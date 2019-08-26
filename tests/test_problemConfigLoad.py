@@ -70,7 +70,13 @@ def test_loadNodeFromCloud():
     node, kproxy = ky.loadNodeFromCloud()
     for n in node:
         assert(n.state == ky.constSymbol['stateNodeActive'])
-        
+
+def test_loadServiceFromCloud():
+    ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()  
+    ky.loadServiceFromCloud()
+
 #def test_problemRawCall():
 #    KubernitesYAMLLoad().problem()
     

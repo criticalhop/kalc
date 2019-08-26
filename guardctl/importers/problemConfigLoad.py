@@ -68,6 +68,43 @@ class KubernitesYAMLLoad(ProblemTemplate):
             priorityDict[priorityItem.metadata.name] = priorityItem.value
         return priorityDict
 
+    def loadServiceFromCloud(self):
+        services = self.coreV1_api.list_service_for_all_namespaces()
+        pods = self.coreV1_api.list_pod_for_all_namespaces()
+
+        for servicek in services.items:
+            serviceTmp = self.addObject(Service())
+                    #count active pods (need for services)
+            amountOfActivePods = 0
+            for podk in pods.items:
+                owner_find = 0
+                ##not working yet!! poodle non type
+            #    for own_item in podk.metadata.owner_references :
+            #        if own_item.uid == servicek.metadata.uid :
+            #            owner_find = 1
+            #            break
+            #    if owner_find == 1 and str(podk.status.phase) == 'Running' :
+            #        amountOfActivePods += 1
+            serviceTmp.amountOfActivePods = amountOfActivePods
+            #load label
+            if 'app' in servicek.metadata.labels:
+                serviceTmp._label = servicek.metadata.labels['app']
+                if 'role' in servicek.metadata.labels:
+                    serviceTmp._label = serviceTmp._label + servicek.metadata.labels['role']
+                if 'tier' in servicek.metadata.labels:
+                    serviceTmp._label = serviceTmp._label + servicek.metadata.labels['tier']
+            
+            # todo load LoadBalancer type
+            # if servicek.spec.type == 'LoadBalancer':
+  
+            #     newLb = self.addObject(Loadbalancer())
+            #     newLb._ipAndName = servicek.status.load_balancer.ingress # .ip - ip addr  .name - domain
+            #     newLb.selectionedService.add(serviceTmp)
+            #     self.loadbalancer.append(newLb)
+
+            self.service.append(serviceTmp)
+
+
     def loadService(self, yamlStr, priorityDict):
         for y in yaml.safe_load_all(yamlStr):
             # log.debug(y)
