@@ -9,7 +9,9 @@ serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
 def test_loadPriority():
     prio = ['high-priority','system-cluster-critical','system-node-critical']
     priorityDict = {}
-    priorityDict = KubernitesYAMLLoad().loadPriority()
+    ky = KubernitesYAMLLoad()
+    ky.cloudQuery()
+    priorityDict = ky.loadPriority()
     for key in priorityDict:
         assert(key in prio)
 

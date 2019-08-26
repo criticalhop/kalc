@@ -48,15 +48,6 @@ class KubernitesYAMLLoad(ProblemTemplate):
             nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek.status.allocatable['memory'])
             nodeTmp.podAmount = int(nodek.status.capacity['pods'])
 
-            kubeProxyTmp = self.addObject(Kubeproxy())
-            kubeProxyTmp.atNode = nodeTmp
-            kubeProxyTmp.mode = self.constSymbol['modeUsermode']
-            
-            #for .selectionedPod.add look for "fill pod with corresponding kube-proxy" in pod iterate section
-
-            #append Node and Proxy to node's and Proxy's list (access by self.node[node_num])
-            kubeProxy.append(kubeProxyTmp)
-
             #defaul values
             nodeTmp.state = self.constSymbol['stateNodeActive']
             nodeTmp.status = self.constSymbol['statusNodeActive']
