@@ -2,13 +2,8 @@ import sys
 import logging as log
 
 from poodle import * 
-from action.pydlKubeAction import *
-from object.kubeObject import *
-
-from problem.problemTemplate import ProblemTemplate
-from object.commonObject import *
-from object.addedNumbers10 import *
-from problem.poodleGen import * 
+from guardctl.model.object.k8s_classes import *
+from guardctl.model.problem.problemTemplate import *
 
 import yaml
 import os

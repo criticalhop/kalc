@@ -8,10 +8,7 @@ from guardctl.model.action.eviction import *
 from guardctl.model.action.oom_kill import *
 
 
-from problem.problemTemplate import ProblemTemplate
-from object.commonObject import *
-from object.addedNumbers10 import *
-
+from guardctl.model.problem.problemTemplate import ProblemTemplate
 
 from kubernetes import client, config
 import croniter, datetime

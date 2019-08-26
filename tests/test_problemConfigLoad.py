@@ -1,7 +1,7 @@
 from poodle import * 
 
 from guardctl.importers.poodleGen import *
-from guradctl.importers.problemConfigLoad import *
+from guardctl.importers.problemConfigLoad import *
 
 daemonYAMLPath = "./tests/kube-config/daemon-set-custom.yaml"
 serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
