@@ -77,7 +77,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                         self.containerConfig.append(self.addObject(сontainerConfigTmp))
 
                         priorityClassName = 0        
-                        if 'priorityClassName' in y['spec']['template'] :
+                        if 'template' in y['spec'] and 'priorityClassName' in y['spec']['template'] :
                             priorityClassName = int(priorityDict[y['spec']['template']['priorityClassName']])
 
                         if label != None and label == dlabel:
