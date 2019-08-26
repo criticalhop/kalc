@@ -223,6 +223,9 @@ class KubernitesYAMLLoad(ProblemTemplate):
             yamlStr = stream.read()
         return yamlStr
 
+    def superProblem(self):
+        super().problem()
+
     def problem(self):
         
         super().problem()

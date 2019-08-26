@@ -22,6 +22,8 @@ def test_loadService():
                     #app+role+tier
     serviceLabel=['redismasterbackend','redisslavebackend','guestbookfrontend','redisslave-unlimitbackend']
     ky = KubernitesYAMLLoad()
+    ky.superProblem()
+
     yamlStr = ky.loadYAML(serviceYAMLPath)
     priorityDict = ky.loadPriority()
     ky.loadService(yamlStr, priorityDict)
@@ -29,7 +31,6 @@ def test_loadService():
         assert(s._label in serviceLabel)
     for p in ky.pod:
         if p.value == 'redismasterbackend0':
-            print(priorityDict)
             assert(p.priority == priorityDict['high-priority'])
         if p.value =='redisslavebackend0':
             #requests:
