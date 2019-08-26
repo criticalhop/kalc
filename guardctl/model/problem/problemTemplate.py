@@ -15,6 +15,7 @@ class ProblemTemplate(poodle.problem.Problem):
     priorityDict = {}
     
     def __init__(self):
+        super().__init__() 
         self.constSymbol = {}
         self.pod = []
         self.node = []

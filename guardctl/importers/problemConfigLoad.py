@@ -104,16 +104,16 @@ class KubernitesYAMLLoad(ProblemTemplate):
             for container in podk.spec.containers:
                 if container.resources.limits != None and 'cpu' in container.resources.limits:
                     if podCpuLimit < 0 : podCpuLimit=0
-                    podCpuLimit += self.cpuConvert(container.resources.limits['cpu'])
+                    podCpuLimit += PoodleGen.cpuConvert(None, container.resources.limits['cpu'])
                 if container.resources.limits != None and 'memory' in container.resources.limits:
                     if podMemLimit < 0 : podMemLimit=0
-                    podMemLimit += self.memConverter(container.resources.limits['memory'])
+                    podMemLimit += PoodleGen.memConverter(None, container.resources.limits['memory'])
                 if container.resources.requests != None and 'cpu' in container.resources.requests:
                     if podCpuRequests < 0 : podCpuRequests=0
-                    podCpuRequests += self.cpuConvert(container.resources.requests['cpu'])
+                    podCpuRequests += PoodleGen.cpuConvert(None, container.resources.requests['cpu'])
                 if container.resources.requests != None and 'memory' in container.resources.requests:
                     if podMemRequests < 0 : podMemRequests=0
-                    podMemRequests += self.memConverter(container.resources.requests['memory'])
+                    podMemRequests += PoodleGen.memConverter(None, container.resources.requests['memory'])
                 # log.debug("container resources limit cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuLimit, mem=podMemLimit))
                 # log.debug("container resources Requests cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuRequests, mem=podMemRequests))
             if podCpuRequests < 0:
