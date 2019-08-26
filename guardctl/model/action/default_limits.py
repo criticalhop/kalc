@@ -1,5 +1,5 @@
 from poodle import planned
-from object.kubeObject import *
+from guardctl.model.object.k8s_classes import *
 # kubernetes scheduler module
 
 class K8DefaultLimits:

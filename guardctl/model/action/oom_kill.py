@@ -1,6 +1,6 @@
 from poodle import planned
-from object.kubeObject import *
-
+from guardctl.model.object.k8s_classes import *
+from poodle import arithmetic
 class K8OOMkill:
     @planned
     def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
@@ -24,7 +24,7 @@ class K8OOMkill:
     def MemoryErrorKillPodOverwhelmingLimits(self,
     nodeOfPod: Node,
     pod1TobeKilled: Pod,
-    greaterThan: GreaterThan
+    greaterThan: arithmetic.GreaterThan
     ):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption

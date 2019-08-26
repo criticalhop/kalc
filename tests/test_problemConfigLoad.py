@@ -1,7 +1,7 @@
 from poodle import * 
 
 from guardctl.importers.poodleGen import *
-from guradctl.importers.problemConfigLoad import *
+from guardctl.importers.problemConfigLoad import *
 
 daemonYAMLPath = "./tests/kube-config/daemon-set-custom.yaml"
 serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
@@ -9,7 +9,9 @@ serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
 def test_loadPriority():
     prio = ['high-priority','system-cluster-critical','system-node-critical']
     priorityDict = {}
-    priorityDict = KubernitesYAMLLoad().loadPriority()
+    ky = KubernitesYAMLLoad()
+    ky.cloudQuery()
+    priorityDict = ky.loadPriority()
     for key in priorityDict:
         assert(key in prio)
 
@@ -22,6 +24,8 @@ def test_loadService():
                     #app+role+tier
     serviceLabel=['redismasterbackend','redisslavebackend','guestbookfrontend','redisslave-unlimitbackend']
     ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()
     yamlStr = ky.loadYAML(serviceYAMLPath)
     priorityDict = ky.loadPriority()
     ky.loadService(yamlStr, priorityDict)
@@ -39,6 +43,8 @@ def test_loadService():
     
 def test_loadDaemonSet():
     ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()
     yamlStr = ky.loadYAML(daemonYAMLPath)
 
     priorityDict = ky.loadPriority()
@@ -59,10 +65,18 @@ def test_loadDaemonSet():
 
 def test_loadNodeFromCloud():
     ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()    
     node, kproxy = ky.loadNodeFromCloud()
     for n in node:
         assert(n.state == ky.constSymbol['stateNodeActive'])
-        
+
+def test_loadServiceFromCloud():
+    ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()  
+    ky.loadServiceFromCloud()
+    ky.loadPodFromCloud()
 #def test_problemRawCall():
 #    KubernitesYAMLLoad().problem()
     
