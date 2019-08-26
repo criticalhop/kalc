@@ -76,7 +76,7 @@ def test_loadServiceFromCloud():
     ky.superProblem()
     ky.cloudQuery()  
     ky.loadServiceFromCloud()
-
+    ky.loadPodFromCloud()
 #def test_problemRawCall():
 #    KubernitesYAMLLoad().problem()
     

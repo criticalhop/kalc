@@ -14,6 +14,18 @@ class ProblemTemplate(poodle.problem.Problem):
     containerConfig = []
     priorityDict = {}
     
+    def __init__(self):
+        self.constSymbol = {}
+        self.pod = []
+        self.node = []
+        self.kubeProxy = []
+        self.loadbalancer = []
+        self.service = []
+        self.daemonSet = []
+        self.request = []
+        self.containerConfig = []
+        self.priorityDict = {}
+
     def constFactory(self, statusNameList, objType):
         for statusName in statusNameList:
             self.constSymbol[statusName] = self.addObject(objType(statusName))
