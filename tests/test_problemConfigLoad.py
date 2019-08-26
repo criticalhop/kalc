@@ -23,7 +23,7 @@ def test_loadService():
     serviceLabel=['redismasterbackend','redisslavebackend','guestbookfrontend','redisslave-unlimitbackend']
     ky = KubernitesYAMLLoad()
     ky.superProblem()
-
+    ky.cloudQuery()
     yamlStr = ky.loadYAML(serviceYAMLPath)
     priorityDict = ky.loadPriority()
     ky.loadService(yamlStr, priorityDict)
@@ -41,6 +41,8 @@ def test_loadService():
     
 def test_loadDaemonSet():
     ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()
     yamlStr = ky.loadYAML(daemonYAMLPath)
 
     priorityDict = ky.loadPriority()
@@ -61,6 +63,8 @@ def test_loadDaemonSet():
 
 def test_loadNodeFromCloud():
     ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()    
     node, kproxy = ky.loadNodeFromCloud()
     for n in node:
         assert(n.state == ky.constSymbol['stateNodeActive'])

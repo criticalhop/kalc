@@ -31,12 +31,16 @@ class KubernitesYAMLLoad(ProblemTemplate):
         super().__init__()
         self._path = path
 
+    def cloudQuery(self):
+        kubernetes.config.load_kube_config()
+        self.coreV1_api = kubernetes.client.CoreV1Api()
+        self.shV1beta1_api = kubernetes.client.SchedulingV1beta1Api()
+        kubernetes.config.load_kube_config()
+
     def loadNodeFromCloud(self):
         nodeList = []
         kubeProxy = []
-        config.load_kube_config()
-        cj_api = client.CoreV1Api()
-        nodes = cj_api.list_node()
+        nodes = self.coreV1_api.list_node()
 
         for nodek in nodes.items:
             nodeTmp = self.addObject(Node(nodek.metadata.name))
@@ -67,10 +71,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
         return nodeList, kubeProxy
 
     def loadPriority(self):
-        kubernetes.config.load_kube_config()
-        sh_api = kubernetes.client.SchedulingV1beta1Api()
-
-        priorityList = sh_api.list_priority_class()
+        priorityList = self.shV1beta1_api.list_priority_class()
         priorityDict = {}
         for priorityItem in priorityList.items:
             priorityDict[priorityItem.metadata.name] = priorityItem.value
@@ -229,7 +230,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def problem(self):
         
         super().problem()
-        
+        self.cloudQuery()
         self.priorityDict = self.loadPriority()
         self.node = self.loadNodeFromCloud()
 
