@@ -29,6 +29,7 @@ def test_loadService():
         assert(s._label in serviceLabel)
     for p in ky.pod:
         if p.value == 'redismasterbackend0':
+            print(priorityDict)
             assert(p.priority == priorityDict['high-priority'])
         if p.value =='redisslavebackend0':
             #requests:

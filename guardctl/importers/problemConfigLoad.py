@@ -4,6 +4,7 @@ import logging as log
 from poodle import * 
 from guardctl.model.object.k8s_classes import *
 from guardctl.model.problem.problemTemplate import *
+from guardctl.importers.poodleGen import PoodleGen
 
 import yaml
 import os
@@ -29,6 +30,41 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def __init__(self, path = ""):
         super().__init__()
         self._path = path
+
+    def loadNodeFromCloud(self):
+        nodeList = []
+        kubeProxy = []
+        config.load_kube_config()
+        cj_api = client.CoreV1Api()
+        nodes = cj_api.list_node()
+
+        for nodek in nodes.items:
+            nodeTmp = self.addObject(Node(nodek.metadata.name))
+            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek.status.allocatable['cpu'])
+            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek.status.allocatable['memory'])
+            nodeTmp.podAmount = int(nodek.status.capacity['pods'])
+
+            kubeProxyTmp = self.addObject(Kubeproxy())
+            kubeProxyTmp.atNode = nodeTmp
+            kubeProxyTmp.mode = self.constSymbol['modeUsermode']
+            
+            #for .selectionedPod.add look for "fill pod with corresponding kube-proxy" in pod iterate section
+
+            #append Node and Proxy to node's and Proxy's list (access by self.node[node_num])
+            kubeProxy.append(kubeProxyTmp)
+
+            #defaul values
+            nodeTmp.state = self.constSymbol['stateNodeActive']
+            nodeTmp.status = self.constSymbol['statusNodeActive']
+#            nodeTmp.currentFormalCpuConsumption = amount of pods
+#            nodeTmp.currentFormalMemConsumption = 
+            nodeTmp.currentRealMemConsumption = 0
+            nodeTmp.currentRealCpuConsumption = 0
+            nodeTmp.AmountOfPodsOverwhelmingMemLimits = 0
+
+            nodeList.append(nodeTmp)
+
+        return nodeList, kubeProxy
 
     def loadPriority(self):
         kubernetes.config.load_kube_config()
@@ -75,10 +111,34 @@ class KubernitesYAMLLoad(ProblemTemplate):
                         сontainerConfigTmp = ContainerConfig(label)
                         сontainerConfigTmp.service = serviceTmp        
                         self.containerConfig.append(self.addObject(сontainerConfigTmp))
+                        
+                        podCpuLimit = -1
+                        podCpuRequests = -1
+                        podMemLimit = -1
+                        podMemRequests = -1
+                        # sum cpu and mem of all containers
+                        for c in d['spec']['template']['spec']['containers']:
+                            if 'limits' in c['resources'] and c['resources']['limits'] != None:
+                                if 'cpu' in c['resources']['limits']:
+                                    if podCpuLimit < 0 : podCpuLimit=0
+                                    podCpuLimit += PoodleGen.cpuConvert(None, c['resources']['limits']['cpu'])
+                                if 'memory' in c['resources']['limits']:
+                                    if podMemLimit < 0 : podMemLimit=0
+                                    podMemLimit += PoodleGen.memConverter(None, c['resources']['limits']['memory'])
+                            if 'requests' in c['resources'] and c['resources']['requests'] != None:
+                                if 'cpu' in c['resources']['requests']:
+                                    if podCpuRequests < 0 : podCpuRequests=0
+                                    podCpuRequests += PoodleGen.cpuConvert(None, c['resources']['requests']['cpu'])
+                                if 'memory' in c['resources']['requests']:
+                                    if podMemRequests < 0 : podMemRequests=0
+                                    podMemRequests += PoodleGen.memConverter(None, c['resources']['requests']['memory'])
+                        
+                        # log.debug("container resources limit cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuLimit, mem=podMemLimit))
+                        # log.debug("container resources Requests cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuRequests, mem=podMemRequests))
 
                         priorityClassName = 0        
-                        if 'template' in y['spec'] and 'priorityClassName' in y['spec']['template'] :
-                            priorityClassName = int(priorityDict[y['spec']['template']['priorityClassName']])
+                        if 'priorityClassName' in d['spec']['template']['spec']:
+                            priorityClassName = int(priorityDict[d['spec']['template']['spec']['priorityClassName']])
 
                         if label != None and label == dlabel:
                                 log.debug("Deployment {0}".format(d['metadata']['name']))
@@ -88,6 +148,11 @@ class KubernitesYAMLLoad(ProblemTemplate):
                                     podTmp = self.addObject(Pod(label + str(i)))
                                     podTmp.podConfig = сontainerConfigTmp
                                     podTmp.priority = priorityClassName
+                                    podTmp.cpuRequest = podCpuRequests
+                                    podTmp.memRequest = podMemRequests
+                                    podTmp.cpuLimit = podCpuLimit
+                                    podTmp.memLimit = podMemLimit
+                                    podTmp.status = self.constSymbol["statusPodPending"]
                                     self.pod.append(podTmp)
 
     def loadDaemonSet(self, yamlStr, priorityDict):
@@ -103,10 +168,30 @@ class KubernitesYAMLLoad(ProblemTemplate):
                     if 'tier' in l:
                         label = label + l['tier']
 
-                priorityClassName = 0        
-                if 'priorityClassName' in y['spec']['template'] :
-                    priorityClassName = int(priorityDict[y['spec']['template']['priorityClassName']])
-
+                podCpuLimit = -1
+                podCpuRequests = -1
+                podMemLimit = -1
+                podMemRequests = -1
+                # sum cpu and mem of all containers
+                for c in y['spec']['template']['spec']['containers']:
+                    if 'limits' in c['resources'] and c['resources']['limits'] != None:
+                        if 'cpu' in c['resources']['limits']:
+                            if podCpuLimit < 0 : podCpuLimit=0
+                            podCpuLimit += PoodleGen.cpuConvert(None, c['resources']['limits']['cpu'])
+                        if 'memory' in c['resources']['limits']:
+                            if podMemLimit < 0 : podMemLimit=0
+                            podMemLimit += PoodleGen.memConverter(None, c['resources']['limits']['memory'])
+                    if 'requests' in c['resources'] and c['resources']['requests'] != None:
+                        if 'cpu' in c['resources']['requests']:
+                            if podCpuRequests < 0 : podCpuRequests=0
+                            podCpuRequests += PoodleGen.cpuConvert(None, c['resources']['requests']['cpu'])
+                        if 'memory' in c['resources']['requests']:
+                            if podMemRequests < 0 : podMemRequests=0
+                            podMemRequests += PoodleGen.memConverter(None, c['resources']['requests']['memory'])
+                        
+                priorityClassName = 0      
+                if 'priorityClassName' in y['spec']['template']['spec'] :
+                    priorityClassName = int(priorityDict[y['spec']['template']['spec']['priorityClassName']])
                 daemonSetTmp = self.addObject(DaemonSet(label))
                 self.daemonSet.append(daemonSetTmp)
                 daemonSetTmp._label = label
@@ -123,7 +208,12 @@ class KubernitesYAMLLoad(ProblemTemplate):
                     for i in range(daemonSetTmp._replicas):
                         podTmp = self.addObject(Pod(label + str(i)))
                         podTmp.podConfig = сontainerConfigTmp
-                        podTmp.priority = self.numberFactory.getNumber(priorityClassName)
+                        podTmp.priority = priorityClassName
+                        podTmp.cpuRequest = podCpuRequests
+                        podTmp.memRequest = podMemRequests
+                        podTmp.cpuLimit = podCpuLimit
+                        podTmp.memLimit = podMemLimit
+                        podTmp.status = self.constSymbol["statusPodPending"]
                         self.pod.append(podTmp)
     
     def loadYAML(self, path):
@@ -138,6 +228,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
         super().problem()
         
         self.priorityDict = self.loadPriority()
+        self.node = self.loadNodeFromCloud()
 
         yamlStr = self.loadYAML(self._path)
  

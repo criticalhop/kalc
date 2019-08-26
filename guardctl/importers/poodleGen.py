@@ -6,9 +6,8 @@ from guardctl.model.object.k8s_classes import *
 from guardctl.model.action.scheduler import *
 from guardctl.model.action.eviction import *
 from guardctl.model.action.oom_kill import *
-
-
 from guardctl.model.problem.problemTemplate import ProblemTemplate
+
 
 from kubernetes import client, config
 import croniter, datetime
@@ -199,11 +198,11 @@ class PoodleGen(ProblemTemplate):
                 # log.debug("container resources limit cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuLimit, mem=podMemLimit))
                 # log.debug("container resources Requests cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuRequests, mem=podMemRequests))
             if podCpuRequests < 0:
-                podTmp.requestedCpu = "null"
+                podTmp.requestedCpu = -1
             else:
                 podTmp.requestedCpu = podCpuRequests
             if podMemRequests < 0:
-                podTmp.requestedMem = "null"
+                podTmp.requestedMem = -1
             else:
                 podTmp.requestedMem = podMemRequests
             
