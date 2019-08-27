@@ -50,7 +50,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
     
     def loadNodeAsDictFromCloud(self, dumpFile=None):
         if self.coreV1_api_list_node != None:
-            yamlStr = self.loadYAML(self._path)
+            yamlStr = self.loadYAML(self.coreV1_api_list_node)
             nodes = yaml.safe_load_all(yamlStr)
         else:
             nodes = self.coreV1_api.list_node().to_dict()
@@ -61,7 +61,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
 
     def loadPodAsDictFromCloud(self, dumpFile=None):
         if self.coreV1_api_list_pod_for_all_namespaces != None:
-            yamlStr = self.loadYAML(self._path)
+            yamlStr = self.loadYAML(self.coreV1_api_list_pod_for_all_namespaces)
             pods = yaml.safe_load_all(yamlStr)
         else:
             pods = self.coreV1_api.list_pod_for_all_namespaces().to_dict()
@@ -72,7 +72,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
 
     def loadServiceAsDictFromCloud(self, dumpFile=None):
         if self.coreV1_list_service_for_all_namespaces != None:
-            yamlStr = self.loadYAML(self._path)
+            yamlStr = self.loadYAML(self.coreV1_list_service_for_all_namespaces)
             services = yaml.safe_load_all(yamlStr)
         else:
             services = self.coreV1_api.list_service_for_all_namespaces()
@@ -84,8 +84,9 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def loadPriorityAsDictFromCloud(self, dumpFile=None):
         print("dump file", self.shV1beta1_api_list_priority_class)
         if self.shV1beta1_api_list_priority_class != None:
-            yamlStr = self.loadYAML(self._path)
+            yamlStr = self.loadYAML(self.shV1beta1_api_list_priority_class)
             priorityList = yaml.safe_load_all(yamlStr)
+            print("priorytylist", priorityList)
         else:
             priorityList = self.shV1beta1_api.list_priority_class().to_dict()
         if dumpFile != None:
@@ -120,6 +121,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def loadPriority(self):
         priorityList = self.loadPriorityAsDictFromCloud()
         priorityDict = {}
+        print(priorityList)
         for priorityItem in priorityList['items']:
             priorityDict[priorityItem['metadata']['name']] = priorityItem['value']
         return priorityDict
