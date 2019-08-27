@@ -1,10 +1,9 @@
 from poodle import planned
 from guardctl.model.object.k8s_classes import *
-# kubernetes scheduler module
 
 class K8SchedulerNoMath:
     
-    @planned
+    @planned(cost=100)
     def SelectNode(self, 
         pod1: Pod,
         nullNode: Node,
@@ -13,7 +12,7 @@ class K8SchedulerNoMath:
         assert nullNode.type == self.constSymbol["Null"]
         pod1.toNode = anyNode
 
-    @planned
+    @planned(cost=100)
     def StartPod(self, 
         podStarted: Pod,
         node1: Node,
@@ -46,9 +45,9 @@ class K8SchedulerNoMath:
     def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
         scheduler1.queueLength -= 1
 
-        # TODO: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
+        #to-do: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
-    @planned
+    @planned(cost=100)
     def ScheduleQueueProcessed(self, scheduler1: Scheduler):
         assert  scheduler1.queueLength == 0
         scheduler1.status = self.constSymbol["statusSchedClean"]

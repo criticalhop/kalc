@@ -1,8 +1,9 @@
 from poodle import planned
 from guardctl.model.object.k8s_classes import *
 from poodle import arithmetic
+
 class K8OOMkill:
-    @planned
+    @planned(cost=100)
     def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
         assert podTobeKilled.memLimitsStatus == self.constSymbol["statusLimMet"]
         assert nodeOfPod == podTobeKilled.atNode
@@ -10,7 +11,7 @@ class K8OOMkill:
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
         podTobeKilled.memLimitsStatus = self.constSymbol["statusLimOverwhelmed"]
         
-    @planned
+    @planned(cost=100)
     def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: Pod,
         nodeOfPod: Node, globalVar1: GlobalVar):            
         assert nodeOfPod == podTobeReanimated.atNode
@@ -20,11 +21,10 @@ class K8OOMkill:
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
         podTobeReanimated.memLimitsStatus = self.constSymbol["statusLimMet"]
         
-    @planned
+    @planned(cost=100)
     def MemoryErrorKillPodOverwhelmingLimits(self,
     nodeOfPod: Node,
-    pod1TobeKilled: Pod,
-    greaterThan: arithmetic.GreaterThan
+    pod1TobeKilled: Pod
     ):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
@@ -34,7 +34,7 @@ class K8OOMkill:
         pod1TobeKilled.status = self.constSymbol['statusPodKilling']
 
 
-    @planned
+    @planned(cost=100)
     def MemoryErrorKillPodNotOverwhelmingLimits(self,
         nodeOfPod: Node,
         podTobeKilled: Pod):
@@ -45,7 +45,7 @@ class K8OOMkill:
 
         podTobeKilled.status = self.constSymbol['statusPodKilling']
     
-    @planned
+    @planned(cost=100)
     def KillPod(self,
             podBeingKilled : Pod,
             nodeWithPod : Node,
@@ -71,11 +71,3 @@ class K8OOMkill:
         podBeingKilled.status = self.constSymbol['statusPodFailed']
         scheduler1.podQueue.add(podBeingKilled)
         scheduler1.status = self.constSymbol["statusSchedChanged"]
-    
-    # @planned
-    # def KubectlRecoverPod(self,
-    #     pod1: Pod):
-    
-    #     assert pod1.status == self.constSymbol['statusPodFailed']
-
-    #     pod1.status = self.constSymbol['statusPodPending']

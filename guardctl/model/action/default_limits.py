@@ -1,9 +1,8 @@
-from poodle import planned
-from guardctl.model.object.k8s_classes import *
-# kubernetes scheduler module
+# from poodle import planned
+# from guardctl.model.object.k8s_classes import *
 
 class K8DefaultLimits:
-    @planned
+    @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
         pod1: Pod,
         memLimit: int
@@ -14,7 +13,7 @@ class K8DefaultLimits:
             
             pod1.memRequest = memLimit
 
-    @planned
+    @planned(cost=100)
     def SetDefaultCpuRequestForPod(self,
         pod1: Pod,
         cpuLimit: int
@@ -25,7 +24,7 @@ class K8DefaultLimits:
             
             pod1.cpuRequest = cpuLimit
     
-    @planned
+    @planned(cost=100)
     def SetDefaultMemLimitForPod(self,
         pod1: Pod,
         node1: Node,
@@ -36,7 +35,7 @@ class K8DefaultLimits:
             assert memCapacity == node1.memCapacity
             pod1.memLimit = memCapacity
             
-    @planned
+    @planned(cost=100)
     def SetDefaultCpuLimitForPod(self,
         pod1: Pod,
         node1: Node,
@@ -47,7 +46,7 @@ class K8DefaultLimits:
             assert cpuCapacity == node1.cpuCapacity
             
             pod1.cpuLimit = cpuCapacity   
-    @planned
+    @planned(cost=100)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
         pod1: Pod,
         node1: Node,
@@ -58,7 +57,7 @@ class K8DefaultLimits:
             pod1.toNode = node1
             pod1.memLimit = memCapacity
             
-    @planned
+    @planned(cost=100)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
         pod1: Pod,
         node1: Node,
@@ -68,7 +67,7 @@ class K8DefaultLimits:
             pod1.toNode = node1
             pod1.cpuLimit = cpuCapacity
 
-    @planned
+    @planned(cost=100)
     def SetDefaultCpuLimitPerLimitRange(self,
         pod1: Pod,
         node1: Node,

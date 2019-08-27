@@ -3,6 +3,8 @@ import logging as log
 
 from poodle import * 
 from guardctl.model.object.k8s_classes import *
+from guardctl.model.action.scheduler import * 
+from guardctl.model.action.eviction import *
 from guardctl.model.problem.problemTemplate import *
 from guardctl.importers.poodleGen import PoodleGen
 
@@ -23,11 +25,8 @@ except:
     pass
 
 class KubernitesYAMLLoad(ProblemTemplate):
-    name = "Kubernites YAML Loader"
-    _path = ""
 
-   # 
-    def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
+    def __init__(self, path, coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
         self._path = path
         self.coreV1_api_list_node = coreV1_api_list_node
