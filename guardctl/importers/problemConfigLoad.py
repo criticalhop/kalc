@@ -401,9 +401,8 @@ class KubernitesYAMLLoad(ProblemTemplate):
         
         super().problem()
         daemonYAMLPath = './tests/kube-config/daemon-set-custom.yaml'
-        dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
-        self.KubernitesYAMLLoad(*dumpList)
-        self.superProblem()
+        # dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
+
         yamlStr = self.loadYAML(daemonYAMLPath)
 
         priorityDict = self.loadPriority()
