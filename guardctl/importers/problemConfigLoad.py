@@ -27,7 +27,7 @@ try:
 except:
     pass
 
-class KubernitesYAMLLoad(ProblemTemplate):
+class KubernetesYAMLLoad(ProblemTemplate):
 
    # 
     def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
