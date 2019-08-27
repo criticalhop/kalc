@@ -12,7 +12,7 @@ serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
 def test_loadPriority():
     prio = ['high-priority','system-cluster-critical','system-node-critical']
     priorityDict = {}
-    ky = KubernitesYAMLLoad()
+    ky = KubernetesYAMLLoad()
     ky.cloudQuery()
     priorityDict = ky.loadPriority()
     for key in priorityDict:
@@ -20,14 +20,14 @@ def test_loadPriority():
 
 
 def test_loadYAML():
-    KubernitesYAMLLoad().loadYAML(serviceYAMLPath)
-    KubernitesYAMLLoad().loadYAML(daemonYAMLPath)
+    KubernetesYAMLLoad().loadYAML(serviceYAMLPath)
+    KubernetesYAMLLoad().loadYAML(daemonYAMLPath)
 
 @pytest.mark.skip(reason="no way of currently testing this")
 def test_loadService():
                     #app+role+tier
     serviceLabel=['redismasterbackend','redisslavebackend','guestbookfrontend','redisslave-unlimitbackend']
-    ky = KubernitesYAMLLoad()
+    ky = KubernetesYAMLLoad()
     ky.superProblem()
     ky.cloudQuery()
     yamlStr = ky.loadYAML(serviceYAMLPath)
@@ -48,7 +48,7 @@ def test_loadService():
     
 @pytest.mark.skip(reason="no way of currently testing this")
 def test_loadDaemonSet():
-    ky = KubernitesYAMLLoad()
+    ky = KubernetesYAMLLoad()
     ky.superProblem()
     ky.cloudQuery()
     yamlStr = ky.loadYAML(daemonYAMLPath)
@@ -72,7 +72,7 @@ def test_loadDaemonSet():
 
 @pytest.mark.skip(reason="no way of currently testing this")
 def test_loadNodeFromCloud():
-    ky = KubernitesYAMLLoad()
+    ky = KubernetesYAMLLoad()
     ky.superProblem()
     ky.cloudQuery()    
     node, kproxy = ky.loadNodeFromCloud()
@@ -81,29 +81,29 @@ def test_loadNodeFromCloud():
 
 @pytest.mark.skip(reason="no way of currently testing this")
 def test_loadServiceFromCloud():
-    ky = KubernitesYAMLLoad()
+    ky = KubernetesYAMLLoad()
     ky.superProblem()
     ky.cloudQuery()  
     ky.loadServiceFromCloud()
     ky.loadPodFromCloud()
 #def test_problemRawCall():
-#    KubernitesYAMLLoad().problem()
+#    KubernetesYAMLLoad().problem()
     
 
 @pytest.mark.skip(reason="no way of currently testing this")
 def test_emuFile():
-    ky = KubernitesYAMLLoad()
+    ky = KubernetesYAMLLoad()
     ky.superProblem()
     ky.cloudQuery()
     ky.loadNodeAsDictFromCloud("/home/andrey/coreV1_api_list_node.yaml")
     ky.loadPodAsDictFromCloud("/home/andrey/coreV1_api_list_pod_for_all_namespaces.yaml")
     ky.loadServiceAsDictFromCloud("/home/andrey/coreV1_list_service_for_all_namespaces.yaml")
     ky.loadPriorityAsDictFromCloud("/home/andrey/shV1beta1_api_list_priority_class")
-#     ky = KubernitesYAMLLoad(None, )
+#     ky = KubernetesYAMLLoad(None, )
 
 def test_loadAllFromFiles():
     dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
-    ky = KubernitesYAMLLoad(*dumpList)
+    ky = KubernetesYAMLLoad(*dumpList)
     ky.superProblem()
     yamlStr = ky.loadYAML(daemonYAMLPath)
 
@@ -126,5 +126,5 @@ def test_loadAllFromFiles():
 
 def test_problemAllFromFile():
     dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
-    ky = KubernitesYAMLLoad(*dumpList)
+    ky = KubernetesYAMLLoad(*dumpList)
     ky.problem()
