@@ -25,28 +25,85 @@ except:
 class KubernitesYAMLLoad(ProblemTemplate):
     name = "Kubernites YAML Loader"
     _path = ""
-    
+
    # 
-    def __init__(self, path = ""):
+    def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
         self._path = path
+        self.coreV1_api_list_node = coreV1_api_list_node
+        self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
+        self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
+        self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
+        # print(self.shV1beta1_api_list_priority_class)
+
+        
 
     def cloudQuery(self):
         kubernetes.config.load_kube_config()
         self.coreV1_api = kubernetes.client.CoreV1Api()
+
         self.shV1beta1_api = kubernetes.client.SchedulingV1beta1Api()
         kubernetes.config.load_kube_config()
+
+    def loadAsDictFromFile(self):
+        pass
+    
+    def loadNodeAsDictFromCloud(self, dumpFile=None):
+        if self.coreV1_api_list_node != None:
+            yamlStr = self.loadYAML(self.coreV1_api_list_node)
+            nodes = yaml.safe_load(yamlStr)
+        else:
+            nodes = self.coreV1_api.list_node().to_dict()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(nodes, outfile, default_flow_style=False)
+        return nodes
+
+    def loadPodAsDictFromCloud(self, dumpFile=None):
+        if self.coreV1_api_list_pod_for_all_namespaces != None:
+            yamlStr = self.loadYAML(self.coreV1_api_list_pod_for_all_namespaces)
+            pods = yaml.safe_load(yamlStr)
+        else:
+            pods = self.coreV1_api.list_pod_for_all_namespaces().to_dict()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(pods, outfile, default_flow_style=False)
+        return pods
+
+    def loadServiceAsDictFromCloud(self, dumpFile=None):
+        if self.coreV1_list_service_for_all_namespaces != None:
+            yamlStr = self.loadYAML(self.coreV1_list_service_for_all_namespaces)
+            services = yaml.safe_load(yamlStr)
+        else:
+            services = self.coreV1_api.list_service_for_all_namespaces()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(services.to_dict(), outfile, default_flow_style=False)
+        return services.to_dict()
+
+    def loadPriorityAsDictFromCloud(self, dumpFile=None):
+        # print("dump file", self.shV1beta1_api_list_priority_class)
+        if self.shV1beta1_api_list_priority_class != None:
+            yamlStr = self.loadYAML(self.shV1beta1_api_list_priority_class)
+            priorityList = yaml.safe_load(yamlStr)
+            # print("priorytylist", priorityList)
+        else:
+            priorityList = self.shV1beta1_api.list_priority_class().to_dict()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(priorityList, outfile, default_flow_style=False)
+        return priorityList
 
     def loadNodeFromCloud(self):
         nodeList = []
         kubeProxy = []
-        nodes = self.coreV1_api.list_node()
-
-        for nodek in nodes.items:
-            nodeTmp = self.addObject(Node(nodek.metadata.name))
-            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek.status.allocatable['cpu'])
-            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek.status.allocatable['memory'])
-            nodeTmp.podAmount = int(nodek.status.capacity['pods'])
+        nodes = self.loadNodeAsDictFromCloud()
+        # print("print nodes ", nodes.to_dict())
+        for nodek in nodes['items']:
+            nodeTmp = self.addObject(Node(nodek['metadata']['name']))
+            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek['status']['allocatable']['cpu'])
+            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
+            nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
             #defaul values
             nodeTmp.state = self.constSymbol['stateNodeActive']
@@ -62,27 +119,29 @@ class KubernitesYAMLLoad(ProblemTemplate):
         return nodeList, kubeProxy
 
     def loadPriority(self):
-        priorityList = self.shV1beta1_api.list_priority_class()
+        priorityList = self.loadPriorityAsDictFromCloud()
         priorityDict = {}
-        for priorityItem in priorityList.items:
-            priorityDict[priorityItem.metadata.name] = priorityItem.value
+        # print(priorityList)
+        for priorityItem in priorityList['items']:
+            priorityDict[priorityItem['metadata']['name']] = priorityItem['value']
         return priorityDict
 
 #call me only after loadNodeFromCloud
     def loadPodFromCloud(self):
-        pods = self.coreV1_api.list_pod_for_all_namespaces()
+        
+        pods = self.loadPodAsDictFromCloud()
 
-        for podk in pods.items:
+        for podk in pods['items']:
             #log.debug(podk.metadata.name)
             #exit(0)
-            podTmp = self.addObject(Pod(podk.metadata.name))
+            podTmp = self.addObject(Pod(podk['metadata']['name']))
             #load label
-            if 'app' in podk.metadata.labels:
-                podTmp._label = podk.metadata.labels['app']
-                if 'role' in  podk.metadata.labels:
-                    podTmp._label = podTmp._label + podk.metadata.labels['role']
-                if 'tier' in  podk.metadata.labels:
-                    podTmp._label = podTmp._label + podk.metadata.labels['tier']
+            if 'app' in podk['metadata']['labels']:
+                podTmp._label = podk['metadata']['labels']['app']
+                if 'role' in  podk['metadata']['labels']:
+                    podTmp._label = podTmp._label + podk['metadata']['labels']['role']
+                if 'tier' in  podk['metadata']['labels']:
+                    podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
             
             #containerCOnfig
             сontainerConfigTmp = ContainerConfig()
@@ -92,7 +151,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
             podTmp.podConfig = сontainerConfigTmp
             self.containerConfig.append(self.addObject(сontainerConfigTmp))
 
-            sym = self.constSymbol["statePod" + str(podk.status.phase)]
+            sym = self.constSymbol["statePod" + str(podk['status']['phase'])]
             # log.debug("object is ", sym)
 
             podTmp.state = sym
@@ -101,19 +160,21 @@ class KubernitesYAMLLoad(ProblemTemplate):
             podCpuRequests = -1
             podMemLimit = -1
             podMemRequests = -1
-            for container in podk.spec.containers:
-                if container.resources.limits != None and 'cpu' in container.resources.limits:
-                    if podCpuLimit < 0 : podCpuLimit=0
-                    podCpuLimit += PoodleGen.cpuConvert(None, container.resources.limits['cpu'])
-                if container.resources.limits != None and 'memory' in container.resources.limits:
-                    if podMemLimit < 0 : podMemLimit=0
-                    podMemLimit += PoodleGen.memConverter(None, container.resources.limits['memory'])
-                if container.resources.requests != None and 'cpu' in container.resources.requests:
-                    if podCpuRequests < 0 : podCpuRequests=0
-                    podCpuRequests += PoodleGen.cpuConvert(None, container.resources.requests['cpu'])
-                if container.resources.requests != None and 'memory' in container.resources.requests:
-                    if podMemRequests < 0 : podMemRequests=0
-                    podMemRequests += PoodleGen.memConverter(None, container.resources.requests['memory'])
+            for container in podk['spec']['containers']:
+                if 'limits' in container['resources'] and container['resources']['limits'] != None:
+                    if 'cpu' in container['resources']['limits']:
+                        if podCpuLimit < 0 : podCpuLimit=0
+                        podCpuLimit += PoodleGen.cpuConvert(None, container['resources']['limits']['cpu'])
+                    if 'memory' in container['resources']['limits']:
+                        if podMemLimit < 0 : podMemLimit=0
+                        podMemLimit += PoodleGen.memConverter(None, container['resources']['limits']['memory'])
+                if 'requests' in container['resources'] and container['resources']['requests'] != None:
+                    if 'cpu' in container['resources']['requests']:
+                        if podCpuRequests < 0 : podCpuRequests=0
+                        podCpuRequests += PoodleGen.cpuConvert(None, container['resources']['requests']['cpu'])
+                    if 'memory' in container['resources']['requests']:
+                        if podMemRequests < 0 : podMemRequests=0
+                        podMemRequests += PoodleGen.memConverter(None, container['resources']['requests']['memory'])
                 # log.debug("container resources limit cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuLimit, mem=podMemLimit))
                 # log.debug("container resources Requests cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuRequests, mem=podMemRequests))
             if podCpuRequests < 0:
@@ -141,25 +202,25 @@ class KubernitesYAMLLoad(ProblemTemplate):
             
             #fill pod with corresponding kube-proxy
             for idx, nodeTmp in enumerate(self.node):
-                if nodeTmp.value == podk.spec.node_name:
+                if nodeTmp.value == podk['spec']['node_name']:
                     #self.kubeProxy[idx].selectionedPod.add(podTmp)
                     podTmp.atNode = nodeTmp
             
             podTmp.status
             
-            log.debug("pod name {0} status {1} ".format(podk.metadata.name, podk.status.phase))
+            log.debug("pod name {0} status {1} ".format(podk['metadata']['name'], podk['status']['phase']))
             #append pod to pod's list
             self.pod.append(podTmp)
 
     def loadServiceFromCloud(self):
-        services = self.coreV1_api.list_service_for_all_namespaces()
-        pods = self.coreV1_api.list_pod_for_all_namespaces()
+        services = self.loadServiceAsDictFromCloud()
+        pods = self.loadPodAsDictFromCloud()
 
-        for servicek in services.items:
+        for servicek in services['items']:
             serviceTmp = self.addObject(Service())
                     #count active pods (need for services)
             amountOfActivePods = 0
-            for podk in pods.items:
+            for podk in pods['items']:
                 owner_find = 0
                 ##not working yet!! poodle non type
             #    for own_item in podk.metadata.owner_references :
@@ -170,12 +231,12 @@ class KubernitesYAMLLoad(ProblemTemplate):
             #        amountOfActivePods += 1
             serviceTmp.amountOfActivePods = amountOfActivePods
             #load label
-            if 'app' in servicek.metadata.labels:
-                serviceTmp._label = servicek.metadata.labels['app']
-                if 'role' in servicek.metadata.labels:
-                    serviceTmp._label = serviceTmp._label + servicek.metadata.labels['role']
-                if 'tier' in servicek.metadata.labels:
-                    serviceTmp._label = serviceTmp._label + servicek.metadata.labels['tier']
+            if 'app' in servicek['metadata']['labels']:
+                serviceTmp._label = servicek['metadata']['labels']['app']
+                if 'role' in servicek['metadata']['labels']:
+                    serviceTmp._label = serviceTmp._label + servicek['metadata']['labels']['role']
+                if 'tier' in servicek['metadata']['labels']:
+                    serviceTmp._label = serviceTmp._label + servicek['metadata']['labels']['tier']
             
             # todo load LoadBalancer type
             # if servicek.spec.type == 'LoadBalancer':
@@ -267,6 +328,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                                     podTmp.status = self.constSymbol["statusPodPending"]
                                     self.pod.append(podTmp)
 
+#call only after loadNodeFromCloud
     def loadDaemonSet(self, yamlStr, priorityDict):
         for y in yaml.safe_load_all(yamlStr):
             if y['kind'] == 'DaemonSet':
@@ -313,11 +375,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                 for c in y['spec']['template']['spec']['containers'] : 
 #                   log.debug("{0} {1}".format(d['kind'], d['metadata']['name']))
                     log.debug("daemonSetTmp {0}".format(c['name']))
-                    if 'replicas' in y['spec']['template']['spec']:
-                        daemonSetTmp._replicas = int(y['spec']['template']['spec']['replicas'])
-                    else:  
-                        daemonSetTmp._replicas = 1
-                    for i in range(daemonSetTmp._replicas):
+                    for myNode in self.node:
                         podTmp = self.addObject(Pod(label + str(i)))
                         podTmp.podConfig = сontainerConfigTmp
                         podTmp.priority = priorityClassName
@@ -326,6 +384,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                         podTmp.cpuLimit = podCpuLimit
                         podTmp.memLimit = podMemLimit
                         podTmp.status = self.constSymbol["statusPodPending"]
+                        podTmp.atNode = myNode
                         self.pod.append(podTmp)
     
     def loadYAML(self, path):
