@@ -8,18 +8,66 @@ NULL = 'null'
 class Type(Object):
     pass
 
-
-class Kind(Object):
-    pass
-
-
-class Mode(Object):
-    pass
-
-
 class Status(Object):
     sequence: int
 
+        STATUSREQATSTART = Status()
+        STATUSREQATLOADBALANCER = Status()
+        STATUSREQATKUBEPROXY = Status()
+        STATUSREQATPODINPUT = Status()
+        STATUSREQMEMRESOURCECONSUMED = Status()
+        STATUSREQCPURESOURCECONSUMED = Status()
+        STATUSREQRESOURCESCONSUMED = Status()
+        STATUSREQDIRECTEDTOPOD = Status()
+        STATUSREQREQUESTPIDTOBEENDED = Status()
+        STATUSREQCPURESOURCERELEASED = Status()
+        STATUSREQMEMRESOURCERELEASED = Status()
+        STATUSREQRESOURCESRELEASED = Status()
+        STATUSREQREQUESTTERMINATED = Status()
+        STATUSREQREQUESTFINISHED = Status()
+        STATUSPODATCONFIG = Status()
+        STATUSPODREADYTOSTART = Status()
+        STATUSPODACTIVE = Status()
+        STATUSPODPENDING = Status()
+        STATUSPODATMANUALCREATION = Status()
+        STATUSPODDIRECTEDTONODE = Status()
+        STATUSPODCPUCONSUMED = Status()
+        STATUSPODRESOURCEFORMALCONSUMPTIONFAILED = Status()
+        STATUSPODFAILEDTOSTART = Status()
+        STATUSPODREADYTOSTART2 = Status()
+        STATUSPODMEMCONSUMED = Status()
+        STATUSPODMEMCONSUMEDFAILED = Status()
+        STATUSPODBINDEDTONODE = Status()
+        STATUSPODRUNNING = Status()
+        STATUSPODSUCCEEDED = Status() # MAY BE LOST BE CAREFUL
+        STATUSPODKILLING = Status()
+        STATUSPODFAILED = Status()
+        STATUSNODERUNNING = Status()
+        STATUSNODESUCCEDED = Status()
+        STATUSPODPENDING = Status()
+        STATUSNODEDELETED = Status()
+        STATUSPODINACTIVE = Status()
+        STATUSNODEACTIVE = Status()
+        STATUSNODEINACTIVE = Status()
+        STATUSREQDIRECTEDTONODE = Status()
+        STATUSREQNODECAPACITYOVERWHELMED = Status()
+        STATUSLIMMET = Status()
+        STATUSLIMOVERWHELMED = Status()
+        TEST = Status()
+        STATUSPODTOBETERMINATED = Status()
+        STATUSPODTERMINATED = Status()
+        STATUSSERVPENDING = Status()
+        STATUSSERVSTARTED = Status()
+        STATUSSERVINTERRUPTED = Status()
+        STATUSREQRUNNING = Status()
+        STATUSPODINITIALCONRELEASED = Status()
+        STATUSPODGLOBALMEMCONSUMED = Status()
+        STATUSPODGLOBALCPUCONSUMED = Status()
+        STATUSPODFORMALCONRELEASED = Status()
+        STATUSSCHEDCLEAN = Status()
+        STATUSSCHEDCHANGED = Status()
+        STATUSPODREADYTOSTART = Status()
+        STATUSPODFINISHEDPLACEMENT = Status()
 
 class State(Object):
     sequence: int
@@ -58,11 +106,6 @@ class Node(Object):
     podAmount: int
     type: Type
 
-
-class EntityType(Object):
-    pass
-
-
 class GlobalVar(Object):
     numberOfRejectedReq: int
     currentFormalCpuConsumption: int
@@ -77,11 +120,6 @@ class GlobalVar(Object):
     schedulerStatus: Status
     amountOfPods: int
     queueLength: int
-
-
-class Calculation(Object):
-    id: int
-    value: int
 
 
 class Pod(Object):
