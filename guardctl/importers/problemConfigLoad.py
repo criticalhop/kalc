@@ -47,7 +47,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
                 yaml.dump(nodes.to_dict(), outfile, default_flow_style=False)
-        return nodes
+        return nodes.to_dict()
 
     def loadPodAsDictFromCloud(self, dumpFile=None):
         pods = self.coreV1_api.list_pod_for_all_namespaces()
@@ -61,25 +61,25 @@ class KubernitesYAMLLoad(ProblemTemplate):
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
                 yaml.dump(services.to_dict(), outfile, default_flow_style=False)
-        return services
+        return services.to_dict()
 
     def loadPriorityAsDictFromCloud(self, dumpFile=None):
         priorityList = self.shV1beta1_api.list_priority_class()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
                 yaml.dump(priorityList.to_dict(), outfile, default_flow_style=False)
-        return priorityList
+        return priorityList.to_dict()
 
     def loadNodeFromCloud(self):
         nodeList = []
         kubeProxy = []
-        nodes = self.coreV1_api.list_node()
+        nodes = self.loadNodeAsDictFromCloud()
         # print("print nodes ", nodes.to_dict())
-        for nodek in nodes.items:
-            nodeTmp = self.addObject(Node(nodek.metadata.name))
-            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek.status.allocatable['cpu'])
-            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek.status.allocatable['memory'])
-            nodeTmp.podAmount = int(nodek.status.capacity['pods'])
+        for nodek in nodes['items']:
+            nodeTmp = self.addObject(Node(nodek['metadata']['name']))
+            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek['status']['allocatable']['cpu'])
+            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
+            nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
             #defaul values
             nodeTmp.state = self.constSymbol['stateNodeActive']
@@ -95,10 +95,10 @@ class KubernitesYAMLLoad(ProblemTemplate):
         return nodeList, kubeProxy
 
     def loadPriority(self):
-        priorityList = self.shV1beta1_api.list_priority_class()
+        priorityList = self.loadPriorityAsDictFromCloud()
         priorityDict = {}
-        for priorityItem in priorityList.items:
-            priorityDict[priorityItem.metadata.name] = priorityItem.value
+        for priorityItem in priorityList['items']:
+            priorityDict[priorityItem['metadata']['name']] = priorityItem['value']
         return priorityDict
 
 #call me only after loadNodeFromCloud
@@ -188,14 +188,14 @@ class KubernitesYAMLLoad(ProblemTemplate):
             self.pod.append(podTmp)
 
     def loadServiceFromCloud(self):
-        services = self.coreV1_api.list_service_for_all_namespaces()
-        pods = self.coreV1_api.list_pod_for_all_namespaces()
+        services = self.loadServiceAsDictFromCloud()
+        pods = self.loadPodAsDictFromCloud()
 
-        for servicek in services.items:
+        for servicek in services['items']:
             serviceTmp = self.addObject(Service())
                     #count active pods (need for services)
             amountOfActivePods = 0
-            for podk in pods.items:
+            for podk in pods['items']:
                 owner_find = 0
                 ##not working yet!! poodle non type
             #    for own_item in podk.metadata.owner_references :
@@ -206,12 +206,12 @@ class KubernitesYAMLLoad(ProblemTemplate):
             #        amountOfActivePods += 1
             serviceTmp.amountOfActivePods = amountOfActivePods
             #load label
-            if 'app' in servicek.metadata.labels:
-                serviceTmp._label = servicek.metadata.labels['app']
-                if 'role' in servicek.metadata.labels:
-                    serviceTmp._label = serviceTmp._label + servicek.metadata.labels['role']
-                if 'tier' in servicek.metadata.labels:
-                    serviceTmp._label = serviceTmp._label + servicek.metadata.labels['tier']
+            if 'app' in servicek['metadata']['labels']:
+                serviceTmp._label = servicek['metadata']['labels']['app']
+                if 'role' in servicek['metadata']['labels']:
+                    serviceTmp._label = serviceTmp._label + servicek['metadata']['labels']['role']
+                if 'tier' in servicek['metadata']['labels']:
+                    serviceTmp._label = serviceTmp._label + servicek['metadata']['labels']['tier']
             
             # todo load LoadBalancer type
             # if servicek.spec.type == 'LoadBalancer':
@@ -303,6 +303,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                                     podTmp.status = self.constSymbol["statusPodPending"]
                                     self.pod.append(podTmp)
 
+#call only after loadNodeFromCloud
     def loadDaemonSet(self, yamlStr, priorityDict):
         for y in yaml.safe_load_all(yamlStr):
             if y['kind'] == 'DaemonSet':
@@ -349,11 +350,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                 for c in y['spec']['template']['spec']['containers'] : 
 #                   log.debug("{0} {1}".format(d['kind'], d['metadata']['name']))
                     log.debug("daemonSetTmp {0}".format(c['name']))
-                    if 'replicas' in y['spec']['template']['spec']:
-                        daemonSetTmp._replicas = int(y['spec']['template']['spec']['replicas'])
-                    else:  
-                        daemonSetTmp._replicas = 1
-                    for i in range(daemonSetTmp._replicas):
+                    for myNode in self.node:
                         podTmp = self.addObject(Pod(label + str(i)))
                         podTmp.podConfig = сontainerConfigTmp
                         podTmp.priority = priorityClassName
@@ -362,6 +359,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
                         podTmp.cpuLimit = podCpuLimit
                         podTmp.memLimit = podMemLimit
                         podTmp.status = self.constSymbol["statusPodPending"]
+                        podTmp.atNode = myNode
                         self.pod.append(podTmp)
     
     def loadYAML(self, path):
