@@ -123,3 +123,8 @@ def test_loadAllFromFiles():
         #   requests:
         #     cpu: 200m
         #     memory: 200Mi
+
+def test_problemAllFromFile():
+    dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
+    ky = KubernitesYAMLLoad(*dumpList)
+    ky.problem()

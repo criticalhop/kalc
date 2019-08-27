@@ -75,11 +75,11 @@ class KubernitesYAMLLoad(ProblemTemplate):
             yamlStr = self.loadYAML(self.coreV1_list_service_for_all_namespaces)
             services = yaml.safe_load(yamlStr)
         else:
-            services = self.coreV1_api.list_service_for_all_namespaces()
+            services = self.coreV1_api.list_service_for_all_namespaces().to_dict()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
-                yaml.dump(services.to_dict(), outfile, default_flow_style=False)
-        return services.to_dict()
+                yaml.dump(services, outfile, default_flow_style=False)
+        return services
 
     def loadPriorityAsDictFromCloud(self, dumpFile=None):
         # print("dump file", self.shV1beta1_api_list_priority_class)
