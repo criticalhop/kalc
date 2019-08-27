@@ -75,11 +75,11 @@ class KubernitesYAMLLoad(ProblemTemplate):
             yamlStr = self.loadYAML(self.coreV1_list_service_for_all_namespaces)
             services = yaml.safe_load(yamlStr)
         else:
-            services = self.coreV1_api.list_service_for_all_namespaces()
+            services = self.coreV1_api.list_service_for_all_namespaces().to_dict()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
-                yaml.dump(services.to_dict(), outfile, default_flow_style=False)
-        return services.to_dict()
+                yaml.dump(services, outfile, default_flow_style=False)
+        return services
 
     def loadPriorityAsDictFromCloud(self, dumpFile=None):
         # print("dump file", self.shV1beta1_api_list_priority_class)
@@ -397,24 +397,19 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def superProblem(self):
         super().problem()
 
+        # dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
     def problem(self):
         
         super().problem()
-        self.cloudQuery()
-        self.priorityDict = self.loadPriority()
-        self.node = self.loadNodeFromCloud()
 
         yamlStr = self.loadYAML(self._path)
- 
-        self.loadService(yamlStr,self.priorityDict)
-        self.loadDaemonSet(yamlStr,self.priorityDict)
 
+        priorityDict = self.loadPriority()
+        self.loadNodeFromCloud()
+        self.loadPodFromCloud()
+        self.loadServiceAsDictFromCloud()
+        self.loadDaemonSet(yamlStr, priorityDict)
 
-        #self.period1 = Period()
-        self.request1 = self.addObject(Request())
-        #self.request1.launchPeriod = self.period1
-        self.request1.status = self.constSymbol["statusReqAtStart"]
-        self.request1.state = self.constSymbol["stateRequestInactive"]
 
     def goal(self):
-        return self.request1.status == self.constSymbol["statusReqRequestFinished"]
+        pass
