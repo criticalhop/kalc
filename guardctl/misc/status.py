@@ -1,6 +1,7 @@
-from action.pydlKubeAction import *  
-from object.commonObject import *
-from object.addedNumbers10 import *
+from guradctl.model.action.default_limits import *
+from guradctl.model.action.eviction import *
+from guradctl.model.action.oom_kill import *
+from guradctl.model.action.scheduler import *
 import poodle.problem
 
 class ProblemTemplate(poodle.problem.Problem):
@@ -14,69 +15,69 @@ class ProblemTemplate(poodle.problem.Problem):
     request = []
     containerConfig = []
     priorityDict = {}
-    
+
     def constFactory(self, statusNameList, objType):
         for statusName in statusNameList:
             self.constSymbol[statusName] = self.addObject(objType(statusName))
 
     def problem(self):
         statusList = ["statusReqAtStart",
-        "statusReqAtLoadbalancer",
-        "statusReqAtKubeproxy",
-        "statusReqAtPodInput",
-        "statusReqMemResourceConsumed",
-        "statusReqCpuResourceConsumed",
-        "statusReqResourcesConsumed",
-        "statusReqDirectedToPod",
-        "statusReqRequestPIDToBeEnded",
-        "statusReqCpuResourceReleased",
-        "statusReqMemResourceReleased",
-        "statusReqResourcesReleased",
-        "statusReqRequestTerminated",
-        "statusReqRequestFinished",
-        "statusPodAtConfig",
-        "statusPodReadyToStart",
-        "statusPodActive",
-        "statusPodPending",
-        "statusPodAtManualCreation",
-        "statusPodDirectedToNode",
-        "statusPodCpuConsumed",
-        "statusPodResourceFormalConsumptionFailed",
-        "statusPodFailedToStart",
-        "statusPodReadyToStart2",
-        "statusPodMemConsumed",
-        "statusPodMemConsumedFailed",
-        "statusPodBindedToNode",
-        "statusPodRunning",
-        "statusPodSucceeded", # may be lost be careful
-        "statusPodKilling",
-        "statusPodFailed",
-        "statusNodeRunning",
-        "statusNodeSucceded",
-        "statusPodPending",
-        "statusNodeDeleted",
-        "statusPodInactive",
-        "statusNodeActive",
-        "statusNodeInactive",
-        "statusReqDirectedToNode",
-        "statusReqNodeCapacityOverwhelmed",
-        "statusLimMet",
-        "statusLimOverwhelmed",
-        "test",
-        "statusPodToBeTerminated",
-        "statusPodTerminated",
-        "statusServPending",
-        "statusServStarted",
-        "statusServInterrupted",
-        "statusReqRunning",
-        "statusPodInitialConReleased",
-        "statusPodGlobalMemConsumed",
-        "statusPodGlobalCpuConsumed",
-        "statusPodFormalConReleased",
-        "statusSchedClean",
-        "statusSchedChanged",
-        "statusPodReadyToStart",
-        "statusPodFinishedPlacement"]
+                        "statusReqAtLoadbalancer",
+                        "statusReqAtKubeproxy",
+                        "statusReqAtPodInput",
+                        "statusReqMemResourceConsumed",
+                        "statusReqCpuResourceConsumed",
+                        "statusReqResourcesConsumed",
+                        "statusReqDirectedToPod",
+                        "statusReqRequestPIDToBeEnded",
+                        "statusReqCpuResourceReleased",
+                        "statusReqMemResourceReleased",
+                        "statusReqResourcesReleased",
+                        "statusReqRequestTerminated",
+                        "statusReqRequestFinished",
+                        "statusPodAtConfig",
+                        "statusPodReadyToStart",
+                        "statusPodActive",
+                        "statusPodPending",
+                        "statusPodAtManualCreation",
+                        "statusPodDirectedToNode",
+                        "statusPodCpuConsumed",
+                        "statusPodResourceFormalConsumptionFailed",
+                        "statusPodFailedToStart",
+                        "statusPodReadyToStart2",
+                        "statusPodMemConsumed",
+                        "statusPodMemConsumedFailed",
+                        "statusPodBindedToNode",
+                        "statusPodRunning",
+                        "statusPodSucceeded", # may be lost be careful
+                        "statusPodKilling",
+                        "statusPodFailed",
+                        "statusNodeRunning",
+                        "statusNodeSucceded",
+                        "statusPodPending",
+                        "statusNodeDeleted",
+                        "statusPodInactive",
+                        "statusNodeActive",
+                        "statusNodeInactive",
+                        "statusReqDirectedToNode",
+                        "statusReqNodeCapacityOverwhelmed",
+                        "statusLimMet",
+                        "statusLimOverwhelmed",
+                        "test",
+                        "statusPodToBeTerminated",
+                        "statusPodTerminated",
+                        "statusServPending",
+                        "statusServStarted",
+                        "statusServInterrupted",
+                        "statusReqRunning",
+                        "statusPodInitialConReleased",
+                        "statusPodGlobalMemConsumed",
+                        "statusPodGlobalCpuConsumed",
+                        "statusPodFormalConReleased",
+                        "statusSchedClean",
+                        "statusSchedChanged",
+                        "statusPodReadyToStart",
+                        "statusPodFinishedPlacement"]
         self.constFactory(statusList, Status)
 
         stateList = [
@@ -94,7 +95,7 @@ class ProblemTemplate(poodle.problem.Problem):
 
         typeList = ["typeTemporary","typePersistent","Null","notNull","Issue01","PreemptLowerPriority","Never"]
         self.constFactory(typeList, Type)
-        
+
         modeList = ["modeUsermode","modeIptables"]
         self.constFactory(modeList, Mode)
 
