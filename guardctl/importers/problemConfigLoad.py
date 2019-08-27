@@ -400,21 +400,17 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def problem(self):
         
         super().problem()
-        self.cloudQuery()
-        self.priorityDict = self.loadPriority()
-        self.node = self.loadNodeFromCloud()
+        dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
+        self.KubernitesYAMLLoad(*dumpList)
+        self.superProblem()
+        yamlStr = self.loadYAML(daemonYAMLPath)
 
-        yamlStr = self.loadYAML(self._path)
- 
-        self.loadService(yamlStr,self.priorityDict)
-        self.loadDaemonSet(yamlStr,self.priorityDict)
+        priorityDict = self.loadPriority()
+        self.loadNodeFromCloud()
+        self.loadPodFromCloud()
+        self.loadServiceAsDictFromCloud()
+        self.loadDaemonSet(yamlStr, priorityDict)
 
-
-        #self.period1 = Period()
-        self.request1 = self.addObject(Request())
-        #self.request1.launchPeriod = self.period1
-        self.request1.status = self.constSymbol["statusReqAtStart"]
-        self.request1.state = self.constSymbol["stateRequestInactive"]
 
     def goal(self):
-        return self.request1.status == self.constSymbol["statusReqRequestFinished"]
+        pass
