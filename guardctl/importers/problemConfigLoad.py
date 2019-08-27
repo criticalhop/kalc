@@ -26,9 +26,10 @@ except:
 
 class KubernitesYAMLLoad(ProblemTemplate):
 
-    def __init__(self, path, coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
+   # 
+    def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
-        self._path = path
+        self._path = "./examples/daemonset1.yaml" #path
         self.coreV1_api_list_node = coreV1_api_list_node
         self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
         self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
