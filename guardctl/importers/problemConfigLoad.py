@@ -34,6 +34,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
         self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
         self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
         self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
+        print(self.shV1beta1_api_list_priority_class)
 
         
 
@@ -59,25 +60,38 @@ class KubernitesYAMLLoad(ProblemTemplate):
         return nodes
 
     def loadPodAsDictFromCloud(self, dumpFile=None):
-        pods = self.coreV1_api.list_pod_for_all_namespaces()
+        if self.coreV1_api_list_pod_for_all_namespaces != None:
+            yamlStr = self.loadYAML(self._path)
+            pods = yaml.safe_load_all(yamlStr)
+        else:
+            pods = self.coreV1_api.list_pod_for_all_namespaces().to_dict()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
-                yaml.dump(pods.to_dict(), outfile, default_flow_style=False)
-        return pods.to_dict()     
+                yaml.dump(pods, outfile, default_flow_style=False)
+        return pods
 
     def loadServiceAsDictFromCloud(self, dumpFile=None):
-        services = self.coreV1_api.list_service_for_all_namespaces()
+        if self.coreV1_list_service_for_all_namespaces != None:
+            yamlStr = self.loadYAML(self._path)
+            services = yaml.safe_load_all(yamlStr)
+        else:
+            services = self.coreV1_api.list_service_for_all_namespaces()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
                 yaml.dump(services.to_dict(), outfile, default_flow_style=False)
         return services.to_dict()
 
     def loadPriorityAsDictFromCloud(self, dumpFile=None):
-        priorityList = self.shV1beta1_api.list_priority_class()
+        print("dump file", self.shV1beta1_api_list_priority_class)
+        if self.shV1beta1_api_list_priority_class != None:
+            yamlStr = self.loadYAML(self._path)
+            priorityList = yaml.safe_load_all(yamlStr)
+        else:
+            priorityList = self.shV1beta1_api.list_priority_class().to_dict()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
-                yaml.dump(priorityList.to_dict(), outfile, default_flow_style=False)
-        return priorityList.to_dict()
+                yaml.dump(priorityList, outfile, default_flow_style=False)
+        return priorityList
 
     def loadNodeFromCloud(self):
         nodeList = []
