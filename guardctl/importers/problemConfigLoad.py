@@ -34,7 +34,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
         self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
         self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
         self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
-        print(self.shV1beta1_api_list_priority_class)
+        # print(self.shV1beta1_api_list_priority_class)
 
         
 
@@ -82,11 +82,11 @@ class KubernitesYAMLLoad(ProblemTemplate):
         return services.to_dict()
 
     def loadPriorityAsDictFromCloud(self, dumpFile=None):
-        print("dump file", self.shV1beta1_api_list_priority_class)
+        # print("dump file", self.shV1beta1_api_list_priority_class)
         if self.shV1beta1_api_list_priority_class != None:
             yamlStr = self.loadYAML(self.shV1beta1_api_list_priority_class)
             priorityList = yaml.safe_load(yamlStr)
-            print("priorytylist", priorityList)
+            # print("priorytylist", priorityList)
         else:
             priorityList = self.shV1beta1_api.list_priority_class().to_dict()
         if dumpFile != None:
@@ -121,7 +121,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
     def loadPriority(self):
         priorityList = self.loadPriorityAsDictFromCloud()
         priorityDict = {}
-        print(priorityList)
+        # print(priorityList)
         for priorityItem in priorityList['items']:
             priorityDict[priorityItem['metadata']['name']] = priorityItem['value']
         return priorityDict
