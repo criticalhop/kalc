@@ -1,29 +1,35 @@
-import sys
 from typing import Set
 
-from poodle import *
+from poodle import Object
 
-NULL='null'
+NULL = 'null'
+
 
 class Type(Object):
     pass
 
+
 class Kind(Object):
     pass
-         
+
+
 class Mode(Object):
     pass
+
 
 class Status(Object):
     sequence: int
 
+
 class State(Object):
     sequence: int
 
+
 class PriorityClass(Object):
     priority: int
-    preemptionPolicy = Property(Type)
-    
+    preemptionPolicy: Type
+
+
 class ContainerConfig(Object):
     service: "Service"
     daemonSet: "DaemonSet"
@@ -33,16 +39,17 @@ class ContainerConfig(Object):
     currentRealMemConsumption: int
     memLimit: int
     cpuLimit: int
-    type = Property(Type)
+    type: Type
     memRequest: int
     cpuRequest: int
-   
+
+
 class Node(Object):
     cpuCapacity: int
     memCapacity: int
     memCapacityBarier: int
-    status = Property(Status)
-    state = Property(State)
+    status: Status
+    state: State
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
     currentRealMemConsumption: int
@@ -51,8 +58,10 @@ class Node(Object):
     podAmount: int
     type: Type
 
+
 class EntityType(Object):
     pass
+
 
 class GlobalVar(Object):
     numberOfRejectedReq: int
@@ -61,68 +70,74 @@ class GlobalVar(Object):
     memCapacity: int
     currentRealMemConsumption: int
     currentRealCpuConsumption: int
-    issue = Property(Type)
-    lastNodeUsedByRRalg = Property(Node)
-    lastNodeUsedByPodRRalg = Property(Node)
+    issue: Type
+    lastNodeUsedByRRalg: Node
+    lastNodeUsedByPodRRalg: Node
     amountOfNodes: int
-    schedulerStatus = Property(Status)
+    schedulerStatus: Status
     amountOfPods: int
     queueLength: int
-         
+
+
 class Calculation(Object):
     id: int
     value: int
 
+
 class Pod(Object):
     podId: int
-    podConfig = Property(ContainerConfig)
+    podConfig: ContainerConfig
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
-    atNode = Property(Node)
-    toNode = Property(Node)
-    status = Property(Status)
-    state = Property(State)
-    bindedToNode = Property(Node)
+    atNode: Node
+    toNode: Node
+    status: Status
+    state: State
+    bindedToNode: Node
     # podNotOverwhelmingLimits: bool
     memLimit: int
-    memLimitsStatus = Property(Status)
+    memLimitsStatus: Status
     cpuLimit: int
-    cpuLimitsStatus = Property(Status)
-    type = Property(Type)
+    cpuLimitsStatus: Status
+    type: Type
     _label = ""
     memRequest: int
     cpuRequest: int
-    targetService = Property("Service")
+    targetService: "Service"
     amountOfActiveRequests: int
-    firstNodeForRRAlg = Property(Node)
+    firstNodeForRRAlg: Node
     counterOfNodesPassed: int
-    priorityClass = Property(PriorityClass)
+    priorityClass: PriorityClass
 
-    def __str__ (self): return str(self.value)
-    
+    def __str__(self): return str(self.value)
+
+
 class Service(Object):
-    lastPod = Property(Pod)
-    atNode = Property(Node)
+    lastPod: Pod
+    atNode: Node
     _label = ""
     amountOfActivePods: int
-    status = Property(Status)
+    status: Status
+
 
 class DaemonSet(Object):
-    lastPod = Property(Pod)
-    atNode = Property(Node)
+    lastPod: Pod
+    atNode: Node
     _label = ""
     amountOfActivePods: int
-    status = Property(Status)
+    status: Status
+
 
 class Container(Object):
-    hasPod = Property(Pod)
+    hasPod: Pod
     cpuRequest: int
     memRequest: int
     cpuLimit: int
     memLimit: int
     config: ContainerConfig
+
 
 class Scheduler(Object):
     queueLength: int
@@ -130,9 +145,12 @@ class Scheduler(Object):
     status: Status
     podQueue: Set[Pod]
 
+
 class Deamonset(Object):
     podList: Set[Pod]
+
 
 class NameSpace(Object):
     cpuLimitRange: int
     memLimitRange: int
+
