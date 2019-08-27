@@ -25,12 +25,17 @@ except:
 class KubernitesYAMLLoad(ProblemTemplate):
     name = "Kubernites YAML Loader"
     _path = ""
-    
+
    # 
-    def __init__(self, path = "", emuFile = ""):
+    def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
         self._path = path
-        self.emuFile = emuFile
+        self.coreV1_api_list_node = coreV1_api_list_node
+        self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
+        self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
+        self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
+
+        
 
     def cloudQuery(self):
         kubernetes.config.load_kube_config()
@@ -43,11 +48,15 @@ class KubernitesYAMLLoad(ProblemTemplate):
         pass
     
     def loadNodeAsDictFromCloud(self, dumpFile=None):
-        nodes = self.coreV1_api.list_node()
+        if self.coreV1_api_list_node != None:
+            yamlStr = self.loadYAML(self._path)
+            nodes = yaml.safe_load_all(yamlStr)
+        else:
+            nodes = self.coreV1_api.list_node().to_dict()
         if dumpFile != None:
             with open(dumpFile, 'w') as outfile:
-                yaml.dump(nodes.to_dict(), outfile, default_flow_style=False)
-        return nodes.to_dict()
+                yaml.dump(nodes, outfile, default_flow_style=False)
+        return nodes
 
     def loadPodAsDictFromCloud(self, dumpFile=None):
         pods = self.coreV1_api.list_pod_for_all_namespaces()
@@ -102,7 +111,7 @@ class KubernitesYAMLLoad(ProblemTemplate):
         return priorityDict
 
 #call me only after loadNodeFromCloud
-    def loadPodFromCloud(self, dump=None):
+    def loadPodFromCloud(self):
         
         pods = self.loadPodAsDictFromCloud()
 

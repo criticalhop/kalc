@@ -28,6 +28,7 @@ def test_loadService():
     ky.cloudQuery()
     yamlStr = ky.loadYAML(serviceYAMLPath)
     priorityDict = ky.loadPriority()
+    ky.loadNodeFromCloud()
     ky.loadService(yamlStr, priorityDict)
     for s in ky.service:
         assert(s._label in serviceLabel)
@@ -48,6 +49,7 @@ def test_loadDaemonSet():
     yamlStr = ky.loadYAML(daemonYAMLPath)
 
     priorityDict = ky.loadPriority()
+    ky.loadNodeFromCloud()
     ky.loadDaemonSet(yamlStr, priorityDict)
     for p in ky.pod:
         if p.value == 'fluentd-logging0':
@@ -91,3 +93,26 @@ def test_emuFile():
     ky.loadPriorityAsDictFromCloud("/home/andrey/shV1beta1_api_list_priority_class")
 #     ky = KubernitesYAMLLoad(None, )
 
+def test_loadAllFromFiles():
+    dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
+    ky = KubernitesYAMLLoad(tuple(dumpList))
+    ky.superProblem()
+    ky.cloudQuery()
+    yamlStr = ky.loadYAML(daemonYAMLPath)
+
+    priorityDict = ky.loadPriority()
+    ky.loadNodeFromCloud()
+    ky.loadDaemonSet(yamlStr, priorityDict)
+    for p in ky.pod:
+        if p.value == 'fluentd-logging0':
+            assert(p.priority == priorityDict['high-priority'])
+            assert(p.cpuRequest == PoodleGen.cpuConvert(None, '200m'))
+            assert(p.memRequest == PoodleGen.memConverter(None, '200Mi'))
+            # assert(p.cpuLimit == 0)
+            assert(p.memLimit == PoodleGen.memConverter(None, '200Mi'))
+        # resources:
+        #   limits:
+        #     memory: 200Mi
+        #   requests:
+        #     cpu: 200m
+        #     memory: 200Mi
