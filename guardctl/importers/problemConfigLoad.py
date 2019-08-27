@@ -27,21 +27,54 @@ class KubernitesYAMLLoad(ProblemTemplate):
     _path = ""
     
    # 
-    def __init__(self, path = ""):
+    def __init__(self, path = "", emuFile = ""):
         super().__init__()
         self._path = path
+        self.emuFile = emuFile
 
     def cloudQuery(self):
         kubernetes.config.load_kube_config()
         self.coreV1_api = kubernetes.client.CoreV1Api()
+
         self.shV1beta1_api = kubernetes.client.SchedulingV1beta1Api()
         kubernetes.config.load_kube_config()
+
+    def loadAsDictFromFile(self):
+        pass
+    
+    def loadNodeAsDictFromCloud(self, dumpFile=None):
+        nodes = self.coreV1_api.list_node()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(nodes.to_dict(), outfile, default_flow_style=False)
+        return nodes
+
+    def loadPodAsDictFromCloud(self, dumpFile=None):
+        pods = self.coreV1_api.list_pod_for_all_namespaces()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(pods.to_dict(), outfile, default_flow_style=False)
+        return pods        
+
+    def loadServiceAsDictFromCloud(self, dumpFile=None):
+        services = self.coreV1_api.list_service_for_all_namespaces()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(services.to_dict(), outfile, default_flow_style=False)
+        return services
+
+    def loadPriorityAsDictFromCloud(self, dumpFile=None):
+        priorityList = self.shV1beta1_api.list_priority_class()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(priorityList.to_dict(), outfile, default_flow_style=False)
+        return priorityList
 
     def loadNodeFromCloud(self):
         nodeList = []
         kubeProxy = []
         nodes = self.coreV1_api.list_node()
-
+        # print("print nodes ", nodes.to_dict())
         for nodek in nodes.items:
             nodeTmp = self.addObject(Node(nodek.metadata.name))
             nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek.status.allocatable['cpu'])

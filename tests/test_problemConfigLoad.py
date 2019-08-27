@@ -80,3 +80,14 @@ def test_loadServiceFromCloud():
 #def test_problemRawCall():
 #    KubernitesYAMLLoad().problem()
     
+
+def test_emuFile():
+    ky = KubernitesYAMLLoad()
+    ky.superProblem()
+    ky.cloudQuery()
+    ky.loadNodeAsDictFromCloud("/home/andrey/coreV1_api_list_node.yaml")
+    ky.loadPodAsDictFromCloud("/home/andrey/coreV1_api_list_pod_for_all_namespaces.yaml")
+    ky.loadServiceAsDictFromCloud("/home/andrey/coreV1_list_service_for_all_namespaces.yaml")
+    ky.loadPriorityAsDictFromCloud("/home/andrey/shV1beta1_api_list_priority_class")
+#     ky = KubernitesYAMLLoad(None, )
+
