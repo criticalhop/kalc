@@ -45,7 +45,7 @@ class K8SchedulerNoMath:
     def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
         scheduler1.queueLength -= 1
 
-        #to-do: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
+        #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
     @planned(cost=100)
     def ScheduleQueueProcessed(self, scheduler1: Scheduler):
