@@ -9,7 +9,7 @@ class K8SchedulerNoMath:
         nullNode: Node,
         anyNode: Node):
         assert pod1.toNode == nullNode
-        assert nullNode.type == self.constSymbol["Null"]
+        assert nullNode.type == NULL
         pod1.toNode = anyNode
 
     @planned(cost=100)
@@ -38,8 +38,8 @@ class K8SchedulerNoMath:
         scheduler1.podQueue.remove(podStarted)
  
         serviceTargetForPod.amountOfActivePods += 1
-        podStarted.status = self.constSymbol["statusPodActive"]
-        serviceTargetForPod.status = self.constSymbol["statusServStarted"]
+        podStarted.status = STATUS_POD_ACTIVE
+        serviceTargetForPod.status = STATUS_SERV_STARTED
            
     @planned(cost=1000)
     def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
@@ -50,7 +50,7 @@ class K8SchedulerNoMath:
     @planned(cost=100)
     def ScheduleQueueProcessed(self, scheduler1: Scheduler):
         assert  scheduler1.queueLength == 0
-        scheduler1.status = self.constSymbol["statusSchedClean"]
+        scheduler1.status = STATUS_SCHED_CLEAN
 
 
      

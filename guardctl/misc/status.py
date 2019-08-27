@@ -21,95 +21,78 @@ class ProblemTemplate(poodle.problem.Problem):
             self.constSymbol[statusName] = self.addObject(objType(statusName))
 
     def problem(self):
-        statusList = ["statusReqAtStart",
-                        "statusReqAtLoadbalancer",
-                        "statusReqAtKubeproxy",
-                        "statusReqAtPodInput",
-                        "statusReqMemResourceConsumed",
-                        "statusReqCpuResourceConsumed",
-                        "statusReqResourcesConsumed",
-                        "statusReqDirectedToPod",
-                        "statusReqRequestPIDToBeEnded",
-                        "statusReqCpuResourceReleased",
-                        "statusReqMemResourceReleased",
-                        "statusReqResourcesReleased",
-                        "statusReqRequestTerminated",
-                        "statusReqRequestFinished",
-                        "statusPodAtConfig",
-                        "statusPodReadyToStart",
-                        "statusPodActive",
-                        "statusPodPending",
-                        "statusPodAtManualCreation",
-                        "statusPodDirectedToNode",
-                        "statusPodCpuConsumed",
-                        "statusPodResourceFormalConsumptionFailed",
-                        "statusPodFailedToStart",
-                        "statusPodReadyToStart2",
-                        "statusPodMemConsumed",
-                        "statusPodMemConsumedFailed",
-                        "statusPodBindedToNode",
-                        "statusPodRunning",
-                        "statusPodSucceeded", # may be lost be careful
-                        "statusPodKilling",
-                        "statusPodFailed",
-                        "statusNodeRunning",
-                        "statusNodeSucceded",
-                        "statusPodPending",
-                        "statusNodeDeleted",
-                        "statusPodInactive",
-                        "statusNodeActive",
-                        "statusNodeInactive",
-                        "statusReqDirectedToNode",
-                        "statusReqNodeCapacityOverwhelmed",
-                        "statusLimMet",
-                        "statusLimOverwhelmed",
-                        "test",
-                        "statusPodToBeTerminated",
-                        "statusPodTerminated",
-                        "statusServPending",
-                        "statusServStarted",
-                        "statusServInterrupted",
-                        "statusReqRunning",
-                        "statusPodInitialConReleased",
-                        "statusPodGlobalMemConsumed",
-                        "statusPodGlobalCpuConsumed",
-                        "statusPodFormalConReleased",
-                        "statusSchedClean",
-                        "statusSchedChanged",
-                        "statusPodReadyToStart",
-                        "statusPodFinishedPlacement"]
-        self.constFactory(statusList, Status)
+            STATUS_REQ_ATSTART = Status()
+            constSymbol = {}	        STATUS_REQ_ATLOADBALANCER = Status()
+            pod = []	        STATUS_REQ_ATKUBEPROXY = Status()
+            node = []	        STATUS_REQ_ATPODINPUT = Status()
+            kubeProxy = []	        STATUS_REQ_MEMRESOURCECONSUMED = Status()
+            loadbalancer = []	        STATUS_REQ_CPURESOURCECONSUMED = Status()
+            service = []	        STATUS_REQ_RESOURCESCONSUMED = Status()
+            daemonSets = []	        STATUS_REQ_DIRECTEDTOPOD = Status()
+            request = []	        STATUS_REQ_REQUESTPIDTOBEENDED = Status()
+            containerConfig = []	        STATUS_REQ_CPURESOURCERELEASED = Status()
+            priorityDict = {}	        STATUS_REQ_MEMRESOURCERELEASED = Status()
+               
+                STATUS_REQ_RESOURCESRELEASED = Status()
+                STATUS_REQ_REQUESTTERMINATED = Status()
+                STATUS_REQ_REQUESTFINISHED = Status()
+                STATUS_POD_ATCONFIG = Status()
+                STATUS_POD_READYTOSTART = Status()
+                STATUS_POD_ACTIVE = Status()
+                STATUS_POD_PENDING = Status()
+                STATUS_POD_ATMANUALCREATION = Status()
+                STATUS_POD_DIRECTEDTONODE = Status()
+                STATUS_POD_CPUCONSUMED = Status()
+                STATUS_POD_RESOURCEFORMALCONSUMPTIONFAILED = Status()
+                STATUS_POD_FAILEDTOSTART = Status()
+                STATUS_POD_READYTOSTART2 = Status()
+                STATUS_POD_MEMCONSUMED = Status()
+                STATUS_POD_MEMCONSUMEDFAILED = Status()
+                STATUS_POD_BINDEDTONODE = Status()
+                STATUS_POD_RUNNING = Status()
+                STATUS_POD_SUCCEEDED = Status() # MAY BE LOST BE CAREFUL
+                STATUS_POD_KILLING = Status()
+                STATUS_POD_FAILED = Status()
+                STATUS_NODE_RUNNING = Status()
+                STATUS_NODE_SUCCEDED = Status()
+                STATUS_POD_PENDING = Status()
+                STATUS_NODE_DELETED = Status()
+                STATUS_POD_INACTIVE = Status()
+                STATUS_NODE_ACTIVE = Status()
+                STATUS_NODE_INACTIVE = Status()
+                STATUS_REQ_DIRECTEDTONODE = Status()
+                STATUS_REQ_NODECAPACITYOVERWHELMED = Status()
+                STATUS_LIM_MET = Status()
+                STATUS_LIM_OVERWHELMED = Status()
+                TEST = Status()
+                STATUS_POD_TOBETERMINATED = Status()
+                STATUS_POD_TERMINATED = Status()
+                STATUS_SERV_PENDING = Status()
+                STATUS_SERV_STARTED = Status()
+                STATUS_SERV_INTERRUPTED = Status()
+                STATUS_REQ_RUNNING = Status()
+                STATUS_POD_INITIALCONRELEASED = Status()
+                STATUS_POD_GLOBALMEMCONSUMED = Status()
+                STATUS_POD_GLOBALCPUCONSUMED = Status()
+                STATUS_POD_FORMALCONRELEASED = Status()
+                STATUS_SCHED_CLEAN = Status()
+                STATUS_SCHED_CHANGED = Status()
+                STATUS_POD_READYTOSTART = Status()
+                STATUS_POD_FINISHEDPLACEMENT = Status()
+        
+                STATE_POD_SUCCEEDED = State()
+                STATE_POD_RUNNING = State()
+                STATE_POD_PENDING = State()
+                STATE_POD_ACTIVE = State()
+                STATE_POD_INACTIVE = State()
+                STATE_REQ_STARTED = State()
+                STATE_REQUEST_ACTIVE = State()
+                STATE_REQUEST_INACTIVE = State()
+                STATE_NODE_ACTIVE = State()
+                STATE_NODE_INACTIVE = State()
 
-        stateList = [
-        "statePodSucceeded",
-        "statePodRunning",
-        "statePodPending",
-        "statePodActive",
-        "statePodInactive",
-        "stateReqStarted",
-        "stateRequestActive",
-        "stateRequestInactive",
-        "stateNodeActive",
-        "stateNodeInactive"]
-        self.constFactory(stateList, State)
 
-        typeList = ["typeTemporary","typePersistent","Null","notNull","Issue01","PreemptLowerPriority","Never"]
-        self.constFactory(typeList, Type)
+         NULL = Type()
+    def problem(self):	        
 
-        modeList = ["modeUsermode","modeIptables"]
-        self.constFactory(modeList, Mode)
-
-        self.constSymbol["statusReqAtStart"].sequence =  1
-        self.constSymbol["statusReqAtLoadbalancer"].sequence =  2
-        self.constSymbol["statusReqAtKubeproxy"].sequence =  3
-        self.constSymbol["statusReqDirectedToPod"].sequence =  4
-        self.constSymbol["statusReqAtPodInput"].sequence =  5
-        self.constSymbol["statusReqCpuResourceConsumed"].sequence =  6
-        self.constSymbol["statusReqMemResourceConsumed"].sequence =  7
-        self.constSymbol["statusReqResourcesConsumed"].sequence =  8
-        self.constSymbol["statusReqRequestPIDToBeEnded"].sequence =  9
-        self.constSymbol["statusReqCpuResourceReleased"].sequence =  10
-        self.constSymbol["statusReqMemResourceReleased"].sequence =  11
-        self.constSymbol["statusReqResourcesReleased"].sequence =  12
-        self.constSymbol["statusReqRequestTerminated"].sequence =  13
-        self.constSymbol["statusReqRequestFinished"].sequence =  20
+        pass

@@ -16,12 +16,12 @@ class K8prioritiyEviction:
                 podtypetest: Type
                 ):
         assert podPending in scheduler1.podQueue
-        assert podPending.status == self.constSymbol["statusPodPending"]    
+        assert podPending.status == STATUS_POD_PENDING 
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
         assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
         assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podToBeReplaced.status == self.constSymbol["statusPodActive"]
-        podToBeReplaced.status = self.constSymbol['statusPodKilling']
+        assert podToBeReplaced.status == STATUS_POD_ACTIVE
+        podToBeReplaced.status = STATUS_POD_KILLING
