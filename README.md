@@ -12,5 +12,7 @@ Guradctl runs formal check of Kubernetes configurations using Poodle AI planner
 To use it:
 
     $ guardctl --help
+    
+    
 
 
