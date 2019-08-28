@@ -127,6 +127,7 @@ class Service(Object):
     _label = ""
     amountOfActivePods: int
     status: Status
+    selector: Label
 
 class Deployment(Controller):
     labels: Set[Label]

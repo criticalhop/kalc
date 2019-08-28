@@ -15,7 +15,8 @@ class KubernetesCluster:
             self.dict_states[item["kind"]].append(item)
     
     def load_kind(self, kind):
-        for item in self.dict_states[kind]: getattr(self, "load_%s" % kind.lower())(item)
+        for item in self.dict_states[kind]: 
+            self.state_objects.append(getattr(self, "load_%s" % kind.lower())(item))
 
     def build_state(self):
         "After loading all configs, we build the state space"
@@ -32,9 +33,9 @@ class KubernetesCluster:
             service: Service, 
             deployment: Deployment,
             label: Label):
-        assert deployment == pod.owner
+        assert deployment == pod.ownerReferences
         assert label in deployment.labels
-        assert label in service.labels
+        assert label == service.selector
         pod.targetService = service
 
     #########################################
@@ -43,20 +44,27 @@ class KubernetesCluster:
 
     def load_pod(self, podk):
         kl = KubernetesYAMLLoad()
-        self.state_objects.append(kl._loadPodFromDict(podk))
+        return kl._loadPodFromDict(podk)
     
     def load_node(self, node):
         kl = KubernetesYAMLLoad()
-        self.state_objects.append(kl._loadNodeFromDict(node))
+        return kl._loadNodeFromDict(node)
 
     def load_service(self, service: dict):
-        s = Service()
+        s = Service(service["name"])
+        s.nameString = service["name"]
         for name, value in service["labels"].items():
             l = Label()
             l.name = name
             l.value = value
             s.labels.add(l)
-    
+        return s
+        
+    def load_deployment(self, deployment: dict):
+        d = Deployment(deployment["name"])
+        d.nameString = deployment["name"]
+        return d
+
     #
     #########################################
 
