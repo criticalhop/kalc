@@ -117,8 +117,7 @@ class Pod(Object):
     def __str__(self): return str(self.value)
 
 class Label(Object):
-    name: str
-    value: str
+    pass
 
 class Service(Object):
     lastPod: Pod
