@@ -6,3 +6,5 @@ build/
 
 .tox/
 .coverage
+
+Session.vim

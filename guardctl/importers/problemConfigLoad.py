@@ -2,13 +2,14 @@ import sys
 import logging as log
 
 from poodle import * 
+from guardctl.misc.const import *
 from guardctl.model.object.k8s_classes import *
 from guardctl.model.action.scheduler import * 
 from guardctl.model.action.eviction import *
 from guardctl.model.action.default_limits import *
 from guardctl.model.action.goalActions import *
 from guardctl.model.action.oom_kill import *
-from guardctl.model.problem.problemTemplate import *
+from guardctl.misc.problem import ProblemTemplate
 from guardctl.importers.poodleGen import PoodleGen
 
 import yaml
@@ -28,8 +29,6 @@ except:
     pass
 
 class KubernetesYAMLLoad(ProblemTemplate):
-
-   # 
     def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
         self._path = path
@@ -38,8 +37,6 @@ class KubernetesYAMLLoad(ProblemTemplate):
         self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
         self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
         # print(self.shV1beta1_api_list_priority_class)
-
-        
 
     def cloudQuery(self):
         kubernetes.config.load_kube_config()
@@ -109,8 +106,8 @@ class KubernetesYAMLLoad(ProblemTemplate):
             nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
             #defaul values
-            nodeTmp.state = self.constSymbol['stateNodeActive']
-            nodeTmp.status = self.constSymbol['statusNodeActive']
+            nodeTmp.state = STATE_NODE_ACTIVE 
+            nodeTmp.status = STATUS_NODE_ACTIVE
 #            nodeTmp.currentFormalCpuConsumption = amount of pods
 #            nodeTmp.currentFormalMemConsumption = 
             nodeTmp.currentRealMemConsumption = 0
@@ -156,7 +153,16 @@ class KubernetesYAMLLoad(ProblemTemplate):
         podTmp.podConfig = сontainerConfigTmp
         self.containerConfig.append(self.addObject(сontainerConfigTmp))
 
-        sym = self.constSymbol["statePod" + str(podk['status']['phase'])]
+        if str(podk['status']['phase']) == "Running":
+            sym = STATE_POD_PENDING
+        elif str(podk['status']['phase']) == "Inactive":
+            sym = STATE_POD_INACTIVE 
+        elif str(podk['status']['phase']) == "Pending":
+            sym = STATE_POD_PENDING
+        elif str(podk['status']['phase']) == "Succeeded":
+            sym = STATE_POD_SUCCEEDED
+        else:
+            raise NotImplementedError("Unsupported pod phase %s" % str(podk['status']['phase']))
         # log.debug("object is ", sym)
 
         podTmp.state = sym
@@ -195,11 +201,11 @@ class KubernetesYAMLLoad(ProblemTemplate):
         #default values
         podTmp.currentRealCpuConsumption = 0
         podTmp.currentRealMemConsumption = 0
-        podTmp.status = self.constSymbol['statusPodAtConfig']
+        podTmp.status = STATUS_POD_ATCONFIG 
         podTmp.podNotOverwhelmingLimits = True
         podTmp.realInitialMemConsumption = 1
         podTmp.realInitialCpuConsumption = 1
-        podTmp.type = self.constSymbol['typePersistent']
+        podTmp.type = TYPE_PERSISTENT
         podTmp.memLimit =  3
         podTmp.cpuLimit =  3
         

@@ -1,6 +1,6 @@
 import pytest
 from poodle import * 
-from  guardctl.model.problem.goals import *
+from  tests.problem.goals import *
 from guardctl.importers.poodleGen import *
 from guardctl.importers.problemConfigLoad import *
 
