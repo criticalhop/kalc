@@ -15,7 +15,9 @@ def test(test, test_cluster, f):
     for root, dirs, files in os.walk(test_cluster):
         for fn in files: 
             click.echo(f" ... {fn}")
-            c.load_conf(open(os.path.join(root, fn)),read())
+            c.load_state(open(os.path.join(root, fn)).read())
+
+    c.build_state()
 
     for res in f: 
         click.echo(f"Creating resource from {f}")
@@ -34,6 +36,8 @@ def run(f):
     click.echo("Fetching cluster state ...")
 
     c.fetch_default()
+
+    c.build_state()
 
     scenario = c.run()
 

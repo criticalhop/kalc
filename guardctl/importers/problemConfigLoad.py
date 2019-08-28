@@ -98,25 +98,25 @@ class KubernetesYAMLLoad(ProblemTemplate):
         nodeList = []
         kubeProxy = []
         nodes = self.loadNodeAsDictFromCloud()
-        # print("print nodes ", nodes.to_dict())
-        for nodek in nodes['items']:
-            nodeTmp = self.addObject(Node(nodek['metadata']['name']))
-            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek['status']['allocatable']['cpu'])
-            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
-            nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
+        for n in nodes["items"]:
+            nodeList.append(self._loadNodeFromDict(n))
+        return nodeList, kubeProxy
 
-            #defaul values
-            nodeTmp.state = STATE_NODE_ACTIVE 
-            nodeTmp.status = STATUS_NODE_ACTIVE
+    def _loadNodeFromDict(self, nodek):
+        nodeTmp = self.addObject(Node(nodek['metadata']['name']))
+        nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek['status']['allocatable']['cpu'])
+        nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
+        nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
+
+        #defaul values
+        nodeTmp.state = STATE_NODE_ACTIVE 
+        nodeTmp.status = STATUS_NODE_ACTIVE
 #            nodeTmp.currentFormalCpuConsumption = amount of pods
 #            nodeTmp.currentFormalMemConsumption = 
-            nodeTmp.currentRealMemConsumption = 0
-            nodeTmp.currentRealCpuConsumption = 0
-            nodeTmp.AmountOfPodsOverwhelmingMemLimits = 0
-
-            nodeList.append(nodeTmp)
-
-        return nodeList, kubeProxy
+        nodeTmp.currentRealMemConsumption = 0
+        nodeTmp.currentRealCpuConsumption = 0
+        nodeTmp.AmountOfPodsOverwhelmingMemLimits = 0
+        return nodeTmp
 
     def loadPriority(self):
         priorityList = self.loadPriorityAsDictFromCloud()
