@@ -1,0 +1,1160 @@
+api_version: apps/v1
+items:
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: '1'
+    cluster_name: null
+    creation_timestamp: 2019-08-15 17:53:52+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: null
+    generation: 1
+    initializers: null
+    labels:
+      k8s-app: fluentd-logging
+    managed_fields: null
+    name: fluentd-elasticsearch
+    namespace: default
+    owner_references: null
+    resource_version: '15119723'
+    self_link: /apis/apps/v1/namespaces/default/daemonsets/fluentd-elasticsearch
+    uid: a4bee035-bf85-11e9-98f3-42010a8000c4
+  spec:
+    min_ready_seconds: null
+    revision_history_limit: 10
+    selector:
+      match_expressions: null
+      match_labels:
+        name: fluentd-elasticsearch
+    template:
+      metadata:
+        annotations: null
+        cluster_name: null
+        creation_timestamp: null
+        deletion_grace_period_seconds: null
+        deletion_timestamp: null
+        finalizers: null
+        generate_name: null
+        generation: null
+        initializers: null
+        labels:
+          name: fluentd-elasticsearch
+        managed_fields: null
+        name: null
+        namespace: null
+        owner_references: null
+        resource_version: null
+        self_link: null
+        uid: null
+      spec:
+        active_deadline_seconds: null
+        affinity: null
+        automount_service_account_token: null
+        containers:
+        - args: null
+          command: null
+          env: null
+          env_from: null
+          image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe: null
+          name: fluentd-elasticsearch
+          ports: null
+          readiness_probe: null
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          security_context: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts:
+          - mount_path: /var/log
+            mount_propagation: null
+            name: varlog
+            read_only: null
+            sub_path: null
+            sub_path_expr: null
+          - mount_path: /var/lib/docker/containers
+            mount_propagation: null
+            name: varlibdockercontainers
+            read_only: true
+            sub_path: null
+            sub_path_expr: null
+          working_dir: null
+        dns_config: null
+        dns_policy: ClusterFirst
+        enable_service_links: null
+        host_aliases: null
+        host_ipc: null
+        host_network: null
+        host_pid: null
+        hostname: null
+        image_pull_secrets: null
+        init_containers: null
+        node_name: null
+        node_selector: null
+        priority: null
+        priority_class_name: high-priority
+        readiness_gates: null
+        restart_policy: Always
+        runtime_class_name: null
+        scheduler_name: default-scheduler
+        security_context:
+          fs_group: null
+          run_as_group: null
+          run_as_non_root: null
+          run_as_user: null
+          se_linux_options: null
+          supplemental_groups: null
+          sysctls: null
+        service_account: null
+        service_account_name: null
+        share_process_namespace: null
+        subdomain: null
+        termination_grace_period_seconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: null
+          toleration_seconds: null
+          value: null
+        volumes:
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path:
+            path: /var/log
+            type: ''
+          iscsi: null
+          name: varlog
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path:
+            path: /var/lib/docker/containers
+            type: ''
+          iscsi: null
+          name: varlibdockercontainers
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+    update_strategy:
+      rolling_update:
+        max_unavailable: 1
+      type: RollingUpdate
+  status:
+    collision_count: null
+    conditions: null
+    current_number_scheduled: 5
+    desired_number_scheduled: 5
+    number_available: 5
+    number_misscheduled: 0
+    number_ready: 5
+    number_unavailable: null
+    observed_generation: 1
+    updated_number_scheduled: 5
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: '2'
+      kubectl.kubernetes.io/last-applied-configuration: '{"apiVersion":"extensions/v1beta1","kind":"DaemonSet","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"fluentd-gcp","kubernetes.io/cluster-service":"true","version":"v3.2.0"},"name":"fluentd-gcp-v3.2.0","namespace":"kube-system"},"spec":{"template":{"metadata":{"annotations":{"scheduler.alpha.kubernetes.io/critical-pod":""},"labels":{"k8s-app":"fluentd-gcp","kubernetes.io/cluster-service":"true","version":"v3.2.0"}},"spec":{"containers":[{"env":[{"name":"NODE_NAME","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"spec.nodeName"}}},{"name":"STACKDRIVER_METADATA_AGENT_URL","value":"http://$(NODE_NAME):8799"}],"image":"gcr.io/stackdriver-agents/stackdriver-logging-agent:0.6-1.6.0-1","livenessProbe":{"exec":{"command":["/bin/sh","-c","LIVENESS_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-300};
+        STUCK_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-900}; if [ ! -e /var/log/fluentd-buffers
+        ]; then\n  exit 1;\nfi; touch -d \"${STUCK_THRESHOLD_SECONDS} seconds ago\"
+        /tmp/marker-stuck; if [[ -z \"$(find /var/log/fluentd-buffers -type f -newer
+        /tmp/marker-stuck -print -quit)\" ]]; then\n  rm -rf /var/log/fluentd-buffers;\n  exit
+        1;\nfi; touch -d \"${LIVENESS_THRESHOLD_SECONDS} seconds ago\" /tmp/marker-liveness;
+        if [[ -z \"$(find /var/log/fluentd-buffers -type f -newer /tmp/marker-liveness
+        -print -quit)\" ]]; then\n  exit 1;\nfi;\n"]},"initialDelaySeconds":600,"periodSeconds":60},"name":"fluentd-gcp","volumeMounts":[{"mountPath":"/var/log","name":"varlog"},{"mountPath":"/var/lib/docker/containers","name":"varlibdockercontainers","readOnly":true},{"mountPath":"/etc/google-fluentd/config.d","name":"config-volume"}]},{"command":["/monitor","--stackdriver-prefix=container.googleapis.com/internal/addons","--api-override=https://monitoring.googleapis.com/","--source=fluentd:http://localhost:24231?whitelisted=stackdriver_successful_requests_count,stackdriver_failed_requests_count,stackdriver_ingested_entries_count,stackdriver_dropped_entries_count","--pod-id=$(POD_NAME)","--namespace-id=$(POD_NAMESPACE)"],"env":[{"name":"POD_NAME","valueFrom":{"fieldRef":{"fieldPath":"metadata.name"}}},{"name":"POD_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}}],"image":"k8s.gcr.io/prometheus-to-sd:v0.5.0","name":"prometheus-to-sd-exporter"}],"dnsPolicy":"Default","hostNetwork":true,"nodeSelector":{"beta.kubernetes.io/fluentd-ds-ready":"true"},"priorityClassName":"system-node-critical","serviceAccountName":"fluentd-gcp","terminationGracePeriodSeconds":60,"tolerations":[{"effect":"NoExecute","operator":"Exists"},{"effect":"NoSchedule","operator":"Exists"}],"volumes":[{"hostPath":{"path":"/var/log"},"name":"varlog"},{"hostPath":{"path":"/var/lib/docker/containers"},"name":"varlibdockercontainers"},{"configMap":{"name":"fluentd-gcp-config-old-v1.2.5"},"name":"config-volume"}]}},"updateStrategy":{"type":"RollingUpdate"}}}
+
+        '
+    cluster_name: null
+    creation_timestamp: 2019-06-18 22:22:15+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: null
+    generation: 2
+    initializers: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: fluentd-gcp
+      kubernetes.io/cluster-service: 'true'
+      version: v3.2.0
+    managed_fields: null
+    name: fluentd-gcp-v3.2.0
+    namespace: kube-system
+    owner_references: null
+    resource_version: '14870555'
+    self_link: /apis/apps/v1/namespaces/kube-system/daemonsets/fluentd-gcp-v3.2.0
+    uid: 86ae80c3-9217-11e9-a049-42010a8000d3
+  spec:
+    min_ready_seconds: null
+    revision_history_limit: 10
+    selector:
+      match_expressions: null
+      match_labels:
+        k8s-app: fluentd-gcp
+        kubernetes.io/cluster-service: 'true'
+        version: v3.2.0
+    template:
+      metadata:
+        annotations:
+          scheduler.alpha.kubernetes.io/critical-pod: ''
+        cluster_name: null
+        creation_timestamp: null
+        deletion_grace_period_seconds: null
+        deletion_timestamp: null
+        finalizers: null
+        generate_name: null
+        generation: null
+        initializers: null
+        labels:
+          k8s-app: fluentd-gcp
+          kubernetes.io/cluster-service: 'true'
+          version: v3.2.0
+        managed_fields: null
+        name: null
+        namespace: null
+        owner_references: null
+        resource_version: null
+        self_link: null
+        uid: null
+      spec:
+        active_deadline_seconds: null
+        affinity: null
+        automount_service_account_token: null
+        containers:
+        - args: null
+          command: null
+          env:
+          - name: NODE_NAME
+            value: null
+            value_from:
+              config_map_key_ref: null
+              field_ref:
+                api_version: v1
+                field_path: spec.nodeName
+              resource_field_ref: null
+              secret_key_ref: null
+          - name: STACKDRIVER_METADATA_AGENT_URL
+            value: http://$(NODE_NAME):8799
+            value_from: null
+          env_from: null
+          image: gcr.io/stackdriver-agents/stackdriver-logging-agent:0.6-1.6.0-1
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe:
+            _exec:
+              command:
+              - /bin/sh
+              - -c
+              - "LIVENESS_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-300}; STUCK_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-900};\
+                \ if [ ! -e /var/log/fluentd-buffers ]; then\n  exit 1;\nfi; touch\
+                \ -d \"${STUCK_THRESHOLD_SECONDS} seconds ago\" /tmp/marker-stuck;\
+                \ if [[ -z \"$(find /var/log/fluentd-buffers -type f -newer /tmp/marker-stuck\
+                \ -print -quit)\" ]]; then\n  rm -rf /var/log/fluentd-buffers;\n \
+                \ exit 1;\nfi; touch -d \"${LIVENESS_THRESHOLD_SECONDS} seconds ago\"\
+                \ /tmp/marker-liveness; if [[ -z \"$(find /var/log/fluentd-buffers\
+                \ -type f -newer /tmp/marker-liveness -print -quit)\" ]]; then\n \
+                \ exit 1;\nfi;\n"
+            failure_threshold: 3
+            http_get: null
+            initial_delay_seconds: 600
+            period_seconds: 60
+            success_threshold: 1
+            tcp_socket: null
+            timeout_seconds: 1
+          name: fluentd-gcp
+          ports: null
+          readiness_probe: null
+          resources:
+            limits:
+              cpu: '1'
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          security_context: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts:
+          - mount_path: /var/log
+            mount_propagation: null
+            name: varlog
+            read_only: null
+            sub_path: null
+            sub_path_expr: null
+          - mount_path: /var/lib/docker/containers
+            mount_propagation: null
+            name: varlibdockercontainers
+            read_only: true
+            sub_path: null
+            sub_path_expr: null
+          - mount_path: /etc/google-fluentd/config.d
+            mount_propagation: null
+            name: config-volume
+            read_only: null
+            sub_path: null
+            sub_path_expr: null
+          working_dir: null
+        - args: null
+          command:
+          - /monitor
+          - --stackdriver-prefix=container.googleapis.com/internal/addons
+          - --api-override=https://monitoring.googleapis.com/
+          - --source=fluentd:http://localhost:24231?whitelisted=stackdriver_successful_requests_count,stackdriver_failed_requests_count,stackdriver_ingested_entries_count,stackdriver_dropped_entries_count
+          - --pod-id=$(POD_NAME)
+          - --namespace-id=$(POD_NAMESPACE)
+          env:
+          - name: POD_NAME
+            value: null
+            value_from:
+              config_map_key_ref: null
+              field_ref:
+                api_version: v1
+                field_path: metadata.name
+              resource_field_ref: null
+              secret_key_ref: null
+          - name: POD_NAMESPACE
+            value: null
+            value_from:
+              config_map_key_ref: null
+              field_ref:
+                api_version: v1
+                field_path: metadata.namespace
+              resource_field_ref: null
+              secret_key_ref: null
+          env_from: null
+          image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe: null
+          name: prometheus-to-sd-exporter
+          ports: null
+          readiness_probe: null
+          resources:
+            limits: null
+            requests: null
+          security_context: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts: null
+          working_dir: null
+        dns_config: null
+        dns_policy: Default
+        enable_service_links: null
+        host_aliases: null
+        host_ipc: null
+        host_network: true
+        host_pid: null
+        hostname: null
+        image_pull_secrets: null
+        init_containers: null
+        node_name: null
+        node_selector:
+          beta.kubernetes.io/fluentd-ds-ready: 'true'
+        priority: null
+        priority_class_name: system-node-critical
+        readiness_gates: null
+        restart_policy: Always
+        runtime_class_name: null
+        scheduler_name: default-scheduler
+        security_context:
+          fs_group: null
+          run_as_group: null
+          run_as_non_root: null
+          run_as_user: null
+          se_linux_options: null
+          supplemental_groups: null
+          sysctls: null
+        service_account: fluentd-gcp
+        service_account_name: fluentd-gcp
+        share_process_namespace: null
+        subdomain: null
+        termination_grace_period_seconds: 60
+        tolerations:
+        - effect: NoExecute
+          key: null
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        - effect: NoSchedule
+          key: null
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        volumes:
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path:
+            path: /var/log
+            type: ''
+          iscsi: null
+          name: varlog
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path:
+            path: /var/lib/docker/containers
+            type: ''
+          iscsi: null
+          name: varlibdockercontainers
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map:
+            default_mode: 420
+            items: null
+            name: fluentd-gcp-config-old-v1.2.5
+            optional: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path: null
+          iscsi: null
+          name: config-volume
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+    update_strategy:
+      rolling_update:
+        max_unavailable: 1
+      type: RollingUpdate
+  status:
+    collision_count: null
+    conditions: null
+    current_number_scheduled: 5
+    desired_number_scheduled: 5
+    number_available: 5
+    number_misscheduled: 0
+    number_ready: 5
+    number_unavailable: null
+    observed_generation: 2
+    updated_number_scheduled: 5
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: '1'
+      kubectl.kubernetes.io/last-applied-configuration: '{"apiVersion":"extensions/v1beta1","kind":"DaemonSet","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"metadata-proxy","kubernetes.io/cluster-service":"true","version":"v0.1"},"name":"metadata-proxy-v0.1","namespace":"kube-system"},"spec":{"template":{"metadata":{"annotations":{"scheduler.alpha.kubernetes.io/critical-pod":""},"labels":{"k8s-app":"metadata-proxy","kubernetes.io/cluster-service":"true","version":"v0.1"}},"spec":{"containers":[{"image":"k8s.gcr.io/metadata-proxy:v0.1.10","name":"metadata-proxy","resources":{"limits":{"cpu":"30m","memory":"25Mi"},"requests":{"cpu":"30m","memory":"25Mi"}},"securityContext":{"privileged":true}},{"command":["/monitor","--stackdriver-prefix=container.googleapis.com/internal/addons","--api-override=https://monitoring.googleapis.com/","--source=metadata_proxy:http://127.0.0.1:989?whitelisted=request_count","--pod-id=$(POD_NAME)","--namespace-id=$(POD_NAMESPACE)"],"env":[{"name":"POD_NAME","valueFrom":{"fieldRef":{"fieldPath":"metadata.name"}}},{"name":"POD_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}}],"image":"k8s.gcr.io/prometheus-to-sd:v0.5.0","name":"prometheus-to-sd-exporter","resources":{"limits":{"cpu":"2m","memory":"20Mi"},"requests":{"cpu":"2m","memory":"20Mi"}}}],"dnsPolicy":"Default","hostNetwork":true,"nodeSelector":{"beta.kubernetes.io/metadata-proxy-ready":"true"},"priorityClassName":"system-node-critical","serviceAccountName":"metadata-proxy","terminationGracePeriodSeconds":30,"tolerations":[{"effect":"NoExecute","operator":"Exists"},{"effect":"NoSchedule","operator":"Exists"}]}},"updateStrategy":{"type":"RollingUpdate"}}}
+
+        '
+    cluster_name: null
+    creation_timestamp: 2019-06-18 22:22:15+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: null
+    generation: 1
+    initializers: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: metadata-proxy
+      kubernetes.io/cluster-service: 'true'
+      version: v0.1
+    managed_fields: null
+    name: metadata-proxy-v0.1
+    namespace: kube-system
+    owner_references: null
+    resource_version: '383'
+    self_link: /apis/apps/v1/namespaces/kube-system/daemonsets/metadata-proxy-v0.1
+    uid: 86e5032f-9217-11e9-a049-42010a8000d3
+  spec:
+    min_ready_seconds: null
+    revision_history_limit: 10
+    selector:
+      match_expressions: null
+      match_labels:
+        k8s-app: metadata-proxy
+        kubernetes.io/cluster-service: 'true'
+        version: v0.1
+    template:
+      metadata:
+        annotations:
+          scheduler.alpha.kubernetes.io/critical-pod: ''
+        cluster_name: null
+        creation_timestamp: null
+        deletion_grace_period_seconds: null
+        deletion_timestamp: null
+        finalizers: null
+        generate_name: null
+        generation: null
+        initializers: null
+        labels:
+          k8s-app: metadata-proxy
+          kubernetes.io/cluster-service: 'true'
+          version: v0.1
+        managed_fields: null
+        name: null
+        namespace: null
+        owner_references: null
+        resource_version: null
+        self_link: null
+        uid: null
+      spec:
+        active_deadline_seconds: null
+        affinity: null
+        automount_service_account_token: null
+        containers:
+        - args: null
+          command: null
+          env: null
+          env_from: null
+          image: k8s.gcr.io/metadata-proxy:v0.1.10
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe: null
+          name: metadata-proxy
+          ports: null
+          readiness_probe: null
+          resources:
+            limits:
+              cpu: 30m
+              memory: 25Mi
+            requests:
+              cpu: 30m
+              memory: 25Mi
+          security_context:
+            allow_privilege_escalation: null
+            capabilities: null
+            privileged: true
+            proc_mount: Default
+            read_only_root_filesystem: null
+            run_as_group: null
+            run_as_non_root: null
+            run_as_user: null
+            se_linux_options: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts: null
+          working_dir: null
+        - args: null
+          command:
+          - /monitor
+          - --stackdriver-prefix=container.googleapis.com/internal/addons
+          - --api-override=https://monitoring.googleapis.com/
+          - --source=metadata_proxy:http://127.0.0.1:989?whitelisted=request_count
+          - --pod-id=$(POD_NAME)
+          - --namespace-id=$(POD_NAMESPACE)
+          env:
+          - name: POD_NAME
+            value: null
+            value_from:
+              config_map_key_ref: null
+              field_ref:
+                api_version: v1
+                field_path: metadata.name
+              resource_field_ref: null
+              secret_key_ref: null
+          - name: POD_NAMESPACE
+            value: null
+            value_from:
+              config_map_key_ref: null
+              field_ref:
+                api_version: v1
+                field_path: metadata.namespace
+              resource_field_ref: null
+              secret_key_ref: null
+          env_from: null
+          image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe: null
+          name: prometheus-to-sd-exporter
+          ports: null
+          readiness_probe: null
+          resources:
+            limits:
+              cpu: 2m
+              memory: 20Mi
+            requests:
+              cpu: 2m
+              memory: 20Mi
+          security_context: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts: null
+          working_dir: null
+        dns_config: null
+        dns_policy: Default
+        enable_service_links: null
+        host_aliases: null
+        host_ipc: null
+        host_network: true
+        host_pid: null
+        hostname: null
+        image_pull_secrets: null
+        init_containers: null
+        node_name: null
+        node_selector:
+          beta.kubernetes.io/metadata-proxy-ready: 'true'
+        priority: null
+        priority_class_name: system-node-critical
+        readiness_gates: null
+        restart_policy: Always
+        runtime_class_name: null
+        scheduler_name: default-scheduler
+        security_context:
+          fs_group: null
+          run_as_group: null
+          run_as_non_root: null
+          run_as_user: null
+          se_linux_options: null
+          supplemental_groups: null
+          sysctls: null
+        service_account: metadata-proxy
+        service_account_name: metadata-proxy
+        share_process_namespace: null
+        subdomain: null
+        termination_grace_period_seconds: 30
+        tolerations:
+        - effect: NoExecute
+          key: null
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        - effect: NoSchedule
+          key: null
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        volumes: null
+    update_strategy:
+      rolling_update:
+        max_unavailable: 1
+      type: RollingUpdate
+  status:
+    collision_count: null
+    conditions: null
+    current_number_scheduled: 0
+    desired_number_scheduled: 0
+    number_available: null
+    number_misscheduled: 0
+    number_ready: 0
+    number_unavailable: null
+    observed_generation: 1
+    updated_number_scheduled: null
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: '1'
+      kubectl.kubernetes.io/last-applied-configuration: '{"apiVersion":"apps/v1","kind":"DaemonSet","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"nvidia-gpu-device-plugin"},"name":"nvidia-gpu-device-plugin","namespace":"kube-system"},"spec":{"selector":{"matchLabels":{"k8s-app":"nvidia-gpu-device-plugin"}},"template":{"metadata":{"annotations":{"scheduler.alpha.kubernetes.io/critical-pod":""},"labels":{"k8s-app":"nvidia-gpu-device-plugin"}},"spec":{"affinity":{"nodeAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":{"nodeSelectorTerms":[{"matchExpressions":[{"key":"cloud.google.com/gke-accelerator","operator":"Exists"}]}]}}},"containers":[{"command":["/usr/bin/nvidia-gpu-device-plugin","-logtostderr"],"image":"k8s.gcr.io/nvidia-gpu-device-plugin@sha256:08509a36233c5096bb273a492251a9a5ca28558ab36d74007ca2a9d3f0b61e1d","name":"nvidia-gpu-device-plugin","resources":{"limits":{"cpu":"50m","memory":"10Mi"},"requests":{"cpu":"50m","memory":"10Mi"}},"securityContext":{"privileged":true},"volumeMounts":[{"mountPath":"/device-plugin","name":"device-plugin"},{"mountPath":"/dev","name":"dev"}]}],"priorityClassName":"system-node-critical","tolerations":[{"effect":"NoExecute","operator":"Exists"},{"effect":"NoSchedule","operator":"Exists"}],"volumes":[{"hostPath":{"path":"/var/lib/kubelet/device-plugins"},"name":"device-plugin"},{"hostPath":{"path":"/dev"},"name":"dev"}]}},"updateStrategy":{"type":"RollingUpdate"}}}
+
+        '
+    cluster_name: null
+    creation_timestamp: 2019-06-18 22:22:26+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: null
+    generation: 1
+    initializers: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: nvidia-gpu-device-plugin
+    managed_fields: null
+    name: nvidia-gpu-device-plugin
+    namespace: kube-system
+    owner_references: null
+    resource_version: '455'
+    self_link: /apis/apps/v1/namespaces/kube-system/daemonsets/nvidia-gpu-device-plugin
+    uid: 8d6c9472-9217-11e9-a049-42010a8000d3
+  spec:
+    min_ready_seconds: null
+    revision_history_limit: 10
+    selector:
+      match_expressions: null
+      match_labels:
+        k8s-app: nvidia-gpu-device-plugin
+    template:
+      metadata:
+        annotations:
+          scheduler.alpha.kubernetes.io/critical-pod: ''
+        cluster_name: null
+        creation_timestamp: null
+        deletion_grace_period_seconds: null
+        deletion_timestamp: null
+        finalizers: null
+        generate_name: null
+        generation: null
+        initializers: null
+        labels:
+          k8s-app: nvidia-gpu-device-plugin
+        managed_fields: null
+        name: null
+        namespace: null
+        owner_references: null
+        resource_version: null
+        self_link: null
+        uid: null
+      spec:
+        active_deadline_seconds: null
+        affinity:
+          node_affinity:
+            preferred_during_scheduling_ignored_during_execution: null
+            required_during_scheduling_ignored_during_execution:
+              node_selector_terms:
+              - match_expressions:
+                - key: cloud.google.com/gke-accelerator
+                  operator: Exists
+                  values: null
+                match_fields: null
+          pod_affinity: null
+          pod_anti_affinity: null
+        automount_service_account_token: null
+        containers:
+        - args: null
+          command:
+          - /usr/bin/nvidia-gpu-device-plugin
+          - -logtostderr
+          env: null
+          env_from: null
+          image: k8s.gcr.io/nvidia-gpu-device-plugin@sha256:08509a36233c5096bb273a492251a9a5ca28558ab36d74007ca2a9d3f0b61e1d
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe: null
+          name: nvidia-gpu-device-plugin
+          ports: null
+          readiness_probe: null
+          resources:
+            limits:
+              cpu: 50m
+              memory: 10Mi
+            requests:
+              cpu: 50m
+              memory: 10Mi
+          security_context:
+            allow_privilege_escalation: null
+            capabilities: null
+            privileged: true
+            proc_mount: Default
+            read_only_root_filesystem: null
+            run_as_group: null
+            run_as_non_root: null
+            run_as_user: null
+            se_linux_options: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts:
+          - mount_path: /device-plugin
+            mount_propagation: null
+            name: device-plugin
+            read_only: null
+            sub_path: null
+            sub_path_expr: null
+          - mount_path: /dev
+            mount_propagation: null
+            name: dev
+            read_only: null
+            sub_path: null
+            sub_path_expr: null
+          working_dir: null
+        dns_config: null
+        dns_policy: ClusterFirst
+        enable_service_links: null
+        host_aliases: null
+        host_ipc: null
+        host_network: null
+        host_pid: null
+        hostname: null
+        image_pull_secrets: null
+        init_containers: null
+        node_name: null
+        node_selector: null
+        priority: null
+        priority_class_name: system-node-critical
+        readiness_gates: null
+        restart_policy: Always
+        runtime_class_name: null
+        scheduler_name: default-scheduler
+        security_context:
+          fs_group: null
+          run_as_group: null
+          run_as_non_root: null
+          run_as_user: null
+          se_linux_options: null
+          supplemental_groups: null
+          sysctls: null
+        service_account: null
+        service_account_name: null
+        share_process_namespace: null
+        subdomain: null
+        termination_grace_period_seconds: 30
+        tolerations:
+        - effect: NoExecute
+          key: null
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        - effect: NoSchedule
+          key: null
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        volumes:
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path:
+            path: /var/lib/kubelet/device-plugins
+            type: ''
+          iscsi: null
+          name: device-plugin
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+        - aws_elastic_block_store: null
+          azure_disk: null
+          azure_file: null
+          cephfs: null
+          cinder: null
+          config_map: null
+          csi: null
+          downward_api: null
+          empty_dir: null
+          fc: null
+          flex_volume: null
+          flocker: null
+          gce_persistent_disk: null
+          git_repo: null
+          glusterfs: null
+          host_path:
+            path: /dev
+            type: ''
+          iscsi: null
+          name: dev
+          nfs: null
+          persistent_volume_claim: null
+          photon_persistent_disk: null
+          portworx_volume: null
+          projected: null
+          quobyte: null
+          rbd: null
+          scale_io: null
+          secret: null
+          storageos: null
+          vsphere_volume: null
+    update_strategy:
+      rolling_update:
+        max_unavailable: 1
+      type: RollingUpdate
+  status:
+    collision_count: null
+    conditions: null
+    current_number_scheduled: 0
+    desired_number_scheduled: 0
+    number_available: null
+    number_misscheduled: 0
+    number_ready: 0
+    number_unavailable: null
+    observed_generation: 1
+    updated_number_scheduled: null
+- api_version: null
+  kind: null
+  metadata:
+    annotations:
+      deprecated.daemonset.template.generation: '1'
+      kubectl.kubernetes.io/last-applied-configuration: '{"apiVersion":"apps/v1","kind":"DaemonSet","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/cluster-service":"true"},"name":"prometheus-to-sd","namespace":"kube-system"},"spec":{"selector":{"matchLabels":{"k8s-app":"prometheus-to-sd"}},"template":{"metadata":{"labels":{"k8s-app":"prometheus-to-sd"}},"spec":{"containers":[{"command":["/monitor","--source=kube-proxy:http://localhost:10249?whitelisted=sync_proxy_rules_latency_microseconds\u0026metricsPrefix=container.googleapis.com/internal/addons","--source=kubelet:http://localhost:10255?whitelisted=docker_operations,docker_operations_errors,runtime_operations,runtime_operations_errors,rest_client_requests_total,storage_operation_duration_seconds,storage_operation_errors_total,run_podsandbox_duration_seconds,run_podsandbox_errors_total","--stackdriver-prefix=container.googleapis.com/internal/nodes","--api-override=https://monitoring.googleapis.com/"],"image":"k8s.gcr.io/prometheus-to-sd:v0.5.0","imagePullPolicy":"IfNotPresent","name":"prometheus-to-sd","resources":{"limits":{"cpu":"3m","memory":"20Mi"},"requests":{"cpu":"1m","memory":"20Mi"}}}],"hostNetwork":true,"nodeSelector":{"beta.kubernetes.io/os":"linux"},"priorityClassName":"system-node-critical","serviceAccountName":"prometheus-to-sd","tolerations":[{"key":"CriticalAddonsOnly","operator":"Exists"}]}}}}
+
+        '
+    cluster_name: null
+    creation_timestamp: 2019-06-18 22:22:15+00:00
+    deletion_grace_period_seconds: null
+    deletion_timestamp: null
+    finalizers: null
+    generate_name: null
+    generation: 1
+    initializers: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      kubernetes.io/cluster-service: 'true'
+    managed_fields: null
+    name: prometheus-to-sd
+    namespace: kube-system
+    owner_references: null
+    resource_version: '14870522'
+    self_link: /apis/apps/v1/namespaces/kube-system/daemonsets/prometheus-to-sd
+    uid: 86c4ab08-9217-11e9-a049-42010a8000d3
+  spec:
+    min_ready_seconds: null
+    revision_history_limit: 10
+    selector:
+      match_expressions: null
+      match_labels:
+        k8s-app: prometheus-to-sd
+    template:
+      metadata:
+        annotations: null
+        cluster_name: null
+        creation_timestamp: null
+        deletion_grace_period_seconds: null
+        deletion_timestamp: null
+        finalizers: null
+        generate_name: null
+        generation: null
+        initializers: null
+        labels:
+          k8s-app: prometheus-to-sd
+        managed_fields: null
+        name: null
+        namespace: null
+        owner_references: null
+        resource_version: null
+        self_link: null
+        uid: null
+      spec:
+        active_deadline_seconds: null
+        affinity: null
+        automount_service_account_token: null
+        containers:
+        - args: null
+          command:
+          - /monitor
+          - --source=kube-proxy:http://localhost:10249?whitelisted=sync_proxy_rules_latency_microseconds&metricsPrefix=container.googleapis.com/internal/addons
+          - --source=kubelet:http://localhost:10255?whitelisted=docker_operations,docker_operations_errors,runtime_operations,runtime_operations_errors,rest_client_requests_total,storage_operation_duration_seconds,storage_operation_errors_total,run_podsandbox_duration_seconds,run_podsandbox_errors_total
+          - --stackdriver-prefix=container.googleapis.com/internal/nodes
+          - --api-override=https://monitoring.googleapis.com/
+          env: null
+          env_from: null
+          image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+          image_pull_policy: IfNotPresent
+          lifecycle: null
+          liveness_probe: null
+          name: prometheus-to-sd
+          ports: null
+          readiness_probe: null
+          resources:
+            limits:
+              cpu: 3m
+              memory: 20Mi
+            requests:
+              cpu: 1m
+              memory: 20Mi
+          security_context: null
+          stdin: null
+          stdin_once: null
+          termination_message_path: /dev/termination-log
+          termination_message_policy: File
+          tty: null
+          volume_devices: null
+          volume_mounts: null
+          working_dir: null
+        dns_config: null
+        dns_policy: ClusterFirst
+        enable_service_links: null
+        host_aliases: null
+        host_ipc: null
+        host_network: true
+        host_pid: null
+        hostname: null
+        image_pull_secrets: null
+        init_containers: null
+        node_name: null
+        node_selector:
+          beta.kubernetes.io/os: linux
+        priority: null
+        priority_class_name: system-node-critical
+        readiness_gates: null
+        restart_policy: Always
+        runtime_class_name: null
+        scheduler_name: default-scheduler
+        security_context:
+          fs_group: null
+          run_as_group: null
+          run_as_non_root: null
+          run_as_user: null
+          se_linux_options: null
+          supplemental_groups: null
+          sysctls: null
+        service_account: prometheus-to-sd
+        service_account_name: prometheus-to-sd
+        share_process_namespace: null
+        subdomain: null
+        termination_grace_period_seconds: 30
+        tolerations:
+        - effect: null
+          key: CriticalAddonsOnly
+          operator: Exists
+          toleration_seconds: null
+          value: null
+        volumes: null
+    update_strategy:
+      rolling_update:
+        max_unavailable: 1
+      type: RollingUpdate
+  status:
+    collision_count: null
+    conditions: null
+    current_number_scheduled: 5
+    desired_number_scheduled: 5
+    number_available: 5
+    number_misscheduled: 0
+    number_ready: 5
+    number_unavailable: null
+    observed_generation: 1
+    updated_number_scheduled: 5
+kind: DaemonSetList
+metadata:
+  _continue: null
+  resource_version: '18759719'
+  self_link: /apis/apps/v1/daemonsets
+
