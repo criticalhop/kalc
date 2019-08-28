@@ -224,6 +224,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
         self.pod.append(podTmp)
         return podTmp
 
+#call me only after loadNodeFromCloud
     def loadServiceFromCloud(self):
         services = self.loadServiceAsDictFromCloud()
         pods = self.loadPodAsDictFromCloud()
@@ -260,7 +261,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
 
             self.service.append(serviceTmp)
 
-
+#call only after loadNodeFromCloud
     def loadService(self, yamlStr, priorityDict):
         for y in yaml.safe_load_all(yamlStr):
             # log.debug(y)
@@ -379,17 +380,14 @@ class KubernetesYAMLLoad(ProblemTemplate):
                 if 'priorityClassName' in y['spec']['template']['spec'] :
                     priorityClassName = int(priorityDict[y['spec']['template']['spec']['priorityClassName']])
                 daemonSetTmp = self.addObject(DaemonSet(label))
-                self.daemonSet.append(daemonSetTmp)
+                self.controller.append(daemonSetTmp)
                 daemonSetTmp._label = label
-                сontainerConfigTmp = ContainerConfig(label)
-                сontainerConfigTmp.daemonSet = daemonSetTmp  
                 #Deployment controller stub in according to  https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
                 for c in y['spec']['template']['spec']['containers'] : 
 #                   log.debug("{0} {1}".format(d['kind'], d['metadata']['name']))
                     log.debug("daemonSetTmp {0}".format(c['name']))
                     for myNode in self.node:
                         podTmp = self.addObject(Pod(label + str(i)))
-                        podTmp.podConfig = сontainerConfigTmp
                         podTmp.priority = priorityClassName
                         podTmp.cpuRequest = podCpuRequests
                         podTmp.memRequest = podMemRequests
@@ -397,6 +395,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                         podTmp.memLimit = podMemLimit
                         podTmp.status = self.constSymbol["statusPodPending"]
                         podTmp.atNode = myNode
+                        podTmp.ownerReferences = daemonSetTmp 
                         self.pod.append(podTmp)
     
     def loadYAML(self, path):

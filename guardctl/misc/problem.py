@@ -10,7 +10,7 @@ class ProblemTemplate:
         self.kubeProxy = []
         self.loadbalancer = []
         self.service = []
-        self.daemonSet = []
+        self.controller = []
         self.request = []
         self.containerConfig = []
         self.priorityDict = {}
