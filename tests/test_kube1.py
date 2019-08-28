@@ -1,3 +1,4 @@
+import pytest
 from poodle import * 
 from  guardctl.model.problem.goals import *
 from guardctl.importers.poodleGen import *
@@ -6,6 +7,7 @@ from guardctl.importers.problemConfigLoad import *
 daemonYAMLPath = "./tests/kube-config/daemon-set-custom.yaml"
 serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
 
+@pytest.mark.skip(reason="no way of currently testing this")
 def test():
 
     tests = [TestServiceInterrupted()]
