@@ -2,6 +2,9 @@ import yaml
 from guardctl.importers.problemConfigLoad import KubernetesYAMLLoad
 from collections import defaultdict
 from guardctl.model.object.k8s_classes import Service, Label, Pod, Service, Deployment
+from guardctl.misc.object_factory import labelFactory
+from poodle import planned
+from guardctl.misc.util import dget
 
 class KubernetesCluster:
     def __init__(self):
@@ -54,15 +57,13 @@ class KubernetesCluster:
         s = Service(service["name"])
         s.nameString = service["name"]
         for name, value in service["labels"].items():
-            l = Label()
-            l.name = name
-            l.value = value
-            s.labels.add(l)
+            s.labels.add(labelFactory.get(name, value))
         return s
         
     def load_deployment(self, deployment: dict):
-        d = Deployment(deployment["name"])
-        d.nameString = deployment["name"]
+        name = dget(deployment, "metadata/name", "NO_NAME")
+        d = Deployment(name)
+        d.nameString = name
         return d
 
     #
