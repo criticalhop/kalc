@@ -9,8 +9,8 @@ serviceYAMLPath = "./tests/kube-config/guestbook-all-in-one.yaml"
 
 @pytest.mark.skip(reason="no way of currently testing this")
 def test():
-
-    tests = [TestServiceInterrupted()]
+    dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
+    tests = [TestServiceInterrupted(*dumpList)]
     for t in tests: t.run()
     import yaml
     for p in tests:

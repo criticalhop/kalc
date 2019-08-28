@@ -1,6 +1,5 @@
 import sys
 import logging as log
-
 from poodle import * 
 from guardctl.misc.const import *
 from guardctl.model.object.k8s_classes import *
@@ -98,6 +97,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
         nodeList = []
         kubeProxy = []
         nodes = self.loadNodeAsDictFromCloud()
+
         for n in nodes["items"]:
             nodeList.append(self._loadNodeFromDict(n))
         return nodeList, kubeProxy
@@ -334,8 +334,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                                     podTmp.memRequest = podMemRequests
                                     podTmp.cpuLimit = podCpuLimit
                                     podTmp.memLimit = podMemLimit
-                                    podTmp.targetService = serviceTmp
-                                    podTmp.status = self.constSymbol["statusPodPending"]
+                                    podTmp.status =  STATUS_POD_PENDING
                                     self.pod.append(podTmp)
 
 #call only after loadNodeFromCloud
@@ -391,7 +390,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                         podTmp.memRequest = podMemRequests
                         podTmp.cpuLimit = podCpuLimit
                         podTmp.memLimit = podMemLimit
-                        podTmp.status = self.constSymbol["statusPodPending"]
+                        podTmp.status = STATUS_POD_PENDING
                         podTmp.atNode = myNode
                         podTmp.targetService = serviceTmp
                         podTmp.ownerReferences = daemonSetTmp 
