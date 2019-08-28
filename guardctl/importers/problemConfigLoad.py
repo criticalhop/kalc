@@ -1,5 +1,6 @@
 import sys
 import logging as log
+from  guardctl.misc.status import * 
 
 from poodle import * 
 from guardctl.model.object.k8s_classes import *
@@ -109,8 +110,8 @@ class KubernetesYAMLLoad(ProblemTemplate):
             nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
             #defaul values
-            nodeTmp.state = self.constSymbol['stateNodeActive']
-            nodeTmp.status = self.constSymbol['statusNodeActive']
+            nodeTmp.state = STATE_NODE_ACTIVE
+            nodeTmp.status = STATUS_POD_ACTIVE
 #            nodeTmp.currentFormalCpuConsumption = amount of pods
 #            nodeTmp.currentFormalMemConsumption = 
             nodeTmp.currentRealMemConsumption = 0
@@ -193,11 +194,11 @@ class KubernetesYAMLLoad(ProblemTemplate):
             #default values
             podTmp.currentRealCpuConsumption = 0
             podTmp.currentRealMemConsumption = 0
-            podTmp.status = self.constSymbol['statusPodAtConfig']
+            podTmp.status = STATUS_POD_ATCONFIG
             podTmp.podNotOverwhelmingLimits = True
             podTmp.realInitialMemConsumption = 1
             podTmp.realInitialCpuConsumption = 1
-            podTmp.type = self.constSymbol['typePersistent']
+            podTmp.type = TYPE_PERSISTENT
             podTmp.memLimit =  3
             podTmp.cpuLimit =  3
             
@@ -328,7 +329,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                                     podTmp.memRequest = podMemRequests
                                     podTmp.cpuLimit = podCpuLimit
                                     podTmp.memLimit = podMemLimit
-                                    podTmp.status = self.constSymbol["statusPodPending"]
+                                    podTmp.status =  STATUS_POD_PENDING
                                     self.pod.append(podTmp)
 
 #call only after loadNodeFromCloud
@@ -386,7 +387,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                         podTmp.memRequest = podMemRequests
                         podTmp.cpuLimit = podCpuLimit
                         podTmp.memLimit = podMemLimit
-                        podTmp.status = self.constSymbol["statusPodPending"]
+                        podTmp.status = STATUS_POD_PENDING
                         podTmp.atNode = myNode
                         self.pod.append(podTmp)
     

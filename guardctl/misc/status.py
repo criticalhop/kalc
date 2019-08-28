@@ -1,7 +1,7 @@
-from guradctl.model.action.default_limits import *
-from guradctl.model.action.eviction import *
-from guradctl.model.action.oom_kill import *
-from guradctl.model.action.scheduler import *
+from guardctl.model.action.default_limits import *
+from guardctl.model.action.eviction import *
+from guardctl.model.action.oom_kill import *
+from guardctl.model.action.scheduler import *
 import poodle.problem
 
 class ProblemTemplate(poodle.problem.Problem):
@@ -21,18 +21,17 @@ class ProblemTemplate(poodle.problem.Problem):
             self.constSymbol[statusName] = self.addObject(objType(statusName))
 
     def problem(self):
-            STATUS_REQ_ATSTART = Status()
-            constSymbol = {}	        STATUS_REQ_ATLOADBALANCER = Status()
-            pod = []	        STATUS_REQ_ATKUBEPROXY = Status()
-            node = []	        STATUS_REQ_ATPODINPUT = Status()
-            kubeProxy = []	        STATUS_REQ_MEMRESOURCECONSUMED = Status()
-            loadbalancer = []	        STATUS_REQ_CPURESOURCECONSUMED = Status()
-            service = []	        STATUS_REQ_RESOURCESCONSUMED = Status()
-            daemonSets = []	        STATUS_REQ_DIRECTEDTOPOD = Status()
-            request = []	        STATUS_REQ_REQUESTPIDTOBEENDED = Status()
-            containerConfig = []	        STATUS_REQ_CPURESOURCERELEASED = Status()
-            priorityDict = {}	        STATUS_REQ_MEMRESOURCERELEASED = Status()
-               
+                STATUS_REQ_ATSTART = Status()
+                STATUS_REQ_ATLOADBALANCER = Status()
+                STATUS_REQ_ATKUBEPROXY = Status()
+                STATUS_REQ_ATPODINPUT = Status()
+                STATUS_REQ_MEMRESOURCECONSUMED = Status()
+                STATUS_REQ_CPURESOURCECONSUMED = Status()
+                STATUS_REQ_RESOURCESCONSUMED = Status()
+                STATUS_REQ_DIRECTEDTOPOD = Status()
+                STATUS_REQ_REQUESTPIDTOBEENDED = Status()
+                STATUS_REQ_CPURESOURCERELEASED = Status()
+                STATUS_REQ_MEMRESOURCERELEASED = Status()
                 STATUS_REQ_RESOURCESRELEASED = Status()
                 STATUS_REQ_REQUESTTERMINATED = Status()
                 STATUS_REQ_REQUESTFINISHED = Status()
@@ -90,9 +89,8 @@ class ProblemTemplate(poodle.problem.Problem):
                 STATE_REQUEST_INACTIVE = State()
                 STATE_NODE_ACTIVE = State()
                 STATE_NODE_INACTIVE = State()
+                NULL = Type()
 
-
-         NULL = Type()
     def problem(self):	        
 
         pass
