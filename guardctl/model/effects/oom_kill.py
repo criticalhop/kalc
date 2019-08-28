@@ -1,8 +1,10 @@
 from poodle import planned
 from guardctl.model.object.k8s_classes import *
 from poodle import arithmetic
+from guardctl.misc.const import *
+from guardctl.model.effects.abstract import Effect
 
-class K8OOMkill:
+class K8OOMkill(Effect):
     @planned(cost=100)
     def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
         assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET

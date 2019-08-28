@@ -138,16 +138,16 @@ class KubernetesYAMLLoad(ProblemTemplate, K8prioritiyEviction, K8DefaultLimits, 
         #exit(0)
         podTmp = self.addObject(Pod(podk['metadata']['name']))
         #load label
-        if 'app' in podk['metadata']['labels']:
-            podTmp._label = podk['metadata']['labels']['app']
-            if 'role' in  podk['metadata']['labels']:
-                podTmp._label = podTmp._label + podk['metadata']['labels']['role']
-            if 'tier' in  podk['metadata']['labels']:
-                podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
+        # if 'app' in podk['metadata']['labels']:
+        #     podTmp._label = podk['metadata']['labels']['app']
+        #     if 'role' in  podk['metadata']['labels']:
+        #         podTmp._label = podTmp._label + podk['metadata']['labels']['role']
+        #     if 'tier' in  podk['metadata']['labels']:
+        #         podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
         
         #containerCOnfig
         if str(podk['status']['phase']) == "Running":
-            sym = STATE_POD_PENDING
+            sym = STATE_POD_RUNNING
         elif str(podk['status']['phase']) == "Inactive":
             sym = STATE_POD_INACTIVE 
         elif str(podk['status']['phase']) == "Pending":

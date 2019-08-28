@@ -58,6 +58,7 @@ class GlobalVar(Object):
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
     memCapacity: int
+    cpuCapacity: int
     currentRealMemConsumption: int
     currentRealCpuConsumption: int
     issue: Type
@@ -86,6 +87,7 @@ class Pod(Object):
     cpuLimitsStatus: StatusLim
     type: Type
     _label = ""
+    labels: Set[Label]
     memRequest: int
     cpuRequest: int
     targetService: "Service"

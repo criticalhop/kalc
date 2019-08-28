@@ -2,9 +2,9 @@ from poodle import schedule
 from poodle.schedule import SchedulingError
 
 class ProblemTemplate:
-    def __init__(self):
+    def __init__(self, objectList=[]):
         self.plan = None
-        self.objectList = []
+        self.objectList = objectList
         self.pod = []
         self.node = []
         self.kubeProxy = []

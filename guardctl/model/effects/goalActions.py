@@ -1,7 +1,9 @@
 from poodle import planned
 from guardctl.model.object.k8s_classes import *
+from guardctl.misc.const import *
+from guardctl.model.effects.abstract import Effect
 
-class K8GoalActions:
+class K8GoalActions(Effect):
     @planned
     def MarkServiceOutageEvent(self,
     service1: Service,
@@ -21,8 +23,8 @@ class K8GoalActions:
         assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
         assert pod1.cpuRequest == cpuRequestLoc
         assert pod1.memRequest == memRequestLoc
-        assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest < globalVar1.cpuCapacity + 1
-        assert globalVar1.currentFormalMemConsumption + pod1.memRequest < globalVar1.memCapacity  + 1
+        assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest <= globalVar1.cpuCapacity
+        assert globalVar1.currentFormalMemConsumption + pod1.memRequest <= globalVar1.memCapacity
 
         service1.status = STATUS_SERV_INTERRUPTED
     

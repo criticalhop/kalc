@@ -1,5 +1,6 @@
 from poodle import planned 
-class KnowledgeGraph():
+from guardctl.model.effects.abstract import Effect
+class KnowledgeGraph(Effect):
     @planned
     def connect_pod_service(self, 
             pod: Pod,  

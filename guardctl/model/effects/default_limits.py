@@ -1,7 +1,8 @@
 from poodle import planned
 from guardctl.model.object.k8s_classes import *
+from guardctl.model.effects.abstract import Effect
 
-class K8DefaultLimits:
+class K8DefaultLimits(Effect):
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
         pod1: Pod,

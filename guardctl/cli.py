@@ -35,7 +35,7 @@ def run(f):
 
     click.echo("Fetching cluster state ...")
 
-    c.fetch_default()
+    c.fetch_state_default()
 
     c.build_state()
 

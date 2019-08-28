@@ -5,6 +5,7 @@ from guardctl.model.object.k8s_classes import Service, Label, Pod, Service, Depl
 from guardctl.misc.object_factory import labelFactory
 from poodle import planned
 from guardctl.misc.util import dget
+from guardctl.model.full import FullModel
 
 class KubernetesCluster:
     def __init__(self):
@@ -32,18 +33,24 @@ class KubernetesCluster:
     #
 
     def load_pod(self, podk):
-        kl = KubernetesYAMLLoad()
-        return kl._loadPodFromDict(podk)
+        pod = KubernetesYAMLLoad()._loadPodFromDict(podk)
+        for name, value in dget(podk, "metadata/labels", None).items():
+            pod.labels.add(labelFactory.get(name, value))
+        return pod
     
     def load_node(self, node):
-        kl = KubernetesYAMLLoad()
-        return kl._loadNodeFromDict(node)
+        n = KubernetesYAMLLoad()._loadNodeFromDict(node)
+        for name, value in dget(node, "metadata/labels", None).items():
+            n.labels.add(labelFactory.get(name, value))
+        return n
 
     def load_service(self, service: dict):
         s = Service(service["name"])
         s.nameString = service["name"]
-        for name, value in service["labels"].items():
+        for name, value in service["metadata"]["labels"].items():
             s.labels.add(labelFactory.get(name, value))
+        for name, value in dget(service, "spec/selector", None).items():
+            s.selector = labelFactory.get(name, value) # TODO: complex selector suport
         return s
         
     def load_deployment(self, deployment: dict):
@@ -58,6 +65,10 @@ class KubernetesCluster:
     def create_resource(self, res: str):
         raise
     
-    def fetch_default(self):
+    def fetch_state_default(self):
+        "Fetch state from cluster using default method"
         raise
+
+    def run(self):
+        plan = FullModel(self.state_objects).run()
     

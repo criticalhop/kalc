@@ -1,7 +1,9 @@
 from poodle import planned
 from guardctl.model.object.k8s_classes import *
+from guardctl.misc.const import *
+from guardctl.model.effects.abstract import Effect
 
-class K8prioritiyEviction:
+class K8prioritiyEviction(Effect):
     @planned(cost=100)
     def EvictAndReplaceLessPrioritizedPod(self,
                 podPending: Pod,
