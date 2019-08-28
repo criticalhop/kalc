@@ -5,21 +5,21 @@ from poodle import arithmetic
 class K8OOMkill:
     @planned(cost=100)
     def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
-        assert podTobeKilled.memLimitsStatus == self.constSymbol["statusLimMet"]
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
         assert nodeOfPod == podTobeKilled.atNode
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
-        podTobeKilled.memLimitsStatus = self.constSymbol["statusLimOverwhelmed"]
+        podTobeKilled.memLimitsStatus = STATUS_LIM_OVERWHELMED
         
     @planned(cost=100)
     def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: Pod,
         nodeOfPod: Node, globalVar1: GlobalVar):            
         assert nodeOfPod == podTobeReanimated.atNode
-        assert podTobeReanimated.memLimitsStatus == self.constSymbol["statusLimOverwhelmed"]
+        assert podTobeReanimated.memLimitsStatus == STATUS_LIM_OVERWHELMED
         assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
-        podTobeReanimated.memLimitsStatus = self.constSymbol["statusLimMet"]
+        podTobeReanimated.memLimitsStatus = STATUS_LIM_MET
         
     @planned(cost=100)
     def MemoryErrorKillPodOverwhelmingLimits(self,
@@ -28,10 +28,10 @@ class K8OOMkill:
     ):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert nodeOfPod.status == self.constSymbol['statusNodeActive']
-        assert pod1TobeKilled.memLimitsStatus == self.constSymbol["statusLimOverwhelmed"]
+        assert nodeOfPod.status == STATUS_NODE_ACTIVE
+        assert pod1TobeKilled.memLimitsStatus == STATUS_LIM_OVERWHELMED
 
-        pod1TobeKilled.status = self.constSymbol['statusPodKilling']
+        pod1TobeKilled.status = STATUS_POD_KILLING
 
 
     @planned(cost=100)
@@ -40,10 +40,10 @@ class K8OOMkill:
         podTobeKilled: Pod):
         assert podTobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert nodeOfPod.status == self.constSymbol['statusNodeActive']
-        assert podTobeKilled.memLimitsStatus == self.constSymbol["statusLimMet"]
+        assert nodeOfPod.status == STATUS_NODE_ACTIVE
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
 
-        podTobeKilled.status = self.constSymbol['statusPodKilling']
+        podTobeKilled.status = STATUS_POD_KILLING
     
     @planned(cost=100)
     def KillPod(self,
@@ -57,7 +57,7 @@ class K8OOMkill:
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status == self.constSymbol['statusPodKilling']
+        assert podBeingKilled.status == STATUS_POD_KILLING
         assert podBeingKilled.amountOfActiveRequests == 0
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
@@ -68,6 +68,6 @@ class K8OOMkill:
         globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
         globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status = self.constSymbol['statusPodFailed']
+        podBeingKilled.status = STATUS_POD_FAILED
         scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status = self.constSymbol["statusSchedChanged"]
+        scheduler1.status = STATUS_SCHED_CHANGED

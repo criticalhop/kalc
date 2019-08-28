@@ -5,6 +5,9 @@ from poodle import *
 from guardctl.model.object.k8s_classes import *
 from guardctl.model.action.scheduler import * 
 from guardctl.model.action.eviction import *
+from guardctl.model.action.default_limits import *
+from guardctl.model.action.goalActions import *
+from guardctl.model.action.oom_kill import *
 from guardctl.model.problem.problemTemplate import *
 from guardctl.importers.poodleGen import PoodleGen
 
@@ -414,5 +417,4 @@ class KubernetesYAMLLoad(ProblemTemplate):
         self.loadDaemonSet(yamlStr, priorityDict)
 
 
-    def goal(self):
-        pass
+
