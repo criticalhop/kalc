@@ -294,9 +294,6 @@ class KubernetesYAMLLoad(ProblemTemplate):
                             if 'tier' in l:
                                 dlabel = dlabel + l['tier']
                         #containerConfig
-                        сontainerConfigTmp = ContainerConfig(label)
-                        сontainerConfigTmp.service = serviceTmp        
-                        self.containerConfig.append(self.addObject(сontainerConfigTmp))
                         
                         podCpuLimit = -1
                         podCpuRequests = -1
@@ -332,12 +329,12 @@ class KubernetesYAMLLoad(ProblemTemplate):
                                     serviceTmp._replicas = int(d['spec']['replicas'])
                                 for i in range(serviceTmp._replicas):
                                     podTmp = self.addObject(Pod(label + str(i)))
-                                    podTmp.podConfig = сontainerConfigTmp
                                     podTmp.priority = priorityClassName
                                     podTmp.cpuRequest = podCpuRequests
                                     podTmp.memRequest = podMemRequests
                                     podTmp.cpuLimit = podCpuLimit
                                     podTmp.memLimit = podMemLimit
+                                    podTmp.targetService = serviceTmp
                                     podTmp.status = self.constSymbol["statusPodPending"]
                                     self.pod.append(podTmp)
 
@@ -382,6 +379,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                 daemonSetTmp = self.addObject(DaemonSet(label))
                 self.controller.append(daemonSetTmp)
                 daemonSetTmp._label = label
+                serviceTmp = self.service.append(Service(label))
                 #Deployment controller stub in according to  https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
                 for c in y['spec']['template']['spec']['containers'] : 
 #                   log.debug("{0} {1}".format(d['kind'], d['metadata']['name']))
@@ -395,6 +393,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
                         podTmp.memLimit = podMemLimit
                         podTmp.status = self.constSymbol["statusPodPending"]
                         podTmp.atNode = myNode
+                        podTmp.targetService = serviceTmp
                         podTmp.ownerReferences = daemonSetTmp 
                         self.pod.append(podTmp)
     
