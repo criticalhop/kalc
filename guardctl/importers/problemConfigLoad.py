@@ -36,18 +36,29 @@ class KubernetesYAMLLoad(ProblemTemplate):
         self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
         self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
         self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
-        # print(self.shV1beta1_api_list_priority_class)
+        self.appsV2Api_list_daemon_set_for_all_namespaces = None
 
     def cloudQuery(self):
         kubernetes.config.load_kube_config()
         self.coreV1_api = kubernetes.client.CoreV1Api()
-
         self.shV1beta1_api = kubernetes.client.SchedulingV1beta1Api()
+        self.appsV2Api = kubernetes.client.AppsV1Api()
         kubernetes.config.load_kube_config()
 
     def loadAsDictFromFile(self):
         pass
-    
+
+    def loadDaemonsetAsDictFromCloud(self, dumpFile=None):
+        if self.appsV2Api_list_daemon_set_for_all_namespaces != None:
+            yamlStr = self.loadYAML(self.appsV2Api_list_daemon_set_for_all_namespaces)
+            daemonset = yaml.safe_load(yamlStr)
+        else:
+            daemonset = self.appsV2Api.list_daemon_set_for_all_namespaces().to_dict()
+        if dumpFile != None:
+            with open(dumpFile, 'w') as outfile:
+                yaml.dump(daemonset, outfile, default_flow_style=False)
+        return daemonset
+
     def loadNodeAsDictFromCloud(self, dumpFile=None):
         if self.coreV1_api_list_node != None:
             yamlStr = self.loadYAML(self.coreV1_api_list_node)
