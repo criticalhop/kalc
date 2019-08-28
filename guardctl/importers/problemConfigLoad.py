@@ -3,11 +3,11 @@ import logging as log
 from poodle import * 
 from guardctl.misc.const import *
 from guardctl.model.object.k8s_classes import *
-from guardctl.model.action.scheduler import * 
-from guardctl.model.action.eviction import *
-from guardctl.model.action.default_limits import *
-from guardctl.model.action.goalActions import *
-from guardctl.model.action.oom_kill import *
+from guardctl.model.effects.scheduler import * 
+from guardctl.model.effects.eviction import *
+from guardctl.model.effects.default_limits import *
+from guardctl.model.effects.goalActions import *
+from guardctl.model.effects.oom_kill import *
 from guardctl.misc.problem import ProblemTemplate
 from guardctl.importers.poodleGen import PoodleGen
 
@@ -27,7 +27,7 @@ try:
 except:
     pass
 
-class KubernetesYAMLLoad(ProblemTemplate):
+class KubernetesYAMLLoad(ProblemTemplate, K8prioritiyEviction, K8DefaultLimits, K8GoalActions, K8OOMkill, K8SchedulerNoMath):
     def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
         self._path = path
@@ -146,13 +146,6 @@ class KubernetesYAMLLoad(ProblemTemplate):
                 podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
         
         #containerCOnfig
-        сontainerConfigTmp = ContainerConfig()
-        for serviceI in self.service:
-            if serviceI._label == podTmp._label:
-                сontainerConfigTmp.service = serviceI
-        podTmp.podConfig = сontainerConfigTmp
-        self.containerConfig.append(self.addObject(сontainerConfigTmp))
-
         if str(podk['status']['phase']) == "Running":
             sym = STATE_POD_PENDING
         elif str(podk['status']['phase']) == "Inactive":
@@ -201,7 +194,7 @@ class KubernetesYAMLLoad(ProblemTemplate):
         #default values
         podTmp.currentRealCpuConsumption = 0
         podTmp.currentRealMemConsumption = 0
-        podTmp.status = STATUS_POD_ATCONFIG 
+        podTmp.status = STATUS_POD_PENDING 
         podTmp.podNotOverwhelmingLimits = True
         podTmp.realInitialMemConsumption = 1
         podTmp.realInitialCpuConsumption = 1

@@ -8,18 +8,26 @@ NULL = 'null'
 class Type(Object):
     pass
 
-
-class Kind(Object):
-    pass
-
-
-class Mode(Object):
-    pass
-
-
 class Status(Object):
     sequence: int
 
+class StatusPod(Object):
+    sequence: int
+
+class StatusNode(Object):
+    sequence: int
+
+class StatusReq(Object):
+    sequence: int
+
+class StatusSched(Object):
+    sequence: int
+    
+class StatusServ(Object):
+    sequence: int
+    
+class StatusLim(Object):
+    sequence: int
 
 class State(Object):
     sequence: int
@@ -30,25 +38,11 @@ class PriorityClass(Object):
     preemptionPolicy: Type
 
 
-class ContainerConfig(Object):
-    service: "Service"
-    daemonSet: "DaemonSet"
-    realInitialMemConsumption: int
-    realInitialCpuConsumption: int
-    currentRealCpuConsumption: int
-    currentRealMemConsumption: int
-    memLimit: int
-    cpuLimit: int
-    type: Type
-    memRequest: int
-    cpuRequest: int
-
-
 class Node(Object):
     cpuCapacity: int
     memCapacity: int
     memCapacityBarier: int
-    status: Status
+    status: StatusNode
     state: State
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
@@ -57,10 +51,6 @@ class Node(Object):
     AmountOfPodsOverwhelmingMemLimits: int
     podAmount: int
     type: Type
-
-
-class EntityType(Object):
-    pass
 
 
 class GlobalVar(Object):
@@ -78,31 +68,22 @@ class GlobalVar(Object):
     amountOfPods: int
     queueLength: int
 
-
-class Calculation(Object):
-    id: int
-    value: int
-
 class Controller(Object):
     "Kubernetes controller abstract class"
     pass
 class Pod(Object):
-    podId: int
-    podConfig: ContainerConfig
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
     atNode: Node
     toNode: Node
-    status: Status
+    status: StatusPod
     state: State
-    bindedToNode: Node
-    # podNotOverwhelmingLimits: bool
     memLimit: int
-    memLimitsStatus: Status
+    memLimitsStatus: StatusLim
     cpuLimit: int
-    cpuLimitsStatus: Status
+    cpuLimitsStatus: StatusLim
     type: Type
     _label = ""
     memRequest: int
@@ -125,7 +106,7 @@ class Service(Object):
     labels: Set[Label]
     _label = ""
     amountOfActivePods: int
-    status: Status
+    status: StatusServ
     selector: Label
 
 class Deployment(Controller):
@@ -140,22 +121,12 @@ class DaemonSet(Controller):
     status: Status
 
 
-class Container(Object):
-    hasPod: Pod
-    cpuRequest: int
-    memRequest: int
-    cpuLimit: int
-    memLimit: int
-    config: ContainerConfig
-
 
 class Scheduler(Object):
     queueLength: int
-    # active = Bool
-    status: Status
+    status: StatusSched
     podQueue: Set[Pod]
 
 class NameSpace(Object):
     cpuLimitRange: int
     memLimitRange: int
-

@@ -3,9 +3,9 @@ import logging as log
 
 from poodle import * 
 from guardctl.model.object.k8s_classes import *
-from guardctl.model.action.scheduler import *
-from guardctl.model.action.eviction import *
-from guardctl.model.action.oom_kill import *
+from guardctl.model.effects.scheduler import *
+from guardctl.model.effects.eviction import *
+from guardctl.model.effects.oom_kill import *
 
 
 from kubernetes import client, config
