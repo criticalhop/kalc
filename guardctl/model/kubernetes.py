@@ -23,23 +23,9 @@ class KubernetesCluster:
 
     def build_state(self):
         "After loading all configs, we build the state space"
-        for kind in ["Node", "Pod", "Service", "Deployment"]:
+        CONTROLLERS = ["Service", "Deployment"]
+        for kind in ["Node"] + CONTROLLERS + ["Pod"]:
             self.load_kind(kind)
-        self.connect_pods_services()
-
-    def connect_pods_services(self):
-        xchain(methods=[self.connect_pod_service], space=self.state_objects)
-    
-    @planned
-    def connect_pod_service(self, 
-            pod: Pod,  
-            service: Service, 
-            deployment: Deployment,
-            label: Label):
-        assert deployment == pod.ownerReferences
-        assert label in deployment.labels
-        assert label == service.selector
-        pod.targetService = service
 
     #########################################
     # Loading of different kinds
