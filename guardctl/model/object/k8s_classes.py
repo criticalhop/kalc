@@ -39,6 +39,7 @@ class PriorityClass(Object):
 
 
 class Node(Object):
+    labels: Set["Label"]
     cpuCapacity: int
     memCapacity: int
     memCapacityBarier: int
@@ -72,6 +73,9 @@ class GlobalVar(Object):
 class Controller(Object):
     "Kubernetes controller abstract class"
     pass
+
+class Label(Object):
+    pass
 class Pod(Object):
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
@@ -98,9 +102,6 @@ class Pod(Object):
     ownerReferences: Controller
 
     def __str__(self): return str(self.value)
-
-class Label(Object):
-    pass
 
 class Service(Object):
     lastPod: Pod
