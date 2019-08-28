@@ -83,7 +83,9 @@ class Calculation(Object):
     id: int
     value: int
 
-
+class Controller(Object):
+    "Kubernetes controller abstract class"
+    pass
 class Pod(Object):
     podId: int
     podConfig: ContainerConfig
@@ -110,19 +112,28 @@ class Pod(Object):
     firstNodeForRRAlg: Node
     counterOfNodesPassed: int
     priorityClass: PriorityClass
+    ownerReferences: Controller
 
     def __str__(self): return str(self.value)
 
+class Label(Object):
+    name: str
+    value: str
 
 class Service(Object):
     lastPod: Pod
     atNode: Node
+    labels: Set[Label]
     _label = ""
     amountOfActivePods: int
     status: Status
+    selector: Label
 
+class Deployment(Controller):
+    labels: Set[Label]
+    replicas: int
 
-class DaemonSet(Object):
+class DaemonSet(Controller):
     lastPod: Pod
     atNode: Node
     _label = ""
@@ -144,11 +155,6 @@ class Scheduler(Object):
     # active = Bool
     status: Status
     podQueue: Set[Pod]
-
-
-class Deamonset(Object):
-    podList: Set[Pod]
-
 
 class NameSpace(Object):
     cpuLimitRange: int

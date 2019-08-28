@@ -3,13 +3,14 @@ import logging as log
 from  guardctl.misc.status import * 
 
 from poodle import * 
+from guardctl.misc.const import *
 from guardctl.model.object.k8s_classes import *
 from guardctl.model.action.scheduler import * 
 from guardctl.model.action.eviction import *
 from guardctl.model.action.default_limits import *
 from guardctl.model.action.goalActions import *
 from guardctl.model.action.oom_kill import *
-from guardctl.model.problem.problemTemplate import *
+from guardctl.misc.problem import ProblemTemplate
 from guardctl.importers.poodleGen import PoodleGen
 
 import yaml
@@ -29,18 +30,14 @@ except:
     pass
 
 class KubernetesYAMLLoad(ProblemTemplate):
-
-   # 
     def __init__(self, path = "", coreV1_api_list_node=None, coreV1_api_list_pod_for_all_namespaces=None, coreV1_list_service_for_all_namespaces=None,shV1beta1_api_list_priority_class=None):
         super().__init__()
-        self._path = "./examples/daemonset1.yaml" #path
+        self._path = path
         self.coreV1_api_list_node = coreV1_api_list_node
         self.coreV1_api_list_pod_for_all_namespaces = coreV1_api_list_pod_for_all_namespaces
         self.coreV1_list_service_for_all_namespaces = coreV1_list_service_for_all_namespaces
         self.shV1beta1_api_list_priority_class = shV1beta1_api_list_priority_class
         # print(self.shV1beta1_api_list_priority_class)
-
-        
 
     def cloudQuery(self):
         kubernetes.config.load_kube_config()
@@ -102,25 +99,26 @@ class KubernetesYAMLLoad(ProblemTemplate):
         nodeList = []
         kubeProxy = []
         nodes = self.loadNodeAsDictFromCloud()
-        # print("print nodes ", nodes.to_dict())
-        for nodek in nodes['items']:
-            nodeTmp = self.addObject(Node(nodek['metadata']['name']))
-            nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek['status']['allocatable']['cpu'])
-            nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
-            nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
-            #defaul values
-            nodeTmp.state = STATE_NODE_ACTIVE
-            nodeTmp.status = STATUS_POD_ACTIVE
+        for n in nodes["items"]:
+            nodeList.append(self._loadNodeFromDict(n))
+        return nodeList, kubeProxy
+
+    def _loadNodeFromDict(self, nodek):
+        nodeTmp = self.addObject(Node(nodek['metadata']['name']))
+        nodeTmp.cpuCapacity = PoodleGen.cpuConvert(None, nodek['status']['allocatable']['cpu'])
+        nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
+        nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
+
+        #defaul values
+        nodeTmp.state = STATE_NODE_ACTIVE 
+        nodeTmp.status = STATUS_NODE_ACTIVE
 #            nodeTmp.currentFormalCpuConsumption = amount of pods
 #            nodeTmp.currentFormalMemConsumption = 
-            nodeTmp.currentRealMemConsumption = 0
-            nodeTmp.currentRealCpuConsumption = 0
-            nodeTmp.AmountOfPodsOverwhelmingMemLimits = 0
-
-            nodeList.append(nodeTmp)
-
-        return nodeList, kubeProxy
+        nodeTmp.currentRealMemConsumption = 0
+        nodeTmp.currentRealCpuConsumption = 0
+        nodeTmp.AmountOfPodsOverwhelmingMemLimits = 0
+        return nodeTmp
 
     def loadPriority(self):
         priorityList = self.loadPriorityAsDictFromCloud()
@@ -134,87 +132,99 @@ class KubernetesYAMLLoad(ProblemTemplate):
     def loadPodFromCloud(self):
         
         pods = self.loadPodAsDictFromCloud()
+        for p in pods["items"]:
+            self._loadPodFromDict(p)
 
-        for podk in pods['items']:
-            #log.debug(podk.metadata.name)
-            #exit(0)
-            podTmp = self.addObject(Pod(podk['metadata']['name']))
-            #load label
-            if 'app' in podk['metadata']['labels']:
-                podTmp._label = podk['metadata']['labels']['app']
-                if 'role' in  podk['metadata']['labels']:
-                    podTmp._label = podTmp._label + podk['metadata']['labels']['role']
-                if 'tier' in  podk['metadata']['labels']:
-                    podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
-            
-            #containerCOnfig
-            сontainerConfigTmp = ContainerConfig()
-            for serviceI in self.service:
-                if serviceI._label == podTmp._label:
-                    сontainerConfigTmp.service = serviceI
-            podTmp.podConfig = сontainerConfigTmp
-            self.containerConfig.append(self.addObject(сontainerConfigTmp))
+    def _loadPodFromDict(self, podk):
+        #log.debug(podk.metadata.name)
+        #exit(0)
+        podTmp = self.addObject(Pod(podk['metadata']['name']))
+        #load label
+        if 'app' in podk['metadata']['labels']:
+            podTmp._label = podk['metadata']['labels']['app']
+            if 'role' in  podk['metadata']['labels']:
+                podTmp._label = podTmp._label + podk['metadata']['labels']['role']
+            if 'tier' in  podk['metadata']['labels']:
+                podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
+        
+        #containerCOnfig
+        сontainerConfigTmp = ContainerConfig()
+        for serviceI in self.service:
+            if serviceI._label == podTmp._label:
+                сontainerConfigTmp.service = serviceI
+        podTmp.podConfig = сontainerConfigTmp
+        self.containerConfig.append(self.addObject(сontainerConfigTmp))
 
-            sym = self.constSymbol["statePod" + str(podk['status']['phase'])]
-            # log.debug("object is ", sym)
+        if str(podk['status']['phase']) == "Running":
+            sym = STATE_POD_PENDING
+        elif str(podk['status']['phase']) == "Inactive":
+            sym = STATE_POD_INACTIVE 
+        elif str(podk['status']['phase']) == "Pending":
+            sym = STATE_POD_PENDING
+        elif str(podk['status']['phase']) == "Succeeded":
+            sym = STATE_POD_SUCCEEDED
+        else:
+            raise NotImplementedError("Unsupported pod phase %s" % str(podk['status']['phase']))
+        # log.debug("object is ", sym)
 
-            podTmp.state = sym
+        podTmp.state = sym
 
-            podCpuLimit = -1
-            podCpuRequests = -1
-            podMemLimit = -1
-            podMemRequests = -1
-            for container in podk['spec']['containers']:
-                if 'limits' in container['resources'] and container['resources']['limits'] != None:
-                    if 'cpu' in container['resources']['limits']:
-                        if podCpuLimit < 0 : podCpuLimit=0
-                        podCpuLimit += PoodleGen.cpuConvert(None, container['resources']['limits']['cpu'])
-                    if 'memory' in container['resources']['limits']:
-                        if podMemLimit < 0 : podMemLimit=0
-                        podMemLimit += PoodleGen.memConverter(None, container['resources']['limits']['memory'])
-                if 'requests' in container['resources'] and container['resources']['requests'] != None:
-                    if 'cpu' in container['resources']['requests']:
-                        if podCpuRequests < 0 : podCpuRequests=0
-                        podCpuRequests += PoodleGen.cpuConvert(None, container['resources']['requests']['cpu'])
-                    if 'memory' in container['resources']['requests']:
-                        if podMemRequests < 0 : podMemRequests=0
-                        podMemRequests += PoodleGen.memConverter(None, container['resources']['requests']['memory'])
-                # log.debug("container resources limit cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuLimit, mem=podMemLimit))
-                # log.debug("container resources Requests cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuRequests, mem=podMemRequests))
-            if podCpuRequests < 0:
-                podTmp.requestedCpu = -1
-            else:
-                podTmp.requestedCpu = podCpuRequests
-            if podMemRequests < 0:
-                podTmp.requestedMem = -1
-            else:
-                podTmp.requestedMem = podMemRequests
-            
-            
-            #default values
-            podTmp.currentRealCpuConsumption = 0
-            podTmp.currentRealMemConsumption = 0
-            podTmp.status = STATUS_POD_ATCONFIG
-            podTmp.podNotOverwhelmingLimits = True
-            podTmp.realInitialMemConsumption = 1
-            podTmp.realInitialCpuConsumption = 1
-            podTmp.type = TYPE_PERSISTENT
-            podTmp.memLimit =  3
-            podTmp.cpuLimit =  3
-            
-            podTmp.priority =  1
-            
-            #fill pod with corresponding kube-proxy
-            for idx, nodeTmp in enumerate(self.node):
-                if nodeTmp.value == podk['spec']['node_name']:
-                    #self.kubeProxy[idx].selectionedPod.add(podTmp)
-                    podTmp.atNode = nodeTmp
-            
-            podTmp.status
-            
-            log.debug("pod name {0} status {1} ".format(podk['metadata']['name'], podk['status']['phase']))
-            #append pod to pod's list
-            self.pod.append(podTmp)
+        podCpuLimit = -1
+        podCpuRequests = -1
+        podMemLimit = -1
+        podMemRequests = -1
+        for container in podk['spec']['containers']:
+            if 'limits' in container['resources'] and container['resources']['limits'] != None:
+                if 'cpu' in container['resources']['limits']:
+                    if podCpuLimit < 0 : podCpuLimit=0
+                    podCpuLimit += PoodleGen.cpuConvert(None, container['resources']['limits']['cpu'])
+                if 'memory' in container['resources']['limits']:
+                    if podMemLimit < 0 : podMemLimit=0
+                    podMemLimit += PoodleGen.memConverter(None, container['resources']['limits']['memory'])
+            if 'requests' in container['resources'] and container['resources']['requests'] != None:
+                if 'cpu' in container['resources']['requests']:
+                    if podCpuRequests < 0 : podCpuRequests=0
+                    podCpuRequests += PoodleGen.cpuConvert(None, container['resources']['requests']['cpu'])
+                if 'memory' in container['resources']['requests']:
+                    if podMemRequests < 0 : podMemRequests=0
+                    podMemRequests += PoodleGen.memConverter(None, container['resources']['requests']['memory'])
+            # log.debug("container resources limit cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuLimit, mem=podMemLimit))
+            # log.debug("container resources Requests cpu {cpu}m  mem {mem}Mi".format(cpu=podCpuRequests, mem=podMemRequests))
+        if podCpuRequests < 0:
+            podTmp.requestedCpu = -1
+        else:
+            podTmp.requestedCpu = podCpuRequests
+        if podMemRequests < 0:
+            podTmp.requestedMem = -1
+        else:
+            podTmp.requestedMem = podMemRequests
+        
+        
+        #default values
+        podTmp.currentRealCpuConsumption = 0
+        podTmp.currentRealMemConsumption = 0
+        podTmp.status = STATUS_POD_ATCONFIG 
+        podTmp.podNotOverwhelmingLimits = True
+        podTmp.realInitialMemConsumption = 1
+        podTmp.realInitialCpuConsumption = 1
+        podTmp.type = TYPE_PERSISTENT
+        podTmp.memLimit =  3
+        podTmp.cpuLimit =  3
+        
+        podTmp.priority =  1
+        
+        #fill pod with corresponding kube-proxy
+        for idx, nodeTmp in enumerate(self.node):
+            if nodeTmp.value == podk['spec']['node_name']:
+                #self.kubeProxy[idx].selectionedPod.add(podTmp)
+                podTmp.atNode = nodeTmp
+        
+        podTmp.status
+        
+        log.debug("pod name {0} status {1} ".format(podk['metadata']['name'], podk['status']['phase']))
+        #append pod to pod's list
+        self.pod.append(podTmp)
+        return podTmp
 
     def loadServiceFromCloud(self):
         services = self.loadServiceAsDictFromCloud()

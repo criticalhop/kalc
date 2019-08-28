@@ -6,25 +6,13 @@ from guardctl.model.object.k8s_classes import *
 from guardctl.model.action.scheduler import *
 from guardctl.model.action.eviction import *
 from guardctl.model.action.oom_kill import *
-from guardctl.model.problem.problemTemplate import ProblemTemplate
 
 
 from kubernetes import client, config
 import croniter, datetime
 import random
 
-
-class StatusFactory:
-    status = {}
-
-    def add(self, statusName):
-        if statusName in self.status:
-            return self.status[statusName]
-        else:
-            self.status[statusName] = pyKube.Status()
-            return self.status[statusName]
-
-class PoodleGen(ProblemTemplate):
+class PoodleGen():
     name = "Basic generator"
     
     def cpuConvert(self, cpuParot):
