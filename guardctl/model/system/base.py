@@ -10,7 +10,7 @@ class HasLabel(Object):
     metadata_labels: Set[Label]
     metadata_name: String
 
-class HasLimitsRequests:
+class HasLimitsRequests(Object):
     """A mixin class to implement Limts/Requests loading and initialiaztion"""
     memRequest: int
     cpuRequest: int

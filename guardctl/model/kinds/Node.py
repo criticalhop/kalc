@@ -1,5 +1,6 @@
 from typing import Set
 from guardctl.model.system.primitives import Label, StatusNode, State, Type
+from guardctl.model.system.base import HasLabel
 
 class Node(HasLabel):
     labels: Set[Label]
