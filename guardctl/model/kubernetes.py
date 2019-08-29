@@ -28,12 +28,6 @@ class KubernetesCluster:
         CONTROLLERS = ["Service", "Deployment"]
         for kind in ["Node"] + CONTROLLERS + ["Pod"]:
             self.load_kind(kind)
-        self.expand_daemonsets()
-
-    def expand_daemonsets(self):
-        # TODO: daemonset - if loaded from create - create pods for every new one 
-        # use "created" to expand (TODO: do this in model!)
-        pass
 
     def load(self, str_, create=False):
         for doc in yaml.load_all(str_):
@@ -55,6 +49,8 @@ class KubernetesCluster:
             else:
                 # means has setter
                 setattr(obj, p, val)
+        if create and hasattr(obj, "hook_after_create"):
+            obj.hook_after_create(self.state_objects)
 
         
     #########################################

@@ -143,7 +143,7 @@ class GlobalVar(Object):
     amountOfPods: int
     queueLength: int
 
-class Controller(HasLabel, HasLimitsRequests):
+class Controller(HasLabel):
     "Kubernetes controller abstract class"
     pass
 
@@ -225,16 +225,29 @@ class Pod(HasLabel, HasLimitsRequests):
 
     def __str__(self): return str(self.value)
 
-class Deployment(Controller):
+class Deployment(Controller, HasLimitsRequests):
     spec_replicas: int
 
-class DaemonSet(Controller):
+    def hook_after_create(self, object_space):
+        # TODO
+        pass
+
+class DaemonSet(Controller, HasLimitsRequests):
     lastPod: Pod
     atNode: Node
     amountOfActivePods: int
     status: Status
 
-
+    def hook_after_create(self, object_space):
+        nodes = filter(lambda x: isinstance(x, Node), object_space)
+        for node in nodes:
+            new_pod = Pod()
+            new_pod.toNode = node
+            new_pod.cpuRequest = self.cpuRequest
+            new_pod.memRequest = self.memRequest
+            new_pod.cpuLimit = self.cpuLimit
+            new_pod.memLimit = self.memLimit
+            object_space.append(new_pod)
 
 class Scheduler(Object):
     queueLength: int
