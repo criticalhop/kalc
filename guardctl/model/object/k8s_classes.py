@@ -64,7 +64,6 @@ class Node(HasLabel):
     memCapacity: int
     memCapacityBarier: int
     status: StatusNode
-    state: State
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
     currentRealMemConsumption: int
@@ -123,7 +122,6 @@ class Pod(HasLabel):
     atNode: Node
     toNode: Node
     status: StatusPod
-    state: State
 
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
@@ -157,22 +155,6 @@ class Pod(HasLabel):
     # def spec_priority(self, value):
     #     if value > 1000: value = 1000
     #     self.priority = value
-
-    @property
-    def status_phase(self):
-        pass
-    @status_phase.setter
-    def status_phase(self, value):
-        if value == "Running":
-            self.state = STATE_POD_RUNNING
-        elif value == "Inactive":
-            self.state = STATE_POD_INACTIVE 
-        elif value  == "Pending":
-            self.state = STATE_POD_PENDING
-        elif value == "Succeeded":
-            self.state = STATE_POD_SUCCEEDED
-        else:
-            raise NotImplementedError("Unsupported pod phase %s" % str(podk['status']['phase']))
 
     def __str__(self): return str(self.value)
 
