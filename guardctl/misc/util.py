@@ -67,3 +67,32 @@ def k8s_to_domain_object(obj):
         return stringFactory.get(obj)
     else:
         raise ValueError("Value type not suported: %s" % repr(obj))
+
+
+def cpuConvertToAbstractProblem(self, cpuParot):
+    #log.debug("cpuParot", cpuParot)
+    cpu = 0
+    if cpuParot[len(cpuParot)-1] == 'm':
+        cpu = int(cpuParot[:-1])
+    else:
+        cpu = int(cpuParot)*1000
+    # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
+    cpu = cpu / 20
+    if cpu == 0:
+        cpu = 1
+    return int(cpu)
+
+def memConvertToAbstractProblem(self, mem):
+    ret = 0
+    if mem[len(mem)-2:] == 'Gi':
+        ret = int(mem[:-2])*1000
+    elif mem[len(mem)-2:] == 'Mi':
+        ret = int(mem[:-2])
+    elif mem[len(mem)-2:] == 'Ki':
+        ret = int(int(mem[:-2])/1000)
+    else:
+        ret = int(int(mem)/1000000)
+    ret = ret / 20
+    if ret == 0:
+        ret = 1
+    return int(ret)
