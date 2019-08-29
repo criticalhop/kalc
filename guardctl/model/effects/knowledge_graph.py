@@ -20,6 +20,7 @@ class KnowledgeGraph(Effect):
             service: Service, 
             label: Label):
         # TODO: full selector support
+        assert pod.targetService == pod.TARGET_SERVICE_NULL
         assert label in pod.metadata_labels
         assert label in service.spec_selector
         pod.targetService = service

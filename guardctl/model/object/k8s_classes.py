@@ -94,12 +94,25 @@ class Controller(HasLabel):
     "Kubernetes controller abstract class"
     pass
 
+
+class Service(HasLabel):
+    spec_selector: Set[Label]
+    lastPod: "Pod"
+    atNode: Node
+    amountOfActivePods: int
+    status: StatusServ
+    
+    def __init__(self, value):
+        super().__init__(self, value)
+        self.amountOfActivePods = 0
+
+
 class Pod(HasLabel):
        
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
-    spec_priority: int # TODO: priority support/setter
+    # spec_priority: int # TODO: priority support/setter
 
     # internal model attributes
     type: Type
@@ -125,6 +138,8 @@ class Pod(HasLabel):
     counterOfNodesPassed: int
     priorityClass: PriorityClass
 
+    TARGET_SERVICE_NULL = Service("NULL")
+
     def __init__(self, value):
         super().__init__(value)
         self.memRequest = -1
@@ -132,6 +147,7 @@ class Pod(HasLabel):
         self.memLimit = -1
         self.cpuLimit = -1
         self.priority = 0
+        self.targetService = self.TARGET_SERVICE_NULL
         
     # we just ignore priority for now
     # @property
@@ -159,17 +175,6 @@ class Pod(HasLabel):
             raise NotImplementedError("Unsupported pod phase %s" % str(podk['status']['phase']))
 
     def __str__(self): return str(self.value)
-
-class Service(HasLabel):
-    spec_selector: Set[Label]
-    lastPod: Pod
-    atNode: Node
-    amountOfActivePods: int
-    status: StatusServ
-    
-    def __init__(self, value):
-        super().__init__(self, value)
-        self.amountOfActivePods = 0
 
 class Deployment(Controller):
     spec_replicas: int
