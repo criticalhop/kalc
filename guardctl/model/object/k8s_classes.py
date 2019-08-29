@@ -10,9 +10,6 @@ class String(Object):
 class Type(Object):
     pass
 
-class Status(Object):
-    sequence: int
-
 class StatusPod(Object):
     sequence: int
 
@@ -77,6 +74,7 @@ class GlobalVar(Object):
     numberOfRejectedReq: int
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
+    cpuCapacity: int
     memCapacity: int
     cpuCapacity: int
     currentRealMemConsumption: int
@@ -131,9 +129,13 @@ class Pod(HasLabel):
     memLimitsStatus: StatusLim
     cpuLimit: int
     cpuLimitsStatus: StatusLim
-    amountOfActiveRequests: int
-    firstNodeForRRAlg: Node
-    counterOfNodesPassed: int
+    _label = ""
+    memRequest: int
+    cpuRequest: int
+    targetService: "Service"
+    # amountOfActiveRequests: int
+    # firstNodeForRRAlg: Node
+    # counterOfNodesPassed: int
     priorityClass: PriorityClass
 
     TARGET_SERVICE_NULL = Service("NULL")
