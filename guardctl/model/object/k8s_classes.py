@@ -143,7 +143,7 @@ class GlobalVar(Object):
     amountOfPods: int
     queueLength: int
 
-class Controller(HasLabel):
+class Controller(HasLabel, HasLimitsRequests):
     "Kubernetes controller abstract class"
     pass
 
@@ -160,8 +160,10 @@ class Service(HasLabel):
         self.amountOfActivePods = 0
 
 
-class Pod(HasLabel):
-       
+class Pod(HasLabel, HasLimitsRequests):
+    def __init__(self, value):
+        super().__init__(self, value)
+        self.status = STATUS_POD_PENDING
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
@@ -170,8 +172,6 @@ class Pod(HasLabel):
     # internal model attributes
     type: Type
     ownerReferences: Controller
-    memRequest: int
-    cpuRequest: int
     targetService: "Service"
     atNode: Node
     toNode: Node
@@ -182,10 +182,6 @@ class Pod(HasLabel):
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
-    memLimit: int
-    memLimitsStatus: StatusLim
-    cpuLimit: int
-    cpuLimitsStatus: StatusLim
     amountOfActiveRequests: int
     firstNodeForRRAlg: Node
     counterOfNodesPassed: int
