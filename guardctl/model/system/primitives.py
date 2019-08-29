@@ -28,8 +28,5 @@ class StatusServ(Object):
 class StatusLim(Object):
     pass
 
-class State(Object):
-    pass
-
 class Label(Object):
     pass

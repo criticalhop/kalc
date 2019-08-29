@@ -27,8 +27,8 @@ class HasLimitsRequests(Object):
         self.memLimit = -1
         self.cpuRequest = -1
         self.memRequest = -1
-        self.memLimitsStatus = STATUS_LIM_MET
-        self.cpuLimitsStatus = STATUS_LIM_MET
+        self.memLimitsStatus = self.stringFactory.get("Limits_met")
+        self.cpuLimitsStatus = self.stringFactory.get("Limits_met")
 
     @property
     def spec_template_spec_containers__resources_limits_cpu(self):

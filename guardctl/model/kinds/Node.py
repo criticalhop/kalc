@@ -7,8 +7,6 @@ class Node(HasLabel):
     cpuCapacity: int
     memCapacity: int
     memCapacityBarier: int
-    status: StatusNode
-    state: State
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
     currentRealMemConsumption: int

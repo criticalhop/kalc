@@ -108,8 +108,7 @@ class KubernetesYAMLLoad(ProblemTemplate, K8prioritiyEviction, K8DefaultLimits, 
         nodeTmp.memCapacity = PoodleGen.memConverter(None, nodek['status']['allocatable']['memory'])
         nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
-        #defaul values
-        nodeTmp.state = STATE_NODE_ACTIVE 
+        #defaul values 
         nodeTmp.status = STATUS_NODE_ACTIVE
 #            nodeTmp.currentFormalCpuConsumption = amount of pods
 #            nodeTmp.currentFormalMemConsumption = 
@@ -146,19 +145,6 @@ class KubernetesYAMLLoad(ProblemTemplate, K8prioritiyEviction, K8DefaultLimits, 
         #         podTmp._label = podTmp._label + podk['metadata']['labels']['tier']
         
         #containerCOnfig
-        if str(podk['status']['phase']) == "Running":
-            sym = STATE_POD_RUNNING
-        elif str(podk['status']['phase']) == "Inactive":
-            sym = STATE_POD_INACTIVE 
-        elif str(podk['status']['phase']) == "Pending":
-            sym = STATE_POD_PENDING
-        elif str(podk['status']['phase']) == "Succeeded":
-            sym = STATE_POD_SUCCEEDED
-        else:
-            raise NotImplementedError("Unsupported pod phase %s" % str(podk['status']['phase']))
-        # log.debug("object is ", sym)
-
-        podTmp.state = sym
 
         podCpuLimit = -1
         podCpuRequests = -1
