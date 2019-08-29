@@ -41,6 +41,8 @@ class Pod(HasLabel, HasLimitsRequests):
         self.cpuLimit = -1
         self.priority = 0
         self.targetService = self.TARGET_SERVICE_NULL
+        self.toNode = NODE_NULL
+        self.atNode = NODE_NULL
         # self.amountOfActiveRequests = 0 # For Requests
         
     # we just ignore priority for now
@@ -247,8 +249,7 @@ class Pod(HasLabel, HasLimitsRequests):
         pod1: Pod,
         nullNode: Node,
         anyNode: Node):
-        assert pod1.toNode == nullNode
-        assert nullNode.type == NULL
+        assert pod1.toNode == NODE_NULL
         pod1.toNode = anyNode
 
     @planned(cost=100)

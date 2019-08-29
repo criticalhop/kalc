@@ -13,5 +13,5 @@ class Node(HasLabel):
     currentRealCpuConsumption: int
     AmountOfPodsOverwhelmingMemLimits: int
     podAmount: int
-    type: Type
+    NODE_NULL = Node("NODE_NULL")
 
