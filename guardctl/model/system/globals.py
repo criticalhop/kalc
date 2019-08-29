@@ -1,3 +1,4 @@
+from guardctl.model.system.primitives import Label, StatusNode, State, Type
 
 
 class GlobalVar(Object):
