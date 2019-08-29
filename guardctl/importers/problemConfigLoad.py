@@ -109,7 +109,6 @@ class KubernetesYAMLLoad(ProblemTemplate, K8prioritiyEviction, K8DefaultLimits, 
         nodeTmp.podAmount = int(nodek['status']['capacity']['pods'])
 
         #defaul values 
-        nodeTmp.status = STATUS_NODE_ACTIVE
 #            nodeTmp.currentFormalCpuConsumption = amount of pods
 #            nodeTmp.currentFormalMemConsumption = 
         nodeTmp.currentRealMemConsumption = 0

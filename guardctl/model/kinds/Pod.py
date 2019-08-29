@@ -200,7 +200,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert pod1TobeKilled.memLimitsStatus == self.stringFactory.get("Limits_exceeded") 
-        pod1TobeKilled.status = self.stringFactory.get("Killing")
+        pod1TobeKilled.status_phase = self.stringFactory.get("Killing")
 
 
     @planned(cost=100)
@@ -211,7 +211,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert podTobeKilled.memLimitsStatus == self.stringFactory.get("Limits_met")
 
-        podTobeKilled.status = self.stringFactory.get("Killing")
+        podTobeKilled.status_phase = self.stringFactory.get("Killing")
     
     @planned(cost=100)
     def KillPod(self,
@@ -225,7 +225,7 @@ class Pod(HasLabel, HasLimitsRequests):
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status ==  self.stringFactory.get("Killing")
+        assert podBeingKilled.status_phase ==  self.stringFactory.get("Killing")
         assert podBeingKilled.amountOfActiveRequests == 0
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
@@ -236,9 +236,9 @@ class Pod(HasLabel, HasLimitsRequests):
         globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
         globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status =  self.stringFactory.get("Failed")
+        podBeingKilled.status_phase =  self.stringFactory.get("Failed")
         scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status = self.stringFactory.get("Changed")
+        scheduler1.status_phase = self.stringFactory.get("Changed")
 
     # Scheduler effects
 
@@ -277,8 +277,8 @@ class Pod(HasLabel, HasLimitsRequests):
         scheduler1.podQueue.remove(podStarted)
  
         serviceTargetForPod.amountOfActivePods += 1
-        podStarted.status = self.stringFactory.get("Running")
-        serviceTargetForPod.status = self.stringFactory.get("Started")
+        podStarted.status_phase = self.stringFactory.get("Running")
+        serviceTargetForPod.status_phase = self.stringFactory.get("Started")
            
     @planned(cost=1000)
     def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
@@ -289,6 +289,6 @@ class Pod(HasLabel, HasLimitsRequests):
     @planned(cost=100)
     def ScheduleQueueProcessed(self, scheduler1: Scheduler):
         assert  scheduler1.queueLength == 0
-        scheduler1.status = self.stringFactory.get("Clean")
+        scheduler1.status_phase = self.stringFactory.get("Clean")
 
 
