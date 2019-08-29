@@ -1,12 +1,13 @@
 from poodle import planned
 from guardctl.misc.const import *
-from guardctl.model.system.primitives import String, Type, Status
+from guardctl.model.system.primitives import String, Type, Status, Label
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
+from guardclt.model.system.globals import GlobalVar
 
 
 
@@ -173,3 +174,144 @@ class Pod(HasLabel, HasLimitsRequests):
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status == STATUS_POD_ACTIVE
         podToBeReplaced.status = STATUS_POD_KILLING
+
+    @planned
+    def connect_pod_service_labels(self, 
+            pod: Pod,  
+            service: Service, 
+            label: Label):
+        # TODO: full selector support
+        assert pod.targetService == pod.TARGET_SERVICE_NULL
+        assert label in pod.metadata_labels
+        assert label in service.spec_selector
+        pod.targetService = service
+        service.amountOfActivePods += 1
+    
+    @planned 
+    def fill_priority_class_object(self,
+            pod: Pod,
+            pclass: PriorityClass):
+        assert pod.spec_priorityClassName == pclass.metadata_name
+        pod.priorityClass = pclass
+
+    @planned(cost=100)
+    def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
+        assert nodeOfPod == podTobeKilled.atNode
+        assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
+        nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
+        podTobeKilled.memLimitsStatus = STATUS_LIM_OVERWHELMED
+        
+    @planned(cost=100)
+    def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: Pod,
+        nodeOfPod: Node, globalVar1: GlobalVar):            
+        assert nodeOfPod == podTobeReanimated.atNode
+        assert podTobeReanimated.memLimitsStatus == STATUS_LIM_OVERWHELMED
+        assert nodeOfPod == podTobeReanimated.atNode
+        assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
+        nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
+        podTobeReanimated.memLimitsStatus = STATUS_LIM_MET
+        
+    @planned(cost=100)
+    def MemoryErrorKillPodOverwhelmingLimits(self,
+    nodeOfPod: Node,
+    pod1TobeKilled: Pod
+    ):
+        assert pod1TobeKilled.atNode == nodeOfPod
+        assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
+        assert nodeOfPod.status == STATUS_NODE_ACTIVE
+        assert pod1TobeKilled.memLimitsStatus == STATUS_LIM_OVERWHELMED
+
+        pod1TobeKilled.status = STATUS_POD_KILLING
+
+
+    @planned(cost=100)
+    def MemoryErrorKillPodNotOverwhelmingLimits(self,
+        nodeOfPod: Node,
+        podTobeKilled: Pod):
+        assert podTobeKilled.atNode == nodeOfPod
+        assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
+        assert nodeOfPod.status == STATUS_NODE_ACTIVE
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
+
+        podTobeKilled.status = STATUS_POD_KILLING
+    
+    @planned(cost=100)
+    def KillPod(self,
+            podBeingKilled : Pod,
+            nodeWithPod : Node,
+            serviceOfPod: Service,
+            globalVar1: GlobalVar,
+            scheduler1: Scheduler,
+            amountOfActivePodsPrev: int
+            
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.targetService == serviceOfPod
+        assert podBeingKilled.status == STATUS_POD_KILLING
+        assert podBeingKilled.amountOfActiveRequests == 0
+        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+
+        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
+        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
+        globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
+        globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        serviceOfPod.amountOfActivePods -= 1
+        podBeingKilled.status = STATUS_POD_FAILED
+        scheduler1.podQueue.add(podBeingKilled)
+        scheduler1.status = STATUS_SCHED_CHANGED
+
+    # Scheduler effects
+
+    @planned(cost=100)
+    def SelectNode(self, 
+        pod1: Pod,
+        nullNode: Node,
+        anyNode: Node):
+        assert pod1.toNode == nullNode
+        assert nullNode.type == NULL
+        pod1.toNode = anyNode
+
+    @planned(cost=100)
+    def StartPod(self, 
+        podStarted: Pod,
+        node1: Node,
+        scheduler1: Scheduler,
+        serviceTargetForPod: Service,
+        globalVar1: GlobalVar
+        ):
+
+        assert podStarted in scheduler1.podQueue
+        assert podStarted.toNode == node1
+        assert podStarted.targetService == serviceTargetForPod
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
+        assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
+
+        node1.currentFormalCpuConsumption += podStarted.cpuRequest
+        node1.currentFormalMemConsumption += podStarted.memRequest
+        globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
+        globalVar1.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node1        
+        scheduler1.queueLength -= 1
+        scheduler1.podQueue.remove(podStarted)
+ 
+        serviceTargetForPod.amountOfActivePods += 1
+        podStarted.status = STATUS_POD_ACTIVE
+        serviceTargetForPod.status = STATUS_SERV_STARTED
+           
+    @planned(cost=1000)
+    def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
+        scheduler1.queueLength -= 1
+
+        #to-do: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
+    
+    @planned(cost=100)
+    def ScheduleQueueProcessed(self, scheduler1: Scheduler):
+        assert  scheduler1.queueLength == 0
+        scheduler1.status = STATUS_SCHED_CLEAN
+
+
