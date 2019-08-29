@@ -1,4 +1,4 @@
-from guardctl.model.object.k8s_classes import Label
+from guardctl.model.object.k8s_classes import Label, String
 
 class _LabelFactory:
     def __init__(self):
@@ -10,3 +10,13 @@ class _LabelFactory:
         return self.labels[lbl]
 
 labelFactory = _LabelFactory()
+
+class _StringFactory:
+    def __init__(self):
+        self.strings = {}
+    def get(self, str_):
+        if not str_ in self.strings:
+            self.strings[str_] = String(str_)
+        return self.strings[str_]
+
+stringFactory = _StringFactory()

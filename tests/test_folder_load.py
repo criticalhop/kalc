@@ -24,3 +24,10 @@ def test_load_nodes():
     k.load_state(open(TEST_DEPLOYMENTS).read())
     k.build_state()
     assert k.state_objects
+
+def test_load_pods_new():
+    k = KubernetesCluster()
+    k.load(open(TEST_PODS).read())
+    k.build_state()
+    # TODO: check if pod is fully loaded
+    assert k.state_objects

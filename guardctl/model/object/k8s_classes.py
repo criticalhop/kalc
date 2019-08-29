@@ -1,10 +1,12 @@
 from typing import Set
+from guardctl.misc.const import *
 
 from poodle import Object
 
 NULL = 'null'
 
-
+class String(Object):
+    pass
 class Type(Object):
     pass
 
@@ -34,11 +36,21 @@ class State(Object):
 
 
 class PriorityClass(Object):
+    metadata_name: String
+
     priority: int
     preemptionPolicy: Type
 
 
-class Node(Object):
+class Label(Object):
+    pass
+
+class HasLabel(Object):
+    metadata_labels: Set[Label]
+    metadata_name: String
+
+
+class Node(HasLabel):
     labels: Set["Label"]
     cpuCapacity: int
     memCapacity: int
@@ -70,56 +82,68 @@ class GlobalVar(Object):
     amountOfPods: int
     queueLength: int
 
-class Controller(Object):
+class Controller(HasLabel):
     "Kubernetes controller abstract class"
     pass
 
-class Label(Object):
-    pass
-class Pod(Object):
-    realInitialMemConsumption: int
-    realInitialCpuConsumption: int
-    currentRealCpuConsumption: int
-    currentRealMemConsumption: int
+class Pod(HasLabel):
+    # k8s attributes
+    metadata_ownerReferences__name: String
+    spec_priorityClassName: String
+    spec_priority: int # TODO: priority support/setter
+
+    # internal model attributes
+    type: Type
+    ownerReferences: Controller
+    memRequest: int
+    cpuRequest: int
+    targetService: "Service"
     atNode: Node
     toNode: Node
     status: StatusPod
     state: State
+
+    realInitialMemConsumption: int
+    realInitialCpuConsumption: int
+    currentRealCpuConsumption: int
+    currentRealMemConsumption: int
     memLimit: int
     memLimitsStatus: StatusLim
     cpuLimit: int
     cpuLimitsStatus: StatusLim
-    type: Type
-    _label = ""
-    labels: Set[Label]
-    memRequest: int
-    cpuRequest: int
-    targetService: "Service"
     amountOfActiveRequests: int
     firstNodeForRRAlg: Node
     counterOfNodesPassed: int
     priorityClass: PriorityClass
-    ownerReferences: Controller
+
+    @setter
+    def status_phase(self, value):
+        if value == "Running":
+            self.state = STATE_POD_RUNNING
+        elif value == "Inactive":
+            self.state = STATE_POD_INACTIVE 
+        elif value  == "Pending":
+            self.state = STATE_POD_PENDING
+        elif value == "Succeeded":
+            self.state = STATE_POD_SUCCEEDED
+        else:
+            raise NotImplementedError("Unsupported pod phase %s" % str(podk['status']['phase']))
 
     def __str__(self): return str(self.value)
 
-class Service(Object):
+class Service(HasLabel):
+    spec_selector: Set[Label]
     lastPod: Pod
     atNode: Node
-    labels: Set[Label]
-    _label = ""
     amountOfActivePods: int
     status: StatusServ
-    selector: Label
 
 class Deployment(Controller):
-    labels: Set[Label]
-    replicas: int
+    spec_replicas: int
 
 class DaemonSet(Controller):
     lastPod: Pod
     atNode: Node
-    _label = ""
     amountOfActivePods: int
     status: Status
 
