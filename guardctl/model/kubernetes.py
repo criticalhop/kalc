@@ -52,6 +52,10 @@ class KubernetesCluster:
                 setattr(obj, p, val)
             elif isinstance(getattr(obj, p), Relation):
                 getattr(obj, p).add(val)
+            else:
+                # means has setter
+                setattr(obj, p, val)
+
         
     #########################################
     # Loading of different kinds: load_{kind}
@@ -102,4 +106,5 @@ class KubernetesCluster:
 
     def run(self):
         plan = FullModel(self.state_objects).run()
+        # TODO: represent plan
     

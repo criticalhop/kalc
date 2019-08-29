@@ -1,5 +1,7 @@
 import pytest
 from guardctl.model.kubernetes import KubernetesCluster
+from guardctl.model.object import Pod
+from guardctl.misc.const import *
 
 TEST_PODS = "./tests/kube-config/pods.yaml"
 TEST_NODES = "./tests/kube-config/nodes.yaml"
@@ -30,4 +32,9 @@ def test_load_pods_new():
     k.load(open(TEST_PODS).read())
     k.build_state()
     # TODO: check if pod is fully loaded
+    pod = k.state_objects[0]
+    assert isinstance(pod, Pod)
+    assert len(pod.metadata_labels) > 0
+    assert pod.state == STATE_POD_PENDING
+
     assert k.state_objects

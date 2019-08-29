@@ -23,3 +23,4 @@ class KnowledgeGraph(Effect):
         assert label in pod.metadata_labels
         assert label in service.spec_selector
         pod.targetService = service
+        service.amountOfActivePods += 1

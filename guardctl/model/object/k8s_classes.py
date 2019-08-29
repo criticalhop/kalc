@@ -41,6 +41,14 @@ class PriorityClass(Object):
     priority: int
     preemptionPolicy: Type
 
+    @property
+    def value(self):
+        pass
+    @value.setter 
+    def value(self, value):
+        if value > 1000: value = 1000
+        self.priority = value
+
 
 class Label(Object):
     pass
@@ -87,6 +95,7 @@ class Controller(HasLabel):
     pass
 
 class Pod(HasLabel):
+       
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
@@ -116,7 +125,27 @@ class Pod(HasLabel):
     counterOfNodesPassed: int
     priorityClass: PriorityClass
 
-    @setter
+    def __init__(self, value):
+        super().__init__(value)
+        self.memRequest = -1
+        self.cpuRequest = -1
+        self.memLimit = -1
+        self.cpuLimit = -1
+        self.priority = 0
+        
+    # we just ignore priority for now
+    # @property
+    # def spec_priority(self):
+    #     pass
+    # @spec_priority.setter
+    # def spec_priority(self, value):
+    #     if value > 1000: value = 1000
+    #     self.priority = value
+
+    @property
+    def status_phase(self):
+        pass
+    @status_phase.setter
     def status_phase(self, value):
         if value == "Running":
             self.state = STATE_POD_RUNNING
@@ -137,6 +166,10 @@ class Service(HasLabel):
     atNode: Node
     amountOfActivePods: int
     status: StatusServ
+    
+    def __init__(self, value):
+        super().__init__(self, value)
+        self.amountOfActivePods = 0
 
 class Deployment(Controller):
     spec_replicas: int

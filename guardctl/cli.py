@@ -7,6 +7,7 @@ def cli():
 
 @click.command()
 @click.option("--test-cluster", "-c", help="Directory with cluster resources definitions", type=str, required=True)
+@click.option("--out-format", "-o", help="Select output format", type=str, required=False)
 @click.option("-f", help="Create new resource from YAML file", type=str, required=False, multiple=True)
 def test(test, test_cluster, f):
     c = KubenetesCluster()
