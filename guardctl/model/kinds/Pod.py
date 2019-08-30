@@ -4,9 +4,10 @@ from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Controller import Controller
-from guardctl.model.system.Scheduler import Scheduler
+import guardctl.model.system.Scheduler as scheduler
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
-from guardclt.model.system.globals import GlobalVar
+from guardctl.model.system.globals import GlobalVar
+from guardctl.model.system.primitives import String
 
 
 class Pod(HasLabel, HasLimitsRequests):
@@ -66,7 +67,7 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
-        pod1: Pod,
+        pod1: "Pod",
         memLimit: int
         ):
             assert pod1.memRequest == -1
@@ -77,7 +78,7 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def SetDefaultCpuRequestForPod(self,
-        pod1: Pod,
+        pod1: "Pod",
         cpuLimit: int
         ):
             assert pod1.cpuLimit > -1
@@ -145,7 +146,7 @@ class Pod(HasLabel, HasLimitsRequests):
                 podPending: Pod,
                 podToBeReplaced: Pod,
                 node1: Node,
-                scheduler1: Scheduler,
+                scheduler1: "scheduler.Scheduler",
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
@@ -224,7 +225,7 @@ class Pod(HasLabel, HasLimitsRequests):
             nodeWithPod : Node,
             serviceOfPod: Service,
             globalVar1: GlobalVar,
-            scheduler1: Scheduler,
+            scheduler1: "scheduler.Scheduler",
             amountOfActivePodsPrev: int
             
          ):
@@ -259,7 +260,7 @@ class Pod(HasLabel, HasLimitsRequests):
     def StartPod(self, 
         podStarted: Pod,
         node1: Node,
-        scheduler1: Scheduler,
+        scheduler1: "scheduler.Scheduler",
         serviceTargetForPod: Service,
         globalVar1: GlobalVar
         ):
@@ -285,13 +286,13 @@ class Pod(HasLabel, HasLimitsRequests):
         serviceTargetForPod.status_phase = stringFactory.get("Started")
            
     @planned(cost=1000)
-    def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
+    def ScheduleQueueProcessed1(self, scheduler1: "scheduler.Scheduler"):
         scheduler1.queueLength -= 1
 
         #to-do: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
     @planned(cost=100)
-    def ScheduleQueueProcessed(self, scheduler1: Scheduler):
+    def ScheduleQueueProcessed(self, scheduler1: "scheduler.Scheduler"):
         assert  scheduler1.queueLength == 0
         scheduler1.status_phase = stringFactory.get("Clean")
 

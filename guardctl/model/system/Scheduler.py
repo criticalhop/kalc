@@ -1,11 +1,11 @@
 from poodle import Object
 from typing import Set
-from guardctl.model.kinds.Pod import Pod
+import guardctl.model.kinds.Pod as pod
 from guardctl.model.system.primitives import StatusSched, String
 
 
 class Scheduler(Object):
     queueLength: int
     status: String
-    podQueue: Set[Pod]
+    podQueue: Set["pod.Pod"]
 
