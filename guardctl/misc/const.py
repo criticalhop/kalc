@@ -33,4 +33,5 @@ STATUS_SERV_STARTED = stringFactory.get("Started")
 
 
 
-#PreemptLowerPriority","Never"]
+TYPE_POLICY_PreemptLowerPriority = stringFactory.get("PreemptLowerPriority")
+TYPE_POLICY_NEVER = stringFactory.get("Never")
