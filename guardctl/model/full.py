@@ -1,7 +1,7 @@
 """Implementing full model from all effects"""
 from poodle import Object
 import guardctl.model.kinds
-import pkgutil
+import pkgutil, inspect
 import guardctl.misc.problem
 
 kinds_collection = []
@@ -13,7 +13,7 @@ for importer, modname, ispkg in pkgutil.iter_modules(
     for n in dir(module):
         c = getattr(module, n)
         if inspect.isclass(c) and issubclass(c, Object) and not c is Object:
-            kinds_collection.add(c)
+            kinds_collection.append(c)
 
 
     

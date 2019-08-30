@@ -2,6 +2,7 @@ from typing import Set
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from guardctl.model.system.primitives import String, Label
 from guardctl.misc.object_factory import labelFactory, stringFactory
+from guardctl.misc.const import *
 
 from poodle import Object
 

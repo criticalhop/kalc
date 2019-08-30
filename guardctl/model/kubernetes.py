@@ -4,6 +4,7 @@ from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
 from guardctl.misc.util import dget, objwalk, find_property, k8s_to_domain_object
 from guardctl.model.full import kinds_collection
+from guardctl.misc.problem import ProblemTemplate
 
 class KubernetesCluster:
     def __init__(self):
@@ -44,6 +45,6 @@ class KubernetesCluster:
         raise
 
     def run(self):
-        plan = FullModel(self.state_objects).run()
+        plan = ProblemTemplate(self.state_objects).run()
         # TODO: represent plan
     

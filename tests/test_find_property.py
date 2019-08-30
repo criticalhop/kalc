@@ -18,7 +18,7 @@ def test_find_prop():
     for doc in yaml.load_all(open(TEST_PODS)):
         for item in doc["items"]:
             for p in objwalk(item):
-                obj = Pod2()
+                obj = "Pod",2()
                 p, val = find_property(obj, p)
                 found.append([p,val])
             # print(found)

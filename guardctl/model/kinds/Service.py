@@ -2,11 +2,12 @@ from typing import Set
 from guardctl.model.system.primitives import Label, StatusServ
 from guardctl.model.kinds.Node import Node
 from guardctl.model.system.base import HasLabel
+import guardctl.model.kinds.Pod as mpod
 
 
 class Service(HasLabel):
     spec_selector: Set[Label]
-    lastPod: "Pod"
+    lastPod: "mpod.Pod"
     atNode: Node
     amountOfActivePods: int
     status: StatusServ

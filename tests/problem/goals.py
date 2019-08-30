@@ -1,11 +1,9 @@
 import sys
 from poodle import * 
-from guardctl.model.full import FullModel
+from guardctl.misc.problem import ProblemTemplate
+from guardctl.misc.const import *
 
 
-class TestServiceInterrupted(FullModel):
+class TestServiceInterrupted(ProblemTemplate):
     def goal(self):
         self.service[0].status == STATUS_SERV_INTERRUPTED
-
-def solve(run):
-    plan = FullModel(self.state_objects).run()

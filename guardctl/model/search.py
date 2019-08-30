@@ -1,5 +1,5 @@
 from poodle import planned
-from guardctl.model.object.k8s_classes import *
+from guardctl.model.system.Scheduler as mscheduler
 from guardctl.misc.const import *
 from guardctl.model.effects.abstract import Effect
 
@@ -7,9 +7,9 @@ class K8SearchEviction(Effect):
     @planned
     def MarkServiceOutageEvent(self,
     service1: Service,
-    pod1: Pod,
-    globalVar1: GlobalVar,
-    scheduler1: Scheduler,
+    pod1: "Pod",
+    globalVar1: "GlobalVar",
+    scheduler1: "mscheduler.Scheduler",
     currentFormalCpuConsumptionLoc: int,
     currentFormalMemConsumptionLoc: int,
     cpuRequestLoc: int,
@@ -33,7 +33,7 @@ class K8SearchEviction(Effect):
     @planned(cost=10000)
     def UnsolveableServiceStart(self,
     service1: Service,
-    scheduler1: Scheduler
+    scheduler1: "mscheduler.Scheduler"
     ):
         assert scheduler1.status == STATUS_SCHED_CHANGED 
         service1.status = STATUS_SERV_STARTED
