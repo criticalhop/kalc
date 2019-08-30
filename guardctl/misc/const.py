@@ -1,5 +1,6 @@
 from poodle import Object
-from guardctl.model.object.k8s_classes import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, State, Type
+from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, Type
+from guardctl.misc.object_factory import stringFactory
 
 # STATE_NODE_ACTIVE = State()
 # STATE_NODE_INACTIVE = State()
@@ -20,8 +21,9 @@ from guardctl.model.object.k8s_classes import StatusServ, StatusNode, StatusPod,
 # STATUS_NODE_SUCCEDED = StatusNode()
 # STATUS_POD_FAILED = StatusPod()
 # STATUS_POD_KILLING = StatusPod()
-# STATUS_POD_PENDING = StatusPod()
-# stringFactory.get("Running") = StatusPod()
+STATUS_POD_PENDING = stringFactory.get("Pending") 
+STATUS_POD_RUNNING = stringFactory.get("Running")
+
 # STATUS_POD_SUCCEEDED = StatusPod() # MAY BE LOST BE CAREFUL
 # STATUS_POD_TERMINATED = StatusPod()
 # STATUS_POD_TOBETERMINATED = StatusPod()
@@ -42,10 +44,10 @@ from guardctl.model.object.k8s_classes import StatusServ, StatusNode, StatusPod,
 # STATUS_REQ_RESOURCESCONSUMED = StatusReq()
 # STATUS_REQ_RESOURCESRELEASED = StatusReq()
 # STATUS_REQ_RUNNING = StatusReq()
-# stringFactory.get("Changed") = StatusSched()
-# stringFactory.get("Clean") = StatusSched()
-# STATUS_SERV_INTERRUPTED = StatusServ()
-# STATUS_SERV_PENDING = StatusServ()
+STATUS_SCHED_CHANGED =  stringFactory.get("Changed")
+STATUS_SCHED_CLEAN   =  stringFactory.get("Clean")
+STATUS_SERV_INTERRUPTED = stringFactory.get("Interrupted")
+STATUS_SERV_PENDING = stringFactory.get("Pending")
 # stringFactory.get("Started") = StatusServ()
 
 

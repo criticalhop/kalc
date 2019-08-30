@@ -1,8 +1,6 @@
 import pytest
 from poodle import * 
 from  tests.problem.goals import *
-from guardctl.importers.poodleGen import *
-from guardctl.importers.problemConfigLoad import *
 from guardctl.misc.const import *
 
 daemonYAMLPath = "./tests/kube-config/daemon-set-custom.yaml"

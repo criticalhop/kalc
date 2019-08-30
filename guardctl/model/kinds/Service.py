@@ -11,7 +11,7 @@ class Service(HasLabel):
     amountOfActivePods: int
     status: StatusServ
     
-    def __init__(self, value):
+    def __init__(self, value=""):
         super().__init__(self, value)
         self.amountOfActivePods = 0
 

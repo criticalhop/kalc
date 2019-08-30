@@ -10,7 +10,7 @@ from guardclt.model.system.globals import GlobalVar
 
 
 class Pod(HasLabel, HasLimitsRequests):
-    def __init__(self, value):
+    def __init__(self, value=""):
         super().__init__(self, value)
         self.status_phase  = stringFactory.get("Pending")
     # k8s attributes
@@ -150,7 +150,7 @@ class Pod(HasLabel, HasLimitsRequests):
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
         assert podPending in scheduler1.podQueue
-        assert podPending.status_phase == stringFactory.get("Pending") 
+        assert podPending.status_phase == STATUS_POD_PENDING 
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
         assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
