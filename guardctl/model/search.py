@@ -15,9 +15,9 @@ class K8SearchEviction(Effect):
     cpuRequestLoc: int,
     memRequestLoc: int
     ):
-        assert scheduler1.status == stringFactory.get("Clean") 
+        assert scheduler1.status == STATUS_SCHED_CLEAN 
         assert service1.amountOfActivePods == 0
-        assert service1.status == stringFactory.get("Started")
+        assert service1.status == STATUS_SERV_STARTED
         assert pod1.targetService == service1
         assert globalVar1.currentFormalCpuConsumption == currentFormalCpuConsumptionLoc
         assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
@@ -35,5 +35,5 @@ class K8SearchEviction(Effect):
     service1: Service,
     scheduler1: Scheduler
     ):
-        assert scheduler1.status == stringFactory.get("Changed")
-        service1.status = stringFactory.get("Started")
+        assert scheduler1.status == STATUS_SCHED_CHANGED 
+        service1.status = STATUS_SERV_STARTED
