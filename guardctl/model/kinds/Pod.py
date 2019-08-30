@@ -9,7 +9,6 @@ from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardclt.model.system.globals import GlobalVar
 
 
-
 class Pod(HasLabel, HasLimitsRequests):
     def __init__(self, value):
         super().__init__(self, value)
@@ -28,10 +27,11 @@ class Pod(HasLabel, HasLimitsRequests):
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
+    spec_nodeName: String
     # amountOfActiveRequests: int # For requests
     priorityClass: PriorityClass
-    TARGET_SERVICE_NULL = Service("NULL")
     status_phase: String
+    TARGET_SERVICE_NULL = Service.SERVICE_NULL
 
     def __init__(self, value):
         super().__init__(value)
@@ -44,6 +44,10 @@ class Pod(HasLabel, HasLimitsRequests):
         self.toNode = NODE_NULL
         self.atNode = NODE_NULL
         # self.amountOfActiveRequests = 0 # For Requests
+
+    def hook_after_load(self, object_space):
+        nodes = filter(lambda x: isinstance(x, Node) and self.spec_nodeName == x.metadata_name, object_space)
+        self.atNode = nodes[0]
         
     # we just ignore priority for now
     # @property
@@ -58,7 +62,6 @@ class Pod(HasLabel, HasLimitsRequests):
     def status_phase(self):
         pass
      
- 
     def __str__(self): return str(self.value)
 
     @planned(cost=100)

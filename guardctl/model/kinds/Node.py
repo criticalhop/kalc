@@ -6,7 +6,6 @@ class Node(HasLabel):
     labels: Set[Label]
     cpuCapacity: int
     memCapacity: int
-    memCapacityBarier: int
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
     currentRealMemConsumption: int

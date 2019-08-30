@@ -1,4 +1,4 @@
-from guardctl.model.object.k8s_classes import Label, String
+from guardctl.model.system.primitives import Label, String
 
 class _LabelFactory:
     def __init__(self):
