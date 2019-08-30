@@ -1,6 +1,7 @@
 from typing import Set
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from guardctl.model.system.primitives import String, Label
+from guardctl.misc.object_factory import labelFactory, stringFactory
 
 from poodle import Object
 
@@ -14,20 +15,20 @@ class HasLimitsRequests(Object):
     memRequest: int
     cpuRequest: int
     memLimit: int
-    memLimitsStatus: StatusLim
+    memLimitsStatus: String
     """Status to set if the limit is reached"""
     cpuLimit: int
-    cpuLimitsStatus: StatusLim
+    cpuLimitsStatus: String
     """Status to set if the limit is reached"""
 
-    def __init__(self, value):
-        super().__init__(self, value)
+    def __init__(self, value = ''):
+        super().__init__(value)
         self.cpuLimit = -1
         self.memLimit = -1
         self.cpuRequest = -1
         self.memRequest = -1
-        self.memLimitsStatus = self.stringFactory.get("Limits_met")
-        self.cpuLimitsStatus = self.stringFactory.get("Limits_met")
+        self.memLimitsStatus = stringFactory.get("Limits_met")
+        self.cpuLimitsStatus = stringFactory.get("Limits_met")
 
     @property
     def spec_template_spec_containers__resources_limits_cpu(self):

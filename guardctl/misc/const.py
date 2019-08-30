@@ -21,7 +21,7 @@ from guardctl.model.object.k8s_classes import StatusServ, StatusNode, StatusPod,
 # STATUS_POD_FAILED = StatusPod()
 # STATUS_POD_KILLING = StatusPod()
 # STATUS_POD_PENDING = StatusPod()
-# self.stringFactory.get("Running") = StatusPod()
+# stringFactory.get("Running") = StatusPod()
 # STATUS_POD_SUCCEEDED = StatusPod() # MAY BE LOST BE CAREFUL
 # STATUS_POD_TERMINATED = StatusPod()
 # STATUS_POD_TOBETERMINATED = StatusPod()
@@ -42,11 +42,11 @@ from guardctl.model.object.k8s_classes import StatusServ, StatusNode, StatusPod,
 # STATUS_REQ_RESOURCESCONSUMED = StatusReq()
 # STATUS_REQ_RESOURCESRELEASED = StatusReq()
 # STATUS_REQ_RUNNING = StatusReq()
-# self.stringFactory.get("Changed") = StatusSched()
-# self.stringFactory.get("Clean") = StatusSched()
+# stringFactory.get("Changed") = StatusSched()
+# stringFactory.get("Clean") = StatusSched()
 # STATUS_SERV_INTERRUPTED = StatusServ()
 # STATUS_SERV_PENDING = StatusServ()
-# self.stringFactory.get("Started") = StatusServ()
+# stringFactory.get("Started") = StatusServ()
 
 
 

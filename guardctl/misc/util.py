@@ -53,6 +53,8 @@ def k8s_to_domain_object(obj):
     try:
         int(obj)
         try_int = True
+    except:
+        pass
     else:
         try_int = False
     if isinstance(obj, dict) and len(obj) == 1:

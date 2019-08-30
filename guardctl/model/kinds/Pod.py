@@ -41,8 +41,8 @@ class Pod(HasLabel, HasLimitsRequests):
         self.cpuLimit = -1
         self.priority = 0
         self.targetService = self.TARGET_SERVICE_NULL
-        self.toNode = NODE_NULL
-        self.atNode = NODE_NULL
+        self.toNode = Node.NODE_NULL
+        self.atNode = Node.NODE_NULL
         # self.amountOfActiveRequests = 0 # For Requests
 
     def hook_after_load(self, object_space):
@@ -150,15 +150,15 @@ class Pod(HasLabel, HasLimitsRequests):
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
         assert podPending in scheduler1.podQueue
-        assert podPending.status_phase == self.stringFactory.get("Pending") 
+        assert podPending.status_phase == stringFactory.get("Pending") 
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
         assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
         assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podToBeReplaced.status_phase == self.stringFactory.get("Running")
-        podToBeReplaced..status_phase == self.stringFactory.get("Killing")
+        assert podToBeReplaced.status_phase == stringFactory.get("Running")
+        podToBeReplaced..status_phase == stringFactory.get("Killing")
 
     @planned
     def connect_pod_service_labels(self, 
@@ -181,21 +181,21 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
-        assert podTobeKilled.memLimitsStatus == self.stringFactory.get("Limits_met")
+        assert podTobeKilled.memLimitsStatus == stringFactory.get("Limits_met")
         assert nodeOfPod == podTobeKilled.atNode
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
-        podTobeKilled.memLimitsStatus = self.stringFactory.get("Limits_exceeded")
+        podTobeKilled.memLimitsStatus = stringFactory.get("Limits_exceeded")
         
     @planned(cost=100)
     def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: Pod,
         nodeOfPod: Node, globalVar1: GlobalVar):            
         assert nodeOfPod == podTobeReanimated.atNode
-        assert podTobeReanimated.memLimitsStatus == self.stringFactory.get("Limits_exceeded")
+        assert podTobeReanimated.memLimitsStatus == stringFactory.get("Limits_exceeded")
         assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
-        podTobeReanimated.memLimitsStatus = self.stringFactory.get("Limits_met")
+        podTobeReanimated.memLimitsStatus = stringFactory.get("Limits_met")
         
     @planned(cost=100)
     def MemoryErrorKillPodOverwhelmingLimits(self,
@@ -204,8 +204,8 @@ class Pod(HasLabel, HasLimitsRequests):
     ):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert pod1TobeKilled.memLimitsStatus == self.stringFactory.get("Limits_exceeded") 
-        pod1TobeKilled.status_phase = self.stringFactory.get("Killing")
+        assert pod1TobeKilled.memLimitsStatus == stringFactory.get("Limits_exceeded") 
+        pod1TobeKilled.status_phase = stringFactory.get("Killing")
 
 
     @planned(cost=100)
@@ -214,9 +214,9 @@ class Pod(HasLabel, HasLimitsRequests):
         podTobeKilled: Pod):
         assert podTobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert podTobeKilled.memLimitsStatus == self.stringFactory.get("Limits_met")
+        assert podTobeKilled.memLimitsStatus == stringFactory.get("Limits_met")
 
-        podTobeKilled.status_phase = self.stringFactory.get("Killing")
+        podTobeKilled.status_phase = stringFactory.get("Killing")
     
     @planned(cost=100)
     def KillPod(self,
@@ -230,7 +230,7 @@ class Pod(HasLabel, HasLimitsRequests):
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status_phase ==  self.stringFactory.get("Killing")
+        assert podBeingKilled.status_phase ==  stringFactory.get("Killing")
         assert podBeingKilled.amountOfActiveRequests == 0
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
@@ -241,9 +241,9 @@ class Pod(HasLabel, HasLimitsRequests):
         globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
         globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status_phase =  self.stringFactory.get("Failed")
+        podBeingKilled.status_phase =  stringFactory.get("Failed")
         scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status_phase = self.stringFactory.get("Changed")
+        scheduler1.status_phase = stringFactory.get("Changed")
 
     # Scheduler effects
 
@@ -252,7 +252,7 @@ class Pod(HasLabel, HasLimitsRequests):
         pod1: Pod,
         nullNode: Node,
         anyNode: Node):
-        assert pod1.toNode == NODE_NULL
+        assert pod1.toNode == Node.NODE_NULL
         pod1.toNode = anyNode
 
     @planned(cost=100)
@@ -281,8 +281,8 @@ class Pod(HasLabel, HasLimitsRequests):
         scheduler1.podQueue.remove(podStarted)
  
         serviceTargetForPod.amountOfActivePods += 1
-        podStarted.status_phase = self.stringFactory.get("Running")
-        serviceTargetForPod.status_phase = self.stringFactory.get("Started")
+        podStarted.status_phase = stringFactory.get("Running")
+        serviceTargetForPod.status_phase = stringFactory.get("Started")
            
     @planned(cost=1000)
     def ScheduleQueueProcessed1(self, scheduler1: Scheduler):
@@ -293,6 +293,6 @@ class Pod(HasLabel, HasLimitsRequests):
     @planned(cost=100)
     def ScheduleQueueProcessed(self, scheduler1: Scheduler):
         assert  scheduler1.queueLength == 0
-        scheduler1.status_phase = self.stringFactory.get("Clean")
+        scheduler1.status_phase = stringFactory.get("Clean")
 
 
