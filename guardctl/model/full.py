@@ -4,7 +4,7 @@ import guardctl.model.kinds
 import pkgutil, inspect
 import guardctl.misc.problem
 
-kinds_collection = []
+kinds_collection = {}
 
 for importer, modname, ispkg in pkgutil.iter_modules(
         path=guardctl.model.kinds.__path__,
@@ -13,7 +13,7 @@ for importer, modname, ispkg in pkgutil.iter_modules(
     for n in dir(module):
         c = getattr(module, n)
         if inspect.isclass(c) and issubclass(c, Object) and not c is Object:
-            kinds_collection.append(c)
+            kinds_collection[c.__name__] = c
 
 
     

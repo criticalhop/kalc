@@ -15,19 +15,20 @@ class KubernetesCluster:
         for doc in yaml.load_all(str_):
             if "items" in doc:
                 for item in doc["items"]: self.load_item(item, create)
-            else: self.load_item(doc)
+            else: self.load_item(doc, create)
     
     def load_item(self, item, create=False):
+        print(item)
         obj = kinds_collection[item["kind"]]()
         obj.kubeguard_created = create # special property to distinguish "created"
         for prop in objwalk(item):
             p, val = find_property(obj, prop)
             if p is None: continue
             val = k8s_to_domain_object(val)
-            if isinstance(getattr(obj, p), Property):
-                setattr(obj, p, val)
-            elif isinstance(getattr(obj, p), Relation):
+            if isinstance(getattr(obj, p), Relation):
                 getattr(obj, p).add(val)
+            elif isinstance(getattr(obj, p), Property):
+                setattr(obj, p, val)
             else:
                 # means has setter
                 setattr(obj, p, val)
