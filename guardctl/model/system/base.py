@@ -1,7 +1,7 @@
 from typing import Set
 from guardctl.misc.const import *
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
-from guardctl.model.system.primitives import String, Label
+from guardctl.model.system.primitives import String, Label, StatusLim
 
 from poodle import Object
 
