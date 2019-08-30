@@ -32,6 +32,8 @@ class KubernetesCluster:
                 setattr(obj, p, val)
         if create and hasattr(obj, "hook_after_create"):
             obj.hook_after_create(self.state_objects)
+        if not create and hasattr(obj, "hook_after_load"):
+            obj.hook_after_load(self.state_objects)
 
         
     def create_resource(self, res: str):
