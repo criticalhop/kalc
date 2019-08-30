@@ -158,7 +158,7 @@ class Pod(HasLabel, HasLimitsRequests):
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status_phase == stringFactory.get("Running")
-        podToBeReplaced..status_phase == stringFactory.get("Killing")
+        podToBeReplaced.status_phase == stringFactory.get("Killing")
 
     @planned
     def connect_pod_service_labels(self, 
