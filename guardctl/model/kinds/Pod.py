@@ -17,6 +17,8 @@ class Pod(HasLabel, HasLimitsRequests):
     def __init__(self, value=""):
         super().__init__(self, value)
         self.status_phase  = STATUS_SERV_PENDING
+        self.isNull = True
+
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
@@ -36,6 +38,7 @@ class Pod(HasLabel, HasLimitsRequests):
     # amountOfActiveRequests: int # For requests
     priorityClass: PriorityClass
     status_phase: String
+    isNull: bool
 
     def __init__(self, value = ""):
         super().__init__(value)
@@ -299,4 +302,6 @@ class Pod(HasLabel, HasLimitsRequests):
         assert  scheduler1.queueLength == 0
         scheduler1.status_phase = STATUS_SCHED_CLEAN
 
+Pod.POD_NULL = Pod("NULL")
+Pod.POD_NULL.isNull = True
 
