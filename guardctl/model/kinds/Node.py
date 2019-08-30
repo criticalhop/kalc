@@ -1,11 +1,8 @@
 from typing import Set
-from guardctl.model.system.primitives import *
+from guardctl.model.system.primitives import String, Label
 from guardctl.model.system.base import HasLabel
 
 class Node(HasLabel):
-    def __init__(self, value=""):
-        super().__init__(self, value)
-        self.isNull = False
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
@@ -20,6 +17,9 @@ class Node(HasLabel):
     podAmount: int
     isNull: bool
     status: String
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.isNull = False
 Node.NODE_NULL = Node("NULL")
 Node.NODE_NULL.isNull = True
 

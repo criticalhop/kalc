@@ -41,8 +41,8 @@ class Pod(HasLabel, HasLimitsRequests):
     status_phase: String
     isNull: bool
 
-    def __init__(self, value = ""):
-        super().__init__(value)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, *kwargs)
         self.memRequest = -1
         self.cpuRequest = -1
         self.memLimit = -1
