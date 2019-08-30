@@ -50,22 +50,21 @@ def find_property(obj, p):
     return None, None
 
 def k8s_to_domain_object(obj):
+    try_int = False
     try:
         int(obj)
         try_int = True
     except:
         pass
-    else:
-        try_int = False
     if isinstance(obj, dict) and len(obj) == 1:
-        k,v=obj.items[0]
+        k,v=list(obj.items())[0]
         return labelFactory.get(k,v)
-    elif isinstance(obj, str) and obj[0] in string.digits and not obj[-1] in string.digits:
+    elif isinstance(obj, str) and obj[0] in string.digits+"-" and not obj[-1] in string.digits:
         # pass on, probably someone will take care
         return obj
     elif isinstance(obj, str) and try_int:
         return int(obj)
-    elif isinstance(obj, str) and not obj[0] in string.digits:
+    elif isinstance(obj, str) and not obj[0] in string.digits+"-":
         return stringFactory.get(obj)
     else:
         raise ValueError("Value type not suported: %s" % repr(obj))

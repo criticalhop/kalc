@@ -23,6 +23,7 @@ class Pod(HasLabel, HasLimitsRequests):
 
     # internal model attributes
     ownerReferences: Controller
+    TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
     targetService: "mservice.Service"
     atNode: "mnode.Node" 
     toNode: "mnode.Node" 
@@ -35,7 +36,6 @@ class Pod(HasLabel, HasLimitsRequests):
     # amountOfActiveRequests: int # For requests
     priorityClass: PriorityClass
     status_phase: String
-    TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
 
     def __init__(self, value = ""):
         super().__init__(value)
@@ -51,7 +51,7 @@ class Pod(HasLabel, HasLimitsRequests):
 
     def hook_after_load(self, object_space):
         nodes = filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space)
-        self.atNode = nodes[0]
+        self.atNode = list(nodes)[0]
         
     # we just ignore priority for now
     # @property
