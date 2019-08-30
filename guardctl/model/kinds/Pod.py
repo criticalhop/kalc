@@ -1,10 +1,13 @@
 from poodle import planned
 from guardctl.misc.const import *
 from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
+import guardctl.model.kinds.Service as mservice
+import guardctl.model.system.Scheduler as mscheduler
+import guardctl.model.kinds.Node as mnode
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Controller import Controller
-import guardctl.model.system.Scheduler as scheduler
+from guardctl.model.system.primitives import String, Label
+
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.system.primitives import String
@@ -20,9 +23,9 @@ class Pod(HasLabel, HasLimitsRequests):
 
     # internal model attributes
     ownerReferences: Controller
-    targetService: "Service"
-    atNode: Node
-    toNode: Node
+    targetService: "mservice.Service"
+    atNode: "mnode.Node" 
+    toNode: "mnode.Node" 
     status: StatusPod
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
@@ -32,9 +35,9 @@ class Pod(HasLabel, HasLimitsRequests):
     # amountOfActiveRequests: int # For requests
     priorityClass: PriorityClass
     status_phase: String
-    TARGET_SERVICE_NULL = Service.SERVICE_NULL
+    TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
 
-    def __init__(self, value):
+    def __init__(self, value = ""):
         super().__init__(value)
         self.memRequest = -1
         self.cpuRequest = -1
@@ -42,12 +45,12 @@ class Pod(HasLabel, HasLimitsRequests):
         self.cpuLimit = -1
         self.priority = 0
         self.targetService = self.TARGET_SERVICE_NULL
-        self.toNode = Node.NODE_NULL
-        self.atNode = Node.NODE_NULL
+        self.toNode = mnode.Node.NODE_NULL
+        self.atNode = mnode.Node.NODE_NULL
         # self.amountOfActiveRequests = 0 # For Requests
 
     def hook_after_load(self, object_space):
-        nodes = filter(lambda x: isinstance(x, Node) and self.spec_nodeName == x.metadata_name, object_space)
+        nodes = filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space)
         self.atNode = nodes[0]
         
     # we just ignore priority for now
@@ -89,8 +92,8 @@ class Pod(HasLabel, HasLimitsRequests):
     
     @planned(cost=100)
     def SetDefaultMemLimitForPod(self,
-        pod1: Pod,
-        node1: Node,
+        pod1: "Pod",
+        node1: "mnode.Node" ,
         memCapacity: int
         ):
             assert pod1.memLimit == -1
@@ -100,8 +103,8 @@ class Pod(HasLabel, HasLimitsRequests):
             
     @planned(cost=100)
     def SetDefaultCpuLimitForPod(self,
-        pod1: Pod,
-        node1: Node,
+        pod1: "Pod",
+        node1: "mnode.Node" ,
         cpuCapacity: int
         ):
             assert pod1.cpuLimit == -1
@@ -111,8 +114,8 @@ class Pod(HasLabel, HasLimitsRequests):
             pod1.cpuLimit = cpuCapacity   
     @planned(cost=100)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
-        pod1: Pod,
-        node1: Node,
+        pod1: "Pod",
+        node1: "mnode.Node" ,
         memCapacity: int
         ):
             assert pod1.memLimit == -1
@@ -122,8 +125,8 @@ class Pod(HasLabel, HasLimitsRequests):
             
     @planned(cost=100)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
-        pod1: Pod,
-        node1: Node,
+        pod1: "Pod",
+        node1: "mnode.Node" ,
         cpuCapacity: int):
             assert pod1.cpuLimit == -1
             assert cpuCapacity == node1.cpuCapacity
@@ -132,8 +135,8 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def SetDefaultCpuLimitPerLimitRange(self,
-        pod1: Pod,
-        node1: Node,
+        pod1: "Pod",
+        node1: "mnode.Node" ,
         cpuCapacity: int,
         ):
             assert pod1.cpuLimit == -1
@@ -143,10 +146,10 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def EvictAndReplaceLessPrioritizedPod(self,
-                podPending: Pod,
-                podToBeReplaced: Pod,
-                node1: Node,
-                scheduler1: "scheduler.Scheduler",
+                podPending: "Pod",
+                podToBeReplaced: "Pod",
+                node1: "mnode.Node" ,
+                scheduler1: "mscheduler.Scheduler",
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
@@ -163,8 +166,8 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned
     def connect_pod_service_labels(self, 
-            pod: Pod,  
-            service: Service, 
+            pod: "Pod",  
+            service: "mservice.Service", 
             label: Label):
         # TODO: full selector support
         assert pod.targetService == pod.TARGET_SERVICE_NULL
@@ -175,13 +178,13 @@ class Pod(HasLabel, HasLimitsRequests):
     
     @planned 
     def fill_priority_class_object(self,
-            pod: Pod,
+            pod: "Pod",
             pclass: PriorityClass):
         assert pod.spec_priorityClassName == pclass.metadata_name
         pod.priorityClass = pclass
 
     @planned(cost=100)
-    def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: Pod,nodeOfPod: Node):
+    def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: "Pod",nodeOfPod: "mnode.Node" ):
         assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
         assert nodeOfPod == podTobeKilled.atNode
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
@@ -189,8 +192,8 @@ class Pod(HasLabel, HasLimitsRequests):
         podTobeKilled.memLimitsStatus = STATUS_LIM_EXCEEDED
         
     @planned(cost=100)
-    def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: Pod,
-        nodeOfPod: Node, globalVar1: GlobalVar):            
+    def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: "Pod",
+        nodeOfPod: "mnode.Node" , globalVar1: GlobalVar):            
         assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimitsStatus == STATUS_LIM_EXCEEDED
         assert nodeOfPod == podTobeReanimated.atNode
@@ -200,8 +203,8 @@ class Pod(HasLabel, HasLimitsRequests):
         
     @planned(cost=100)
     def MemoryErrorKillPodOverwhelmingLimits(self,
-    nodeOfPod: Node,
-    pod1TobeKilled: Pod
+    nodeOfPod: "mnode.Node" ,
+    pod1TobeKilled: "Pod"
     ):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
@@ -211,8 +214,8 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def MemoryErrorKillPodNotOverwhelmingLimits(self,
-        nodeOfPod: Node,
-        podTobeKilled: Pod):
+        nodeOfPod: "mnode.Node" ,
+        podTobeKilled: "Pod"):
         assert podTobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
@@ -221,11 +224,11 @@ class Pod(HasLabel, HasLimitsRequests):
     
     @planned(cost=100)
     def KillPod(self,
-            podBeingKilled : Pod,
-            nodeWithPod : Node,
-            serviceOfPod: Service,
-            globalVar1: GlobalVar,
-            scheduler1: "scheduler.Scheduler",
+            podBeingKilled : "Pod",
+            nodeWithPod : "mnode.Node" ,
+            serviceOfPod: "mservice.Service",
+            globalVar1: "GlobalVar",
+            scheduler1: "mscheduler.Scheduler",
             amountOfActivePodsPrev: int
             
          ):
@@ -250,19 +253,19 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def SelectNode(self, 
-        pod1: Pod,
-        nullNode: Node,
-        anyNode: Node):
+        pod1: "Pod",
+        nullNode: "mnode.Node" ,
+        anyNode: "mnode.Node" ):
         assert pod1.toNode == Node.NODE_NULL
         pod1.toNode = anyNode
 
     @planned(cost=100)
     def StartPod(self, 
-        podStarted: Pod,
-        node1: Node,
-        scheduler1: "scheduler.Scheduler",
-        serviceTargetForPod: Service,
-        globalVar1: GlobalVar
+        podStarted: "Pod",
+        node1: "mnode.Node" ,
+        scheduler1: "mscheduler.Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        globalVar1: "GlobalVar"
         ):
 
         assert podStarted in scheduler1.podQueue
@@ -286,13 +289,13 @@ class Pod(HasLabel, HasLimitsRequests):
         serviceTargetForPod.status_phase = STATUS_SERV_STARTED
            
     @planned(cost=1000)
-    def ScheduleQueueProcessed1(self, scheduler1: "scheduler.Scheduler"):
+    def ScheduleQueueProcessed1(self, scheduler1: "mscheduler.Scheduler"):
         scheduler1.queueLength -= 1
 
         #to-do: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
     @planned(cost=100)
-    def ScheduleQueueProcessed(self, scheduler1: "scheduler.Scheduler"):
+    def ScheduleQueueProcessed(self, scheduler1: "mscheduler.Scheduler"):
         assert  scheduler1.queueLength == 0
         scheduler1.status_phase = STATUS_SCHED_CLEAN
 

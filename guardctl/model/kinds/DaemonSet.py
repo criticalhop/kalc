@@ -1,12 +1,12 @@
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Pod import Pod
+import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.primitives import Status
 
 
 class DaemonSet(Controller, HasLimitsRequests):
-    lastPod: Pod
+    lastPod: "mpod.Pod"
     atNode: Node
     amountOfActivePods: int
     status: Status
@@ -14,7 +14,7 @@ class DaemonSet(Controller, HasLimitsRequests):
     def hook_after_create(self, object_space):
         nodes = filter(lambda x: isinstance(x, Node), object_space)
         for node in nodes:
-            new_pod = Pod()
+            new_pod = mpod.Pod()
             new_pod.toNode = node
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest
