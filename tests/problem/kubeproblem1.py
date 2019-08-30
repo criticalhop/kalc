@@ -38,14 +38,17 @@ class Problem2(ProblemTemplate):
         self.nullLb = self.addObject( LoadBalancer('Null'))
 
 
+        
         self.service1 = self.addObject(mservice.Service('service1'))
         self.service1.amountOfActivePods = 2
         self.service1.status = STATUS_SERV_STARTED
-        
+        self.service.append(self.service1)
+
         self.service2 = self.addObject(mservice.Service('service2'))
         self.service2.amountOfActivePods = 2
         self.service2.status = STATUS_SERV_STARTED
-        
+        self.service.append(self.service2)
+
         self.service3 = self.addObject(mservice.Service('service3'))
         self.service3.amountOfActivePods = 0
         self.service3.status = STATUS_SERV_PENDING        
