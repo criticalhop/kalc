@@ -6,6 +6,6 @@ from guardctl.model.system.primitives import StatusSched
 
 class Scheduler(Object):
     queueLength: int
-    status: StatusSched
+    status: String
     podQueue: Set[Pod]
 

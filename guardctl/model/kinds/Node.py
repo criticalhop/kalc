@@ -1,19 +1,16 @@
 from typing import Set
-from guardctl.model.system.primitives import Label, StatusNode, State, Type
+from guardctl.model.system.primitives import *
 from guardctl.model.system.base import HasLabel
 
 class Node(HasLabel):
     labels: Set[Label]
     cpuCapacity: int
     memCapacity: int
-    memCapacityBarier: int
-    status: StatusNode
-    state: State
     currentFormalCpuConsumption: int
     currentFormalMemConsumption: int
     currentRealMemConsumption: int
     currentRealCpuConsumption: int
     AmountOfPodsOverwhelmingMemLimits: int
     podAmount: int
-    type: Type
+    NODE_NULL = Node("NODE_NULL")
 

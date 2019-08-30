@@ -15,3 +15,4 @@ class Service(HasLabel):
         super().__init__(self, value)
         self.amountOfActivePods = 0
 
+Service.SERVICE_NULL = Service("NULL")
