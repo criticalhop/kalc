@@ -56,7 +56,9 @@ def k8s_to_domain_object(obj):
         try_int = True
     except:
         pass
-    if isinstance(obj, dict) and len(obj) == 1:
+    if isinstance(obj, int):
+        return obj
+    elif isinstance(obj, dict) and len(obj) == 1:
         k,v=list(obj.items())[0]
         return labelFactory.get(k,v)
     elif isinstance(obj, str) and obj[0] in string.digits+"-" and not obj[-1] in string.digits:
@@ -70,7 +72,7 @@ def k8s_to_domain_object(obj):
         raise ValueError("Value type not suported: %s" % repr(obj))
 
 
-def cpuConvertToAbstractProblem(self, cpuParot):
+def cpuConvertToAbstractProblem(cpuParot):
     #log.debug("cpuParot", cpuParot)
     cpu = 0
     if cpuParot[len(cpuParot)-1] == 'm':
@@ -83,7 +85,7 @@ def cpuConvertToAbstractProblem(self, cpuParot):
         cpu = 1
     return int(cpu)
 
-def memConvertToAbstractProblem(self, mem):
+def memConvertToAbstractProblem(mem):
     ret = 0
     if mem[len(mem)-2:] == 'Gi':
         ret = int(mem[:-2])*1000

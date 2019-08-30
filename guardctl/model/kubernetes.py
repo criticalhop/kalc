@@ -18,8 +18,13 @@ class KubernetesCluster:
             else: self.load_item(doc, create)
     
     def load_item(self, item, create=False):
-        print(item)
+        assert isinstance(item, dict)
+        item["__created"] = create
+        self.dict_states[item["kind"]].append(item)
+    
+    def _build_item(self, item):
         obj = kinds_collection[item["kind"]]()
+        create = item["__created"]
         obj.kubeguard_created = create # special property to distinguish "created"
         for prop in objwalk(item):
             p, val = find_property(obj, prop)
@@ -36,7 +41,17 @@ class KubernetesCluster:
             obj.hook_after_create(self.state_objects)
         if not create and hasattr(obj, "hook_after_load"):
             obj.hook_after_load(self.state_objects)
+        self.state_objects.append(obj)
 
+    def _build_state(self):
+        collected = self.dict_states.copy()
+        for k in ["Node", "Pod"]:
+            for item in collected[k]:
+                self._build_item(item)
+            del collected[k]
+        for k,v in collected.items():
+            for item in v:
+                self._build_item(item)
         
     def create_resource(self, res: str):
         self.load(res, create=True)
@@ -46,6 +61,7 @@ class KubernetesCluster:
         raise
 
     def run(self):
+        self._build_state()
         plan = ProblemTemplate(self.state_objects).run()
         # TODO: represent plan
     
