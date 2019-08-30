@@ -1,4 +1,5 @@
 from poodle import planned
+from logzero import logger
 from guardctl.misc.const import *
 from guardctl.model.kinds.Node import Node
 import guardctl.model.kinds.Service as mservice
@@ -50,8 +51,12 @@ class Pod(HasLabel, HasLimitsRequests):
         # self.amountOfActiveRequests = 0 # For Requests
 
     def hook_after_load(self, object_space):
-        nodes = filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space)
-        self.atNode = list(nodes)[0]
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
+        if nodes:
+            self.atNode = nodes[0]
+        else:
+            logger.warning("Orphan Pod loaded")
+
         
     # we just ignore priority for now
     # @property
