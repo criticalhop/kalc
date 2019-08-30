@@ -1,6 +1,7 @@
 import pytest
 
 from poodle import * 
+pytestmark = pytest.mark.skip("all tests still WIP")
 
 
 daemonYAMLPath = "./tests/kube-config/daemon-set-custom.yaml"
