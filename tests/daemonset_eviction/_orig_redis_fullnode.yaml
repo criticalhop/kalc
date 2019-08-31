@@ -11,7 +11,7 @@ spec:
   - port: 6379
     targetPort: 6379
   selector:
-    app: redis
+    app: redis-evict
     tier: backend
     role: master
 ---

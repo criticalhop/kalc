@@ -6,7 +6,13 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.misc.const import *
 from guardctl.misc.problem import ProblemTemplate
 
-class K8SearchEviction(ProblemTemplate):
+
+class KubernetesModel(ProblemTemplate):
+    def problem(self):
+        self.scheduler = self.addObject(Scheduler())
+        self.globalVar = self.addObject(GlobalVar())
+
+class K8SearchEviction(KubernetesModel):
     @planned
     def MarkServiceOutageEvent(self,
                 service1: Service,

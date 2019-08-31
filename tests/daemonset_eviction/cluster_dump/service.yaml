@@ -99,7 +99,7 @@ items:
       protocol: TCP
       targetPort: 6379
     selector:
-      app: redis
+      app: redis-evict
       role: master
       tier: backend
     sessionAffinity: None

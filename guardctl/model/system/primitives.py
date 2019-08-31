@@ -29,4 +29,5 @@ class StatusLim(Object):
     pass
 
 class Label(Object):
-    pass
+    def __str__(self):
+        return self.poodle_internal__value
