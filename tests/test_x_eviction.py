@@ -29,4 +29,6 @@ def test_eviction_fromfiles_strictgoal():
     k.load_dir(TEST_CLUSTER_FOLDER)
     k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
-    SingleGoalEvictionDetect(k.state_objects).run()
+    p = SingleGoalEvictionDetect(k.state_objects)
+    p.run()
+    assert p.plan

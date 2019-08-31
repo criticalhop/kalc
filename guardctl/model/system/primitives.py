@@ -30,4 +30,4 @@ class StatusLim(Object):
 
 class Label(Object):
     def __str__(self):
-        return self.poodle_internal__value
+        return str(self._get_value())

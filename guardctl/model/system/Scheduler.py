@@ -50,7 +50,7 @@ class Scheduler(Object):
  
         serviceTargetForPod.amountOfActivePods += 1
         podStarted.status_phase = STATUS_POD_RUNNING 
-        serviceTargetForPod.status_phase = STATUS_SERV_STARTED
+        serviceTargetForPod.status = STATUS_SERV_STARTED
            
     @planned(cost=1000)
     def ScheduleQueueProcessed1(self, scheduler1: "Scheduler"):
@@ -61,4 +61,4 @@ class Scheduler(Object):
     @planned(cost=100)
     def ScheduleQueueProcessed(self, scheduler1: "Scheduler"):
         assert  scheduler1.queueLength == 0
-        scheduler1.status_phase = STATUS_SCHED_CLEAN
+        scheduler1.status = STATUS_SCHED_CLEAN
