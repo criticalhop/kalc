@@ -15,11 +15,6 @@ from guardctl.model.system.primitives import String
 
 
 class Pod(HasLabel, HasLimitsRequests):
-    def __init__(self, value=""):
-        super().__init__(self, value)
-        self.status_phase  = STATUS_SERV_PENDING
-        self.isNull = True
-
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
@@ -36,21 +31,19 @@ class Pod(HasLabel, HasLimitsRequests):
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
     spec_nodeName: String
-    # amountOfActiveRequests: int # For requests
     priorityClass: PriorityClass
     status_phase: String
     isNull: bool
+    # amountOfActiveRequests: int # For requests
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, *kwargs)
-        self.memRequest = -1
-        self.cpuRequest = -1
-        self.memLimit = -1
-        self.cpuLimit = -1
+        super().__init__(*args, **kwargs)
         self.priority = 0
         self.targetService = self.TARGET_SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
+        self.status_phase = STATUS_SERV_PENDING
+        self.isNull = True
         # self.amountOfActiveRequests = 0 # For Requests
 
     def hook_after_load(self, object_space):
@@ -70,10 +63,6 @@ class Pod(HasLabel, HasLimitsRequests):
     #     if value > 1000: value = 1000
     #     self.priority = value
 
-    @property
-    def status_phase(self):
-        pass
-     
     def __str__(self): return str(self.value)
 
     @planned(cost=100)

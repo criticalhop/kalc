@@ -16,7 +16,7 @@ class K8SearchEviction(KubernetesModel):
     @planned
     def MarkServiceOutageEvent(self,
                 service1: Service,
-                pod1: "Pod",
+                pod1: Pod,
                 globalVar1: "GlobalVar",
                 scheduler1: "Scheduler",
                 currentFormalCpuConsumptionLoc: int,

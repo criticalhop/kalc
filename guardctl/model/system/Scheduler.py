@@ -11,6 +11,10 @@ class Scheduler(Object):
     status: String
     podQueue: Set["mpod.Pod"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.queueLength = 0
+
     @planned(cost=100)
     def SelectNode(self, 
         pod1: "mpod.Pod",

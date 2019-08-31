@@ -22,8 +22,8 @@ class HasLimitsRequests(Object):
     cpuLimitsStatus: String
     """Status to set if the limit is reached"""
 
-    def __init__(self, value = ''):
-        super().__init__(value)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.cpuLimit = -1
         self.memLimit = -1
         self.cpuRequest = -1
