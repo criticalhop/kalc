@@ -1,26 +1,26 @@
 import click
-import os 
+import os
+from guardctl.model.kubernetes import KubernetesCluster
 
 @click.group()
 def cli():
     pass
 
 @click.command()
-@click.option("--test-cluster", "-c", help="Directory with cluster resources definitions", type=str, required=True)
-@click.option("--out-format", "-o", help="Select output format", type=str, required=False)
+@click.option("--from-dir", "-d", help="Directory with cluster resources definitions", type=str, required=True)
+@click.option("--output", "-o", help="Select output format", type=click.Choice(["json", "yaml", "wide"]), required=False, default="wide")
 @click.option("-f", help="Create new resource from YAML file", type=str, required=False, multiple=True)
-def test(test, test_cluster, f):
+def test(test, from_dir, output, f):
     c = KubenetesCluster()
 
+
+
+    # TODO: only echo this if -o=wide
     click.echo(f"Loading cluster definitions from {test_cluster} ...")
-    for root, dirs, files in os.walk(test_cluster):
-        for fn in files: 
-            click.echo(f" ... {fn}")
-            c.load_state(open(os.path.join(root, fn)).read())
 
-    c.build_state()
+    c.load_dir(test_cluster)
 
-    for res in f: 
+    for res in f:
         click.echo(f"Creating resource from {f}")
         c.create_resource(open(res).read())
 

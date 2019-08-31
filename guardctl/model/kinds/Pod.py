@@ -183,6 +183,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert label in service.spec_selector
         pod.targetService = service
         service.amountOfActivePods += 1
+        service.status = STATUS_SERV_STARTED
     
     @planned 
     def fill_priority_class_object(self,
