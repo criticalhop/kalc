@@ -44,13 +44,12 @@ def test_cluster_folder():
 
 def test_daemonset_folder():
     mix = ProblemMixer()
+    mix.load_dir(TEST_CLUSTER_FOLDER)
     mix.create_resource(open(TEST_DAEMONET).read())
     mix._build_state()
     mix.fillObjectLists()
     print(mix.pod)
-    print("nodes ", mix.node)
-#     assert(len(mix.pod) == 8)
-#     assert(len(mix.node) == 5)
-#     assert(len(mix.service) == 6)
+    assert(len(mix.pod) == 8 + len(mix.node))
+    assert(len(mix.node) == 5)
+    assert(len(mix.service) == 6 + 1) # + another service from DaemonSet 
 
-# def test_daemonset_and_cluster_folder():
