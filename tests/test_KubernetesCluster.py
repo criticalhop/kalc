@@ -31,7 +31,6 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         return evict_service.status == STATUS_SERV_INTERRUPTED and \
                                     scheduler.status == STATUS_SCHED_CLEAN
 
-
 def test_load_dir():
     mix = ProblemMixer()
     mix.load_dir(TEST_CLUSTER_FOLDER)

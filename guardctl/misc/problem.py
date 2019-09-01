@@ -24,16 +24,12 @@ class ProblemTemplate:
 
     # fill object with corresponding list (list instance in lower case)
     def fillObjectLists(self):
-        print("call fillObjectLists ", self.objectList )
         requiredObject = ['Pod', "Node", "Service", "LoadBalancer", "DaemonSet", "Deployment"]
         for obj in self.objectList:
-            print("try for ", obj)
             if obj.__class__.__name__ in requiredObject:
                 try:
-                    print("list of ", obj.__class__.__name__.lower(), " is ", getattr(self, obj.__class__.__name__.lower()))
                     getattr(self, obj.__class__.__name__.lower()).append(obj)
                 except:
-                    print("error with ", obj)
                     pass
 
     def run(self, timeout=30):
