@@ -45,7 +45,7 @@ def test_cluster_folder():
     have_high_priority=False
     for priorityClass in mix.state_objects:
         if isinstance(priorityClass, PriorityClass):
-            if priorityClass.metadata_name in PRIORITY:
+            if priorityClass.metadata_name == 'high-priority':
                 have_high_priority = True
                 assert(priorityClass.priority == (1000 if PRIORITY[priorityClass.metadata_name] > 1000 else PRIORITY[priorityClass.metadata_name]))
     assert(have_high_priority)
