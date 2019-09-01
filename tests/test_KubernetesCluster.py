@@ -34,29 +34,23 @@ class SingleGoalEvictionDetect(K8SearchEviction):
 def test_cluster_folder():
     mix = ProblemMixer()
     mix.load_dir(TEST_CLUSTER_FOLDER)
-#    mix.create_resource(open(TEST_DAEMONET).read())
     mix._build_state()
-    # mix.run()
     mix.fillObjectLists()
+    # mix.run()
+    # print(mix.plan)
     assert(len(mix.pod) == 8)
     assert(len(mix.node) == 5)
     assert(len(mix.service) == 6)
-    # p = SingleGoalEvictionDetect(k.state_objects)
-    # p.run()
-    # assert(p.plan)
 
-# def test_daemonset_folder():
-#     mix = ProblemMixer()
-#     mix.load_dir(TEST_CLUSTER_FOLDER)
-# #    mix.create_resource(open(TEST_DAEMONET).read())
-#     mix._build_state()
-#     # mix.run()
-#     mix.fillObjectLists()
+def test_daemonset_folder():
+    mix = ProblemMixer()
+    mix.create_resource(open(TEST_DAEMONET).read())
+    mix._build_state()
+    mix.fillObjectLists()
+    print(mix.pod)
+    print("nodes ", mix.node)
 #     assert(len(mix.pod) == 8)
 #     assert(len(mix.node) == 5)
 #     assert(len(mix.service) == 6)
-#     # p = SingleGoalEvictionDetect(k.state_objects)
-#     # p.run()
-#     # assert(p.plan)
 
 # def test_daemonset_and_cluster_folder():
