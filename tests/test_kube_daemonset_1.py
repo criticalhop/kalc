@@ -15,9 +15,9 @@ def test():
     for p in tests:
         if not p.plan: 
             print("Could not solve %s" % p.__class__.__name__)
+            print(p)
             continue
-        print("Created plan for %s:" % p.__class__.__name__)
-        i=0
-        for a in p.plan:
-            i=i+1
-            print(i,":",a.__class__.__name__,"\n",yaml.dump({k:v.value if v else f"NONE{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
+        if p.plan:
+            print("Created plan for %s:" % p.__class__.__name__)
+            print(p)
+            assert p.plan

@@ -63,6 +63,7 @@ class Problem2(ProblemTemplate):
         self.node1.currentRealMemConsumption =0
         self.node1.currentRealCpuConsumption =0
         self.node1.AmountOfPodsOverwhelmingMemLimits =0
+        self.node.append(self.node1)
 
 
         self.node2 = self.addObject(mnode.Node('node2'))
@@ -75,6 +76,7 @@ class Problem2(ProblemTemplate):
         self.node2.currentRealMemConsumption =0
         self.node2.currentRealCpuConsumption =0
         self.node2.AmountOfPodsOverwhelmingMemLimits =0
+        self.node.append(self.node2)
 
         self.node2.prevNode = self.node1
         self.node1.prevNode = self.node2    
@@ -96,6 +98,7 @@ class Problem2(ProblemTemplate):
         self.pod1.amountOfActiveRequests =0
         self.pod1.targetService = self.service1
         self.pod1.priorityClass = self.priorityLow
+        self.pod.append(self.pod1)
         
         
         self.pod2 = self.addObject(mpod.Pod('pod2'))
@@ -116,6 +119,8 @@ class Problem2(ProblemTemplate):
         self.pod2.amountOfActiveRequests =0
         self.pod2.targetService = self.service1
         self.pod2.priorityClass = self.priorityLow
+        self.pod.append(self.pod2)
+
      
         self.pod3 = self.addObject(mpod.Pod('pod3'))
         self.pod3.currentRealCpuConsumption =0
@@ -134,6 +139,8 @@ class Problem2(ProblemTemplate):
         self.pod3.amountOfActiveRequests =0
         self.pod3.targetService = self.service2
         self.pod3.priorityClass = self.priorityLow
+        self.pod.append(self.pod3)
+
 
         
         self.pod4 = self.addObject(mpod.Pod('pod4'))
@@ -153,9 +160,7 @@ class Problem2(ProblemTemplate):
         self.pod4.amountOfActiveRequests =0
         self.pod4.targetService = self.service3
         self.pod4.priorityClass = self.priorityLow
-
-
-
+        self.pod.append(self.pod4)
 
         self.pod5 = self.addObject(mpod.Pod('pod5'))
         self.pod5.currentRealCpuConsumption =0
@@ -174,6 +179,8 @@ class Problem2(ProblemTemplate):
         self.pod5.amountOfActiveRequests =0
         self.pod5.targetService = self.service3
         self.pod5.priorityClass = self.priorityHigh
+        self.pod.append(self.pod5)
+
 
 
         self.pod6 = self.addObject(mpod.Pod('pod6'))
@@ -194,6 +201,8 @@ class Problem2(ProblemTemplate):
         self.pod6.targetService = self.service3
         self.daemonset1.podList.add(self.pod6)
         self.pod6.priorityClass = self.priorityHigh
+        self.pod.append(self.pod6)
+
 
         
         self.pod7 = self.addObject(mpod.Pod('pod7'))
@@ -214,6 +223,8 @@ class Problem2(ProblemTemplate):
         self.pod7.targetService = self.service3
         self.daemonset1.podList.add(self.pod7)
         self.pod7.priorityClass = self.priorityHigh
+        self.pod.append(self.pod7)
+
 
 
 
