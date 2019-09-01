@@ -68,7 +68,9 @@ class KubernetesCluster:
 
     def run(self):
         self._build_state()
-        self.plan = K8SearchEviction(self.state_objects).run()
+        k = K8SearchEviction(self.state_objects)
+        k.run()
+        self.plan = k.plan
         return self.plan
         # TODO: represent plan
 
