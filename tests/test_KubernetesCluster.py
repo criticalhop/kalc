@@ -8,6 +8,7 @@ from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
 from guardctl.misc.object_factory import stringFactory, labelFactory
 from guardctl.misc.problem import ProblemTemplate
+from guardctl.model.kinds.PriorityClass import PriorityClass
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
@@ -31,16 +32,24 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         return evict_service.status == STATUS_SERV_INTERRUPTED and \
                                     scheduler.status == STATUS_SCHED_CLEAN
 
+PRIORITY = {'high-priority':1000000, 'system-cluster-critical': 2000000000, 'system-node-critical': 2000001000}
+
 def test_cluster_folder():
     mix = ProblemMixer()
     mix.load_dir(TEST_CLUSTER_FOLDER)
     mix._build_state()
     mix.fillObjectLists()
-    # mix.run()
-    # print(mix.plan)
     assert(len(mix.pod) == 8)
     assert(len(mix.node) == 5)
     assert(len(mix.service) == 6)
+    have_high_priority=False
+    for priorityClass in mix.state_objects:
+        if isinstance(priorityClass, PriorityClass):
+            if priorityClass.metadata_name in PRIORITY:
+                have_high_priority = True
+                assert(priorityClass.priority == (1000 if PRIORITY[priorityClass.metadata_name] > 1000 else PRIORITY[priorityClass.metadata_name]))
+    assert(have_high_priority)
+    
 
 def test_daemonset_folder():
     mix = ProblemMixer()
@@ -48,8 +57,7 @@ def test_daemonset_folder():
     mix.create_resource(open(TEST_DAEMONET).read())
     mix._build_state()
     mix.fillObjectLists()
-    print(mix.pod)
     assert(len(mix.pod) == 8 + len(mix.node))
     assert(len(mix.node) == 5)
-    assert(len(mix.service) == 6 + 1) # + another service from DaemonSet 
+    assert(len(mix.service) == 6) 
 
