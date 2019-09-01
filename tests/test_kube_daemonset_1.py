@@ -5,6 +5,6 @@ from guardctl.misc.const import *
 
 # @pytest.mark.skip(reason="no way of currently testing this")
 def test():
-    tests = [TestServiceInterrupted()]
+    p = TestServiceInterrupted()
     print(p.plan)
     assert p.plan
