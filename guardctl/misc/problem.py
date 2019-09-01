@@ -21,6 +21,21 @@ class ProblemTemplate:
     def addObject(self, obj):
         self.objectList.append(obj)
         return obj
+
+    # fill object with corresponding list (list instance in lower case)
+    def fillObjectLists(self):
+        print("call fillObjectLists ", self.objectList )
+        requiredObject = ['Pod', "Node", "Service", "LoadBalancer", "DaemonSet", "Deployment"]
+        for obj in self.objectList:
+            print("try for ", obj)
+            if obj.__class__.__name__ in requiredObject:
+                try:
+                    print("list of ", obj.__class__.__name__.lower(), " is ", getattr(self, obj.__class__.__name__.lower()))
+                    getattr(self, obj.__class__.__name__.lower()).append(obj)
+                except:
+                    print("error with ", obj)
+                    pass
+
     def run(self, timeout=30):
         self.problem()
         self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m))]
@@ -42,3 +57,6 @@ class ProblemTemplate:
             )
         except SchedulingError:
             pass
+
+    def goal(self):
+        pass

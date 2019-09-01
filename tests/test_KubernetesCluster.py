@@ -7,9 +7,17 @@ from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
 from guardctl.misc.object_factory import stringFactory, labelFactory
+from guardctl.misc.problem import ProblemTemplate
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
+
+class ProblemMixer(KubernetesCluster, ProblemTemplate):
+
+    def __init__(self):
+        KubernetesCluster.__init__(self)
+        ProblemTemplate.__init__(self, self.state_objects)
+
 
 class SingleGoalEvictionDetect(K8SearchEviction):
     def goal(self):
@@ -25,10 +33,14 @@ class SingleGoalEvictionDetect(K8SearchEviction):
 
 
 def test_load_dir():
-    k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
-    # k.create_resource(open(TEST_DAEMONET).read())
-    # k._build_state()
+    mix = ProblemMixer()
+    mix.load_dir(TEST_CLUSTER_FOLDER)
+    mix.create_resource(open(TEST_DAEMONET).read())
+    mix._build_state()
+    # mix.run()
+    mix.fillObjectLists()
+    print("\nself.pod ", mix.pod, "\n")
+
     # p = SingleGoalEvictionDetect(k.state_objects)
     # p.run()
     # assert(p.plan)
