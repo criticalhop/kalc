@@ -13,8 +13,8 @@ class Service(HasLabel):
     amountOfActivePods: int
     status: String
     
-    def __init__(self, value=""):
-        super().__init__(self, value)
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
         self.amountOfActivePods = 0
 
 Service.SERVICE_NULL = Service("NULL")

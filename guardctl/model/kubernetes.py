@@ -1,27 +1,33 @@
 import yaml
+import os
 from collections import defaultdict
 from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
 from guardctl.misc.util import dget, objwalk, find_property, k8s_to_domain_object
 from guardctl.model.full import kinds_collection
-from guardctl.misc.problem import ProblemTemplate
+from guardctl.model.search import K8SearchEviction
 
 class KubernetesCluster:
     def __init__(self):
         self.dict_states = defaultdict(list)
         self.state_objects = []
 
+    def load_dir(self, dir_path):
+        for root, dirs, files in os.walk(dir_path):
+            for fn in files:
+                self.load(open(os.path.join(root, fn)).read())
+
     def load(self, str_, create=False):
         for doc in yaml.load_all(str_):
             if "items" in doc:
                 for item in doc["items"]: self.load_item(item, create)
             else: self.load_item(doc, create)
-    
+
     def load_item(self, item, create=False):
         assert isinstance(item, dict)
         item["__created"] = create
         self.dict_states[item["kind"]].append(item)
-    
+
     def _build_item(self, item):
         obj = kinds_collection[item["kind"]]()
         create = item["__created"]
@@ -52,16 +58,17 @@ class KubernetesCluster:
         for k,v in collected.items():
             for item in v:
                 self._build_item(item)
-        
+
     def create_resource(self, res: str):
         self.load(res, create=True)
-    
+
     def fetch_state_default(self):
         "Fetch state from cluster using default method"
         raise
 
     def run(self):
         self._build_state()
-        plan = ProblemTemplate(self.state_objects).run()
+        self.plan = K8SearchEviction(self.state_objects).run()
+        return self.plan
         # TODO: represent plan
-    
+

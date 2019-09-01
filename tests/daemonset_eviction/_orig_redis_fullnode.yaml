@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master-evict
+  labels:
+    app: redis-evict
+    tier: backend
+    role: master
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis-evict
+    tier: backend
+    role: master
+---
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-master-evict
+spec:
+  selector:
+    matchLabels:
+      app: redis-evict
+      role: master
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis-evict
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: k8s.gcr.io/redis:e2e  # or just image: redis
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1700280Ki
+        ports:
+        - containerPort: 6379
+---

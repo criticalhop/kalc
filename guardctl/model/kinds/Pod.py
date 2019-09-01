@@ -15,11 +15,6 @@ from guardctl.model.system.primitives import String
 
 
 class Pod(HasLabel, HasLimitsRequests):
-    def __init__(self, value=""):
-        super().__init__(self, value)
-        self.status_phase  = STATUS_SERV_PENDING
-        self.isNull = True
-
     # k8s attributes
     metadata_ownerReferences__name: String
     spec_priorityClassName: String
@@ -36,21 +31,19 @@ class Pod(HasLabel, HasLimitsRequests):
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
     spec_nodeName: String
-    # amountOfActiveRequests: int # For requests
     priorityClass: PriorityClass
     status_phase: String
     isNull: bool
+    # amountOfActiveRequests: int # For requests
 
-    def __init__(self, value = ""):
-        super().__init__(value)
-        self.memRequest = -1
-        self.cpuRequest = -1
-        self.memLimit = -1
-        self.cpuLimit = -1
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.priority = 0
         self.targetService = self.TARGET_SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
+        self.status_phase = STATUS_SERV_PENDING
+        self.isNull = True
         # self.amountOfActiveRequests = 0 # For Requests
 
     def hook_after_load(self, object_space):
@@ -70,11 +63,7 @@ class Pod(HasLabel, HasLimitsRequests):
     #     if value > 1000: value = 1000
     #     self.priority = value
 
-    @property
-    def status_phase(self):
-        pass
-     
-    def __str__(self): return str(self.value)
+    def __str__(self): return str(self._get_value())
 
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
@@ -156,7 +145,7 @@ class Pod(HasLabel, HasLimitsRequests):
     def EvictAndReplaceLessPrioritizedPod(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
-                node1: "mnode.Node" ,
+                node1: "mnode.Node" , # unused
                 scheduler1: "mscheduler.Scheduler",
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
@@ -165,12 +154,12 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podPending.status_phase == STATUS_POD_PENDING 
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
-        assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
-        assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
+        # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
+        # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status_phase == STATUS_POD_RUNNING 
-        podToBeReplaced.status_phase == STATUS_POD_KILLING
+        podToBeReplaced.status_phase = STATUS_POD_KILLING
 
     @planned
     def connect_pod_service_labels(self, 
@@ -183,6 +172,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert label in service.spec_selector
         pod.targetService = service
         service.amountOfActivePods += 1
+        service.status = STATUS_SERV_STARTED
     
     @planned 
     def fill_priority_class_object(self,
@@ -243,7 +233,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
         assert podBeingKilled.status_phase ==  STATUS_POD_KILLING
-        assert podBeingKilled.amountOfActiveRequests == 0
+        # assert podBeingKilled.amountOfActiveRequests == 0
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
         nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
@@ -255,57 +245,11 @@ class Pod(HasLabel, HasLimitsRequests):
         serviceOfPod.amountOfActivePods -= 1
         podBeingKilled.status_phase =  STATUS_POD_FAILED
         scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status_phase = STATUS_SCHED_CHANGED 
+        scheduler1.status = STATUS_SCHED_CHANGED 
 
     # Scheduler effects
 
-    @planned(cost=100)
-    def SelectNode(self, 
-        pod1: "Pod",
-        nullNode: "mnode.Node" ,
-        anyNode: "mnode.Node" ):
-        assert pod1.toNode == Node.NODE_NULL
-        pod1.toNode = anyNode
 
-    @planned(cost=100)
-    def StartPod(self, 
-        podStarted: "Pod",
-        node1: "mnode.Node" ,
-        scheduler1: "mscheduler.Scheduler",
-        serviceTargetForPod: "mservice.Service",
-        globalVar1: "GlobalVar"
-        ):
-
-        assert podStarted in scheduler1.podQueue
-        assert podStarted.toNode == node1
-        assert podStarted.targetService == serviceTargetForPod
-        assert podStarted.cpuRequest > -1
-        assert podStarted.memRequest > -1
-        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
-        assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
-
-        node1.currentFormalCpuConsumption += podStarted.cpuRequest
-        node1.currentFormalMemConsumption += podStarted.memRequest
-        globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
-        globalVar1.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node1        
-        scheduler1.queueLength -= 1
-        scheduler1.podQueue.remove(podStarted)
- 
-        serviceTargetForPod.amountOfActivePods += 1
-        podStarted.status_phase = STATUS_POD_RUNNING 
-        serviceTargetForPod.status_phase = STATUS_SERV_STARTED
-           
-    @planned(cost=1000)
-    def ScheduleQueueProcessed1(self, scheduler1: "mscheduler.Scheduler"):
-        scheduler1.queueLength -= 1
-
-        #to-do: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
-    
-    @planned(cost=100)
-    def ScheduleQueueProcessed(self, scheduler1: "mscheduler.Scheduler"):
-        assert  scheduler1.queueLength == 0
-        scheduler1.status_phase = STATUS_SCHED_CLEAN
 
 Pod.POD_NULL = Pod("NULL")
 Pod.POD_NULL.isNull = True
