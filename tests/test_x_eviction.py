@@ -23,7 +23,7 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         return evict_service.status == STATUS_SERV_INTERRUPTED and \
                                     scheduler.status == STATUS_SCHED_CLEAN
 
-@pytest.mark.skip(reason="no way of currently testing this")
+#@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
