@@ -7,4 +7,6 @@ from guardctl.model.system.primitives import Status
 
 
 class LoadBalancer(Object):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__( *args, **kwargs)
+    

@@ -85,8 +85,8 @@ class Problem2(ProblemTemplate):
         self.pod1.currentRealCpuConsumption =0
         self.pod1.currentRealMemConsumption =0
         self.pod1.status_phase = STATUS_POD_RUNNING
-        self.pod1.memRequest = 1
-        self.pod1.cpuRequest = 1
+        self.pod1.memRequest = 2
+        self.pod1.cpuRequest = 2
         self.pod1.podNotOverwhelmingLimits = True
         self.pod1.realInitialMemConsumption =0
         self.pod1.realInitialCpuConsumption =0
@@ -105,8 +105,8 @@ class Problem2(ProblemTemplate):
         self.pod2.currentRealCpuConsumption =0
         self.pod2.currentRealMemConsumption =0
         self.pod2.status_phase = STATUS_POD_RUNNING
-        self.pod2.memRequest = 1
-        self.pod2.cpuRequest = 1
+        self.pod2.memRequest = 2
+        self.pod2.cpuRequest = 2
         self.pod2.podNotOverwhelmingLimits = True
         self.pod2.realInitialMemConsumption =0
         self.pod2.realInitialCpuConsumption =0        
@@ -166,8 +166,8 @@ class Problem2(ProblemTemplate):
         self.pod5.currentRealCpuConsumption =0
         self.pod5.currentRealMemConsumption =0
         self.pod5.status_phase = STATUS_POD_PENDING
-        self.pod5.memRequest = 1
-        self.pod5.cpuRequest = 1
+        self.pod5.memRequest = 2
+        self.pod5.cpuRequest = 2
         self.pod5.podNotOverwhelmingLimits = True
         self.pod5.realInitialMemConsumption =0
         self.pod5.realInitialCpuConsumption =0
@@ -187,8 +187,8 @@ class Problem2(ProblemTemplate):
         self.pod6.currentRealCpuConsumption =0
         self.pod6.currentRealMemConsumption =0
         self.pod6.status_phase = STATUS_POD_PENDING
-        self.pod6.memRequest = 1
-        self.pod6.cpuRequest = 1
+        self.pod6.memRequest = 2
+        self.pod6.cpuRequest = 2
         self.pod6.podNotOverwhelmingLimits = True
         self.pod6.realInitialMemConsumption =0
         self.pod6.realInitialCpuConsumption =0
@@ -209,8 +209,8 @@ class Problem2(ProblemTemplate):
         self.pod7.currentRealCpuConsumption =0
         self.pod7.currentRealMemConsumption =0
         self.pod7.status_phase = STATUS_POD_PENDING
-        self.pod7.memRequest = 1
-        self.pod7.cpuRequest = 1
+        self.pod7.memRequest = 2
+        self.pod7.cpuRequest = 2
         self.pod7.podNotOverwhelmingLimits = True
         self.pod7.realInitialMemConsumption =0
         self.pod7.realInitialCpuConsumption =0

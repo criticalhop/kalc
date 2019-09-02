@@ -8,6 +8,9 @@ class PriorityClass(Object):
     priority: int
     preemptionPolicy: Type
 
+    def __init__(self, *args, **kwargs):
+        super().__init__( *args, **kwargs)
+
     @property
     def value(self):
         pass

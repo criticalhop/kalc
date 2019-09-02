@@ -18,10 +18,9 @@ class Scheduler(Object):
     @planned(cost=100)
     def SelectNode(self, 
         pod1: "mpod.Pod",
-        nullNode: "Node" ,
-        anyNode: "Node" ):
+        SelectedNode: "Node" ):
         assert pod1.toNode == Node.NODE_NULL
-        pod1.toNode = anyNode
+        pod1.toNode = SelectedNode
 
     @planned(cost=100)
     def StartPod(self, 

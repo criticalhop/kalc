@@ -17,9 +17,15 @@ class Node(HasLabel):
     podAmount: int
     isNull: bool
     status: String
+
     def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.isNull = False
+
+    # def __repr__(self):
+    #     return 'Nodename : ' + str(self._get_value()) 
+
+
 Node.NODE_NULL = Node("NULL")
 Node.NODE_NULL.isNull = True
 

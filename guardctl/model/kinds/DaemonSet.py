@@ -13,6 +13,9 @@ class DaemonSet(Controller, HasLimitsRequests):
     status: Status
     podList: Set["mpod.Pod"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__( *args, **kwargs)
+
     def hook_after_create(self, object_space):
         nodes = filter(lambda x: isinstance(x, Node), object_space)
         for node in nodes:

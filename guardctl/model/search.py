@@ -21,6 +21,8 @@ class K8SearchEviction(KubernetesModel):
                 scheduler1: "Scheduler",
                 currentFormalCpuConsumptionLoc: int,
                 currentFormalMemConsumptionLoc: int,
+                cpuCapacityLoc:int,
+                memCapacityLoc:int,
                 cpuRequestLoc: int,
                 memRequestLoc: int
             ):
@@ -32,8 +34,10 @@ class K8SearchEviction(KubernetesModel):
         assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
         assert pod1.cpuRequest == cpuRequestLoc
         assert pod1.memRequest == memRequestLoc
-        assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest <= globalVar1.cpuCapacity
-        assert globalVar1.currentFormalMemConsumption + pod1.memRequest <= globalVar1.memCapacity
+        assert globalVar1.cpuCapacity == cpuCapacityLoc 
+        assert globalVar1.memCapacity == memCapacityLoc 
+        # assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest > globalVar1.cpuCapacity
+        assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
 
         service1.status = STATUS_SERV_INTERRUPTED
     

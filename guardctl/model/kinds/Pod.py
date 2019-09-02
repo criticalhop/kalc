@@ -25,7 +25,6 @@ class Pod(HasLabel, HasLimitsRequests):
     targetService: "mservice.Service"
     atNode: "mnode.Node" 
     toNode: "mnode.Node" 
-    status: StatusPod
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
@@ -142,7 +141,7 @@ class Pod(HasLabel, HasLimitsRequests):
             pod1.cpuLimit = cpuCapacity
 
     @planned(cost=100)
-    def EvictAndReplaceLessPrioritizedPod(self,
+    def Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
                 node1: "mnode.Node" , # unused
@@ -151,6 +150,30 @@ class Pod(HasLabel, HasLimitsRequests):
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
         assert podPending in scheduler1.podQueue
+        assert podPending.toNode == Node.NODE_NULL
+        assert podPending.status_phase == STATUS_POD_PENDING 
+        assert priorityClassOfPendingPod == podPending.priorityClass
+        assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
+        # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
+        # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
+        # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
+        assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+        assert podToBeReplaced.status_phase == STATUS_POD_RUNNING 
+        podToBeReplaced.status_phase = STATUS_POD_KILLING
+
+    @planned(cost=100)
+    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
+                podPending: "Pod",
+                podToBeReplaced: "Pod",
+                nodeForPodPending: "mnode.Node" , # unused
+                scheduler1: "mscheduler.Scheduler",
+                priorityClassOfPendingPod: PriorityClass,
+                priorityClassOfPodToBeReplaced: PriorityClass
+                ):
+        assert podPending in scheduler1.podQueue
+        assert podPending.toNode == nodeForPodPending
+        assert nodeForPodPending.isNull == False
+        assert podToBeReplaced.atNode == nodeForPodPending
         assert podPending.status_phase == STATUS_POD_PENDING 
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
