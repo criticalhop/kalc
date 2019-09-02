@@ -25,4 +25,4 @@ def test_eviction_synthetic():
         i=0
         for a in p.plan:
             i=i+1
-            print(i,":",a.__class__.__name__,"\n",yaml.dump({k:v.poodle_internal__value if v else f"NONE{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
+            print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
