@@ -33,5 +33,4 @@ def test_eviction_fromfiles_strictgoal():
     p.run()
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
-    if p.plan:
-        assert p.plan
+    assert p.plan
