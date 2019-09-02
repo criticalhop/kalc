@@ -8,3 +8,4 @@ build/
 .coverage
 
 Session.vim
+test.log

@@ -4,6 +4,9 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.misc.const import *
 
+import logzero
+logzero.logfile("./test.log", disableStderrLogger=True)
+
 TEST_PODS = "./tests/kube-config/pods.yaml"
 TEST_NODES = "./tests/kube-config/nodes.yaml"
 TEST_DEPLOYMENTS = "./tests/kube-config/deployments.yaml"
