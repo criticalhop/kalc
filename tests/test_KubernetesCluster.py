@@ -34,6 +34,7 @@ class SingleGoalEvictionDetect(K8SearchEviction):
 
 PRIORITY = {'high-priority':1000000, 'system-cluster-critical': 2000000000, 'system-node-critical': 2000001000}
 
+@pytest.mark.skip(reason="need full string support in poodle to test this")
 def test_cluster_folder():
     mix = ProblemMixer()
     mix.load_dir(TEST_CLUSTER_FOLDER)
