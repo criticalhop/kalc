@@ -35,6 +35,7 @@ def test_eviction_fromfiles_strictgoal():
     p.run()
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
+        raise
     if p.plan:
         i=0
         for a in p.plan:
