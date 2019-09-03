@@ -1,9 +1,9 @@
 from poodle import Object
-from guardctl.model.system.primitives import Type, String
+from guardctl.model.system.primitives import Type
 
 
 class PriorityClass(Object):
-    metadata_name: String
+    metadata_name: str
 
     priority: int
     preemptionPolicy: Type

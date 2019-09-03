@@ -6,7 +6,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
-from guardctl.misc.object_factory import stringFactory, labelFactory
+from guardctl.misc.object_factory import labelFactory
 from guardctl.misc.problem import ProblemTemplate
 from guardctl.model.kinds.PriorityClass import PriorityClass
 
@@ -34,7 +34,6 @@ class SingleGoalEvictionDetect(K8SearchEviction):
 
 PRIORITY = {'high-priority':1000000, 'system-cluster-critical': 2000000000, 'system-node-critical': 2000001000}
 
-@pytest.mark.skip(reason="need full string support in poodle to test this")
 def test_cluster_folder():
     mix = ProblemMixer()
     mix.load_dir(TEST_CLUSTER_FOLDER)
@@ -46,9 +45,9 @@ def test_cluster_folder():
     have_high_priority=False
     for priorityClass in mix.state_objects:
         if isinstance(priorityClass, PriorityClass):
-            if priorityClass.metadata_name == stringFactory.get('high-priority'):
+            if priorityClass.metadata_name == 'high-priority':
                 have_high_priority = True
-                assert(priorityClass.priority == (1000 if PRIORITY[priorityClass.metadata_name] > 1000 else PRIORITY[priorityClass.metadata_name]))
+                assert(priorityClass.priority == (1000 if PRIORITY[str(priorityClass.metadata_name)] > 1000 else PRIORITY[str(priorityClass.metadata_name)]))
     assert(have_high_priority)
     
 

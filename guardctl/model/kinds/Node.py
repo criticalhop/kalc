@@ -1,11 +1,11 @@
 from typing import Set
-from guardctl.model.system.primitives import String, Label
+from guardctl.model.system.primitives import Label
 from guardctl.model.system.base import HasLabel
 
 class Node(HasLabel):
     # k8s attributes
-    metadata_ownerReferences__name: String
-    spec_priorityClassName: String
+    metadata_ownerReferences__name: str
+    spec_priorityClassName: str
     labels: Set[Label]
     cpuCapacity: int
     memCapacity: int
@@ -16,7 +16,7 @@ class Node(HasLabel):
     AmountOfPodsOverwhelmingMemLimits: int
     podAmount: int
     isNull: bool
-    status: String
+    status: str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

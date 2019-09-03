@@ -1,7 +1,7 @@
 import pytest
 
 from poodle import * 
-pytestmark = pytest.mark.skip("all tests still WIP")
+# pytestmark = pytest.mark.skip("all tests still WIP")
 
 
 daemonYAMLPath = "./tests/kube-config/daemon-set-custom.yaml"
@@ -100,6 +100,7 @@ def test_emuFile():
     ky.loadPriorityAsDictFromCloud("/home/andrey/shV1beta1_api_list_priority_class")
 #     ky = KubernetesYAMLLoad(None, )
 
+@pytest.mark.skip(reason="no way of currently testing this")
 def test_loadAllFromFiles():
     dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
     ky = KubernetesYAMLLoad(*dumpList)
@@ -123,6 +124,7 @@ def test_loadAllFromFiles():
         #     cpu: 200m
         #     memory: 200Mi
 
+@pytest.mark.skip(reason="no way of currently testing this")
 def test_problemAllFromFile():
     dumpList = [daemonYAMLPath, './examples/currentCloud/coreV1_api_list_node.yaml', './examples/currentCloud/coreV1_api_list_pod_for_all_namespaces.yaml',  './examples/currentCloud/coreV1_list_service_for_all_namespaces.yaml','./examples/currentCloud/shV1beta1_api_list_priority_class.yaml']
     ky = KubernetesYAMLLoad(*dumpList)

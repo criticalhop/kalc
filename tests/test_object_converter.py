@@ -1,8 +1,8 @@
 from guardctl.misc.util import k8s_to_domain_object
-from guardctl.model.system.primitives import String, Label
+from guardctl.model.system.primitives import Label
 
 def test_convert_string():
-    assert isinstance(k8s_to_domain_object("just_string"), String)
+    assert isinstance(k8s_to_domain_object("just_string"), str)
 
 def test_convert_int():
     assert k8s_to_domain_object("123") == 123

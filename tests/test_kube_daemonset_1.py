@@ -6,7 +6,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
-from guardctl.misc.object_factory import stringFactory, labelFactory
+from guardctl.misc.object_factory import labelFactory
 from  tests.problem.goals import *
 import yaml
 
@@ -20,6 +20,7 @@ def test_eviction_synthetic():
     p.run()
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
+        raise
     if p.plan:
         i=0
         for a in p.plan:

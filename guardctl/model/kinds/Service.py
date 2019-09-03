@@ -3,7 +3,7 @@ from guardctl.model.system.primitives import Label, StatusServ
 from guardctl.model.kinds.Node import Node
 from guardctl.model.system.base import HasLabel
 import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.primitives import StatusSched, String
+from guardctl.model.system.primitives import StatusSched
 
 
 class Service(HasLabel):
@@ -11,7 +11,7 @@ class Service(HasLabel):
     lastPod: "mpod.Pod"
     atNode: Node
     amountOfActivePods: int
-    status: String
+    status: str
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)

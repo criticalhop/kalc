@@ -1,9 +1,6 @@
 from poodle import Object
 
-
-class String(Object):
-    pass
-    
+ 
 class Type(Object):
     pass
 

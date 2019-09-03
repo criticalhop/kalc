@@ -7,17 +7,16 @@ import guardctl.model.system.Scheduler as mscheduler
 import guardctl.model.kinds.Node as mnode
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Controller import Controller
-from guardctl.model.system.primitives import String, Label
+from guardctl.model.system.primitives import Label
 
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.globals import GlobalVar
-from guardctl.model.system.primitives import String
 
 
 class Pod(HasLabel, HasLimitsRequests):
     # k8s attributes
-    metadata_ownerReferences__name: String
-    spec_priorityClassName: String
+    metadata_ownerReferences__name: str
+    spec_priorityClassName: str
 
     # internal model attributes
     ownerReferences: Controller
@@ -29,9 +28,9 @@ class Pod(HasLabel, HasLimitsRequests):
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
     currentRealMemConsumption: int
-    spec_nodeName: String
+    spec_nodeName: str
     priorityClass: PriorityClass
-    status_phase: String
+    status_phase: str
     isNull: bool
     # amountOfActiveRequests: int # For requests
 
