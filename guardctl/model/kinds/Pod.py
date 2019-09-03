@@ -41,7 +41,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.targetService = self.TARGET_SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
-        self.status_phase = STATUS_SERV_PENDING
+        self.status_phase = STATUS_POD_PENDING
         self.isNull = True
         # self.amountOfActiveRequests = 0 # For Requests
 
