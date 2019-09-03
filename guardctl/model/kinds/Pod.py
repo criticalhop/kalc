@@ -51,6 +51,8 @@ class Pod(HasLabel, HasLimitsRequests):
         else:
             logger.warning("Orphan Pod loaded")
 
+    def __repr__(self):
+        return 'Podname : ' + str(self._get_value()) 
         
     # we just ignore priority for now
     # @property
@@ -148,16 +150,16 @@ class Pod(HasLabel, HasLimitsRequests):
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
-        assert podPending in scheduler1.podQueue
-        assert podPending.toNode == Node.NODE_NULL
+        # assert podPending in scheduler1.podQueue
+        # assert podPending.toNode == Node.NODE_NULL
         assert podPending.status_phase == STATUS_POD_PENDING 
-        assert priorityClassOfPendingPod == podPending.priorityClass
-        assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
-        # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
-        # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
-        # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
-        assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podToBeReplaced.status_phase == STATUS_POD_RUNNING 
+        # assert priorityClassOfPendingPod == podPending.priorityClass
+        # assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
+        # # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
+        # # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
+        # # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
+        # assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+        # assert podToBeReplaced.status_phase == STATUS_POD_RUNNING 
         podToBeReplaced.status_phase = STATUS_POD_KILLING
 
     @planned(cost=100)
@@ -169,18 +171,18 @@ class Pod(HasLabel, HasLimitsRequests):
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
-        assert podPending in scheduler1.podQueue
-        assert podPending.toNode == nodeForPodPending
-        assert nodeForPodPending.isNull == False
-        assert podToBeReplaced.atNode == nodeForPodPending
+        # assert podPending in scheduler1.podQueue
+        # assert podPending.toNode == nodeForPodPending
+        # assert nodeForPodPending.isNull == False
+        # assert podToBeReplaced.atNode == nodeForPodPending
         assert podPending.status_phase == STATUS_POD_PENDING 
-        assert priorityClassOfPendingPod == podPending.priorityClass
-        assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
-        # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
-        # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
-        # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
-        assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podToBeReplaced.status_phase == STATUS_POD_RUNNING 
+        # assert priorityClassOfPendingPod == podPending.priorityClass
+        # assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass 
+        # # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
+        # # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
+        # # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
+        # assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+        # assert podToBeReplaced.status_phase == STATUS_POD_RUNNING 
         podToBeReplaced.status_phase = STATUS_POD_KILLING
 
     @planned
@@ -255,7 +257,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
         assert podBeingKilled.status_phase ==  STATUS_POD_KILLING
-        # assert podBeingKilled.amountOfActiveRequests == 0
+        # assert podBeingKilled.amountOfActiveRequests == 0 #for requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
         nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
