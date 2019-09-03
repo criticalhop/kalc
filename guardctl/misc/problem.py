@@ -48,7 +48,8 @@ class ProblemTemplate:
                 methods=self_methods + list(model_methods), 
                 space=list(self.__dict__.values())+self.objectList,
                 goal=lambda:(self.goal()),
-                timeout=timeout
+                timeout=timeout,
+                sessionName=self.__class__.__name__
                 #exit=self.exit
             )
         except SchedulingError:
