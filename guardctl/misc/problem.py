@@ -32,7 +32,8 @@ class ProblemTemplate:
                 except:
                     pass
 
-    def run(self, timeout=30):
+    def run(self, timeout=30, sessionName=None):
+        if not sessionName: sessionName = self.__class__.__name__
         self.problem()
         self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m))]
         model_methods = []
@@ -49,7 +50,7 @@ class ProblemTemplate:
                 space=list(self.__dict__.values())+self.objectList,
                 goal=lambda:(self.goal()),
                 timeout=timeout,
-                sessionName=self.__class__.__name__
+                sessionName=sessionName
                 #exit=self.exit
             )
         except SchedulingError:

@@ -17,7 +17,9 @@ TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 def test_eviction_synthetic():
     p = TestServiceInterrupted()
-    p.run()
+    p.run(sessionName="test_eviction_synthetic")
+    assert len(list(filter(lambda x: isinstance(x, Pod), p.objectList))) == 7
+    # print("PODS:", len(list(filter(lambda x: isinstance(x, Pod), p.objectList))))
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
         raise

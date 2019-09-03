@@ -32,7 +32,8 @@ def test_eviction_fromfiles_strictgoal():
     k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
     p = SingleGoalEvictionDetect(k.state_objects)
-    p.run()
+    p.run(timeout=60, sessionName="test_eviction_fromfiles_strictgoal")
+    # p.run(timeout=60)
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
         raise
