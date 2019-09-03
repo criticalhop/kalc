@@ -6,7 +6,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
-from guardctl.misc.object_factory import stringFactory, labelFactory
+from guardctl.misc.object_factory import labelFactory
 from  tests.problem.goals import *
 import yaml
 

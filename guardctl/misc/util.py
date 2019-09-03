@@ -1,5 +1,5 @@
 from collections import Mapping, Set, Sequence 
-from guardctl.misc.object_factory import labelFactory, stringFactory
+from guardctl.misc.object_factory import labelFactory 
 import string
 
 import dpath.util
@@ -67,7 +67,7 @@ def k8s_to_domain_object(obj):
     elif isinstance(obj, str) and try_int:
         return int(obj)
     elif isinstance(obj, str) and not obj[0] in string.digits+"-":
-        return stringFactory.get(obj)
+        return obj
     else:
         raise ValueError("Value type not suported: %s" % repr(obj))
 

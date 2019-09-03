@@ -1,15 +1,14 @@
 from poodle import Object
 from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, Type
-from guardctl.misc.object_factory import stringFactory
 
-STATUS_LIM_MET = stringFactory.get("Limit is met")
-STATUS_LIM_EXCEEDED = stringFactory.get("LImits is exceded")
-STATUS_POD_FAILED =  stringFactory.get("Inactive")
-STATUS_POD_KILLING = stringFactory.get("Killing")
-STATUS_POD_PENDING = stringFactory.get("Pending") 
-STATUS_POD_RUNNING = stringFactory.get("Running")
-STATUS_NODE_ACTIVE = stringFactory.get("Active")
-STATUS_NODE_INACTIVE = stringFactory.get("Inactive")
+STATUS_LIM_MET = "Limit is met"
+STATUS_LIM_EXCEEDED = "LImits is exceded"
+STATUS_POD_FAILED =  "Inactive"
+STATUS_POD_KILLING = "Killing"
+STATUS_POD_PENDING = "Pending" 
+STATUS_POD_RUNNING = "Running"
+STATUS_NODE_ACTIVE = "Active"
+STATUS_NODE_INACTIVE = "Inactive"
 # STATUS_REQ_ATKUBEPROXY = StatusReq()
 # STATUS_REQ_ATLOADBALANCER = StatusReq()
 # STATUS_REQ_ATPODINPUT = StatusReq()
@@ -27,13 +26,13 @@ STATUS_NODE_INACTIVE = stringFactory.get("Inactive")
 # STATUS_REQ_RESOURCESCONSUMED = StatusReq()
 # STATUS_REQ_RESOURCESRELEASED = StatusReq()
 # STATUS_REQ_RUNNING = StatusReq()
-STATUS_SCHED_CHANGED =  stringFactory.get("Changed")
-STATUS_SCHED_CLEAN   =  stringFactory.get("Clean")
-STATUS_SERV_INTERRUPTED = stringFactory.get("Interrupted")
-STATUS_SERV_PENDING = stringFactory.get("Pending")
-STATUS_SERV_STARTED = stringFactory.get("Started")
+STATUS_SCHED_CHANGED =  "Changed"
+STATUS_SCHED_CLEAN   =  "Clean"
+STATUS_SERV_INTERRUPTED = "Interrupted"
+STATUS_SERV_PENDING = "Pending"
+STATUS_SERV_STARTED = "Started"
 
 
 
-TYPE_POLICY_PreemptLowerPriority = stringFactory.get("PreemptLowerPriority")
-TYPE_POLICY_NEVER = stringFactory.get("Never")
+TYPE_POLICY_PreemptLowerPriority = "PreemptLowerPriority"
+TYPE_POLICY_NEVER = "Never"

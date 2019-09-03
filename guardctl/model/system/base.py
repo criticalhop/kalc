@@ -1,7 +1,7 @@
 from typing import Set
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
-from guardctl.model.system.primitives import String, Label
-from guardctl.misc.object_factory import labelFactory, stringFactory
+from guardctl.model.system.primitives import Label
+from guardctl.misc.object_factory import labelFactory
 from guardctl.misc.const import *
 
 from poodle import Object
@@ -9,17 +9,17 @@ from poodle import Object
 
 class HasLabel(Object):
     metadata_labels: Set[Label]
-    metadata_name: String
+    metadata_name: str
 
 class HasLimitsRequests(Object):
     """A mixin class to implement Limts/Requests loading and initialiaztion"""
     memRequest: int
     cpuRequest: int
     memLimit: int
-    memLimitsStatus: String
+    memLimitsStatus: str
     """Status to set if the limit is reached"""
     cpuLimit: int
-    cpuLimitsStatus: String
+    cpuLimitsStatus: str
     """Status to set if the limit is reached"""
 
     def __init__(self, *args, **kwargs):

@@ -3,12 +3,12 @@ from typing import Set
 from guardctl.misc.const import *
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.Node import Node
-from guardctl.model.system.primitives import StatusSched, String
+from guardctl.model.system.primitives import StatusSched
 
 
 class Scheduler(Object):
     queueLength: int
-    status: String
+    status: str
     podQueue: Set["mpod.Pod"]
 
     def __init__(self, *args, **kwargs):
