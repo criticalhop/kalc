@@ -237,7 +237,6 @@ class Problem2(ProblemTemplate):
         self.pod3.nextPod = self.pod4
         self.pod2.nextPod = self.pod3
         self.pod1.nextPod = self.pod2
-        mpod.Pod.POD_NULL.nextPod = self.pod1       
         
         
         self.globalVar1 = self.addObject(mglobals.GlobalVar('globalVar1'))
