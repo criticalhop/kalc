@@ -13,6 +13,7 @@ class Service(HasLabel):
     atNode: Node
     amountOfActivePods: int
     status: str
+    metadata_name: str
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
