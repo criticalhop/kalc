@@ -43,12 +43,21 @@ class K8SearchEviction(KubernetesModel):
     
 
     
-    @planned(cost=10000)
-    def UnsolveableServiceStart(self,
+    # @planned(cost=10000)
+    # def UnsolveableServiceStart(self,
+    #             service1: Service,
+    #             scheduler1: "mscheduler.Scheduler"
+    #         ):
+    #     assert scheduler1.status == STATUS_SCHED_CHANGED 
+    #     service1.status = STATUS_SERV_STARTED
+    
+    @planned(cost=100)
+    def PodsConnectedToServices(self,
                 service1: Service,
-                scheduler1: "mscheduler.Scheduler"
+                scheduler1: "mscheduler.Scheduler",
+                pod1: Pod
             ):
-        assert scheduler1.status == STATUS_SCHED_CHANGED 
+        assert service1.amountOfActivePods > 0
         service1.status = STATUS_SERV_STARTED
 
     def goal(self):
