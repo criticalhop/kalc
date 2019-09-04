@@ -77,6 +77,7 @@ def test_service_active_pods():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
     k._build_state()
+    
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
