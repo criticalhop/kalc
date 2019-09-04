@@ -24,7 +24,7 @@ class KubernetesCluster:
             else: self.load_item(doc, create)
 
     def load_item(self, item, create=False):
-        assert isinstance(item, dict)
+        assert isinstance(item, dict), item
         item["__created"] = create
         self.dict_states[item["kind"]].append(item)
 

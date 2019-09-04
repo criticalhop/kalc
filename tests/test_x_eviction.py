@@ -37,14 +37,14 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         pod = next(filter(lambda x: isinstance(x, Pod), self.objectList))
         return  pod.status_phase == STATUS_POD_PENDING   #  evict_service.status == scheduler.status == STATUS_SCHED_CLEAN and STATUS_SERV_INTERRUPTED 
                                     
-
 def test_priority_is_loaded():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
     k._build_state()
     priorityClasses = filter(lambda x: isinstance(x, PriorityClass), k.state_objects)
     for p in priorityClasses:
-        if p.metadata_name == "high-priority" and p.preemptionPolicy == TYPE_POLICY_PreemptLowerPriority:
+        if p.metadata_name == "high-priority" and p.preemptionPolicy == TYPE_POLICY_PreemptLowerPriority\
+            and p.priority > 0:
             return
     raise ValueError("Could not find priority loded")
 
@@ -54,11 +54,57 @@ def test_service_load():
     k._build_state()
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     for p in objects:
-        if p.metadata_name == "redis-master-evict" and labelFactory.get("app", "redis-evict") in p.metadata_labels:
+        if p.metadata_name == "redis-master-evict" and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels:
             return
     raise ValueError("Could not find service loded")
 
-def test_daemonset_load():
+def test_service_status():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    for p in objects:
+        if p.metadata_name == "redis-master-evict" and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+                p.status == STATUS_SERV_STARTED:
+            return
+    raise ValueError("Could not find service loded")
+
+def test_service_active_pods():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    for p in objects:
+        if p.metadata_name == "redis-master-evict" and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+                p.status == STATUS_SERV_STARTED and\
+                    p.amountOfActivePods > 0:
+            return
+    raise ValueError("Could not find service loded")
+
+
+def test_service_link_to_pods():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    for p in objects:
+        if p.metadata_name == "redis-master-evict" and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+                p.status == STATUS_SERV_STARTED:
+                serv = p
+    for p in objects:
+        if p.metadata_name == "redis-master-evict" and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+                p.status == STATUS_SERV_STARTED:
+                if p.targetService == serv:
+                    return
+    raise ValueError("Could not find service loded")
+
+def test_queue_status():
+    "test length and status of scheduler queue after load"
     pass
 
 #@pytest.mark.skip(reason="no way of currently testing this")

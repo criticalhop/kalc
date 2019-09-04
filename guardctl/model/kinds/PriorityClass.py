@@ -12,6 +12,7 @@ class PriorityClass(Object):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.preemptionPolicy = TYPE_POLICY_PreemptLowerPriority
+        self.priority = 0
 
     @property
     def value(self):
