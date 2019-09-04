@@ -1,6 +1,7 @@
 import pytest
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.kinds.Pod import Pod
+from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.misc.object_factory import labelFactory
@@ -77,3 +78,13 @@ def test_load_folder_load_pod_labels():
         if labelFactory.get("app", "redis-evict") in ds.metadata_labels._get_value():
             return
     raise Exception("Can not check labels load")
+
+def test_spec_selector_labels():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    for ds in filter(lambda x: isinstance(x, Service), k.state_objects):
+        if labelFactory.get("app", "redis-evict") in ds.spec_selector._get_value():
+            return
+    raise Exception("Can not check labels load")
+
