@@ -14,8 +14,11 @@ TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 class SingleGoalEvictionDetect(K8SearchEviction):
     def goal(self):
-        for ob in self.objectList:
-            print(str(ob))
+        # for ob in self.objectList:
+        #     print(str(ob))
+        podlist = filter(lambda x: isinstance(x, Pod), self.objectList)
+        for poditem in podlist:
+            print("pod:"+ str(poditem.metadata_name._get_value()) + " status_phase: " + str(poditem.status_phase) + " spec_nodeName: " + str(poditem.spec_nodeName._get_value()) + " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + " cpuLimit: " + str(poditem.cpuLimit._get_value()) + " memLimit: " + str(poditem.memLimit._get_value()))
 
         evict_service = next(filter(lambda x: isinstance(x, Service) and \
             labelFactory.get("app", "redis-evict") in x.spec_selector._get_value(),
