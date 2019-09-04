@@ -46,7 +46,7 @@ def test_service_load():
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels:
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value():
             return
     raise ValueError("Could not find service loded")
 
@@ -57,7 +57,7 @@ def test_service_status():
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV_STARTED:
             return
     raise ValueError("Could not find service loded")
@@ -69,7 +69,7 @@ def test_service_active_pods():
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV_STARTED and\
                     p.amountOfActivePods > 0:
             return
@@ -83,12 +83,12 @@ def test_service_link_to_pods():
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV_STARTED:
                 serv = p
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV_STARTED:
                 if p.targetService == serv:
                     return

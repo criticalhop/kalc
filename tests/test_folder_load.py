@@ -2,6 +2,8 @@ import pytest
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
+from guardctl.model.kinds.DaemonSet import DaemonSet
+from guardctl.misc.object_factory import labelFactory
 from guardctl.misc.const import *
 
 import logzero
@@ -57,8 +59,21 @@ def test_load_folder():
     for pod in pods:
         assert pod.atNode._property_value != Node.NODE_NULL
 
-def test_load_folder_create():
+def test_load_folder_create_labels():
     k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
+    # k.load_dir(TEST_CLUSTER_FOLDER)
     k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
+    for ds in filter(lambda x: isinstance(x, DaemonSet), k.state_objects):
+        if labelFactory.get("k8s-app", "fluentd-logging") in ds.metadata_labels._get_value():
+            return
+    raise Exception("Can not check labels load")
+
+def test_load_folder_load_pod_labels():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    for ds in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if labelFactory.get("app", "redis-evict") in ds.metadata_labels._get_value():
+            return
+    raise Exception("Can not check labels load")

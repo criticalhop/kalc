@@ -6,23 +6,23 @@ items:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
-    creationTimestamp: 2019-08-31T01:15:01Z
-    generateName: foobar-wrong-1567214100-
+    creationTimestamp: 2019-09-04T21:00:08Z
+    generateName: foobar-wrong-1567630800-
     labels:
-      controller-uid: c14d42dc-cb8c-11e9-98f3-42010a8000c4
-      job-name: foobar-wrong-1567214100
-    name: foobar-wrong-1567214100-qmwvz
+      controller-uid: fa131869-cf56-11e9-98f3-42010a8000c4
+      job-name: foobar-wrong-1567630800
+    name: foobar-wrong-1567630800-dcmvp
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
       blockOwnerDeletion: true
       controller: true
       kind: Job
-      name: foobar-wrong-1567214100
-      uid: c14d42dc-cb8c-11e9-98f3-42010a8000c4
-    resourceVersion: "19422675"
-    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567214100-qmwvz
-    uid: c15129d1-cb8c-11e9-98f3-42010a8000c4
+      name: foobar-wrong-1567630800
+      uid: fa131869-cf56-11e9-98f3-42010a8000c4
+    resourceVersion: "20771743"
+    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567630800-dcmvp
+    uid: fa15bce9-cf56-11e9-98f3-42010a8000c4
   spec:
     containers:
     - command:
@@ -66,26 +66,26 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:15:01Z
+      lastTransitionTime: 2019-09-04T21:00:08Z
       reason: PodCompleted
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:25:02Z
+      lastTransitionTime: 2019-09-04T21:10:10Z
       reason: PodCompleted
       status: "False"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:25:02Z
+      lastTransitionTime: 2019-09-04T21:10:10Z
       reason: PodCompleted
       status: "False"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:15:01Z
+      lastTransitionTime: 2019-09-04T21:00:08Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://a3e3e8ede96efd18fc3bb086fc433d3027d51511d5315d13e0911451d465e35f
+    - containerID: docker://2faa795d7896e72aacb8ce97b8963b09aab65e7b3fe15c13278aac4b56c7b376
       image: bash:latest
       imageID: docker-pullable://bash@sha256:b7648de8f07dd0de784e19f058f3e30c4b2890ef7be3994b4226cdd194871d78
       lastState: {}
@@ -94,39 +94,39 @@ items:
       restartCount: 0
       state:
         terminated:
-          containerID: docker://a3e3e8ede96efd18fc3bb086fc433d3027d51511d5315d13e0911451d465e35f
+          containerID: docker://2faa795d7896e72aacb8ce97b8963b09aab65e7b3fe15c13278aac4b56c7b376
           exitCode: 0
-          finishedAt: 2019-08-31T01:25:02Z
+          finishedAt: 2019-09-04T21:10:09Z
           reason: Completed
-          startedAt: 2019-08-31T01:15:01Z
+          startedAt: 2019-09-04T21:00:09Z
     hostIP: 10.128.0.17
     phase: Succeeded
-    podIP: 10.8.4.140
+    podIP: 10.8.4.21
     qosClass: Burstable
-    startTime: 2019-08-31T01:15:01Z
+    startTime: 2019-09-04T21:00:08Z
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
-    creationTimestamp: 2019-08-31T01:20:01Z
-    generateName: foobar-wrong-1567214400-
+    creationTimestamp: 2019-09-04T21:05:08Z
+    generateName: foobar-wrong-1567631100-
     labels:
-      controller-uid: 747dd207-cb8d-11e9-98f3-42010a8000c4
-      job-name: foobar-wrong-1567214400
-    name: foobar-wrong-1567214400-x25v5
+      controller-uid: ad327edd-cf57-11e9-98f3-42010a8000c4
+      job-name: foobar-wrong-1567631100
+    name: foobar-wrong-1567631100-f726r
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
       blockOwnerDeletion: true
       controller: true
       kind: Job
-      name: foobar-wrong-1567214400
-      uid: 747dd207-cb8d-11e9-98f3-42010a8000c4
-    resourceVersion: "19423645"
-    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567214400-x25v5
-    uid: 747f68ae-cb8d-11e9-98f3-42010a8000c4
+      name: foobar-wrong-1567631100
+      uid: ad327edd-cf57-11e9-98f3-42010a8000c4
+    resourceVersion: "20772713"
+    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567631100-f726r
+    uid: ad36cf01-cf57-11e9-98f3-42010a8000c4
   spec:
     containers:
     - command:
@@ -170,26 +170,26 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:20:01Z
+      lastTransitionTime: 2019-09-04T21:05:08Z
       reason: PodCompleted
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:30:03Z
+      lastTransitionTime: 2019-09-04T21:15:09Z
       reason: PodCompleted
       status: "False"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:30:03Z
+      lastTransitionTime: 2019-09-04T21:15:09Z
       reason: PodCompleted
       status: "False"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:20:01Z
+      lastTransitionTime: 2019-09-04T21:05:08Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://207553ee333e69112937fcda4b378255c454dc40ed4e584778d77c670f857b28
+    - containerID: docker://4080fe2eff1f253f14f5f1a6e6796620c44c81c7b35cb6078320918c9ba79a59
       image: bash:latest
       imageID: docker-pullable://bash@sha256:b7648de8f07dd0de784e19f058f3e30c4b2890ef7be3994b4226cdd194871d78
       lastState: {}
@@ -198,39 +198,39 @@ items:
       restartCount: 0
       state:
         terminated:
-          containerID: docker://207553ee333e69112937fcda4b378255c454dc40ed4e584778d77c670f857b28
+          containerID: docker://4080fe2eff1f253f14f5f1a6e6796620c44c81c7b35cb6078320918c9ba79a59
           exitCode: 0
-          finishedAt: 2019-08-31T01:30:02Z
+          finishedAt: 2019-09-04T21:15:09Z
           reason: Completed
-          startedAt: 2019-08-31T01:20:02Z
+          startedAt: 2019-09-04T21:05:09Z
     hostIP: 10.128.0.17
     phase: Succeeded
-    podIP: 10.8.4.141
+    podIP: 10.8.4.22
     qosClass: Burstable
-    startTime: 2019-08-31T01:20:01Z
+    startTime: 2019-09-04T21:05:08Z
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
-    creationTimestamp: 2019-08-31T01:25:02Z
-    generateName: foobar-wrong-1567214700-
+    creationTimestamp: 2019-09-04T21:10:09Z
+    generateName: foobar-wrong-1567631400-
     labels:
-      controller-uid: 27bdc0f0-cb8e-11e9-98f3-42010a8000c4
-      job-name: foobar-wrong-1567214700
-    name: foobar-wrong-1567214700-n9p8l
+      controller-uid: 6059aa6c-cf58-11e9-98f3-42010a8000c4
+      job-name: foobar-wrong-1567631400
+    name: foobar-wrong-1567631400-thh5f
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
       blockOwnerDeletion: true
       controller: true
       kind: Job
-      name: foobar-wrong-1567214700
-      uid: 27bdc0f0-cb8e-11e9-98f3-42010a8000c4
-    resourceVersion: "19424664"
-    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567214700-n9p8l
-    uid: 27c19dbe-cb8e-11e9-98f3-42010a8000c4
+      name: foobar-wrong-1567631400
+      uid: 6059aa6c-cf58-11e9-98f3-42010a8000c4
+    resourceVersion: "20773689"
+    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567631400-thh5f
+    uid: 605dab15-cf58-11e9-98f3-42010a8000c4
   spec:
     containers:
     - command:
@@ -274,26 +274,26 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:25:02Z
+      lastTransitionTime: 2019-09-04T21:10:09Z
       reason: PodCompleted
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:35:03Z
+      lastTransitionTime: 2019-09-04T21:20:10Z
       reason: PodCompleted
       status: "False"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:35:03Z
+      lastTransitionTime: 2019-09-04T21:20:10Z
       reason: PodCompleted
       status: "False"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:25:02Z
+      lastTransitionTime: 2019-09-04T21:10:09Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://71d4f066576ce446492b5a09ff93cb15aa964b44098ef31369c75122bb413e23
+    - containerID: docker://ffbbb369df3cc359f24da3df9da1f947e41bf48f5e12415e86f6023654a27d74
       image: bash:latest
       imageID: docker-pullable://bash@sha256:b7648de8f07dd0de784e19f058f3e30c4b2890ef7be3994b4226cdd194871d78
       lastState: {}
@@ -302,39 +302,39 @@ items:
       restartCount: 0
       state:
         terminated:
-          containerID: docker://71d4f066576ce446492b5a09ff93cb15aa964b44098ef31369c75122bb413e23
+          containerID: docker://ffbbb369df3cc359f24da3df9da1f947e41bf48f5e12415e86f6023654a27d74
           exitCode: 0
-          finishedAt: 2019-08-31T01:35:03Z
+          finishedAt: 2019-09-04T21:20:10Z
           reason: Completed
-          startedAt: 2019-08-31T01:25:03Z
+          startedAt: 2019-09-04T21:10:10Z
     hostIP: 10.128.0.17
     phase: Succeeded
-    podIP: 10.8.4.142
+    podIP: 10.8.4.23
     qosClass: Burstable
-    startTime: 2019-08-31T01:25:02Z
+    startTime: 2019-09-04T21:10:09Z
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
-    creationTimestamp: 2019-08-31T01:30:03Z
-    generateName: foobar-wrong-1567215000-
+    creationTimestamp: 2019-09-04T21:15:09Z
+    generateName: foobar-wrong-1567631700-
     labels:
-      controller-uid: db4f6a63-cb8e-11e9-98f3-42010a8000c4
-      job-name: foobar-wrong-1567215000
-    name: foobar-wrong-1567215000-kbwwt
+      controller-uid: 1382150a-cf59-11e9-98f3-42010a8000c4
+      job-name: foobar-wrong-1567631700
+    name: foobar-wrong-1567631700-vfn58
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
       blockOwnerDeletion: true
       controller: true
       kind: Job
-      name: foobar-wrong-1567215000
-      uid: db4f6a63-cb8e-11e9-98f3-42010a8000c4
-    resourceVersion: "19423667"
-    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567215000-kbwwt
-    uid: db56458b-cb8e-11e9-98f3-42010a8000c4
+      name: foobar-wrong-1567631700
+      uid: 1382150a-cf59-11e9-98f3-42010a8000c4
+    resourceVersion: "20774691"
+    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567631700-vfn58
+    uid: 13851294-cf59-11e9-98f3-42010a8000c4
   spec:
     containers:
     - command:
@@ -378,23 +378,127 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:30:03Z
+      lastTransitionTime: 2019-09-04T21:15:09Z
+      reason: PodCompleted
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:30:04Z
-      status: "True"
+      lastTransitionTime: 2019-09-04T21:25:11Z
+      reason: PodCompleted
+      status: "False"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:30:04Z
-      status: "True"
+      lastTransitionTime: 2019-09-04T21:25:11Z
+      reason: PodCompleted
+      status: "False"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:30:03Z
+      lastTransitionTime: 2019-09-04T21:15:09Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://99c8ec9742ac9f4d3df5bc99cb79282da9e0208cd36cf8140d301889ec32e728
+    - containerID: docker://9cf682c840133b59cd8396304416cb5fccfe385c40a5867dd95f1a425da6787f
+      image: bash:latest
+      imageID: docker-pullable://bash@sha256:b7648de8f07dd0de784e19f058f3e30c4b2890ef7be3994b4226cdd194871d78
+      lastState: {}
+      name: hello
+      ready: false
+      restartCount: 0
+      state:
+        terminated:
+          containerID: docker://9cf682c840133b59cd8396304416cb5fccfe385c40a5867dd95f1a425da6787f
+          exitCode: 0
+          finishedAt: 2019-09-04T21:25:10Z
+          reason: Completed
+          startedAt: 2019-09-04T21:15:10Z
+    hostIP: 10.128.0.17
+    phase: Succeeded
+    podIP: 10.8.4.24
+    qosClass: Burstable
+    startTime: 2019-09-04T21:15:09Z
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        hello'
+    creationTimestamp: 2019-09-04T21:20:00Z
+    generateName: foobar-wrong-1567632000-
+    labels:
+      controller-uid: c0af57f1-cf59-11e9-98f3-42010a8000c4
+      job-name: foobar-wrong-1567632000
+    name: foobar-wrong-1567632000-xmwvq
+    namespace: default
+    ownerReferences:
+    - apiVersion: batch/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Job
+      name: foobar-wrong-1567632000
+      uid: c0af57f1-cf59-11e9-98f3-42010a8000c4
+    resourceVersion: "20773658"
+    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567632000-xmwvq
+    uid: c0b32609-cf59-11e9-98f3-42010a8000c4
+  spec:
+    containers:
+    - command:
+      - sleep
+      - "600"
+      image: bash
+      imagePullPolicy: Always
+      name: hello
+      resources:
+        requests:
+          cpu: 100m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-kchbk
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    nodeName: gke-tesg1-default-pool-ff7a1295-dmtd
+    priority: 0
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-kchbk
+      secret:
+        defaultMode: 420
+        secretName: default-token-kchbk
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: 2019-09-04T21:20:00Z
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: 2019-09-04T21:20:01Z
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: 2019-09-04T21:20:01Z
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: 2019-09-04T21:20:00Z
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://c21d07f2d034f562bd5a5884f1420f4c729851f0227d1809fde7afe076be013d
       image: bash:latest
       imageID: docker-pullable://bash@sha256:b7648de8f07dd0de784e19f058f3e30c4b2890ef7be3994b4226cdd194871d78
       lastState: {}
@@ -403,35 +507,35 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: 2019-08-31T01:30:04Z
+          startedAt: 2019-09-04T21:20:01Z
     hostIP: 10.128.0.17
     phase: Running
-    podIP: 10.8.4.143
+    podIP: 10.8.4.25
     qosClass: Burstable
-    startTime: 2019-08-31T01:30:03Z
+    startTime: 2019-09-04T21:20:00Z
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
-    creationTimestamp: 2019-08-31T01:35:05Z
-    generateName: foobar-wrong-1567215300-
+    creationTimestamp: 2019-09-04T21:25:01Z
+    generateName: foobar-wrong-1567632300-
     labels:
-      controller-uid: 8eeb57d9-cb8f-11e9-98f3-42010a8000c4
-      job-name: foobar-wrong-1567215300
-    name: foobar-wrong-1567215300-nhftz
+      controller-uid: 742d1524-cf5a-11e9-98f3-42010a8000c4
+      job-name: foobar-wrong-1567632300
+    name: foobar-wrong-1567632300-hk7rh
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
       blockOwnerDeletion: true
       controller: true
       kind: Job
-      name: foobar-wrong-1567215300
-      uid: 8eeb57d9-cb8f-11e9-98f3-42010a8000c4
-    resourceVersion: "19424691"
-    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567215300-nhftz
-    uid: 8eedc542-cb8f-11e9-98f3-42010a8000c4
+      name: foobar-wrong-1567632300
+      uid: 742d1524-cf5a-11e9-98f3-42010a8000c4
+    resourceVersion: "20774663"
+    selfLink: /api/v1/namespaces/default/pods/foobar-wrong-1567632300-hk7rh
+    uid: 743032e2-cf5a-11e9-98f3-42010a8000c4
   spec:
     containers:
     - command:
@@ -475,23 +579,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:35:05Z
+      lastTransitionTime: 2019-09-04T21:25:01Z
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:35:06Z
+      lastTransitionTime: 2019-09-04T21:25:02Z
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:35:06Z
+      lastTransitionTime: 2019-09-04T21:25:02Z
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-08-31T01:35:05Z
+      lastTransitionTime: 2019-09-04T21:25:01Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://fe3b8313c6797b377aa47d4060ec2b6a062e53e578cdec61413419655c65923c
+    - containerID: docker://4257d107f6c02057918d84b10c61826b10ec1416d291d41975928e3ec6fb5418
       image: bash:latest
       imageID: docker-pullable://bash@sha256:b7648de8f07dd0de784e19f058f3e30c4b2890ef7be3994b4226cdd194871d78
       lastState: {}
@@ -500,23 +604,23 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: 2019-08-31T01:35:05Z
+          startedAt: 2019-09-04T21:25:02Z
     hostIP: 10.128.0.17
     phase: Running
-    podIP: 10.8.4.144
+    podIP: 10.8.4.26
     qosClass: Burstable
-    startTime: 2019-08-31T01:35:05Z
+    startTime: 2019-09-04T21:25:01Z
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: 2019-07-24T20:32:15Z
+    creationTimestamp: 2019-08-31T01:51:54Z
     generateName: redis-master-57fc67768d-
     labels:
       app: redis
       pod-template-hash: 57fc67768d
       role: master
       tier: backend
-    name: redis-master-57fc67768d-zhwhh
+    name: redis-master-57fc67768d-hl44k
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -525,9 +629,9 @@ items:
       kind: ReplicaSet
       name: redis-master-57fc67768d
       uid: 1fb98600-ae52-11e9-98f3-42010a8000c4
-    resourceVersion: "9416930"
-    selfLink: /api/v1/namespaces/default/pods/redis-master-57fc67768d-zhwhh
-    uid: 1fc0888c-ae52-11e9-98f3-42010a8000c4
+    resourceVersion: "19428192"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-57fc67768d-hl44k
+    uid: e85c20ed-cb91-11e9-98f3-42010a8000c4
   spec:
     containers:
     - image: k8s.gcr.io/redis:e2e
@@ -547,7 +651,7 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-tesg1-default-pool-ff7a1295-7kwg
+    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -572,23 +676,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:15Z
+      lastTransitionTime: 2019-08-31T01:51:55Z
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:17Z
+      lastTransitionTime: 2019-08-31T01:51:57Z
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:17Z
+      lastTransitionTime: 2019-08-31T01:51:57Z
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:15Z
+      lastTransitionTime: 2019-08-31T01:51:55Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://7aff450907a3ba3addfe5280dc01f163828aca74d0684f630ed64f6263d26a6a
+    - containerID: docker://c906a8a65a780373fe6c4a43d696564bcaa27505dbb36847fc6b33cb191c5916
       image: k8s.gcr.io/redis:e2e
       imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
       lastState: {}
@@ -597,49 +701,46 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: 2019-07-24T20:32:16Z
-    hostIP: 10.128.0.14
+          startedAt: 2019-08-31T01:51:57Z
+    hostIP: 10.128.0.15
     phase: Running
-    podIP: 10.8.1.123
+    podIP: 10.8.2.105
     qosClass: Burstable
-    startTime: 2019-07-24T20:32:15Z
+    startTime: 2019-08-31T01:51:55Z
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: 2019-07-24T20:32:15Z
-    generateName: redis-slave-57f9f8db74-
+    creationTimestamp: 2019-09-04T21:24:52Z
+    generateName: redis-master-evict-fd97bd94b-
     labels:
-      app: redis
-      pod-template-hash: 57f9f8db74
-      role: slave
+      app: redis-evict
+      pod-template-hash: fd97bd94b
+      role: master
       tier: backend
-    name: redis-slave-57f9f8db74-kth5c
+    name: redis-master-evict-fd97bd94b-zjcjz
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: redis-slave-57f9f8db74
-      uid: 1fbf8bcb-ae52-11e9-98f3-42010a8000c4
-    resourceVersion: "9416946"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-57f9f8db74-kth5c
-    uid: 1fd1b601-ae52-11e9-98f3-42010a8000c4
+      name: redis-master-evict-fd97bd94b
+      uid: 6ef1dd30-cf5a-11e9-98f3-42010a8000c4
+    resourceVersion: "20774619"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-evict-fd97bd94b-zjcjz
+    uid: 6ef59db7-cf5a-11e9-98f3-42010a8000c4
   spec:
     containers:
-    - env:
-      - name: GET_HOSTS_FROM
-        value: dns
-      image: gcr.io/google_samples/gb-redisslave:v1
+    - image: k8s.gcr.io/redis:e2e
       imagePullPolicy: IfNotPresent
-      name: slave
+      name: master
       ports:
       - containerPort: 6379
         protocol: TCP
       resources:
         requests:
-          cpu: 100m
-          memory: 100Mi
+          cpu: 500m
+          memory: 1700280Ki
       terminationMessagePath: /dev/termination-log
       terminationMessagePolicy: File
       volumeMounts:
@@ -647,7 +748,7 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-tesg1-default-pool-ff7a1295-z7lx
+    nodeName: gke-tesg1-default-pool-ff7a1295-zpc5
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -672,48 +773,48 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:15Z
+      lastTransitionTime: 2019-09-04T21:24:52Z
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:17Z
+      lastTransitionTime: 2019-09-04T21:24:53Z
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:17Z
+      lastTransitionTime: 2019-09-04T21:24:53Z
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:15Z
+      lastTransitionTime: 2019-09-04T21:24:52Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://2ac40c4f639bc81643a30a9fc626ca4616cc27a976891c1e5809dee1a6a4371b
-      image: gcr.io/google_samples/gb-redisslave:v1
-      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+    - containerID: docker://81f06544dcda613b0e25748db1468e1569d5201d23a7ff618f52867447236449
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
       lastState: {}
-      name: slave
+      name: master
       ready: true
       restartCount: 0
       state:
         running:
-          startedAt: 2019-07-24T20:32:16Z
-    hostIP: 10.128.0.13
+          startedAt: 2019-09-04T21:24:53Z
+    hostIP: 10.128.0.16
     phase: Running
-    podIP: 10.8.0.99
+    podIP: 10.8.3.70
     qosClass: Burstable
-    startTime: 2019-07-24T20:32:15Z
+    startTime: 2019-09-04T21:24:52Z
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: 2019-07-24T20:32:15Z
+    creationTimestamp: 2019-08-31T01:51:54Z
     generateName: redis-slave-57f9f8db74-
     labels:
       app: redis
       pod-template-hash: 57f9f8db74
       role: slave
       tier: backend
-    name: redis-slave-57f9f8db74-tzdrr
+    name: redis-slave-57f9f8db74-bcnvr
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -722,9 +823,9 @@ items:
       kind: ReplicaSet
       name: redis-slave-57f9f8db74
       uid: 1fbf8bcb-ae52-11e9-98f3-42010a8000c4
-    resourceVersion: "9416934"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-57f9f8db74-tzdrr
-    uid: 1fc27d4a-ae52-11e9-98f3-42010a8000c4
+    resourceVersion: "19428184"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-57f9f8db74-bcnvr
+    uid: e8e1ce44-cb91-11e9-98f3-42010a8000c4
   spec:
     containers:
     - env:
@@ -747,7 +848,7 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-tesg1-default-pool-ff7a1295-7kwg
+    nodeName: gke-tesg1-default-pool-ff7a1295-dmtd
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -772,23 +873,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:15Z
+      lastTransitionTime: 2019-08-31T01:51:55Z
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:17Z
+      lastTransitionTime: 2019-08-31T01:51:57Z
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:17Z
+      lastTransitionTime: 2019-08-31T01:51:57Z
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: 2019-07-24T20:32:15Z
+      lastTransitionTime: 2019-08-31T01:51:55Z
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://08c3740a52c5326573421102a78eaa10031d65ffe6c35c042e623d99ba60a208
+    - containerID: docker://fa5045eb5e41c3144f9750363d4ad56151b4899c4b09d36716233696e8ae9808
       image: gcr.io/google_samples/gb-redisslave:v1
       imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
       lastState: {}
@@ -797,12 +898,112 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: 2019-07-24T20:32:16Z
-    hostIP: 10.128.0.14
+          startedAt: 2019-08-31T01:51:56Z
+    hostIP: 10.128.0.17
     phase: Running
-    podIP: 10.8.1.124
+    podIP: 10.8.4.150
     qosClass: Burstable
-    startTime: 2019-07-24T20:32:15Z
+    startTime: 2019-08-31T01:51:55Z
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: 2019-08-31T01:51:54Z
+    generateName: redis-slave-57f9f8db74-
+    labels:
+      app: redis
+      pod-template-hash: 57f9f8db74
+      role: slave
+      tier: backend
+    name: redis-slave-57f9f8db74-l6sf8
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-57f9f8db74
+      uid: 1fbf8bcb-ae52-11e9-98f3-42010a8000c4
+    resourceVersion: "19428189"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-57f9f8db74-l6sf8
+    uid: e8619678-cb91-11e9-98f3-42010a8000c4
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-kchbk
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-kchbk
+      secret:
+        defaultMode: 420
+        secretName: default-token-kchbk
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: 2019-08-31T01:51:55Z
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: 2019-08-31T01:51:57Z
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: 2019-08-31T01:51:57Z
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: 2019-08-31T01:51:55Z
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://ac2f5655f23f5863380b33c8fbeb3f11e3f14cacaa428805c542cdb4b4175849
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: 2019-08-31T01:51:57Z
+    hostIP: 10.128.0.15
+    phase: Running
+    podIP: 10.8.2.106
+    qosClass: Burstable
+    startTime: 2019-08-31T01:51:55Z
 kind: List
 metadata:
   resourceVersion: ""

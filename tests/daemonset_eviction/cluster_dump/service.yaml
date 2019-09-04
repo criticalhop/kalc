@@ -82,18 +82,18 @@ items:
 - apiVersion: v1
   kind: Service
   metadata:
-    creationTimestamp: 2019-08-31T01:41:56Z
+    creationTimestamp: 2019-09-04T21:24:52Z
     labels:
       app: redis-evict
       role: master
       tier: backend
     name: redis-master-evict
     namespace: default
-    resourceVersion: "19426037"
+    resourceVersion: "20774605"
     selfLink: /api/v1/namespaces/default/services/redis-master-evict
-    uid: 83eac27d-cb90-11e9-98f3-42010a8000c4
+    uid: 6ee8b5c7-cf5a-11e9-98f3-42010a8000c4
   spec:
-    clusterIP: 10.0.13.120
+    clusterIP: 10.0.13.148
     ports:
     - port: 6379
       protocol: TCP
