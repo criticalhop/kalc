@@ -3,3 +3,6 @@ untangle
 kubernetes
 croniter
 click
+dpath
+logzero
+git+https://github.com/criticalhop/poodle.git
