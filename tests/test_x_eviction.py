@@ -35,8 +35,8 @@ def test_eviction_fromfiles_strictgoal():
     p.run(timeout=60, sessionName="test_eviction_fromfiles_strictgoal")
     # p.run(timeout=60)
     if not p.plan: 
-        print("Could not solve %s" % p.__class__.__name__)
-        raise
+        # print("Could not solve %s" % p.__class__.__name__)
+        raise Exception("Could not solve %s" % p.__class__.__name__)
     if p.plan:
         i=0
         for a in p.plan:
