@@ -23,7 +23,7 @@ class TestServiceInterrupted(Problem2,K8SearchEviction ):
         self.service[0].status == STATUS_SERV_INTERRUPTED
 
 
-class Test_case_4_service_connected_to_pod(Problem2,K8SearchEviction ):
+class Test_case_4_service_connected_to_pod(K8SearchEviction ):
     def goal(self):
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
         for poditem in pod_loaded_list:
@@ -43,5 +43,18 @@ class Test_case_4_service_connected_to_pod(Problem2,K8SearchEviction ):
             " podAmount: "  + str(nodeitem.podAmount._get_value()) + \
             " isNull:"  + str(nodeitem.isNull._get_value()) + \
             " status:"  + str(nodeitem.status._get_value()))
+        service_loaded_list = filter(lambda x: isinstance(x, Service), self.objectList)
+        for serviceitem in service_loaded_list:
+            if serviceitem.spec_selector._get_value() is None:
+                labels = "NONE"
+            else:
+                labels = str([str(x) for x in serviceitem.spec_selector._get_value()])
+         
+            print(" service:" + str(serviceitem.metadata_name._get_value())  + \
+                    " spec_selector: " + labels + \
+                    " lastPod: " + str(serviceitem.lastPod._get_value()) + \
+                    " amountOfActivePods: " + str(serviceitem.amountOfActivePods._get_value()) + \
+                    " status: " +  str(serviceitem.status._get_value())) 
 
-        self.service[1].status == STATUS_SERV_STARTED
+        self.service_one = next(filter(lambda x: isinstance(x, Service), self.objectList))
+        self.service_one == STATUS_SERV_STARTED
