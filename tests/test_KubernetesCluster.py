@@ -47,7 +47,7 @@ def test_cluster_folder():
         if isinstance(priorityClass, PriorityClass):
             if priorityClass.metadata_name == 'high-priority':
                 have_high_priority = True
-                assert(priorityClass.priority == (1000 if PRIORITY[str(priorityClass.metadata_name)] > 1000 else PRIORITY[str(priorityClass.metadata_name)]))
+                assert(priorityClass.priority == (1000 if PRIORITY[str(priorityClass.metadata_name)] >= 1000 else PRIORITY[str(priorityClass.metadata_name)]))
     assert(have_high_priority)
     
 

@@ -35,7 +35,8 @@ def test_priority_is_loaded():
     k._build_state()
     priorityClasses = filter(lambda x: isinstance(x, PriorityClass), k.state_objects)
     for p in priorityClasses:
-        if p.metadata_name == "high-priority" and p.preemptionPolicy == TYPE_POLICY_PreemptLowerPriority:
+        if p.metadata_name == "high-priority" and p.preemptionPolicy == TYPE_POLICY_PreemptLowerPriority\
+            and p.priority > 0:
             return
     raise ValueError("Could not find priority loded")
 

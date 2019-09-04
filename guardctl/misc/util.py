@@ -36,6 +36,9 @@ def objwalk(obj, path=(), memo=None):
 def find_property(obj, p):
     path = p[0]
     val = p[1]
+    if len(path) == 1:
+        if hasattr(obj, path[0]):
+            return path[0], val
     
     for i in range(len(path), 1, -1):
         try_path = path[:i]
