@@ -18,6 +18,7 @@ class Pod(HasLabel, HasLimitsRequests):
     metadata_ownerReferences__name: str
     spec_priorityClassName: str
     metadata_name: str
+    metadata_labels: str
 
     # internal model attributes
     ownerReferences: Controller
