@@ -24,7 +24,7 @@ class KubernetesCluster:
             else: self.load_item(doc, create)
 
     def load_item(self, item, create=False):
-        assert isinstance(item, dict)
+        assert isinstance(item, dict), item
         item["__created"] = create
         self.dict_states[item["kind"]].append(item)
 
@@ -60,7 +60,7 @@ class KubernetesCluster:
                 self._build_item(item)
 
     def create_resource(self, res: str):
-        self.load(res, create=True)
+        self.load(open(res), create=True)
 
     def fetch_state_default(self):
         "Fetch state from cluster using default method"

@@ -3,12 +3,12 @@ from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.primitives import Status
+from guardctl.misc.const import *
 from poodle import *
 from typing import Set
 
 class DaemonSet(Controller, HasLimitsRequests):
     lastPod: "mpod.Pod"
-    atNode: Node
     amountOfActivePods: int
     status: Status
     podList: Set["mpod.Pod"]
@@ -25,5 +25,7 @@ class DaemonSet(Controller, HasLimitsRequests):
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit
             new_pod.memLimit = self.memLimit
+            new_pod.status_phase = STATUS_POD_PENDING
+            self.podList.add(new_pod)
             object_space.append(new_pod)
 

@@ -46,9 +46,6 @@ def test_service_load():
             return
     raise ValueError("Could not find service loded")
 
-def test_daemonset_load():
-    pass
-
 #@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
