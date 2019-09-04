@@ -4,6 +4,7 @@ from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
+from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
@@ -24,6 +25,29 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         pod = next(filter(lambda x: isinstance(x, Pod), self.objectList))
         return  pod.status_phase == STATUS_POD_PENDING   #  evict_service.status == scheduler.status == STATUS_SCHED_CLEAN and STATUS_SERV_INTERRUPTED 
                                     
+
+def test_priority_is_loaded():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    priorityClasses = filter(lambda x: isinstance(x, PriorityClass), k.state_objects)
+    for p in priorityClasses:
+        if p.metadata_name == "high-priority" and p.preemptionPolicy == TYPE_POLICY_PreemptLowerPriority:
+            return
+    raise ValueError("Could not find priority loded")
+
+def test_service_load():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    for p in objects:
+        if p.metadata_name == "redis-master-evict" and labelFactory.get("app", "redis-evict") in p.metadata_labels:
+            return
+    raise ValueError("Could not find service loded")
+
+def test_daemonset_load():
+    pass
 
 #@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_fromfiles_strictgoal():
