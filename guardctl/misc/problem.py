@@ -1,4 +1,4 @@
-from poodle import schedule
+from poodle import schedule, xschedule
 from poodle.schedule import SchedulingError
 
 class ProblemTemplate:
@@ -33,7 +33,7 @@ class ProblemTemplate:
                 except:
                     pass
 
-    def run(self, timeout=30, sessionName=None):
+    def run(self, timeout=30, sessionName=None, schedule=schedule, raise_=False):
         if not sessionName: sessionName = self.__class__.__name__
         self.problem()
         self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m)) and hasattr(getattr(self, m), "_planned")]
@@ -55,7 +55,14 @@ class ProblemTemplate:
                 #exit=self.exit
             )
         except SchedulingError:
-            pass
+            if raise_:
+                raise SchedulingError("Can't solve")
+            else:
+                pass
+    
+    def xrun(self, timeout=30, sessionName=None):
+        "Run and execute plan"
+        self.run(timeout, sessionName, schedule=xschedule, raise_=True)
 
     def goal(self):
         pass

@@ -9,6 +9,7 @@ from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
 from guardctl.misc.object_factory import labelFactory
+from poodle import debug_plan
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
@@ -66,43 +67,87 @@ def test_service_status():
     k.load_dir(TEST_CLUSTER_FOLDER)
     k._build_state()
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    service_found = False
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
-                p.status == STATUS_SERV_STARTED:
+            labelFactory.get("app", "redis-evict") in p.spec_selector._get_value() and \
+                p.status == STATUS_SERV_PENDING:
+            service_found = True
+            break
+    assert service_found
+    
+    objects = filter(lambda x: isinstance(x, Pod), k.state_objects)
+    for p in objects:
+        if p.targetService == Pod.TARGET_SERVICE_NULL and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value():
             return
+
     raise ValueError("Could not find service loded")
+
+class StartServiceGoal(K8SearchEviction):
+    def select_target_service(self):
+        service = None
+        for service in filter(lambda x: isinstance(x, Service), self.objectList):
+            if service.metadata_name == "redis-master-evict": break
+        assert service
+        self.targetservice = service
+    def goal(self):
+        return self.targetservice.status == STATUS_SERV_STARTED
+    def debug(self):
+        self.problem()
+        self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m)) and hasattr(getattr(self, m), "_planned")]
+        model_methods = []
+        methods_scanned = set()
+        for obj in self.objectList:
+            if not obj.__class__.__name__ in methods_scanned:
+                methods_scanned.add(obj.__class__.__name__)
+                for m in dir(obj):
+                    if callable(getattr(obj, m)) and hasattr(getattr(obj, m), "_planned"):
+                        model_methods.append(getattr(obj, m))
+        debug_plan(
+            methods=self_methods + list(model_methods), 
+            space=list(self.__dict__.values())+self.objectList,
+            goal=lambda:(self.goal()),
+            plan=[Pod().connect_pod_service_labels]
+        )
 
 def test_service_active_pods():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
     k._build_state()
+    p = StartServiceGoal(k.state_objects)
+    p.select_target_service()
+    # p.debug()
+    p.xrun()
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    pods_active = False
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV_STARTED and\
                     p.amountOfActivePods > 0:
-            return
-    raise ValueError("Could not find service loded")
+            pods_active = True
+            break
+    assert pods_active
+    global ALL_STATE
+    ALL_STATE = k.state_objects
 
 
 def test_service_link_to_pods():
-    k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
-    k._build_state()
-    objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+    objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
+    serv = None
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV_STARTED:
                 serv = p
+    assert not serv is None
+    objects = filter(lambda x: isinstance(x, Pod), ALL_STATE)
     for p in objects:
-        if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
-                p.status == STATUS_SERV_STARTED:
-                if p.targetService == serv:
-                    return
+        if str(p.metadata_name).startswith("redis-master-evict")\
+             and p.targetService == serv:
+            return
     raise ValueError("Could not find service loded")
 
 def test_queue_status():
