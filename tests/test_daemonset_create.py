@@ -17,7 +17,7 @@ TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 def test_load_requests():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
-    k.create_resource(TEST_DAEMONET)
+    k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
     objects = filter(lambda x: isinstance(x, DaemonSet), k.state_objects)
     for p in objects:

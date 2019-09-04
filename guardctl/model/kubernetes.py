@@ -60,7 +60,7 @@ class KubernetesCluster:
                 self._build_item(item)
 
     def create_resource(self, res: str):
-        self.load(open(res), create=True)
+        self.load(res, create=True)
 
     def fetch_state_default(self):
         "Fetch state from cluster using default method"
