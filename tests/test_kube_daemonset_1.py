@@ -9,6 +9,8 @@ from guardctl.model.search import K8SearchEviction
 from guardctl.misc.object_factory import labelFactory
 from  tests.problem.goals import *
 import yaml
+from poodle.schedule import EmptyPlanError
+# from mem_top import mem_top
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
@@ -16,10 +18,13 @@ TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 def test_eviction_synthetic_test_1():
     p = Test_case_1()
-    p.run()
+    try:
+        p.run()
+    except EmptyPlanError:
+        pass
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
-        raise
+        raise Exception()
     if p.plan:
         i=0
         for a in p.plan:
@@ -28,10 +33,10 @@ def test_eviction_synthetic_test_1():
 
 def test_eviction_synthetic_test_2():
     p = Test_case_2()
-    p.run()
+    p.run(timeout=60)
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
-        raise
+        raise Exception()
     if p.plan:
         i=0
         for a in p.plan:
@@ -40,10 +45,10 @@ def test_eviction_synthetic_test_2():
 
 def test_eviction_synthetic_test_3():
     p = Test_case_3()
-    p.run()
+    p.run(timeout=90)
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
-        raise
+        raise Exception()
     if p.plan:
         i=0
         for a in p.plan:
@@ -53,12 +58,12 @@ def test_eviction_synthetic_test_3():
 
 def test_eviction_synthetic():
     p = TestServiceInterrupted()
-    p.run(sessionName="test_eviction_synthetic")
+    p.run(timeout=90, sessionName="test_eviction_synthetic")
     assert len(list(filter(lambda x: isinstance(x, Pod), p.objectList))) == 7
     # print("PODS:", len(list(filter(lambda x: isinstance(x, Pod), p.objectList))))
     if not p.plan: 
         print("Could not solve %s" % p.__class__.__name__)
-        raise
+        raise Exception()
     if p.plan:
         i=0
         for a in p.plan:

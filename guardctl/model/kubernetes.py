@@ -64,7 +64,7 @@ class KubernetesCluster:
 
     def fetch_state_default(self):
         "Fetch state from cluster using default method"
-        raise
+        raise NotImplementedError()
 
     def run(self):
         self._build_state()

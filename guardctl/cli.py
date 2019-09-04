@@ -11,14 +11,12 @@ def cli():
 @click.option("--output", "-o", help="Select output format", type=click.Choice(["json", "yaml", "wide"]), required=False, default="wide")
 @click.option("-f", help="Create new resource from YAML file", type=str, required=False, multiple=True)
 def test(test, from_dir, output, f):
-    c = KubenetesCluster()
-
-
+    c = KubernetesCluster()
 
     # TODO: only echo this if -o=wide
-    click.echo(f"Loading cluster definitions from {test_cluster} ...")
+    click.echo(f"Loading cluster definitions from {from_dir} ...")
 
-    c.load_dir(test_cluster)
+    c.load_dir(from_dir)
 
     for res in f:
         click.echo(f"Creating resource from {f}")
@@ -32,13 +30,11 @@ def test(test, from_dir, output, f):
 @click.command()
 @click.option("-f", help="Create new resource from YAML file", type=str, required=False, multiple=True)
 def run(f):
-    c = KubenetesCluster()
+    c = KubernetesCluster()
 
     click.echo("Fetching cluster state ...")
 
     c.fetch_state_default()
-
-    c.build_state()
 
     scenario = c.run()
 

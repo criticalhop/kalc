@@ -1,4 +1,4 @@
-from collections import Mapping, Set, Sequence 
+from collections.abc import Mapping, Set, Sequence 
 from guardctl.misc.object_factory import labelFactory 
 import string
 

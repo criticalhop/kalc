@@ -52,6 +52,7 @@ class K8SearchEviction(KubernetesModel):
         service1.status = STATUS_SERV_STARTED
 
     def goal(self):
+        # TODO: find and define service or fix domain!
         self.service[0].status == STATUS_SERV_INTERRUPTED and \
-            self.scheduler1.status == STATUS_SCHED_CLEAN
+            self.scheduler.status == STATUS_SCHED_CLEAN
 

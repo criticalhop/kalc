@@ -26,7 +26,7 @@ def test_load_nodes():
     k._build_state()
     assert k.state_objects
 
-def test_load_nodes():
+def test_load_deployments():
     k = KubernetesCluster()
     k.load(open(TEST_NODES).read())
     k.load(open(TEST_PODS).read())
