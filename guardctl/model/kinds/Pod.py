@@ -17,6 +17,7 @@ class Pod(HasLabel, HasLimitsRequests):
     # k8s attributes
     metadata_ownerReferences__name: str
     spec_priorityClassName: str
+    metadata_name: str
 
     # internal model attributes
     ownerReferences: Controller
@@ -241,7 +242,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
 
         podTobeKilled.status_phase = STATUS_POD_KILLING
-    
+
     @planned(cost=100)
     def KillPod(self,
             podBeingKilled : "Pod",
@@ -255,7 +256,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
         assert podBeingKilled.status_phase ==  STATUS_POD_KILLING
-        # assert podBeingKilled.amountOfActiveRequests == 0
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
         nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
@@ -265,7 +266,7 @@ class Pod(HasLabel, HasLimitsRequests):
         globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
         globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status_phase =  STATUS_POD_FAILED
+        podBeingKilled.status_phase =  STATUS_POD_PENDING
         scheduler1.podQueue.add(podBeingKilled)
         scheduler1.status = STATUS_SCHED_CHANGED 
 

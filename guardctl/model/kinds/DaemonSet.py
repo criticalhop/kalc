@@ -13,13 +13,17 @@ class DaemonSet(Controller, HasLimitsRequests):
     status: Status
     podList: Set["mpod.Pod"]
 
+
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
 
     def hook_after_create(self, object_space):
         nodes = filter(lambda x: isinstance(x, Node), object_space)
+        i = 0
         for node in nodes:
+            i += 1
             new_pod = mpod.Pod()
+            new_pod.metadata_name = str(self.metadata_name) + '-' + str(i)
             new_pod.toNode = node
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest

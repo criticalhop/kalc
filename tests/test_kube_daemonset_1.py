@@ -12,7 +12,7 @@ import yaml
 from poodle.schedule import EmptyPlanError
 # from mem_top import mem_top
 
-# @pytest.mark.skip(reason="no way of currently testing this")
+#@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_synthetic_test_1():
     p = Test_case_1()
     try:
@@ -28,6 +28,7 @@ def test_eviction_synthetic_test_1():
             i=i+1
             print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
 
+#@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_synthetic_test_2():
     p = Test_case_2()
     p.run(timeout=90)
@@ -40,6 +41,7 @@ def test_eviction_synthetic_test_2():
             i=i+1
             print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
 
+#@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_synthetic_test_3():
     p = Test_case_3()
     p.run(timeout=90)
@@ -52,6 +54,7 @@ def test_eviction_synthetic_test_3():
             i=i+1
             print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
 
+#@pytest.mark.skip(reason="no way of currently testing this")
 def test_eviction_synthetic():
     p = TestServiceInterrupted()
     p.run(timeout=90, sessionName="test_eviction_synthetic")
