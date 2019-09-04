@@ -40,7 +40,16 @@ def test_load_limits():
     raise ValueError("Could not find service loded")
 
 def test_limits_for_pods_created():
-    pass
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k.create_resource(open(TEST_DAEMONET).read())
+    k._build_state()
+    objects = filter(lambda x: isinstance(x, Pod), k.state_objects)
+    for p in objects:
+        if str(p.metadata_name).startswith("fluentd-elasticsearch") and \
+            p.cpuRequest > -1 and \
+            p.memRequest > -1 and \
+             p.memLimit > -1:
+            return
+    raise ValueError("Could not find service loded")
 
-def test_requests_for_pods_created():
-    pass

@@ -28,7 +28,6 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         pod = next(filter(lambda x: isinstance(x, Pod), self.objectList))
         return  pod.status_phase == STATUS_POD_PENDING   #  evict_service.status == scheduler.status == STATUS_SCHED_CLEAN and STATUS_SERV_INTERRUPTED 
                                     
-
 def test_priority_is_loaded():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
