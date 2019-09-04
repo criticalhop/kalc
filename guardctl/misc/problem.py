@@ -36,14 +36,14 @@ class ProblemTemplate:
     def run(self, timeout=30, sessionName=None):
         if not sessionName: sessionName = self.__class__.__name__
         self.problem()
-        self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m))]
+        self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m)) and hasattr(getattr(self, m), "_planned")]
         model_methods = []
         methods_scanned = set()
         for obj in self.objectList:
             if not obj.__class__.__name__ in methods_scanned:
                 methods_scanned.add(obj.__class__.__name__)
                 for m in dir(obj):
-                    if callable(getattr(obj, m)):
+                    if callable(getattr(obj, m)) and hasattr(getattr(obj, m), "_planned"):
                         model_methods.append(getattr(obj, m))
         try:
             self.plan = schedule(
