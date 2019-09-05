@@ -18,4 +18,5 @@ class GlobalVar(Object):
     schedulerStatus: Status
     amountOfPods: int
     queueLength: int
+    searchGoal1: bool
 

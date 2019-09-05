@@ -210,7 +210,7 @@ def test_nodes_pods_allocated():
     "test that all pods in status running are allocated to nodes"
     pass
 
-# @pytest.mark.skip(reason="need to test everything else first")
+@pytest.mark.skip(reason="need to test everything else first")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -220,6 +220,26 @@ def test_eviction_fromfiles_strictgoal():
     p.select_target_service()
     p.print_objects()
     p.run(timeout=360, sessionName="test_eviction_fromfiles_strictgoal")
+    # p.run(timeout=60)
+    if not p.plan:
+        # print("Could not solve %s" % p.__class__.__name__)
+        raise Exception("Could not solve %s" % p.__class__.__name__)
+    if p.plan:
+        i=0
+        for a in p.plan:
+            i=i+1
+            print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
+
+
+# @pytest.mark.skip(reason="need to test everything else first")
+def test_search_goal1():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k.create_resource(open(TEST_DAEMONET).read())
+    k._build_state()
+    p = K8SearchEviction(k.state_objects)
+    p.getGLobalVar()
+    p.run(timeout=360, sessionName="Mark_all_pods_started_except_succeeded")
     # p.run(timeout=60)
     if not p.plan:
         # print("Could not solve %s" % p.__class__.__name__)

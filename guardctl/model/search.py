@@ -5,7 +5,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Pod import Pod
 from guardctl.misc.const import *
 from guardctl.misc.problem import ProblemTemplate
-
+     
 
 class KubernetesModel(ProblemTemplate):
     def problem(self):
@@ -13,34 +13,31 @@ class KubernetesModel(ProblemTemplate):
         self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
 
 class K8SearchEviction(KubernetesModel):
-    @planned
-    def MarkServiceOutageEvent(self,
+     
+
+    @planned(cost=10000)
+    def MarkServiceInterruptionEvent(self,
                 service1: Service,
-                pod1: Pod,
-                # globalVar1: "GlobalVar",
                 scheduler1: "Scheduler",
-                currentFormalCpuConsumptionLoc: int,
-                currentFormalMemConsumptionLoc: int,
-                cpuCapacityLoc:int,
-                memCapacityLoc:int,
-                cpuRequestLoc: int,
-                memRequestLoc: int
+                globalVar1: GlobalVar
             ):
         assert scheduler1.status == STATUS_SCHED_CLEAN 
         assert service1.amountOfActivePods == 0
         assert service1.status == STATUS_SERV_STARTED
-        assert pod1.targetService == service1
-        # assert globalVar1.currentFormalCpuConsumption == currentFormalCpuConsumptionLoc
-        # assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
-        assert pod1.cpuRequest == cpuRequestLoc
-        assert pod1.memRequest == memRequestLoc
-        # assert globalVar1.cpuCapacity == cpuCapacityLoc 
-        # assert globalVar1.memCapacity == memCapacityLoc 
-        #### assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest > globalVar1.cpuCapacity
-        # assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
-
         service1.status = STATUS_SERV_INTERRUPTED
+        globalVar1.searchGoal1 = True
     
+    @planned(cost=100)
+    def Mark_all_pods_started_except_succeeded(self,
+                service1: Service,
+                scheduler1: "Scheduler",
+                globalVar1: GlobalVar
+            ):
+        pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
+        for poditem in pod_loaded_list:
+            if poditem.status_phase != STATUS_NODE_SUCCEEDED:
+                assert poditem.status_phase == STATUS_POD_RUNNING
+        globalVar1.searchGoal1 = True
 
     
     # @planned(cost=10000)
@@ -51,17 +48,20 @@ class K8SearchEviction(KubernetesModel):
     #     assert scheduler1.status == STATUS_SCHED_CHANGED 
     #     service1.status = STATUS_SERV_STARTED
     
-    @planned(cost=100)
-    def PodsConnectedToServices(self,
-                service1: Service,
-                scheduler1: "mscheduler.Scheduler",
-                pod1: Pod
-            ):
-        assert service1.amountOfActivePods > 0
-        service1.status = STATUS_SERV_STARTED
+    # @planned(cost=100)
+    # def PodsConnectedToServices(self,
+    #             service1: Service,
+    #             scheduler1: "mscheduler.Scheduler",
+    #             pod1: Pod
+    #         ):
+    #     assert service1.amountOfActivePods > 0
+    #     service1.status = STATUS_SERV_STARTED
+    
+    # def goal(self):
+    #     globalVar1 = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
+    #     globalVar1.searchGoal1 = True
+    def getGLobalVar(self):
+        self.globalVar1 = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
 
-    def goal(self):
-        # TODO: find and define service or fix domain!
-        self.service[0].status == STATUS_SERV_INTERRUPTED and \
-            self.scheduler.status == STATUS_SCHED_CLEAN
+    goal = lambda self: self.globalVar1.searchGoal1 == True
 

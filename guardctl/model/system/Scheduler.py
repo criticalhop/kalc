@@ -28,7 +28,7 @@ class Scheduler(Object):
         node1: "Node" ,
         scheduler1: "Scheduler",
         serviceTargetForPod: "mservice.Service",
-        # globalVar1: "GlobalVar"
+        globalVar1: "GlobalVar"
         ):
 
         assert podStarted in scheduler1.podQueue
@@ -41,8 +41,8 @@ class Scheduler(Object):
 
         node1.currentFormalCpuConsumption += podStarted.cpuRequest
         node1.currentFormalMemConsumption += podStarted.memRequest
-        # globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
-        # globalVar1.currentFormalMemConsumption += podStarted.memRequest
+        globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
+        globalVar1.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node1        
         scheduler1.queueLength -= 1
         scheduler1.podQueue.remove(podStarted)
