@@ -23,3 +23,5 @@ class PriorityClass(Object):
         self.priority = value
 
 
+zeroPriorityClass = PriorityClass("ZERO")
+zeroPriorityClass.metadata_name = "Normal-zero"

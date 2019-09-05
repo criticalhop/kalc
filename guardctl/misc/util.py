@@ -83,7 +83,7 @@ def cpuConvertToAbstractProblem(cpuParot):
     else:
         cpu = int(cpuParot)*1000
     # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
-    cpu = cpu / 20
+    cpu = int(cpu / 200)
     if cpu == 0:
         cpu = 1
     return int(cpu)
@@ -98,7 +98,7 @@ def memConvertToAbstractProblem(mem):
         ret = int(int(mem[:-2])/1000)
     else:
         ret = int(int(mem)/1000000)
-    ret = ret / 20
+    ret = int(ret / 500)
     if ret == 0:
         ret = 1
     return int(ret)

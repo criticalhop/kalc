@@ -20,14 +20,30 @@ import logzero
 logzero.logfile("./test.log", disableStderrLogger=False)
 
 class SingleGoalEvictionDetect(K8SearchEviction):
-    def goal(self):
-        # for ob in self.objectList:
-        #     print(str(ob))
+    def select_target_service(self):
+        service_found = None
+        for servicel in filter(lambda x: isinstance(x, Service), self.objectList):
+            if servicel.metadata_name == "redis-master-evict": 
+                service_found = servicel
+                break
+        assert service_found
+        self.targetservice = service_found
+    
+    goal = lambda self: self.targetservice.status == STATUS_SERV_INTERRUPTED
+
+    def print_objects(self):
+        print("=====>")
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
         for poditem in pod_loaded_list:
-            print("pod:"+ str(poditem.metadata_name._get_value()) + " status_phase: " + str(poditem.status_phase) + " spec_nodeName: " + str(poditem.spec_nodeName._get_value()) + " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + \
-                " cpuLimit: " + str(poditem.cpuLimit._get_value()) + " memLimit: " + str(poditem.memLimit._get_value())+ \
-                "metadata_labels:" + str(poditem.metadata_labels._get_value))
+            print("pod:"+ str(poditem.metadata_name._get_value()) + \
+                " status_phase: " + str(poditem.status_phase) + \
+                " priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
+                " toNode: " + str(poditem.toNode._property_value) + \
+                " atNode: " + str(poditem.atNode._property_value) + \
+                " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + \
+                " cpuLimit: " + str(poditem.cpuLimit._get_value()) + " memLimit: " + str(poditem.memLimit._get_value()) + \
+                " targetService: "+ str(poditem.targetService._property_value) +\
+                " metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]))
         node_loaded_list = filter(lambda x: isinstance(x, Node), self.objectList)
         for nodeitem in node_loaded_list:
             print("node:"+ str(nodeitem.metadata_name._get_value()) + " cpuCapacity: " + str(nodeitem.cpuCapacity._get_value()) + " memCapacity: " + str(nodeitem.memCapacity._get_value()) + \
@@ -37,14 +53,21 @@ class SingleGoalEvictionDetect(K8SearchEviction):
             " podAmount: "  + str(nodeitem.podAmount._get_value()) + \
             " isNull:"  + str(nodeitem.isNull._get_value()) + \
             " status:"  + str(nodeitem.status._get_value()))
+        services = filter(lambda x: isinstance(x, Service), self.objectList)
+        for service in services:
+            print("service: "+str(service.metadata_name)+\
+                " amountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
+                " status: "+str(service.status._get_value()) + 
+                " spec_selector: "+str([str(x) for x in service.spec_selector._property_value]))
+        
+        prios = filter(lambda x: isinstance(x, PriorityClass), self.objectList)
+        for prio in prios:
+            print("priorityClass: "+str(prio.metadata_name)+" "+str(prio.priority._get_value()))
 
-        evict_service = next(filter(lambda x: isinstance(x, Service) and \
-            labelFactory.get("app", "redis-evict") in x.spec_selector._get_value(),
-            self.objectList))
+
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
-        pod = next(filter(lambda x: isinstance(x, Pod), self.objectList))
-        return  pod.status_phase == STATUS_POD_PENDING   #  evict_service.status == scheduler.status == STATUS_SCHED_CLEAN and STATUS_SERV_INTERRUPTED 
                                     
+
 def test_priority_is_loaded():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -92,11 +115,13 @@ def test_service_status():
 
 class StartServiceGoal(K8SearchEviction):
     def select_target_service(self):
-        service = None
-        for service in filter(lambda x: isinstance(x, Service), self.objectList):
-            if service.metadata_name == "redis-master-evict": break
-        assert service
-        self.targetservice = service
+        service_found = None
+        for servicel in filter(lambda x: isinstance(x, Service), self.objectList):
+            if servicel.metadata_name == "redis-master-evict": 
+                service_found = servicel
+                break
+        assert service_found
+        self.targetservice = service_found
     def goal(self):
         return self.targetservice.status == STATUS_SERV_STARTED
     def debug(self):
@@ -170,12 +195,14 @@ def test_queue_status():
 def test_nodes_status():
     objects = filter(lambda x: isinstance(x, Node), ALL_STATE)
     for node in objects:
-        assert node.cpuCapacity > 1
-        assert node.memCapacity > 1
-        assert node.currentFormalCpuConsumption > 1
-        assert node.currentFormalMemConsumption > 1
+        if node.cpuCapacity > 1 and \
+            node.memCapacity > 1 and \
+           node.currentFormalCpuConsumption > 1 and \
+           node.currentFormalMemConsumption > 1:
+           return
         # assert node.currentRealMemConsumption > 1
         # assert node.currentRealCpuConsumption > 1
+    raise Exception("Could not find valid nodes")
 
 def test_nodes_pods_allocated():
     "test that all pods in status running are allocated to nodes"
@@ -188,7 +215,9 @@ def test_eviction_fromfiles_strictgoal():
     k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
     p = SingleGoalEvictionDetect(k.state_objects)
-    p.run(timeout=60, sessionName="test_eviction_fromfiles_strictgoal")
+    p.select_target_service()
+    p.print_objects()
+    p.run(timeout=30, sessionName="test_eviction_fromfiles_strictgoal")
     # p.run(timeout=60)
     if not p.plan: 
         # print("Could not solve %s" % p.__class__.__name__)

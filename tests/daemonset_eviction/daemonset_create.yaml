@@ -21,10 +21,10 @@ spec:
         image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
         resources:
           limits:
-            memory: 400Mi
+            memory: 1500Mi
           requests:
             cpu: 400m
-            memory: 400Mi
+            memory: 1500Mi
         volumeMounts:
         - name: varlog
           mountPath: /var/log

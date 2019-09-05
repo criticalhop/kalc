@@ -53,7 +53,8 @@ class KubernetesCluster:
 
     def _build_state(self):
         collected = self.dict_states.copy()
-        for k in ["Node", "Pod"]:
+        for k in ["PriorityClass", "Node", "Pod"]:
+            if not k in collected: continue
             for item in collected[k]:
                 self._build_item(item)
             del collected[k]

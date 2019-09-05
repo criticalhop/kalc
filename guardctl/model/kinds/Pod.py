@@ -5,7 +5,7 @@ from guardctl.model.kinds.Node import Node
 import guardctl.model.kinds.Service as mservice
 import guardctl.model.system.Scheduler as mscheduler
 import guardctl.model.kinds.Node as mnode
-from guardctl.model.kinds.PriorityClass import PriorityClass
+from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.primitives import Label
 
@@ -40,6 +40,7 @@ class Pod(HasLabel, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.priority = 0
+        self.priorityClass = zeroPriorityClass
         self.targetService = self.TARGET_SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
@@ -51,7 +52,7 @@ class Pod(HasLabel, HasLimitsRequests):
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
         for node in nodes:
-            if node.metadata_name == self.spec_nodeName:
+            if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
                 if self.cpuRequest > 0:
                     node.currentFormalCpuConsumption += self.cpuRequest

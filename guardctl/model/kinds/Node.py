@@ -45,6 +45,8 @@ class Node(HasLabel):
     def status_allocatable_cpu(self, value):
         self.cpuCapacity = cpuConvertToAbstractProblem(value)
 
+    def __str__(self):
+        return str(self.metadata_name)
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
 

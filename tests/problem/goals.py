@@ -23,6 +23,11 @@ class TestServiceInterrupted(Problem2,K8SearchEviction ):
         self.service[0].status == STATUS_SERV_INTERRUPTED
 
 
+class TestServiceInterruptedAutoLink(ProblemAutoLink,K8SearchEviction ):
+    def goal(self):
+        self.service[0].status == STATUS_SERV_INTERRUPTED
+
+
 class Test_case_4_service_connected_to_pod(K8SearchEviction ):
     def goal(self):
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
