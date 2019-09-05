@@ -8,24 +8,24 @@ from guardctl.model.search import *
 
 class Test_case_1(Problem2,K8SearchEviction ):
     def goal(self):
-        self.pod[0].status_phase == STATUS_POD_RUNNING
+        self.pod[0].status == STATUS_POD["Running"]
 
 class Test_case_2(Problem2,K8SearchEviction ):
     def goal(self):
-        self.pod[1].status_phase == STATUS_POD_PENDING
+        self.pod[1].status == STATUS_POD["Pending"]
 
 class Test_case_3(Problem2,K8SearchEviction ):
     def goal(self):
-        self.pod[0].status_phase == STATUS_POD_KILLING
+        self.pod[0].status == STATUS_POD["Killing"]
 
 class TestServiceInterrupted(Problem2,K8SearchEviction ):
     def goal(self):
-        self.service[0].status == STATUS_SERV_INTERRUPTED
+        self.service[0].status == STATUS_SERV["Interrupted"]
 
 
 class TestServiceInterruptedAutoLink(ProblemAutoLink,K8SearchEviction ):
     def goal(self):
-        self.service[0].status == STATUS_SERV_INTERRUPTED
+        self.service[0].status == STATUS_SERV["Interrupted"]
 
 
 class Test_case_4_service_connected_to_pod(K8SearchEviction ):
@@ -36,7 +36,7 @@ class Test_case_4_service_connected_to_pod(K8SearchEviction ):
                 labels = "NONE"
             else:
                 labels = str([str(x) for x in poditem.metadata_labels._get_value()])
-            print("pod:"+ str(poditem.metadata_name._get_value()) + " status_phase: " + str(poditem.status_phase) + " spec_nodeName: " + str(poditem.spec_nodeName._get_value()) + " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + \
+            print("pod:"+ str(poditem.metadata_name._get_value()) + " status: " + str(poditem.status) + " spec_nodeName: " + str(poditem.spec_nodeName._get_value()) + " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + \
                 " cpuLimit: " + str(poditem.cpuLimit._get_value()) + " memLimit: " + str(poditem.memLimit._get_value())+ \
                 "metadata_labels:" + labels)
         node_loaded_list = filter(lambda x: isinstance(x, Node), self.objectList)
@@ -62,4 +62,4 @@ class Test_case_4_service_connected_to_pod(K8SearchEviction ):
                     " status: " +  str(serviceitem.status._get_value())) 
 
         self.service_one = next(filter(lambda x: isinstance(x, Service), self.objectList))
-        self.service_one == STATUS_SERV_STARTED
+        self.service_one == STATUS_SERV["Started"]

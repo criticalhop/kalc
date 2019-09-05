@@ -34,7 +34,7 @@ class DaemonSet(Controller, HasLimitsRequests):
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit
             new_pod.memLimit = self.memLimit
-            new_pod.status_phase = STATUS_POD_PENDING
+            new_pod.status = STATUS_POD["Pending"]
             try:
                 new_pod.priorityClass = \
                     next(filter(\
@@ -48,5 +48,5 @@ class DaemonSet(Controller, HasLimitsRequests):
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1
-            scheduler.status = STATUS_SCHED_CHANGED
+            scheduler.status = STATUS_SCHED["Changed"]
 

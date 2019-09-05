@@ -16,10 +16,10 @@ class HasLimitsRequests(Object):
     memRequest: int
     cpuRequest: int
     memLimit: int
-    memLimitsStatus: str
+    memLimitsStatus: StatusLim
     """Status to set if the limit is reached"""
     cpuLimit: int
-    cpuLimitsStatus: str
+    cpuLimitsStatus: StatusLim
     """Status to set if the limit is reached"""
 
     def __init__(self, *args, **kwargs):
@@ -28,8 +28,8 @@ class HasLimitsRequests(Object):
         self.memLimit = -1
         self.cpuRequest = -1
         self.memRequest = -1
-        self.memLimitsStatus = STATUS_LIM_MET
-        self.cpuLimitsStatus = STATUS_LIM_MET
+        self.memLimitsStatus = STATUS_LIM["Limit Met"]
+        self.cpuLimitsStatus = STATUS_LIM["Limit Met"]
 
     @property
     def spec_template_spec_containers__resources_limits_cpu(self):

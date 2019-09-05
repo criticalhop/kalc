@@ -24,7 +24,7 @@ class Problem2(ProblemTemplate):
 
         self.priorityHigh = self.addObject(PriorityClass('HighPreemptive'))
         self.priorityHigh.priority = 5
-        self.priorityHigh.preemtionPolicy = TYPE_POLICY_PreemptLowerPriority
+        self.priorityHigh.preemtionPolicy = POLICY["PreemptLowerPriority"]
 
         self.priorityHighNoPreem = self.addObject(PriorityClass('HighNoPreemptive'))
         self.priorityHighNoPreem.priority = 5
@@ -47,17 +47,17 @@ class Problem2(ProblemTemplate):
 
         self.service1 = self.addObject(mservice.Service('service1'))
         self.service1.amountOfActivePods = 2
-        self.service1.status = STATUS_SERV_STARTED
+        self.service1.status = STATUS_SERV["Started"]
         self.service.append(self.service1)
 
         self.service2 = self.addObject(mservice.Service('service2'))
         self.service2.amountOfActivePods = 2
-        self.service2.status = STATUS_SERV_STARTED
+        self.service2.status = STATUS_SERV["Started"]
         self.service.append(self.service2)
 
         self.service3 = self.addObject(mservice.Service('service3'))
         self.service3.amountOfActivePods = 0
-        self.service3.status = STATUS_SERV_PENDING
+        self.service3.status = STATUS_SERV["Pending"]
 
 
         self.node1 = self.addObject(mnode.Node('node1'))
@@ -90,7 +90,7 @@ class Problem2(ProblemTemplate):
         self.pod1 = self.addObject(mpod.Pod('pod1'))
         self.pod1.currentRealCpuConsumption =0
         self.pod1.currentRealMemConsumption =0
-        self.pod1.status_phase = STATUS_POD_RUNNING
+        self.pod1.status = STATUS_POD["Running"]
         self.pod1.memRequest = 2
         self.pod1.cpuRequest = 2
         self.pod1.podNotOverwhelmingLimits = True
@@ -100,7 +100,7 @@ class Problem2(ProblemTemplate):
         self.pod1.cpuLimit =  1
         self.pod1.atNode = self.node2
         self.pod1.toNode = mnode.Node.NODE_NULL
-        self.pod1.memLimitsStatus = STATUS_LIM_MET
+        self.pod1.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod1.amountOfActiveRequests =0
         self.pod1.targetService = self.service1
         self.pod1.priorityClass = self.priorityLow
@@ -110,7 +110,7 @@ class Problem2(ProblemTemplate):
         self.pod2 = self.addObject(mpod.Pod('pod2'))
         self.pod2.currentRealCpuConsumption =0
         self.pod2.currentRealMemConsumption =0
-        self.pod2.status_phase = STATUS_POD_RUNNING
+        self.pod2.status = STATUS_POD["Running"]
         self.pod2.memRequest = 2
         self.pod2.cpuRequest = 2
         self.pod2.podNotOverwhelmingLimits = True
@@ -120,7 +120,7 @@ class Problem2(ProblemTemplate):
         self.pod2.cpuLimit =  1
         self.pod2.atNode = self.node2
         self.pod2.toNode =  mnode.Node.NODE_NULL
-        self.pod2.memLimitsStatus = STATUS_LIM_MET
+        self.pod2.memLimitsStatus = STATUS_LIM["Limit Met"]
         ## todo:  for relations  it should give helpful error message when = instead of add.
         self.pod2.amountOfActiveRequests =0
         self.pod2.targetService = self.service1
@@ -131,7 +131,7 @@ class Problem2(ProblemTemplate):
         self.pod3 = self.addObject(mpod.Pod('pod3'))
         self.pod3.currentRealCpuConsumption =0
         self.pod3.currentRealMemConsumption =0
-        self.pod3.status_phase = STATUS_POD_RUNNING
+        self.pod3.status = STATUS_POD["Running"]
         self.pod3.memRequest = 1
         self.pod3.cpuRequest = 1
         self.pod3.podNotOverwhelmingLimits = True
@@ -141,7 +141,7 @@ class Problem2(ProblemTemplate):
         self.pod3.cpuLimit =  2
         self.pod3.atNode = self.node1
         self.pod3.toNode =  mnode.Node.NODE_NULL
-        self.pod3.memLimitsStatus = STATUS_LIM_MET
+        self.pod3.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod3.amountOfActiveRequests =0
         self.pod3.targetService = self.service2
         self.pod3.priorityClass = self.priorityLow
@@ -152,7 +152,7 @@ class Problem2(ProblemTemplate):
         self.pod4 = self.addObject(mpod.Pod('pod4'))
         self.pod4.currentRealCpuConsumption =0
         self.pod4.currentRealMemConsumption =0
-        self.pod4.status_phase = STATUS_POD_RUNNING
+        self.pod4.status = STATUS_POD["Running"]
         self.pod4.memRequest = 1
         self.pod4.cpuRequest = 1
         self.pod4.podNotOverwhelmingLimits = True
@@ -162,7 +162,7 @@ class Problem2(ProblemTemplate):
         self.pod4.cpuLimit =   1
         self.pod4.atNode = self.node1
         self.pod4.toNode =  mnode.Node.NODE_NULL
-        self.pod4.memLimitsStatus = STATUS_LIM_MET
+        self.pod4.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod4.amountOfActiveRequests =0
         self.pod4.targetService = self.service3
         self.pod4.priorityClass = self.priorityLow
@@ -171,7 +171,7 @@ class Problem2(ProblemTemplate):
         self.pod5 = self.addObject(mpod.Pod('pod5'))
         self.pod5.currentRealCpuConsumption =0
         self.pod5.currentRealMemConsumption =0
-        self.pod5.status_phase = STATUS_POD_PENDING
+        self.pod5.status = STATUS_POD["Pending"]
         self.pod5.memRequest = 2
         self.pod5.cpuRequest = 2
         self.pod5.podNotOverwhelmingLimits = True
@@ -181,7 +181,7 @@ class Problem2(ProblemTemplate):
         self.pod5.cpuLimit =   1
         self.pod5.atNode =  mnode.Node.NODE_NULL
         self.pod5.toNode =  mnode.Node.NODE_NULL
-        self.pod5.memLimitsStatus = STATUS_LIM_MET
+        self.pod5.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod5.amountOfActiveRequests =0
         self.pod5.targetService = self.service3
         self.pod5.priorityClass = self.priorityHigh
@@ -192,7 +192,7 @@ class Problem2(ProblemTemplate):
         self.pod6 = self.addObject(mpod.Pod('pod6'))
         self.pod6.currentRealCpuConsumption =0
         self.pod6.currentRealMemConsumption =0
-        self.pod6.status_phase = STATUS_POD_PENDING
+        self.pod6.status = STATUS_POD["Pending"]
         self.pod6.memRequest = 2
         self.pod6.cpuRequest = 2
         self.pod6.podNotOverwhelmingLimits = True
@@ -202,7 +202,7 @@ class Problem2(ProblemTemplate):
         self.pod6.cpuLimit =   1
         self.pod6.atNode =  mnode.Node.NODE_NULL
         self.pod6.toNode = self.node1
-        self.pod6.memLimitsStatus = STATUS_LIM_MET
+        self.pod6.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod6.amountOfActiveRequests =0
         self.pod6.targetService = self.service3
         self.daemonset1.podList.add(self.pod6)
@@ -214,7 +214,7 @@ class Problem2(ProblemTemplate):
         self.pod7 = self.addObject(mpod.Pod('pod7'))
         self.pod7.currentRealCpuConsumption =0
         self.pod7.currentRealMemConsumption =0
-        self.pod7.status_phase = STATUS_POD_PENDING
+        self.pod7.status = STATUS_POD["Pending"]
         self.pod7.memRequest = 2
         self.pod7.cpuRequest = 2
         self.pod7.podNotOverwhelmingLimits = True
@@ -224,7 +224,7 @@ class Problem2(ProblemTemplate):
         self.pod7.cpuLimit =   1
         self.pod7.atNode =  mnode.Node.NODE_NULL
         self.pod7.toNode = self.node2
-        self.pod7.memLimitsStatus = STATUS_LIM_MET
+        self.pod7.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod7.amountOfActiveRequests =0
         self.pod7.targetService = self.service3
         self.daemonset1.podList.add(self.pod7)
@@ -260,7 +260,7 @@ class Problem2(ProblemTemplate):
         self.scheduler1.podQueue.add(self.pod5)
         self.scheduler1.podQueue.add(self.pod6)
         self.scheduler1.podQueue.add(self.pod7)
-        self.scheduler1.status = STATUS_SCHED_CHANGED
+        self.scheduler1.status = STATUS_SCHED["Changed"]
         self.scheduler1.queueLength = 3
 
 
@@ -271,7 +271,7 @@ class ProblemAutoLink(ProblemTemplate):
 
         self.priorityHigh = self.addObject(PriorityClass('HighPreemptive'))
         self.priorityHigh.priority = 5
-        self.priorityHigh.preemtionPolicy = TYPE_POLICY_PreemptLowerPriority
+        self.priorityHigh.preemtionPolicy = POLICY["PreemptLowerPriority"]
 
         self.priorityHighNoPreem = self.addObject(PriorityClass('HighNoPreemptive'))
         self.priorityHighNoPreem.priority = 5
@@ -294,20 +294,20 @@ class ProblemAutoLink(ProblemTemplate):
 
         self.service1 = self.addObject(mservice.Service('service1'))
         self.service1.amountOfActivePods = 0
-        self.service1.status = STATUS_SERV_PENDING
+        self.service1.status = STATUS_SERV["Pending"]
         self.service1.spec_selector.add(labelFactory.get("test","test"))
         self.service.append(self.service1)
 
         self.service2 = self.addObject(mservice.Service('service2'))
         self.service2.amountOfActivePods = 0
-        self.service2.status = STATUS_SERV_PENDING
+        self.service2.status = STATUS_SERV["Pending"]
         self.service2.spec_selector.add(labelFactory.get("test2","test2"))
         self.service.append(self.service2)
 
         self.service3 = self.addObject(mservice.Service('service3'))
         self.service3.amountOfActivePods = 0
         self.service3.spec_selector.add(labelFactory.get("test3","test3"))
-        self.service3.status = STATUS_SERV_PENDING
+        self.service3.status = STATUS_SERV["Pending"]
 
 
         self.node1 = self.addObject(mnode.Node('node1'))
@@ -340,7 +340,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod1 = self.addObject(mpod.Pod('pod1'))
         self.pod1.currentRealCpuConsumption =0
         self.pod1.currentRealMemConsumption =0
-        self.pod1.status_phase = STATUS_POD_RUNNING
+        self.pod1.status = STATUS_POD["Running"]
         self.pod1.memRequest = 2
         self.pod1.cpuRequest = 2
         self.pod1.podNotOverwhelmingLimits = True
@@ -350,7 +350,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod1.cpuLimit =  1
         self.pod1.atNode = self.node2
         self.pod1.toNode = mnode.Node.NODE_NULL
-        self.pod1.memLimitsStatus = STATUS_LIM_MET
+        self.pod1.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod1.amountOfActiveRequests =0
         # self.pod1.targetService = self.service1
         self.pod1.metadata_labels.add(labelFactory.get("test","test"))
@@ -361,7 +361,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod2 = self.addObject(mpod.Pod('pod2'))
         self.pod2.currentRealCpuConsumption =0
         self.pod2.currentRealMemConsumption =0
-        self.pod2.status_phase = STATUS_POD_RUNNING
+        self.pod2.status = STATUS_POD["Running"]
         self.pod2.memRequest = 2
         self.pod2.cpuRequest = 2
         self.pod2.podNotOverwhelmingLimits = True
@@ -371,7 +371,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod2.cpuLimit =  1
         self.pod2.atNode = self.node2
         self.pod2.toNode =  mnode.Node.NODE_NULL
-        self.pod2.memLimitsStatus = STATUS_LIM_MET
+        self.pod2.memLimitsStatus = STATUS_LIM["Limit Met"]
         ## todo:  for relations  it should give helpful error message when = instead of add.
         self.pod2.amountOfActiveRequests =0
         # self.pod2.targetService = self.service1
@@ -383,7 +383,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod3 = self.addObject(mpod.Pod('pod3'))
         self.pod3.currentRealCpuConsumption =0
         self.pod3.currentRealMemConsumption =0
-        self.pod3.status_phase = STATUS_POD_RUNNING
+        self.pod3.status = STATUS_POD["Running"]
         self.pod3.memRequest = 1
         self.pod3.cpuRequest = 1
         self.pod3.podNotOverwhelmingLimits = True
@@ -393,7 +393,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod3.cpuLimit =  2
         self.pod3.atNode = self.node1
         self.pod3.toNode =  mnode.Node.NODE_NULL
-        self.pod3.memLimitsStatus = STATUS_LIM_MET
+        self.pod3.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod3.amountOfActiveRequests =0
         # self.pod3.targetService = self.service2
         self.pod3.metadata_labels.add(labelFactory.get("test2","test2"))
@@ -405,7 +405,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod4 = self.addObject(mpod.Pod('pod4'))
         self.pod4.currentRealCpuConsumption =0
         self.pod4.currentRealMemConsumption =0
-        self.pod4.status_phase = STATUS_POD_RUNNING
+        self.pod4.status = STATUS_POD["Running"]
         self.pod4.memRequest = 1
         self.pod4.cpuRequest = 1
         self.pod4.podNotOverwhelmingLimits = True
@@ -415,7 +415,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod4.cpuLimit =   1
         self.pod4.atNode = self.node1
         self.pod4.toNode =  mnode.Node.NODE_NULL
-        self.pod4.memLimitsStatus = STATUS_LIM_MET
+        self.pod4.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod4.amountOfActiveRequests =0
         # self.pod4.targetService = self.service3
         self.pod4.metadata_labels.add(labelFactory.get("test3","test3"))
@@ -425,7 +425,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod5 = self.addObject(mpod.Pod('pod5'))
         self.pod5.currentRealCpuConsumption =0
         self.pod5.currentRealMemConsumption =0
-        self.pod5.status_phase = STATUS_POD_PENDING
+        self.pod5.status = STATUS_POD["Pending"]
         self.pod5.memRequest = 2
         self.pod5.cpuRequest = 2
         self.pod5.podNotOverwhelmingLimits = True
@@ -435,7 +435,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod5.cpuLimit =   1
         self.pod5.atNode =  mnode.Node.NODE_NULL
         self.pod5.toNode =  mnode.Node.NODE_NULL
-        self.pod5.memLimitsStatus = STATUS_LIM_MET
+        self.pod5.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod5.amountOfActiveRequests =0
         # self.pod5.targetService = self.service3
         self.pod5.metadata_labels.add(labelFactory.get("test3","test3"))
@@ -447,7 +447,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod6 = self.addObject(mpod.Pod('pod6'))
         self.pod6.currentRealCpuConsumption =0
         self.pod6.currentRealMemConsumption =0
-        self.pod6.status_phase = STATUS_POD_PENDING
+        self.pod6.status = STATUS_POD["Pending"]
         self.pod6.memRequest = 2
         self.pod6.cpuRequest = 2
         self.pod6.podNotOverwhelmingLimits = True
@@ -457,7 +457,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod6.cpuLimit =   1
         self.pod6.atNode =  mnode.Node.NODE_NULL
         self.pod6.toNode = self.node1
-        self.pod6.memLimitsStatus = STATUS_LIM_MET
+        self.pod6.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod6.amountOfActiveRequests =0
         # self.pod6.targetService = self.service3
         self.pod6.metadata_labels.add(labelFactory.get("test3","test3"))
@@ -470,7 +470,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod7 = self.addObject(mpod.Pod('pod7'))
         self.pod7.currentRealCpuConsumption =0
         self.pod7.currentRealMemConsumption =0
-        self.pod7.status_phase = STATUS_POD_PENDING
+        self.pod7.status = STATUS_POD["Pending"]
         self.pod7.memRequest = 2
         self.pod7.cpuRequest = 2
         self.pod7.podNotOverwhelmingLimits = True
@@ -480,7 +480,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod7.cpuLimit =   1
         self.pod7.atNode =  mnode.Node.NODE_NULL
         self.pod7.toNode = self.node2
-        self.pod7.memLimitsStatus = STATUS_LIM_MET
+        self.pod7.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod7.amountOfActiveRequests =0
         # self.pod7.targetService = self.service3
         self.pod7.metadata_labels.add(labelFactory.get("test3","test3"))
@@ -517,7 +517,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.scheduler1.podQueue.add(self.pod5)
         self.scheduler1.podQueue.add(self.pod6)
         self.scheduler1.podQueue.add(self.pod7)
-        self.scheduler1.status = STATUS_SCHED_CHANGED
+        self.scheduler1.status = STATUS_SCHED["Changed"]
         self.scheduler1.queueLength = 3
 
     def print_objects(self):
@@ -525,7 +525,7 @@ class ProblemAutoLink(ProblemTemplate):
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
         for poditem in pod_loaded_list:
             print("pod:"+ str(poditem.metadata_name._get_value()) + \
-                " status_phase: " + str(poditem.status_phase) + \
+                " status: " + str(poditem.status) + \
                 " priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
                 " toNode: " + str(poditem.toNode._property_value) + \
                 " atNode: " + str(poditem.atNode._property_value) + \

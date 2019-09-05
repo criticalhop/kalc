@@ -1,5 +1,5 @@
 from poodle import Object
-from guardctl.model.system.primitives import Type
+from guardctl.model.system.primitives import TypePolicy
 from guardctl.misc.const import *
 
 
@@ -7,11 +7,11 @@ class PriorityClass(Object):
     metadata_name: str
 
     priority: int
-    preemptionPolicy: str
+    preemptionPolicy: TypePolicy
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
-        self.preemptionPolicy = TYPE_POLICY_PreemptLowerPriority
+        self.preemptionPolicy = POLICY["PreemptLowerPriority"]
         self.priority = 0
 
     @property

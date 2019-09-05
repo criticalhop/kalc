@@ -30,15 +30,15 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         self.targetservice = service_found
         self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
 
-    goal = lambda self: self.targetservice.status == STATUS_SERV_INTERRUPTED and \
-            self.scheduler.status == STATUS_SCHED_CLEAN
+    goal = lambda self: self.targetservice.status == STATUS_SERV["Interrupted"] and \
+            self.scheduler.status == STATUS_SCHED["Clean"]
 
     def print_objects(self):
         print("=====>")
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
         for poditem in pod_loaded_list:
             print("pod:"+ str(poditem.metadata_name._get_value()) + \
-                " status_phase: " + str(poditem.status_phase) + \
+                " status: " + str(poditem.status) + \
                 " priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
                 " toNode: " + str(poditem.toNode._property_value) + \
                 " atNode: " + str(poditem.atNode._property_value) + \
@@ -76,7 +76,7 @@ def test_priority_is_loaded():
     k._build_state()
     priorityClasses = filter(lambda x: isinstance(x, PriorityClass), k.state_objects)
     for p in priorityClasses:
-        if p.metadata_name == "high-priority" and p.preemptionPolicy == TYPE_POLICY_PreemptLowerPriority\
+        if p.metadata_name == "high-priority" and p.preemptionPolicy == POLICY["PreemptLowerPriority"]\
             and p.priority > 0:
             return
     raise ValueError("Could not find priority loded")
@@ -102,7 +102,7 @@ def test_service_status():
         if p.metadata_name == "redis-master-evict" and \
             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
             labelFactory.get("app", "redis-evict") in p.spec_selector._get_value() and \
-                p.status == STATUS_SERV_PENDING:
+                p.status == STATUS_SERV["Pending"]:
             service_found = True
             break
     assert service_found
@@ -125,7 +125,7 @@ class StartServiceGoal(K8SearchEviction):
         assert service_found
         self.targetservice = service_found
     def goal(self):
-        return self.targetservice.status == STATUS_SERV_STARTED
+        return self.targetservice.status == STATUS_SERV["Started"]
     def debug(self):
         self.problem()
         self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m)) and hasattr(getattr(self, m), "_planned")]
@@ -157,7 +157,7 @@ def test_service_active_pods():
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
-                p.status == STATUS_SERV_STARTED and\
+                p.status == STATUS_SERV["Started"] and\
                     p.amountOfActivePods > 0:
             pods_active = True
             break
@@ -172,7 +172,7 @@ def test_service_link_to_pods():
     for p in objects:
         if p.metadata_name == "redis-master-evict" and \
             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
-                p.status == STATUS_SERV_STARTED:
+                p.status == STATUS_SERV["Started"]:
                 serv = p
     assert not serv is None
     objects = filter(lambda x: isinstance(x, Pod), ALL_STATE)
@@ -192,7 +192,7 @@ def test_queue_status():
     nodes = list(filter(lambda x: isinstance(x, Node), k.state_objects))
     assert scheduler.queueLength == len(nodes)
     assert scheduler.podQueue._get_value()
-    assert scheduler.status == STATUS_SCHED_CHANGED
+    assert scheduler.status == STATUS_SCHED["Changed"]
 
 def test_nodes_status():
     objects = filter(lambda x: isinstance(x, Node), ALL_STATE)

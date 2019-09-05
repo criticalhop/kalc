@@ -26,9 +26,9 @@ class K8SearchEviction(KubernetesModel):
                 cpuRequestLoc: int,
                 memRequestLoc: int
             ):
-        assert scheduler1.status == STATUS_SCHED_CLEAN 
+        assert scheduler1.status == STATUS_SCHED["Clean"] 
         assert service1.amountOfActivePods == 0
-        assert service1.status == STATUS_SERV_STARTED
+        assert service1.status == STATUS_SERV["Started"]
         assert pod1.targetService == service1
         # assert globalVar1.currentFormalCpuConsumption == currentFormalCpuConsumptionLoc
         # assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
@@ -39,7 +39,7 @@ class K8SearchEviction(KubernetesModel):
         #### assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest > globalVar1.cpuCapacity
         # assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
 
-        service1.status = STATUS_SERV_INTERRUPTED
+        service1.status = STATUS_SERV["Interrupted"]
     
 
     
@@ -48,8 +48,8 @@ class K8SearchEviction(KubernetesModel):
     #             service1: Service,
     #             scheduler1: "mscheduler.Scheduler"
     #         ):
-    #     assert scheduler1.status == STATUS_SCHED_CHANGED 
-    #     service1.status = STATUS_SERV_STARTED
+    #     assert scheduler1.status == STATUS_SCHED["Changed"] 
+    #     service1.status = STATUS_SERV["Started"]
     
     @planned(cost=100)
     def PodsConnectedToServices(self,
@@ -58,10 +58,10 @@ class K8SearchEviction(KubernetesModel):
                 pod1: Pod
             ):
         assert service1.amountOfActivePods > 0
-        service1.status = STATUS_SERV_STARTED
+        service1.status = STATUS_SERV["Started"]
 
     def goal(self):
         # TODO: find and define service or fix domain!
-        self.service[0].status == STATUS_SERV_INTERRUPTED and \
-            self.scheduler.status == STATUS_SCHED_CLEAN
+        self.service[0].status == STATUS_SERV["Interrupted"] and \
+            self.scheduler.status == STATUS_SCHED["Clean"]
 

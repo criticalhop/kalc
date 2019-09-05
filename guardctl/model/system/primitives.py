@@ -28,3 +28,6 @@ class StatusLim(Object):
 class Label(Object):
     def __str__(self):
         return str(self._get_value())
+
+class TypePolicy(Object):
+    pass

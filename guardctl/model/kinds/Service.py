@@ -12,13 +12,13 @@ class Service(HasLabel):
     lastPod: "mpod.Pod"
     atNode: Node
     amountOfActivePods: int
-    status: str
+    status: StatusServ
     metadata_name: str
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.amountOfActivePods = 0
-        self.status = STATUS_SERV_PENDING
+        self.status = STATUS_SERV["Pending"]
     
     # def __repr__(self):
     #     return 'Servicename : ' + str(self._get_value()) 

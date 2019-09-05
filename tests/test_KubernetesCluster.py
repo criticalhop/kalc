@@ -29,8 +29,8 @@ class SingleGoalEvictionDetect(K8SearchEviction):
             labelFactory.get("app", "redis-evict") in x.spec_selector._get_value(),
             self.objectList))
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
-        return evict_service.status == STATUS_SERV_INTERRUPTED and \
-                                    scheduler.status == STATUS_SCHED_CLEAN
+        return evict_service.status == STATUS_SERV["Interrupted"] and \
+                                    scheduler.status == STATUS_SCHED["Clean"]
 
 PRIORITY = {'high-priority':1000000, 'system-cluster-critical': 2000000000, 'system-node-critical': 2000001000}
 

@@ -11,7 +11,7 @@ from guardctl.model.system.primitives import Label
 
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.globals import GlobalVar
-
+from guardctl.misc.const import *
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
 
@@ -33,7 +33,7 @@ class Pod(HasLabel, HasLimitsRequests):
     currentRealMemConsumption: int
     spec_nodeName: str
     priorityClass: PriorityClass
-    status_phase: str
+    status: StatusPod
     isNull: bool
     # amountOfActiveRequests: int # For requests
 
@@ -44,7 +44,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.targetService = self.TARGET_SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
-        self.status_phase = STATUS_POD_PENDING
+        self.status = STATUS_POD["Pending"]
         self.isNull = True
         self.realInitialMemConsumption = 0
         self.realInitialCpuConsumption = 0
@@ -82,6 +82,12 @@ class Pod(HasLabel, HasLimitsRequests):
         if self.memRequest == -1: self.memRequest = 0
         self.memRequest += memConvertToAbstractProblem(res)
 
+    @property
+    def status_phase(self):
+        pass
+    @status_phase.setter
+    def status_phase(self, res):
+        self.status = STATUS_POD[res]
 
     # we just ignore priority for now
     # @property
@@ -181,15 +187,15 @@ class Pod(HasLabel, HasLimitsRequests):
                 ):
         assert podPending in scheduler1.podQueue
         assert podPending.toNode == Node.NODE_NULL
-        assert podPending.status_phase == STATUS_POD_PENDING
+        assert podPending.status == STATUS_POD["Pending"]
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass
         # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
         # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podToBeReplaced.status_phase == STATUS_POD_RUNNING
-        podToBeReplaced.status_phase = STATUS_POD_KILLING
+        assert podToBeReplaced.status == STATUS_POD["Running"]
+        podToBeReplaced.status = STATUS_POD["Killing"]
 
     @planned(cost=100)
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
@@ -204,15 +210,15 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podPending.toNode == nodeForPodPending
         assert nodeForPodPending.isNull == False
         assert podToBeReplaced.atNode == nodeForPodPending
-        assert podPending.status_phase == STATUS_POD_PENDING
+        assert podPending.status == STATUS_POD["Pending"]
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass
         # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
         # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podToBeReplaced.status_phase == STATUS_POD_RUNNING
-        podToBeReplaced.status_phase = STATUS_POD_KILLING
+        assert podToBeReplaced.status == STATUS_POD["Running"]
+        podToBeReplaced.status = STATUS_POD["Killing"]
 
     @planned
     def connect_pod_service_labels(self,
@@ -225,7 +231,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert label in service.spec_selector
         pod.targetService = service
         service.amountOfActivePods += 1
-        service.status = STATUS_SERV_STARTED
+        service.status = STATUS_SERV["Started"]
 
     @planned
     def fill_priority_class_object(self,
@@ -236,11 +242,11 @@ class Pod(HasLabel, HasLimitsRequests):
 
     @planned(cost=100)
     def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: "Pod",nodeOfPod: "mnode.Node" ):
-        assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
         assert nodeOfPod == podTobeKilled.atNode
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
-        podTobeKilled.memLimitsStatus = STATUS_LIM_EXCEEDED
+        podTobeKilled.memLimitsStatus = STATUS_LIM["Limit Exceeded"]
 
     @planned(cost=100)
     def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: "Pod",
@@ -248,11 +254,11 @@ class Pod(HasLabel, HasLimitsRequests):
         #, globalVar1: GlobalVar
         ):
         assert nodeOfPod == podTobeReanimated.atNode
-        assert podTobeReanimated.memLimitsStatus == STATUS_LIM_EXCEEDED
+        assert podTobeReanimated.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
         assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
-        podTobeReanimated.memLimitsStatus = STATUS_LIM_MET
+        podTobeReanimated.memLimitsStatus = STATUS_LIM["Limit Met"]
 
     @planned(cost=100)
     def MemoryErrorKillPodOverwhelmingLimits(self,
@@ -261,8 +267,8 @@ class Pod(HasLabel, HasLimitsRequests):
     ):
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert pod1TobeKilled.memLimitsStatus == STATUS_LIM_EXCEEDED
-        pod1TobeKilled.status_phase = STATUS_POD_KILLING
+        assert pod1TobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
+        pod1TobeKilled.status = STATUS_POD["Killing"]
 
 
     @planned(cost=100)
@@ -271,9 +277,9 @@ class Pod(HasLabel, HasLimitsRequests):
         podTobeKilled: "Pod"):
         assert podTobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert podTobeKilled.memLimitsStatus == STATUS_LIM_MET
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
 
-        podTobeKilled.status_phase = STATUS_POD_KILLING
+        podTobeKilled.status = STATUS_POD["Killing"]
 
     @planned(cost=100)
     def KillPod(self,
@@ -287,7 +293,7 @@ class Pod(HasLabel, HasLimitsRequests):
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status_phase ==  STATUS_POD_KILLING
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
@@ -298,9 +304,9 @@ class Pod(HasLabel, HasLimitsRequests):
         # globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
         # globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status_phase =  STATUS_POD_PENDING
+        podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status = STATUS_SCHED_CHANGED
+        scheduler1.status = STATUS_SCHED["Changed"]
 
     # Scheduler effects
 

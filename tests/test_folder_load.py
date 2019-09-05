@@ -46,7 +46,7 @@ def test_load_pods_new():
     pod = k.state_objects[2]
     assert isinstance(pod, Pod)
     assert len(pod.metadata_labels._get_value()) > 0
-    assert pod.status_phase == STATUS_POD_RUNNING
+    assert pod.status_phase == STATUS_POD["Running"]
 
     assert k.state_objects
 
