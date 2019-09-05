@@ -219,7 +219,7 @@ def test_eviction_fromfiles_strictgoal():
     p = SingleGoalEvictionDetect(k.state_objects)
     p.select_target_service()
     p.print_objects()
-    p.run(timeout=60, sessionName="test_eviction_fromfiles_strictgoal")
+    p.run(timeout=360, sessionName="test_eviction_fromfiles_strictgoal")
     # p.run(timeout=60)
     if not p.plan:
         # print("Could not solve %s" % p.__class__.__name__)

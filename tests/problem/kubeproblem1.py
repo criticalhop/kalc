@@ -17,10 +17,10 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 
-class Problem2(ProblemTemplate): 
+class Problem2(ProblemTemplate):
     def problem(self):
         # super().problem()
-        
+
 
         self.priorityHigh = self.addObject(PriorityClass('HighPreemptive'))
         self.priorityHigh.priority = 5
@@ -29,12 +29,12 @@ class Problem2(ProblemTemplate):
         self.priorityHighNoPreem = self.addObject(PriorityClass('HighNoPreemptive'))
         self.priorityHighNoPreem.priority = 5
         self.priorityHighNoPreem.preemtionPolicy = TYPE_POLICY_NEVER
-        
+
 
         self.priorityLow = self.addObject(PriorityClass('Low'))
         self.priorityLow.priority = 1
         self.priorityLow.preemtionPolicy = TYPE_POLICY_NEVER
-        
+
         self.priorityUndefined = self.addObject(PriorityClass('Undefined'))
         self.priorityUndefined.priority =0
         self.priorityUndefined.preemtionPolicy = TYPE_POLICY_NEVER
@@ -44,7 +44,7 @@ class Problem2(ProblemTemplate):
         self.nullLb = self.addObject( LoadBalancer('Null'))
 
 
-        
+
         self.service1 = self.addObject(mservice.Service('service1'))
         self.service1.amountOfActivePods = 2
         self.service1.status = STATUS_SERV_STARTED
@@ -57,9 +57,9 @@ class Problem2(ProblemTemplate):
 
         self.service3 = self.addObject(mservice.Service('service3'))
         self.service3.amountOfActivePods = 0
-        self.service3.status = STATUS_SERV_PENDING        
+        self.service3.status = STATUS_SERV_PENDING
 
-        
+
         self.node1 = self.addObject(mnode.Node('node1'))
         self.node1.status = STATUS_NODE_ACTIVE ##TODO - make Node activation mechanism
         self.node1.cpuCapacity = 3
@@ -85,8 +85,8 @@ class Problem2(ProblemTemplate):
         self.node.append(self.node2)
 
         self.node2.prevNode = self.node1
-        self.node1.prevNode = self.node2    
-               
+        self.node1.prevNode = self.node2
+
         self.pod1 = self.addObject(mpod.Pod('pod1'))
         self.pod1.currentRealCpuConsumption =0
         self.pod1.currentRealMemConsumption =0
@@ -105,8 +105,8 @@ class Problem2(ProblemTemplate):
         self.pod1.targetService = self.service1
         self.pod1.priorityClass = self.priorityLow
         self.pod.append(self.pod1)
-        
-        
+
+
         self.pod2 = self.addObject(mpod.Pod('pod2'))
         self.pod2.currentRealCpuConsumption =0
         self.pod2.currentRealMemConsumption =0
@@ -115,10 +115,10 @@ class Problem2(ProblemTemplate):
         self.pod2.cpuRequest = 2
         self.pod2.podNotOverwhelmingLimits = True
         self.pod2.realInitialMemConsumption =0
-        self.pod2.realInitialCpuConsumption =0        
+        self.pod2.realInitialCpuConsumption =0
         self.pod2.memLimit =  1
         self.pod2.cpuLimit =  1
-        self.pod2.atNode = self.node2   
+        self.pod2.atNode = self.node2
         self.pod2.toNode =  mnode.Node.NODE_NULL
         self.pod2.memLimitsStatus = STATUS_LIM_MET
         ## todo:  for relations  it should give helpful error message when = instead of add.
@@ -127,7 +127,7 @@ class Problem2(ProblemTemplate):
         self.pod2.priorityClass = self.priorityLow
         self.pod.append(self.pod2)
 
-     
+
         self.pod3 = self.addObject(mpod.Pod('pod3'))
         self.pod3.currentRealCpuConsumption =0
         self.pod3.currentRealMemConsumption =0
@@ -139,16 +139,16 @@ class Problem2(ProblemTemplate):
         self.pod3.realInitialCpuConsumption =0
         self.pod3.memLimit =  2
         self.pod3.cpuLimit =  2
-        self.pod3.atNode = self.node1     
+        self.pod3.atNode = self.node1
         self.pod3.toNode =  mnode.Node.NODE_NULL
-        self.pod3.memLimitsStatus = STATUS_LIM_MET        
+        self.pod3.memLimitsStatus = STATUS_LIM_MET
         self.pod3.amountOfActiveRequests =0
         self.pod3.targetService = self.service2
         self.pod3.priorityClass = self.priorityLow
         self.pod.append(self.pod3)
 
 
-        
+
         self.pod4 = self.addObject(mpod.Pod('pod4'))
         self.pod4.currentRealCpuConsumption =0
         self.pod4.currentRealMemConsumption =0
@@ -210,7 +210,7 @@ class Problem2(ProblemTemplate):
         self.pod.append(self.pod6)
 
 
-        
+
         self.pod7 = self.addObject(mpod.Pod('pod7'))
         self.pod7.currentRealCpuConsumption =0
         self.pod7.currentRealMemConsumption =0
@@ -243,9 +243,9 @@ class Problem2(ProblemTemplate):
         self.pod3.nextPod = self.pod4
         self.pod2.nextPod = self.pod3
         self.pod1.nextPod = self.pod2
-        # mpod.Pod.POD_NULL.nextPod = self.pod1       
-        
-        
+        # mpod.Pod.POD_NULL.nextPod = self.pod1
+
+
         self.globalVar1 = self.addObject(mglobals.GlobalVar('globalVar1'))
         self.globalVar1.numberOfRejectedReq =0
         self.globalVar1.lastPod = self.pod1
@@ -255,19 +255,19 @@ class Problem2(ProblemTemplate):
         self.globalVar1.currentFormalMemConsumption  = 4
         self.globalVar1.queueLength =0
         self.globalVar1.amountOfPods = 5
-          
+
         self.scheduler1 = self.addObject(mscheduler.Scheduler('scheduler1'))
         self.scheduler1.podQueue.add(self.pod5)
         self.scheduler1.podQueue.add(self.pod6)
         self.scheduler1.podQueue.add(self.pod7)
         self.scheduler1.status = STATUS_SCHED_CHANGED
-        self.scheduler1.queueLength = 3  
+        self.scheduler1.queueLength = 3
 
 
-class ProblemAutoLink(ProblemTemplate): 
+class ProblemAutoLink(ProblemTemplate):
     def problem(self):
         # super().problem()
-        
+
 
         self.priorityHigh = self.addObject(PriorityClass('HighPreemptive'))
         self.priorityHigh.priority = 5
@@ -276,12 +276,12 @@ class ProblemAutoLink(ProblemTemplate):
         self.priorityHighNoPreem = self.addObject(PriorityClass('HighNoPreemptive'))
         self.priorityHighNoPreem.priority = 5
         self.priorityHighNoPreem.preemtionPolicy = TYPE_POLICY_NEVER
-        
+
 
         self.priorityLow = self.addObject(PriorityClass('Low'))
         self.priorityLow.priority = 1
         self.priorityLow.preemtionPolicy = TYPE_POLICY_NEVER
-        
+
         self.priorityUndefined = self.addObject(PriorityClass('Undefined'))
         self.priorityUndefined.priority =0
         self.priorityUndefined.preemtionPolicy = TYPE_POLICY_NEVER
@@ -291,7 +291,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.nullLb = self.addObject( LoadBalancer('Null'))
 
 
-        
+
         self.service1 = self.addObject(mservice.Service('service1'))
         self.service1.amountOfActivePods = 0
         self.service1.status = STATUS_SERV_PENDING
@@ -307,9 +307,9 @@ class ProblemAutoLink(ProblemTemplate):
         self.service3 = self.addObject(mservice.Service('service3'))
         self.service3.amountOfActivePods = 0
         self.service3.spec_selector.add(labelFactory.get("test3","test3"))
-        self.service3.status = STATUS_SERV_PENDING        
+        self.service3.status = STATUS_SERV_PENDING
 
-        
+
         self.node1 = self.addObject(mnode.Node('node1'))
         self.node1.status = STATUS_NODE_ACTIVE ##TODO - make Node activation mechanism
         self.node1.cpuCapacity = 3
@@ -335,8 +335,8 @@ class ProblemAutoLink(ProblemTemplate):
         self.node.append(self.node2)
 
         self.node2.prevNode = self.node1
-        self.node1.prevNode = self.node2    
-               
+        self.node1.prevNode = self.node2
+
         self.pod1 = self.addObject(mpod.Pod('pod1'))
         self.pod1.currentRealCpuConsumption =0
         self.pod1.currentRealMemConsumption =0
@@ -356,8 +356,8 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod1.metadata_labels.add(labelFactory.get("test","test"))
         self.pod1.priorityClass = self.priorityLow
         self.pod.append(self.pod1)
-        
-        
+
+
         self.pod2 = self.addObject(mpod.Pod('pod2'))
         self.pod2.currentRealCpuConsumption =0
         self.pod2.currentRealMemConsumption =0
@@ -366,10 +366,10 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod2.cpuRequest = 2
         self.pod2.podNotOverwhelmingLimits = True
         self.pod2.realInitialMemConsumption =0
-        self.pod2.realInitialCpuConsumption =0        
+        self.pod2.realInitialCpuConsumption =0
         self.pod2.memLimit =  1
         self.pod2.cpuLimit =  1
-        self.pod2.atNode = self.node2   
+        self.pod2.atNode = self.node2
         self.pod2.toNode =  mnode.Node.NODE_NULL
         self.pod2.memLimitsStatus = STATUS_LIM_MET
         ## todo:  for relations  it should give helpful error message when = instead of add.
@@ -379,7 +379,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod2.priorityClass = self.priorityLow
         self.pod.append(self.pod2)
 
-     
+
         self.pod3 = self.addObject(mpod.Pod('pod3'))
         self.pod3.currentRealCpuConsumption =0
         self.pod3.currentRealMemConsumption =0
@@ -391,9 +391,9 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod3.realInitialCpuConsumption =0
         self.pod3.memLimit =  2
         self.pod3.cpuLimit =  2
-        self.pod3.atNode = self.node1     
+        self.pod3.atNode = self.node1
         self.pod3.toNode =  mnode.Node.NODE_NULL
-        self.pod3.memLimitsStatus = STATUS_LIM_MET        
+        self.pod3.memLimitsStatus = STATUS_LIM_MET
         self.pod3.amountOfActiveRequests =0
         # self.pod3.targetService = self.service2
         self.pod3.metadata_labels.add(labelFactory.get("test2","test2"))
@@ -401,7 +401,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod.append(self.pod3)
 
 
-        
+
         self.pod4 = self.addObject(mpod.Pod('pod4'))
         self.pod4.currentRealCpuConsumption =0
         self.pod4.currentRealMemConsumption =0
@@ -466,7 +466,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod.append(self.pod6)
 
 
-        
+
         self.pod7 = self.addObject(mpod.Pod('pod7'))
         self.pod7.currentRealCpuConsumption =0
         self.pod7.currentRealMemConsumption =0
@@ -500,26 +500,26 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod3.nextPod = self.pod4
         self.pod2.nextPod = self.pod3
         self.pod1.nextPod = self.pod2
-        # mpod.Pod.POD_NULL.nextPod = self.pod1       
-        
-        
+        # mpod.Pod.POD_NULL.nextPod = self.pod1
+
+
         self.globalVar1 = self.addObject(mglobals.GlobalVar('globalVar1'))
-        self.globalVar1.numberOfRejectedReq =0
-        self.globalVar1.lastPod = self.pod1
-        self.globalVar1.memCapacity = 6
-        self.globalVar1.cpuCapacity = 6
-        self.globalVar1.currentFormalCpuConsumption  = 4
-        self.globalVar1.currentFormalMemConsumption  = 4
-        self.globalVar1.queueLength =0
-        self.globalVar1.amountOfPods = 5
-          
+        ##self.globalVar1.numberOfRejectedReq =0
+        #self.globalVar1.lastPod = self.pod1
+        #self.globalVar1.memCapacity = 6
+        #self.globalVar1.cpuCapacity = 6
+        #self.globalVar1.currentFormalCpuConsumption  = 4
+        #self.globalVar1.currentFormalMemConsumption  = 4
+        #self.globalVar1.queueLength =0
+        #self.globalVar1.amountOfPods = 5
+
         self.scheduler1 = self.addObject(mscheduler.Scheduler('scheduler1'))
         self.scheduler1.podQueue.add(self.pod5)
         self.scheduler1.podQueue.add(self.pod6)
         self.scheduler1.podQueue.add(self.pod7)
         self.scheduler1.status = STATUS_SCHED_CHANGED
-        self.scheduler1.queueLength = 3  
-    
+        self.scheduler1.queueLength = 3
+
     def print_objects(self):
         print("=====>")
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
@@ -546,9 +546,9 @@ class ProblemAutoLink(ProblemTemplate):
         for service in services:
             print("service: "+str(service.metadata_name)+\
                 " amountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
-                " status: "+str(service.status._get_value()) + 
+                " status: "+str(service.status._get_value()) +
                 " spec_selector: "+str([str(x) for x in service.spec_selector._property_value]))
-        
+
         prios = filter(lambda x: isinstance(x, PriorityClass), self.objectList)
         for prio in prios:
             print("priorityClass: "+str(prio.metadata_name)+" "+str(prio.priority._get_value()))

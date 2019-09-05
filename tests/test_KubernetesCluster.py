@@ -39,9 +39,9 @@ def test_cluster_folder():
     mix.load_dir(TEST_CLUSTER_FOLDER)
     mix._build_state()
     mix.fillObjectLists()
-    assert(len(mix.pod) == 10)
+    assert(len(mix.pod) == 32)
     assert(len(mix.node) == 5)
-    assert(len(mix.service) == 6)
+    assert(len(mix.service) == 10)
     have_high_priority=False
     for priorityClass in mix.state_objects:
         if isinstance(priorityClass, PriorityClass):
@@ -57,7 +57,7 @@ def test_daemonset_folder():
     mix.create_resource(open(TEST_DAEMONET).read())
     mix._build_state()
     mix.fillObjectLists()
-    assert(len(mix.pod) == 10 + len(mix.node))
+    assert(len(mix.pod) == 37 - 5 + len(mix.node))
     assert(len(mix.node) == 5)
-    assert(len(mix.service) == 6) 
+    assert(len(mix.service) == 10) 
 
