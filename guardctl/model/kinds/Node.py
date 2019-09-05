@@ -1,5 +1,5 @@
 from typing import Set
-from guardctl.model.system.primitives import Label
+from guardctl.model.system.primitives import Label, StatusNode
 from guardctl.model.system.base import HasLabel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
@@ -18,7 +18,7 @@ class Node(HasLabel):
     AmountOfPodsOverwhelmingMemLimits: int
     podAmount: int
     isNull: bool
-    status: str
+    status: StatusNode
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

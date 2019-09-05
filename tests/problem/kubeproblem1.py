@@ -28,16 +28,16 @@ class Problem2(ProblemTemplate):
 
         self.priorityHighNoPreem = self.addObject(PriorityClass('HighNoPreemptive'))
         self.priorityHighNoPreem.priority = 5
-        self.priorityHighNoPreem.preemtionPolicy = TYPE_POLICY_NEVER
+        self.priorityHighNoPreem.preemtionPolicy = POLICY["Never"]
 
 
         self.priorityLow = self.addObject(PriorityClass('Low'))
         self.priorityLow.priority = 1
-        self.priorityLow.preemtionPolicy = TYPE_POLICY_NEVER
+        self.priorityLow.preemtionPolicy = POLICY["Never"]
 
         self.priorityUndefined = self.addObject(PriorityClass('Undefined'))
         self.priorityUndefined.priority =0
-        self.priorityUndefined.preemtionPolicy = TYPE_POLICY_NEVER
+        self.priorityUndefined.preemtionPolicy = POLICY["Never"]
 
         self.daemonset1 = self.addObject(DaemonSet('DS1'))
 
@@ -61,7 +61,7 @@ class Problem2(ProblemTemplate):
 
 
         self.node1 = self.addObject(mnode.Node('node1'))
-        self.node1.status = STATUS_NODE_ACTIVE ##TODO - make Node activation mechanism
+        self.node1.status = STATUS_NODE["Active"] ##TODO - make Node activation mechanism
         self.node1.cpuCapacity = 3
         self.node1.memCapacity = 3
         self.node1.currentFormalCpuConsumption = 2
@@ -73,7 +73,7 @@ class Problem2(ProblemTemplate):
 
 
         self.node2 = self.addObject(mnode.Node('node2'))
-        self.node2.status = STATUS_NODE_ACTIVE
+        self.node2.status = STATUS_NODE["Active"]
         self.node2.cpuCapacity = 3
         self.node2.memCapacity = 3
         self.node2.memCapacityBarier = 3
@@ -275,16 +275,16 @@ class ProblemAutoLink(ProblemTemplate):
 
         self.priorityHighNoPreem = self.addObject(PriorityClass('HighNoPreemptive'))
         self.priorityHighNoPreem.priority = 5
-        self.priorityHighNoPreem.preemtionPolicy = TYPE_POLICY_NEVER
+        self.priorityHighNoPreem.preemtionPolicy = POLICY["Never"]
 
 
         self.priorityLow = self.addObject(PriorityClass('Low'))
         self.priorityLow.priority = 1
-        self.priorityLow.preemtionPolicy = TYPE_POLICY_NEVER
+        self.priorityLow.preemtionPolicy = POLICY["Never"]
 
         self.priorityUndefined = self.addObject(PriorityClass('Undefined'))
         self.priorityUndefined.priority =0
-        self.priorityUndefined.preemtionPolicy = TYPE_POLICY_NEVER
+        self.priorityUndefined.preemtionPolicy = POLICY["Never"]
 
         self.daemonset1 = self.addObject(DaemonSet('DS1'))
 
@@ -311,7 +311,7 @@ class ProblemAutoLink(ProblemTemplate):
 
 
         self.node1 = self.addObject(mnode.Node('node1'))
-        self.node1.status = STATUS_NODE_ACTIVE ##TODO - make Node activation mechanism
+        self.node1.status = STATUS_NODE["Active"] ##TODO - make Node activation mechanism
         self.node1.cpuCapacity = 3
         self.node1.memCapacity = 3
         self.node1.currentFormalCpuConsumption = 2
@@ -323,7 +323,7 @@ class ProblemAutoLink(ProblemTemplate):
 
 
         self.node2 = self.addObject(mnode.Node('node2'))
-        self.node2.status = STATUS_NODE_ACTIVE
+        self.node2.status = STATUS_NODE["Active"]
         self.node2.cpuCapacity = 3
         self.node2.memCapacity = 3
         self.node2.memCapacityBarier = 3

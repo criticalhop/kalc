@@ -1,6 +1,5 @@
 from poodle import schedule, xschedule
 from poodle.schedule import SchedulingError
-from guardctl.model.system.primitives import StatusPod, StatusNode, StatusSched, StatusServ, StatusLim
 
 class ProblemTemplate:
     def __init__(self, objectList=None):
@@ -17,27 +16,8 @@ class ProblemTemplate:
         self.containerConfig = []
         self.priorityDict = {}
     
-    # def constFactory(self, statusNameList, objType):
-    #     for statusName in statusNameList:
-    #         self.constSymbol[statusName] = self.addObject(objType(statusName))
-
-
-    # def problem(self):
-    #     statusPodList = ["statusPodPending",
-    #     "statusPodMemConsumed",
-    #     "statusPodRunning",
-    #     "statusPodSucceeded",
-    #     "statusPodKilling",
-    #     "statusPodFailed"]
-    #     self.constFactory(statusPodList, StatusPod)
-
-    #     statusNodeList = ["statusNodeActive",
-    #     "statusNodeInactive"]
-    #     self.constFactory(statusNodeList, StatusPod)
-        
-    #     statusLimList = ["statusNodeActive",
-    #     "statusNodeInactive"]
-    #     self.constFactory(statusNodeList, StatusPod)
+    def problem(self):
+        pass
         
     def addObject(self, obj):
         self.objectList.append(obj)
