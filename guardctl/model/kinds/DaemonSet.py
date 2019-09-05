@@ -36,4 +36,5 @@ class DaemonSet(Controller, HasLimitsRequests):
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1
+            scheduler.status = STATUS_SCHED_CHANGED
 

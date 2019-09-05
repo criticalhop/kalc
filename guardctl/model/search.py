@@ -17,7 +17,7 @@ class K8SearchEviction(KubernetesModel):
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
-                globalVar1: "GlobalVar",
+                # globalVar1: "GlobalVar",
                 scheduler1: "Scheduler",
                 currentFormalCpuConsumptionLoc: int,
                 currentFormalMemConsumptionLoc: int,
@@ -30,14 +30,14 @@ class K8SearchEviction(KubernetesModel):
         assert service1.amountOfActivePods == 0
         assert service1.status == STATUS_SERV_STARTED
         assert pod1.targetService == service1
-        assert globalVar1.currentFormalCpuConsumption == currentFormalCpuConsumptionLoc
-        assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
+        # assert globalVar1.currentFormalCpuConsumption == currentFormalCpuConsumptionLoc
+        # assert globalVar1.currentFormalMemConsumption == currentFormalMemConsumptionLoc
         assert pod1.cpuRequest == cpuRequestLoc
         assert pod1.memRequest == memRequestLoc
-        assert globalVar1.cpuCapacity == cpuCapacityLoc 
-        assert globalVar1.memCapacity == memCapacityLoc 
-        # assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest > globalVar1.cpuCapacity
-        assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
+        # assert globalVar1.cpuCapacity == cpuCapacityLoc 
+        # assert globalVar1.memCapacity == memCapacityLoc 
+        #### assert globalVar1.currentFormalCpuConsumption + pod1.cpuRequest > globalVar1.cpuCapacity
+        # assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
 
         service1.status = STATUS_SERV_INTERRUPTED
     

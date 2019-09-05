@@ -19,26 +19,31 @@ class Node(HasLabel):
     podAmount: int
     isNull: bool
     status: str
-    
-    @property
-    def status_capacity_memory(self):
-        pass
-    @status_capacity_memory.setter
-    def status_capacity_memory(self, value):
-        if value == -1: value = 0
-        self.memCapacity = memConvertToAbstractProblem(value)
-
-    # @property
-    # def status_capacity_cpu(self):
-    #     pass
-    # @status_capacity_cpu.setter
-    # def status_capacity_cpu(self, value):
-    #     if value == -1: value = 0
-    #     self.cpuCapacity = cpuConvertToAbstractProblem(value)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.AmountOfPodsOverwhelmingMemLimits = 0
+        self.currentFormalCpuConsumption = 0
+        self.currentFormalMemConsumption = 0
+        self.currentRealCpuConsumption = 0
+        self.currentRealMemConsumption = 0
+        self.cpuCapacity = 0
+        self.memCapacity = 0
         self.isNull = False
+    
+    @property
+    def status_allocatable_memory(self):
+        pass
+    @status_allocatable_memory.setter
+    def status_allocatable_memory(self, value):
+        self.memCapacity = memConvertToAbstractProblem(value)
+
+    @property
+    def status_allocatable_cpu(self):
+        pass
+    @status_allocatable_cpu.setter
+    def status_allocatable_cpu(self, value):
+        self.cpuCapacity = cpuConvertToAbstractProblem(value)
 
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 

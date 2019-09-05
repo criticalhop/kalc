@@ -88,5 +88,3 @@ def test_spec_selector_labels():
             return
     raise Exception("Can not check labels load")
 
-def test_load_nodes_properties():
-    pass

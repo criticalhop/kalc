@@ -12,6 +12,8 @@ from guardctl.model.system.primitives import Label
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.globals import GlobalVar
 
+from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+
 
 class Pod(HasLabel, HasLimitsRequests):
     # k8s attributes
@@ -47,10 +49,33 @@ class Pod(HasLabel, HasLimitsRequests):
 
     def hook_after_load(self, object_space):
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
-        if nodes:
-            self.atNode = nodes[0]
-        else:
-            logger.warning("Orphan Pod loaded")
+        found = False
+        for node in nodes:
+            if node.metadata_name == self.spec_nodeName:
+                self.atNode = node
+                if self.cpuRequest > 0:
+                    node.currentFormalCpuConsumption += self.cpuRequest
+                if self.memRequest > 0:
+                    node.currentFormalMemConsumption += self.memRequest
+                found = True
+        if not found:
+            logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
+
+    @property
+    def spec_containers__resources_requests_cpu(self):
+        pass
+    @spec_containers__resources_requests_cpu.setter
+    def spec_containers__resources_requests_cpu(self, res):
+        if self.cpuRequest == -1: self.cpuRequest = 0
+        self.cpuRequest += cpuConvertToAbstractProblem(res)
+
+    @property
+    def spec_containers__resources_requests_memory(self):
+        pass
+    @spec_containers__resources_requests_memory.setter
+    def spec_containers__resources_requests_memory(self, res):
+        if self.memRequest == -1: self.memRequest = 0
+        self.memRequest += memConvertToAbstractProblem(res)
 
         
     # we just ignore priority for now
@@ -214,7 +239,9 @@ class Pod(HasLabel, HasLimitsRequests):
         
     @planned(cost=100)
     def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: "Pod",
-        nodeOfPod: "mnode.Node" , globalVar1: GlobalVar):            
+        nodeOfPod: "mnode.Node" 
+        #, globalVar1: GlobalVar
+        ):            
         assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimitsStatus == STATUS_LIM_EXCEEDED
         assert nodeOfPod == podTobeReanimated.atNode
@@ -248,7 +275,7 @@ class Pod(HasLabel, HasLimitsRequests):
             podBeingKilled : "Pod",
             nodeWithPod : "mnode.Node" ,
             serviceOfPod: "mservice.Service",
-            globalVar1: "GlobalVar",
+            # globalVar1: "GlobalVar",
             scheduler1: "mscheduler.Scheduler",
             amountOfActivePodsPrev: int
             
@@ -263,8 +290,8 @@ class Pod(HasLabel, HasLimitsRequests):
         nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
-        globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
-        globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        # globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
+        # globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
         podBeingKilled.status_phase =  STATUS_POD_PENDING
         scheduler1.podQueue.add(podBeingKilled)

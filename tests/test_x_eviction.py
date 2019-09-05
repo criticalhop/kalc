@@ -14,6 +14,11 @@ from poodle import debug_plan
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
+ALL_STATE = None
+
+import logzero
+logzero.logfile("./test.log", disableStderrLogger=False)
+
 class SingleGoalEvictionDetect(K8SearchEviction):
     def goal(self):
         # for ob in self.objectList:
@@ -152,9 +157,31 @@ def test_service_link_to_pods():
 
 def test_queue_status():
     "test length and status of scheduler queue after load"
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k.create_resource(open(TEST_DAEMONET).read())
+    k._build_state()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    nodes = list(filter(lambda x: isinstance(x, Node), k.state_objects))
+    assert scheduler.queueLength == len(nodes)
+    assert scheduler.podQueue._get_value()
+    assert scheduler.status == STATUS_SCHED_CHANGED
+
+def test_nodes_status():
+    objects = filter(lambda x: isinstance(x, Node), ALL_STATE)
+    for node in objects:
+        assert node.cpuCapacity > 1
+        assert node.memCapacity > 1
+        assert node.currentFormalCpuConsumption > 1
+        assert node.currentFormalMemConsumption > 1
+        # assert node.currentRealMemConsumption > 1
+        # assert node.currentRealCpuConsumption > 1
+
+def test_nodes_pods_allocated():
+    "test that all pods in status running are allocated to nodes"
     pass
 
-@pytest.mark.skip(reason="need to test everything else first")
+# @pytest.mark.skip(reason="need to test everything else first")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
