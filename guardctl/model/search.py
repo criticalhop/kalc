@@ -9,8 +9,8 @@ from guardctl.misc.problem import ProblemTemplate
 
 class KubernetesModel(ProblemTemplate):
     def problem(self):
-        self.scheduler = self.addObject(Scheduler())
-        self.globalVar = self.addObject(GlobalVar())
+        self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
+        self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
 
 class K8SearchEviction(KubernetesModel):
     @planned

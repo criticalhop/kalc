@@ -6,11 +6,13 @@ from poodle import planned, Property, Relation
 from guardctl.misc.util import dget, objwalk, find_property, k8s_to_domain_object
 from guardctl.model.full import kinds_collection
 from guardctl.model.search import K8SearchEviction
+from guardctl.model.system.globals import GlobalVar
+from guardctl.model.system.Scheduler import Scheduler
 
 class KubernetesCluster:
     def __init__(self):
         self.dict_states = defaultdict(list)
-        self.state_objects = []
+        self.state_objects = [Scheduler(), GlobalVar()]
 
     def load_dir(self, dir_path):
         for root, dirs, files in os.walk(dir_path):

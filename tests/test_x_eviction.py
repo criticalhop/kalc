@@ -154,7 +154,7 @@ def test_queue_status():
     "test length and status of scheduler queue after load"
     pass
 
-#@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.skip(reason="need to test everything else first")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)

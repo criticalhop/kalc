@@ -43,7 +43,7 @@ def test_load_pods_new():
     k.load(open(TEST_PODS).read())
     k._build_state()
     # TODO: check if pod is fully loaded
-    pod = k.state_objects[0]
+    pod = k.state_objects[2]
     assert isinstance(pod, Pod)
     assert len(pod.metadata_labels._get_value()) > 0
     assert pod.status_phase == STATUS_POD_RUNNING
@@ -88,3 +88,5 @@ def test_spec_selector_labels():
             return
     raise Exception("Can not check labels load")
 
+def test_load_nodes_properties():
+    pass
