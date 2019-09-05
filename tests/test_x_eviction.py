@@ -23,13 +23,15 @@ class SingleGoalEvictionDetect(K8SearchEviction):
     def select_target_service(self):
         service_found = None
         for servicel in filter(lambda x: isinstance(x, Service), self.objectList):
-            if servicel.metadata_name == "redis-master-evict": 
+            if servicel.metadata_name == "redis-master-evict":
                 service_found = servicel
                 break
         assert service_found
         self.targetservice = service_found
-    
-    goal = lambda self: self.targetservice.status == STATUS_SERV_INTERRUPTED
+        self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
+
+    goal = lambda self: self.targetservice.status == STATUS_SERV_INTERRUPTED and \
+            self.scheduler.status == STATUS_SCHED_CLEAN
 
     def print_objects(self):
         print("=====>")
@@ -57,16 +59,16 @@ class SingleGoalEvictionDetect(K8SearchEviction):
         for service in services:
             print("service: "+str(service.metadata_name)+\
                 " amountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
-                " status: "+str(service.status._get_value()) + 
+                " status: "+str(service.status._get_value()) +
                 " spec_selector: "+str([str(x) for x in service.spec_selector._property_value]))
-        
+
         prios = filter(lambda x: isinstance(x, PriorityClass), self.objectList)
         for prio in prios:
             print("priorityClass: "+str(prio.metadata_name)+" "+str(prio.priority._get_value()))
 
 
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
-                                    
+
 
 def test_priority_is_loaded():
     k = KubernetesCluster()
@@ -104,7 +106,7 @@ def test_service_status():
             service_found = True
             break
     assert service_found
-    
+
     objects = filter(lambda x: isinstance(x, Pod), k.state_objects)
     for p in objects:
         if p.targetService == Pod.TARGET_SERVICE_NULL and \
@@ -117,7 +119,7 @@ class StartServiceGoal(K8SearchEviction):
     def select_target_service(self):
         service_found = None
         for servicel in filter(lambda x: isinstance(x, Service), self.objectList):
-            if servicel.metadata_name == "redis-master-evict": 
+            if servicel.metadata_name == "redis-master-evict":
                 service_found = servicel
                 break
         assert service_found
@@ -136,7 +138,7 @@ class StartServiceGoal(K8SearchEviction):
                     if callable(getattr(obj, m)) and hasattr(getattr(obj, m), "_planned"):
                         model_methods.append(getattr(obj, m))
         debug_plan(
-            methods=self_methods + list(model_methods), 
+            methods=self_methods + list(model_methods),
             space=list(self.__dict__.values())+self.objectList,
             goal=lambda:(self.goal()),
             plan=[Pod().connect_pod_service_labels]
@@ -217,9 +219,9 @@ def test_eviction_fromfiles_strictgoal():
     p = SingleGoalEvictionDetect(k.state_objects)
     p.select_target_service()
     p.print_objects()
-    p.run(timeout=30, sessionName="test_eviction_fromfiles_strictgoal")
+    p.run(timeout=60, sessionName="test_eviction_fromfiles_strictgoal")
     # p.run(timeout=60)
-    if not p.plan: 
+    if not p.plan:
         # print("Could not solve %s" % p.__class__.__name__)
         raise Exception("Could not solve %s" % p.__class__.__name__)
     if p.plan:
