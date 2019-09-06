@@ -5,6 +5,8 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Pod import Pod
 from guardctl.misc.const import *
 from guardctl.misc.problem import ProblemTemplate
+from guardctl.model.scenario import ScenarioStep, describe
+import sys
 
 
 class KubernetesModel(ProblemTemplate):
@@ -40,6 +42,14 @@ class K8SearchEviction(KubernetesModel):
         # assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
 
         service1.status = STATUS_SERV["Interrupted"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Detected service outage event",
+            parameters={"service.amountOfActivePods": 0, "service": describe(service1)},
+            probability=1.0,
+            affected=[describe(service1)]
+        )
     
 
     
@@ -54,11 +64,18 @@ class K8SearchEviction(KubernetesModel):
     @planned(cost=100)
     def PodsConnectedToServices(self,
                 service1: Service,
-                scheduler1: "mscheduler.Scheduler",
-                pod1: Pod
+                scheduler1: "mscheduler.Scheduler"
             ):
         assert service1.amountOfActivePods > 0
         service1.status = STATUS_SERV["Started"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Mark service as started",
+            parameters={},
+            probability=1.0,
+            affected=[describe(service1)]
+        )
 
     def goal(self):
         # TODO: find and define service or fix domain!

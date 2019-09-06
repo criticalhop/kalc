@@ -4,6 +4,8 @@ from guardctl.misc.const import *
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.system.primitives import StatusSched
+from guardctl.model.scenario import ScenarioStep, describe
+import sys
 
 
 class Scheduler(Object):
@@ -21,6 +23,14 @@ class Scheduler(Object):
         SelectedNode: "Node" ):
         assert pod1.toNode == Node.NODE_NULL
         pod1.toNode = SelectedNode
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Selected node for pod placement",
+            parameters={"pod": describe(pod1), "node": describe(SelectedNode)},
+            probability=1.0,
+            affected=[describe(pod1), describe(SelectedNode)]
+        )
 
     @planned(cost=100)
     def StartPod(self, 
@@ -50,10 +60,26 @@ class Scheduler(Object):
         serviceTargetForPod.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node1)]
+        )
            
     @planned(cost=1000)
     def ScheduleQueueProcessed1(self, scheduler1: "Scheduler"):
         scheduler1.queueLength -= 1
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Can't place a pod",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
@@ -61,3 +87,11 @@ class Scheduler(Object):
     def ScheduleQueueProcessed(self, scheduler1: "Scheduler"):
         assert  scheduler1.queueLength == 0
         scheduler1.status = STATUS_SCHED["Clean"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Finished processing pod queue",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )

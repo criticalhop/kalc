@@ -1,7 +1,7 @@
 {
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": true,
+    "python.testing.pytestEnabled": false, // vscode bug
     "python.venvFolders": [
         "${workspaceFolder}/.tox"
     ],

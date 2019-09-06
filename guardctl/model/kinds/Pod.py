@@ -13,6 +13,8 @@ from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.globals import GlobalVar
 from guardctl.misc.const import *
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from guardctl.model.scenario import ScenarioStep, describe
+import sys
 
 
 class Pod(HasLabel, HasLimitsRequests):
@@ -110,6 +112,14 @@ class Pod(HasLabel, HasLimitsRequests):
             assert memLimit == pod1.memLimit
 
             pod1.memRequest = memLimit
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="Setting default memory request for pod",
+                parameters={"currentMemoryRequest": -1, "newMemoryRequest": str(pod1.memLimit)},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
 
     @planned(cost=100)
     def SetDefaultCpuRequestForPod(self,
@@ -121,6 +131,14 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuLimit == pod1.cpuLimit
 
             pod1.cpuRequest = cpuLimit
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="Setting default cpu request for pod",
+                parameters={"currentCpuRequest": -1, "newCpuRequest": str(pod1.cpuLimit)},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
 
     @planned(cost=100)
     def SetDefaultMemLimitForPod(self,
@@ -132,6 +150,14 @@ class Pod(HasLabel, HasLimitsRequests):
             assert node1 == pod1.atNode
             assert memCapacity == node1.memCapacity
             pod1.memLimit = memCapacity
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="Setting default memory limit for pod",
+                parameters={"currentMemoryLimit": -1, "newMemoryLimit": str(pod1.memLimit)},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
 
     @planned(cost=100)
     def SetDefaultCpuLimitForPod(self,
@@ -144,6 +170,15 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuCapacity == node1.cpuCapacity
 
             pod1.cpuLimit = cpuCapacity
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="Setting default cpu limit for pod to node capacity",
+                parameters={"currentCpuLimit": -1, "newCpuLimit": str(pod1.cpuLimit)},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
+
     @planned(cost=100)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
@@ -154,6 +189,14 @@ class Pod(HasLabel, HasLimitsRequests):
             assert memCapacity == node1.memCapacity
             pod1.toNode = node1
             pod1.memLimit = memCapacity
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="no description provided",
+                parameters={},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
 
     @planned(cost=100)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
@@ -164,6 +207,14 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuCapacity == node1.cpuCapacity
             pod1.toNode = node1
             pod1.cpuLimit = cpuCapacity
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="no description provided",
+                parameters={},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
 
     @planned(cost=100)
     def SetDefaultCpuLimitPerLimitRange(self,
@@ -175,6 +226,14 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuCapacity == node1.cpuCapacity
             pod1.toNode = node1
             pod1.cpuLimit = cpuCapacity
+            return ScenarioStep(
+                name=sys._getframe().f_code.co_name,
+                subsystem=self.__class__.__name__,
+                description="no description provided",
+                parameters={},
+                probability=1.0,
+                affected=[describe(pod1)]
+            )
 
     @planned(cost=100)
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined(self,
@@ -196,6 +255,14 @@ class Pod(HasLabel, HasLimitsRequests):
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Because pod has lower priority, it is getting evicted to make room for new pod",
+            parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
+            probability=1.0,
+            affected=[describe(podPending), describe(podToBeReplaced)]
+        )
 
     @planned(cost=100)
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
@@ -219,6 +286,14 @@ class Pod(HasLabel, HasLimitsRequests):
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Because pod has lower priority, it is getting evicted to make room for new pod",
+            parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
+            probability=1.0,
+            affected=[describe(podPending), describe(podToBeReplaced)]
+        )
 
     @planned
     def connect_pod_service_labels(self,
@@ -232,6 +307,14 @@ class Pod(HasLabel, HasLimitsRequests):
         pod.targetService = service
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[describe(pod)]
+        )
 
     @planned
     def fill_priority_class_object(self,
@@ -239,17 +322,33 @@ class Pod(HasLabel, HasLimitsRequests):
             pclass: PriorityClass):
         assert pod.spec_priorityClassName == pclass.metadata_name
         pod.priorityClass = pclass
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[describe(pod)]
+        )
 
     @planned(cost=100)
-    def MarkPodAsOverwhelmingMemLimits(self, podTobeKilled: "Pod",nodeOfPod: "mnode.Node" ):
+    def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "mnode.Node" ):
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
         assert nodeOfPod == podTobeKilled.atNode
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
         podTobeKilled.memLimitsStatus = STATUS_LIM["Limit Exceeded"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
     @planned(cost=100)
-    def MarkPodAsNonoverwhelmingMemLimits(self, podTobeReanimated: "Pod",
+    def Mark_Pod_As_Not_Exceeding_Mem_Limits(self, podTobeReanimated: "Pod",
         nodeOfPod: "mnode.Node"
         #, globalVar1: GlobalVar
         ):
@@ -259,9 +358,17 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
         podTobeReanimated.memLimitsStatus = STATUS_LIM["Limit Met"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
     @planned(cost=100)
-    def MemoryErrorKillPodOverwhelmingLimits(self,
+    def MemoryErrorKillPodExceedingLimits(self,
     nodeOfPod: "mnode.Node" ,
     pod1TobeKilled: "Pod"
     ):
@@ -269,10 +376,18 @@ class Pod(HasLabel, HasLimitsRequests):
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert pod1TobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
         pod1TobeKilled.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
 
     @planned(cost=100)
-    def MemoryErrorKillPodNotOverwhelmingLimits(self,
+    def MemoryErrorKillPodNotExceedingLimits(self,
         nodeOfPod: "mnode.Node" ,
         podTobeKilled: "Pod"):
         assert podTobeKilled.atNode == nodeOfPod
@@ -280,6 +395,14 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
 
         podTobeKilled.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
     @planned(cost=100)
     def KillPod(self,
@@ -307,6 +430,14 @@ class Pod(HasLabel, HasLimitsRequests):
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler1.podQueue.add(podBeingKilled)
         scheduler1.status = STATUS_SCHED["Changed"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
 
     # Scheduler effects
 

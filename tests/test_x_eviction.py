@@ -10,6 +10,7 @@ from guardctl.misc.const import *
 from guardctl.model.search import K8SearchEviction
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
+from guardctl.model.scenario import Scenario
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
@@ -224,6 +225,7 @@ def test_eviction_fromfiles_strictgoal():
     if not p.plan:
         # print("Could not solve %s" % p.__class__.__name__)
         raise Exception("Could not solve %s" % p.__class__.__name__)
+    print(Scenario(p.plan).asyaml())
     if p.plan:
         i=0
         for a in p.plan:
