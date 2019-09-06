@@ -6,3 +6,4 @@ click
 dpath
 logzero
 git+https://github.com/criticalhop/poodle.git
+yaspin

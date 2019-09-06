@@ -8,7 +8,7 @@ from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8SearchEviction
+from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"

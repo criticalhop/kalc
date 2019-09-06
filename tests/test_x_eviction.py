@@ -7,7 +7,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8SearchEviction
+from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
 from guardctl.model.scenario import Scenario
@@ -20,7 +20,7 @@ ALL_STATE = None
 import logzero
 logzero.logfile("./test.log", disableStderrLogger=False)
 
-class SingleGoalEvictionDetect(K8SearchEviction):
+class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
     def select_target_service(self):
         service_found = None
         for servicel in filter(lambda x: isinstance(x, Service), self.objectList):
@@ -116,7 +116,7 @@ def test_service_status():
 
     raise ValueError("Could not find service loded")
 
-class StartServiceGoal(K8SearchEviction):
+class StartServiceGoal(K8ServiceInterruptSearch):
     def select_target_service(self):
         service_found = None
         for servicel in filter(lambda x: isinstance(x, Service), self.objectList):

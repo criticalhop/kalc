@@ -14,7 +14,7 @@ class KubernetesModel(ProblemTemplate):
         self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
         self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
 
-class K8SearchEviction(KubernetesModel):
+class K8ServiceInterruptSearch(KubernetesModel):
     @planned
     def MarkServiceOutageEvent(self,
                 service1: Service,
@@ -80,5 +80,19 @@ class K8SearchEviction(KubernetesModel):
     def goal(self):
         # TODO: find and define service or fix domain!
         self.service[0].status == STATUS_SERV["Interrupted"] and \
+            self.scheduler.status == STATUS_SCHED["Clean"]
+
+class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
+    def select_target_service(self):
+        service_found = None
+        for servicel in filter(lambda x: isinstance(x, Service), self.objectList):
+            if servicel.metadata_name == "redis-master-evict":
+                service_found = servicel
+                break
+        assert service_found
+        self.targetservice = service_found
+        self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
+
+    goal = lambda self: self.targetservice.status == STATUS_SERV["Interrupted"] and \
             self.scheduler.status == STATUS_SCHED["Clean"]
 

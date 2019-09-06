@@ -6,29 +6,29 @@ from guardctl.model.search import *
 
 
 
-class Test_case_1(Problem2,K8SearchEviction ):
+class Test_case_1(Problem2,K8ServiceInterruptSearch ):
     def goal(self):
         self.pod[0].status == STATUS_POD["Running"]
 
-class Test_case_2(Problem2,K8SearchEviction ):
+class Test_case_2(Problem2,K8ServiceInterruptSearch ):
     def goal(self):
         self.pod[1].status == STATUS_POD["Pending"]
 
-class Test_case_3(Problem2,K8SearchEviction ):
+class Test_case_3(Problem2,K8ServiceInterruptSearch ):
     def goal(self):
         self.pod[0].status == STATUS_POD["Killing"]
 
-class TestServiceInterrupted(Problem2,K8SearchEviction ):
+class TestServiceInterrupted(Problem2,K8ServiceInterruptSearch ):
     def goal(self):
         self.service[0].status == STATUS_SERV["Interrupted"]
 
 
-class TestServiceInterruptedAutoLink(ProblemAutoLink,K8SearchEviction ):
+class TestServiceInterruptedAutoLink(ProblemAutoLink,K8ServiceInterruptSearch ):
     def goal(self):
         self.service[0].status == STATUS_SERV["Interrupted"]
 
 
-class Test_case_4_service_connected_to_pod(K8SearchEviction ):
+class Test_case_4_service_connected_to_pod(K8ServiceInterruptSearch ):
     def goal(self):
         pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
         for poditem in pod_loaded_list:

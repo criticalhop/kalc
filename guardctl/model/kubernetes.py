@@ -5,13 +5,17 @@ from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
 from guardctl.misc.util import dget, objwalk, find_property, k8s_to_domain_object
 from guardctl.model.full import kinds_collection
-from guardctl.model.search import K8SearchEviction
+from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.system.Scheduler import Scheduler
 
 class KubernetesCluster:
     def __init__(self):
         self.dict_states = defaultdict(list)
+        self._reset()
+
+    def _reset(self):
+        "Reset object states and require a rebuild with _bulid_state"
         self.state_objects = [Scheduler(), GlobalVar()]
 
     def load_dir(self, dir_path):
@@ -20,7 +24,7 @@ class KubernetesCluster:
                 self.load(open(os.path.join(root, fn)).read())
 
     def load(self, str_, create=False):
-        for doc in yaml.load_all(str_):
+        for doc in yaml.load_all(str_, Loader=yaml.FullLoader):
             if "items" in doc:
                 for item in doc["items"]: self.load_item(item, create)
             else: self.load_item(doc, create)
@@ -70,8 +74,8 @@ class KubernetesCluster:
         raise NotImplementedError()
 
     def run(self):
-        self._build_state()
-        k = K8SearchEviction(self.state_objects)
+        if len(self.state_objects) < 3: self._build_state()
+        k = K8ServiceInterruptSearch(self.state_objects)
         k.run()
         self.plan = k.plan
         return self.plan

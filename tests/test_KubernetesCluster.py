@@ -5,7 +5,7 @@ from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8SearchEviction
+from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 from guardctl.misc.problem import ProblemTemplate
 from guardctl.model.kinds.PriorityClass import PriorityClass
@@ -20,7 +20,7 @@ class ProblemMixer(KubernetesCluster, ProblemTemplate):
         ProblemTemplate.__init__(self, self.state_objects)
 
 
-class SingleGoalEvictionDetect(K8SearchEviction):
+class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
     def goal(self):
         # for ob in self.objectList:
         #     print(str(ob))

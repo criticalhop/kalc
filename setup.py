@@ -1,11 +1,12 @@
 """
 CHAI runs formal check of Kubernetes configurations using Poodle AI planner
 """
-from setuptools import find_packages, setup
+from setuptools import find_namespace_packages, setup
 
 dependencies = ['click']
 
 setup(
+    python_requires='>=3.7',
     name='kubectl-chai',
     version='0.1.0',
     url='https://github.com/criticalhop/kubectl-chai',
@@ -14,14 +15,15 @@ setup(
     author_email='info@criticalhop.com',
     description='CHAI runs formal check of Kubernetes configurations using Poodle AI planner',
     long_description=__doc__,
-    packages=find_packages(exclude=['tests']),
+    packages=find_namespace_packages(exclude=['tests']),
+    package_dir = {'guardctl': 'guardctl'},
     include_package_data=True,
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
     entry_points={
         'console_scripts': [
-            'kubectl-chai = guardctl.cli:main',
+            'kubectl-chai = guardctl.cli:run',
         ],
     },
     classifiers=[
