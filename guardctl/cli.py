@@ -1,7 +1,7 @@
 import click
 import os
 from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import SingleGoalEvictionDetect
+from guardctl.model.search import AnyServiceInterrupted 
 from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -32,8 +32,8 @@ def run(from_dir, output, filename, timeout=150):
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
-    p = SingleGoalEvictionDetect(k.state_objects)
-    p.select_target_service()
+    p = AnyServiceInterrupted(k.state_objects)
+    # p.select_target_service()
 
     click.echo("# Solving ...")
     with yaspin(Spinners.earth, text="") as sp:

@@ -18,4 +18,9 @@ class GlobalVar(Object):
     schedulerStatus: Status
     amountOfPods: int
     queueLength: int
+    is_service_interrupted: bool
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.is_service_interrupted = False
+        

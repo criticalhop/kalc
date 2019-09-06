@@ -19,7 +19,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
-                # globalVar1: "GlobalVar",
+                global_: "GlobalVar",
                 scheduler1: "Scheduler",
                 currentFormalCpuConsumptionLoc: int,
                 currentFormalMemConsumptionLoc: int,
@@ -42,6 +42,8 @@ class K8ServiceInterruptSearch(KubernetesModel):
         # assert globalVar1.currentFormalMemConsumption + pod1.memRequest > globalVar1.memCapacity
 
         service1.status = STATUS_SERV["Interrupted"]
+        global_.is_service_interrupted = True
+        
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -94,5 +96,10 @@ class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
         self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
 
     goal = lambda self: self.targetservice.status == STATUS_SERV["Interrupted"] and \
+            self.scheduler.status == STATUS_SCHED["Clean"]
+
+class AnyServiceInterrupted(K8ServiceInterruptSearch):
+
+    goal = lambda self: self.globalVar.is_service_interrupted == True and \
             self.scheduler.status == STATUS_SCHED["Clean"]
 
