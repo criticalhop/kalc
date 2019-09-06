@@ -46,6 +46,8 @@ class Node(HasLabel):
         self.cpuCapacity = cpuConvertToAbstractProblem(value)
 
     def __str__(self):
+        if self.metadata_name._get_value() is None:
+            return "<unnamed node>"
         return str(self.metadata_name)
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
