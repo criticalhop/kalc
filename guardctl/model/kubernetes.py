@@ -9,6 +9,8 @@ from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.system.Scheduler import Scheduler
 
+KINDS_LOAD_ORDER = ["PriorityClass", "Service", "Node", "Pod"]
+
 class KubernetesCluster:
     def __init__(self):
         self.dict_states = defaultdict(list)
@@ -57,7 +59,7 @@ class KubernetesCluster:
 
     def _build_state(self):
         collected = self.dict_states.copy()
-        for k in ["PriorityClass", "Node", "Pod"]:
+        for k in KINDS_LOAD_ORDER:
             if not k in collected: continue
             for item in collected[k]:
                 self._build_item(item)
