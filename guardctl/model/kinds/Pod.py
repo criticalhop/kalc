@@ -74,7 +74,6 @@ class Pod(HasLabel, HasLimitsRequests):
             if len(service.spec_selector._get_value()) and \
                     set(service.spec_selector._get_value())\
                         .issubset(set(self.metadata_labels._get_value())):
-                print("FOUND link Service", service.metadata_name, "<> Pod", self.metadata_name)
                 self.targetService = service
                 if self.status == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
