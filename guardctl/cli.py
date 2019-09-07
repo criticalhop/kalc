@@ -5,6 +5,7 @@ from guardctl.model.search import AnyServiceInterrupted
 from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
+from sys import stdout
 
 # @click.group()
 # def cli():
@@ -36,15 +37,20 @@ def run(from_dir, output, filename, timeout=150):
     # p.select_target_service()
 
     click.echo("# Solving ...")
-    with yaspin(Spinners.earth, text="") as sp:
+
+    if stdout.isatty():
+        with yaspin(Spinners.earth, text="") as sp:
+            p.run(timeout=timeout, sessionName="cli_run")
+            if not p.plan:
+                sp.ok("✅ ")
+                click.echo("# No scenario was found.")
+            else:
+                sp.fail("💥 ")
+                click.echo("# Scenario found.")
+                click.echo(Scenario(p.plan).asyaml())
+    else:
         p.run(timeout=timeout, sessionName="cli_run")
-        if not p.plan:
-            sp.ok("✅ ")
-            click.echo("# No scenario was found.")
-        else:
-            sp.fail("💥 ")
-            click.echo("# Scenario found.")
-            click.echo(Scenario(p.plan).asyaml())
+        click.echo(Scenario(p.plan).asyaml())
 
 @click.command()
 @click.option("-f", help="Create new resource from YAML file", type=str, required=False, multiple=True)
