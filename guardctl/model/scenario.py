@@ -14,7 +14,15 @@ class Scenario:
     def asjson(self):
         return json.dumps([asdict(x) for x in self.steps])
     def asyaml(self):
-        return yaml.dump([asdict(x) for x in self.steps])
+        if not self.steps:
+            return "# Empty scenario"
+        probability = 1
+        for s in self.steps:
+            probability = probability * s.probability
+        return yaml.dump({
+                "probability": probability,
+                "steps": [asdict(x) for x in self.steps]
+                })
 
 @dataclass
 class ScenarioStep:
