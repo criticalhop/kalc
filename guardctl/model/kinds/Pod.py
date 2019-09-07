@@ -54,7 +54,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.currentFormalCpuConsumption = 0
         # self.amountOfActiveRequests = 0 # For Requests
 
-    def hook_after_load(self, object_space):
+    def hook_after_load(self, object_space, _ignore_orphan=False):
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
         for node in nodes:
@@ -65,7 +65,7 @@ class Pod(HasLabel, HasLimitsRequests):
                 if self.memRequest > 0:
                     node.currentFormalMemConsumption += self.memRequest
                 found = True
-        if not found and self.toNode == Node.NODE_NULL:
+        if not found and self.toNode == Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
         # link service <> pod
