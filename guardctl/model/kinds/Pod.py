@@ -124,6 +124,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert memLimit == pod1.memLimit
 
             pod1.memRequest = memLimit
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -143,6 +144,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuLimit == pod1.cpuLimit
 
             pod1.cpuRequest = cpuLimit
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -162,6 +164,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert node1 == pod1.atNode
             assert memCapacity == node1.memCapacity
             pod1.memLimit = memCapacity
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -182,6 +185,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuCapacity == node1.cpuCapacity
 
             pod1.cpuLimit = cpuCapacity
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -201,6 +205,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert memCapacity == node1.memCapacity
             pod1.toNode = node1
             pod1.memLimit = memCapacity
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -219,6 +224,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuCapacity == node1.cpuCapacity
             pod1.toNode = node1
             pod1.cpuLimit = cpuCapacity
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -238,6 +244,7 @@ class Pod(HasLabel, HasLimitsRequests):
             assert cpuCapacity == node1.cpuCapacity
             pod1.toNode = node1
             pod1.cpuLimit = cpuCapacity
+
             return ScenarioStep(
                 name=sys._getframe().f_code.co_name,
                 subsystem=self.__class__.__name__,
@@ -267,6 +274,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -298,6 +306,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -322,6 +331,7 @@ class Pod(HasLabel, HasLimitsRequests):
         pod.targetService = service
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -337,6 +347,7 @@ class Pod(HasLabel, HasLimitsRequests):
             pclass: PriorityClass):
         assert pod.spec_priorityClassName == pclass.metadata_name
         pod.priorityClass = pclass
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -353,6 +364,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
         podTobeKilled.memLimitsStatus = STATUS_LIM["Limit Exceeded"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -373,6 +385,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
         podTobeReanimated.memLimitsStatus = STATUS_LIM["Limit Met"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -391,6 +404,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert pod1TobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
         pod1TobeKilled.status = STATUS_POD["Killing"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -410,6 +424,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
 
         podTobeKilled.status = STATUS_POD["Killing"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -445,6 +460,7 @@ class Pod(HasLabel, HasLimitsRequests):
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler1.podQueue.add(podBeingKilled)
         scheduler1.status = STATUS_SCHED["Changed"]
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
