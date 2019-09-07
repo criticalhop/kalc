@@ -65,8 +65,20 @@ class Pod(HasLabel, HasLimitsRequests):
                 if self.memRequest > 0:
                     node.currentFormalMemConsumption += self.memRequest
                 found = True
-        if not found:
+        if not found and self.toNode == Node.NODE_NULL:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
+        
+        # link service <> pod
+        services = filter(lambda x: isinstance(x, mservice.Service), object_space)
+        for service in services:
+            if len(service.spec_selector._get_value()) and \
+                    set(service.spec_selector._get_value())\
+                        .issubset(set(self.metadata_labels._get_value())):
+                print("FOUND link Service", service.metadata_name, "<> Pod", self.metadata_name)
+                self.targetService = service
+                if self.status == STATUS_POD["Running"]:
+                    self.connect_pod_service_labels(self, service, \
+                        list(service.metadata_labels._get_value())[0])
 
     @property
     def spec_containers__resources_requests_cpu(self):
@@ -295,15 +307,18 @@ class Pod(HasLabel, HasLimitsRequests):
             affected=[describe(podPending), describe(podToBeReplaced)]
         )
 
-    @planned
+    # We did this in Python function, so commented out as this code is incomplete
+    # @planned
     def connect_pod_service_labels(self,
             pod: "Pod",
             service: "mservice.Service",
             label: Label):
         # TODO: full selector support
+        # TODO: only if pod is running, service is started
         assert pod.targetService == pod.TARGET_SERVICE_NULL
         assert label in pod.metadata_labels
         assert label in service.spec_selector
+        assert pod.status == STATUS_POD["Running"]
         pod.targetService = service
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]

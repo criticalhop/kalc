@@ -35,6 +35,7 @@ class DaemonSet(Controller, HasLimitsRequests):
             new_pod.cpuLimit = self.cpuLimit
             new_pod.memLimit = self.memLimit
             new_pod.status = STATUS_POD["Pending"]
+            new_pod.hook_after_load(object_space) # for service<>pod link
             try:
                 new_pod.priorityClass = \
                     next(filter(\

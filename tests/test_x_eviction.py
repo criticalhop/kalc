@@ -10,6 +10,7 @@ from guardctl.misc.const import *
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
+from poodle.schedule import EmptyPlanError
 from guardctl.model.scenario import Scenario
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
@@ -151,8 +152,13 @@ def test_service_active_pods():
     k._build_state()
     p = StartServiceGoal(k.state_objects)
     p.select_target_service()
+    global ALL_STATE
+    ALL_STATE = k.state_objects
     # p.debug()
-    p.xrun()
+    try:
+        p.xrun()
+    except EmptyPlanError:
+        return
     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
     pods_active = False
     for p in objects:
@@ -163,9 +169,6 @@ def test_service_active_pods():
             pods_active = True
             break
     assert pods_active
-    global ALL_STATE
-    ALL_STATE = k.state_objects
-
 
 def test_service_link_to_pods():
     objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
