@@ -36,6 +36,6 @@ POLICY = {
 }
 
 EXCLUDED_SERV = {
-    # "redis-master" : TypeServ("redis-master"),
-    "redis-master-evict" : TypeServ("redis-master-evict")
+    "redis-master" : TypeServ("redis-master"),
+    # "redis-master-evict" : TypeServ("redis-master-evict")
 }
