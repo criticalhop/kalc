@@ -14,12 +14,19 @@ class Service(HasLabel):
     amountOfActivePods: int
     status: StatusServ
     metadata_name: str
+    searchable: bool
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.amountOfActivePods = 0
         self.status = STATUS_SERV["Pending"]
-    
+        self.searchable = True
+                
+    def hook_after_load(self, object_space, _ignore_orphan=False):
+        if self.metadata_name in  list(EXCLUDED_SERV): 
+            self.searchable = False
+ 
+
     # def __repr__(self):
     #     return 'Servicename : ' + str(self._get_value()) 
 

@@ -1,5 +1,5 @@
 from poodle import Object
-from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy
+from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy, TypeServ
 
 
 STATUS_POD = {
@@ -33,4 +33,9 @@ STATUS_SERV = {
 POLICY = {
     "PreemptLowerPriority" : TypePolicy("PreemptLowerPriority"),
     "Never" : TypePolicy("Never")
+}
+
+EXCLUDED_SERV = {
+    # "redis-master" : TypeServ("redis-master"),
+    "redis-master-evict" : TypeServ("redis-master-evict")
 }

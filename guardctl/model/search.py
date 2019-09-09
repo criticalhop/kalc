@@ -31,6 +31,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert scheduler1.status == STATUS_SCHED["Clean"] 
         assert service1.amountOfActivePods == 0
         assert service1.status == STATUS_SERV["Started"]
+        # assert service1.searchable == True
         assert pod1.targetService == service1
         assert pod1.cpuRequest == cpuRequestLoc
         assert pod1.memRequest == memRequestLoc
