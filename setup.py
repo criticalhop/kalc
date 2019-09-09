@@ -7,13 +7,13 @@ dependencies = ['click']
 
 setup(
     python_requires='>=3.7',
-    name='kubectl-chai',
+    name='kubectl-val',
     version='0.1.0',
-    url='https://github.com/criticalhop/kubectl-chai',
+    url='https://github.com/criticalhop/kubectl-val',
     license='BSD',
     author='CriticalHop Team',
     author_email='info@criticalhop.com',
-    description='CHAI runs formal check of Kubernetes configurations using Poodle AI planner',
+    description='Run formal check of Kubernetes configurations using Poodle AI planner',
     long_description=__doc__,
     packages=find_namespace_packages(exclude=['tests']),
     package_dir = {'guardctl': 'guardctl'},
@@ -23,7 +23,7 @@ setup(
     install_requires=dependencies,
     entry_points={
         'console_scripts': [
-            'kubectl-chai = guardctl.cli:run',
+            'kubectl-val = guardctl.cli:run',
         ],
     },
     classifiers=[
@@ -41,9 +41,7 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: MacOS',
         'Operating System :: Unix',
-        # 'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
-        # 'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ]
