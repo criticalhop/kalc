@@ -69,6 +69,14 @@ cd kubectl-val
 pip install .
 ```
 
+# Specifying solver location
+
+If you run your own solver (recommended for testing purposes) - you can specify its URL with environment variable `POODLE_SOLVER_URL`:
+
+```shell
+export POODLE_SOLVER_URL=http://localhost:8082
+```
+
 # Vision
 
 The goal for the project is to create an intent-driven, self-healing Kubernetes configuraiton system that would abstract the cluster manager from error-prone manual tweaking.
