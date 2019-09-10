@@ -12,6 +12,10 @@
 
 # Quick Start
 
+## Requirements
+
+kubectl-val is written in modern Python and requires **Python 3.7+** so please be prepared that if your default script installation  uses older Python versions you may have to manually specify interpreter for the script.
+
 ## Installation
 
     $ pip install kubectl-val
@@ -85,4 +89,4 @@ The goal for the project is to create an intent-driven, self-healing Kubernetes 
 
 `kubectl-val` is a developer preview and currently supports a subset of resource/limits validation and partial label match validation.
 
-We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [twitter](https://twitter.com/criticalhop) and if you are interested to know more please subscribe to our email updates at [criticalhop.com/demo](https://www.criticalhop.com/demo)
+We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). If you are interested to know more please subscribe to our email updates at [criticalhop.com/demo](https://www.criticalhop.com/demo)
