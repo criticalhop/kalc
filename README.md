@@ -14,13 +14,13 @@
 
 ## Requirements
 
-kubectl-val is written in modern Python and requires **Python 3.7+** so please be prepared that if your default script installation  uses older Python versions you may have to manually specify interpreter for the script.
+kubectl-val is written in modern Python and requires **Python 3.7+**, so please be prepared that if your default script installation  uses older Python versions you may have to manually specify the interpreter for the script.
 
 ## Installation
 
     $ pip install kubectl-val
 
-`kubectl-val` comes as a simple [kubectl plugin](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/) so a working `kubectl` is a requirement if you want to access real cluster. If you do not have `kubectl` you can use it just as standalone shell command `kubectl-val` instead of `kubectl val ...`
+`kubectl-val` comes as a simple [kubectl plugin](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/), so a working `kubectl` is a requirement if you want to access real cluster. If you do not have `kubectl` you can use it just as standalone shell command `kubectl-val` instead of `kubectl val ...`
 
 ## Usage
 
@@ -55,7 +55,7 @@ After you have the dump folder, you can continue with a check described above.
 
 # Architecture
 
-To search for a failure scenario, kubectl-val builds a model representation of current cluster state that it reads from files created by `kubectl get -o=yaml`. The constructed model is sent to PDDL planner and the resulting solution is then interpreted as a failure scenario and sent back to console as YAML-encoded scenario steps.
+To search for a failure scenario, kubectl-val builds a model representation of the current cluster state that it reads from the files created by `kubectl get -o=yaml`. The constructed model is sent to PDDL planner and the resulting solution is then interpreted as a failure scenario and sent back to console as YAML-encoded scenario steps.
 
 Scenario output can later be used by the pipeline operator to aid with decision making - e.g. whether stop the deployment, log the event to the dashboard, etc.
 
@@ -83,12 +83,12 @@ export POODLE_SOLVER_URL=http://localhost:8082
 
 # Vision
 
-The goal for the project is to create an intent-driven, self-healing Kubernetes configuraiton system that would abstract the cluster manager from error-prone manual tweaking.
+The goal for the project is to create an intent-driven, self-healing Kubernetes configuration system that will abstract the cluster manager from error-prone manual tweaking.
 
 # Project Status
 
 `kubectl-val` is a developer preview and currently supports a subset of resource/limits validation and partial label match validation.
 
-We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kubectl-val/issues).
+We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [Twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kubectl-val/issues).
 
 For enterprise enquiries, use the following form: [criticalhop.com/demo](https://www.criticalhop.com/demo) or write us an email at info@criticalhop.com
