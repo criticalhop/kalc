@@ -2,13 +2,6 @@ from collections.abc import Mapping, Set, Sequence
 from guardctl.misc.object_factory import labelFactory 
 import string
 
-import dpath.util
-def dget(d, path, default):
-    try:
-        return dpath.util.get(d, path)
-    except KeyError:
-        return default
-
 try:
     from six import string_types, iteritems
 except ImportError:
