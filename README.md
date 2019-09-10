@@ -89,6 +89,6 @@ The goal for the project is to create an intent-driven, self-healing Kubernetes 
 
 `kubectl-val` is a developer preview and currently supports a subset of resource/limits validation and partial label match validation.
 
-We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). 
+We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kubectl-val/issues).
 
 For enterprise enquiries, use the following form: [criticalhop.com/demo](https://www.criticalhop.com/demo) or write us an email at info@criticalhop.com
