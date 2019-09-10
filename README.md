@@ -10,18 +10,6 @@
 
 `kubectl-val` implements a simplified kubernetes model using an object-oriented state machine and searches for any scenario that may lead to a 'failure'. Failures are currently defined as `Service` having no associated running pods. Other definitions are also possible and are currently work in progress. 
 
-## Architecture
-
-To search for a failure scenario, kubectl-val builds a model representation of current cluster state that it reads from files created by `kubectl get -o=yaml`. The constructed model is sent to PDDL planner and the resulting solution is then interpreted as a failure scenario and sent back to console as YAML-encoded scenario steps.
-
-Scenario output can later be used by the pipeline operator to aid with decision making - e.g. whether stop the deployment, log the event to the dashboard, etc.
-
-Kubectl also calculates the probability of the scenario by multiplying the probability associated with every step.
-
-![kubectl-val architecture](doc/img/architecture.png)
-
-`kubectl-val` depends on a configured PDDL AI-planning solver running as http service and talking to poodle. You can grab one from [criticalhop-solver](https://github.com/criticalhop/criticalhop-solver) repository. By default `kubectl-val` uses a hosted [CriticalHop](https://www.criticalhop.com/) demo SaaS solver.
-
 # Quick Start
 
 ## Installation
@@ -60,6 +48,18 @@ kubectl get priority -o=yaml > priority.yaml
 ```
 
 After you have the dump folder, you can continue with a check described above.
+
+# Architecture
+
+To search for a failure scenario, kubectl-val builds a model representation of current cluster state that it reads from files created by `kubectl get -o=yaml`. The constructed model is sent to PDDL planner and the resulting solution is then interpreted as a failure scenario and sent back to console as YAML-encoded scenario steps.
+
+Scenario output can later be used by the pipeline operator to aid with decision making - e.g. whether stop the deployment, log the event to the dashboard, etc.
+
+Kubectl also calculates the probability of the scenario by multiplying the probability associated with every step.
+
+![kubectl-val architecture](doc/img/architecture.png)
+
+`kubectl-val` depends on a configured PDDL AI-planning solver running as http service and talking to poodle. You can grab one from [criticalhop-solver](https://github.com/criticalhop/criticalhop-solver) repository. By default `kubectl-val` uses a hosted [CriticalHop](https://www.criticalhop.com/) demo SaaS solver.
 
 # Build from source
 
