@@ -6,3 +6,7 @@ build/
 
 .tox/
 .coverage
+
+Session.vim
+test.log
+.pytest_cache/*

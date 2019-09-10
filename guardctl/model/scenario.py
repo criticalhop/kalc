@@ -1,22 +1,41 @@
+import json
+import yaml
+from typing import Dict, List
+from dataclasses import dataclass, asdict
+
 class Scenario:
-    def __init__(self, name):
-        self.severity_level = SEVERITY_HINT # 1 - max severity
-        self.check = None # type: Check
-        self._affected = []
+    def __init__(self, plan=None):
         self.steps = []
-        self.name = name
+        if plan:
+            for a in plan:
+                self.step(a())
     def step(self, step):
         self.steps.append(step)
-    def affected(self, aff):
-        if aff["kind"] in [ "Cluster" ]:
-            self.severity_level = SEVERITY_MAX
-        self._affected.append(aff)
-    def __repr__(self):
-        ret = "Scenario: %s\n" % self.name
-        ret += "Severity: %s\n" % self.severity_level
-        ret += "Affected: %s\n" % repr(self._affected)
-        i = 1
-        for step in self.steps:
-            ret += " - " + str(i) + ": " + str(step) + "\n"
-            i += 1
-        return ret
+    def asjson(self):
+        return json.dumps([asdict(x) for x in self.steps])
+    def asyaml(self):
+        if not self.steps:
+            return "# Empty scenario"
+        probability = 1
+        for s in self.steps:
+            probability = probability * s.probability
+        return yaml.dump({
+                "probability": probability,
+                "steps": [asdict(x) for x in self.steps]
+                })
+
+@dataclass
+class ScenarioStep:
+    name: str
+    subsystem: str
+    description: str
+    parameters: Dict
+    probability: float
+    affected: List
+
+def describe(obj):
+    if hasattr(obj, "metadata_name"):
+        name = str(obj.metadata_name)
+    else:
+        name = "no_name"
+    return {"kind": obj.__class__.__name__, "metadata": {"name": name}}
