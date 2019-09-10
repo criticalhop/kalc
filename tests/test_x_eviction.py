@@ -7,7 +7,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.model.search import K8ServiceInterruptSearch, AnyServiceInterrupted
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
@@ -214,7 +214,7 @@ def test_nodes_pods_allocated():
     "test that all pods in status running are allocated to nodes"
     pass
 
-# @pytest.mark.skip(reason="need to test everything else first")
+@pytest.mark.skip(reason="need to test everything else first")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -235,3 +235,22 @@ def test_eviction_fromfiles_strictgoal():
             i=i+1
             print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
 
+
+def test_anyservice_interrupted_fromfiles():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k.create_resource(open(TEST_DAEMONET).read())
+    k._build_state()
+    p = AnyServiceInterrupted(k.state_objects)
+    # p.print_objects()
+    p.run(timeout=360, sessionName="test_anyservice_interrupted_fromfiles")
+    # p.run(timeout=60)
+    if not p.plan:
+        # print("Could not solve %s" % p.__class__.__name__)
+        raise Exception("Could not solve %s" % p.__class__.__name__)
+    print(Scenario(p.plan).asyaml())
+    if p.plan:
+        i=0
+        for a in p.plan:
+            i=i+1
+            print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
