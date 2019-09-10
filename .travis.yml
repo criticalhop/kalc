@@ -1,0 +1,27 @@
+language: python
+python:
+- '3.6'
+matrix:
+  include:
+  - python: 3.7
+    dist: xenial
+before_install:
+- pip install poetry
+install:
+- poetry install -v
+- pip install tox-travis
+script:
+- tox
+# before_deploy:
+# - poetry config http-basic.pypi $PYPI_USER $PYPI_PASSWORD
+# - poetry build
+# deploy:
+#   provider: script
+#   script: poetry publish
+#   on:
+#     tags: true
+#     condition: "$TRAVIS_PYTHON_VERSION == 3.7"
+# env:
+#   global:
+#   - secure: [REDACTED]
+#   - secure: [REDACTED]
