@@ -70,7 +70,7 @@ Kubectl also calculates the probability of the scenario by multiplying the proba
 ```shell
 git clone https://github.com/criticalhop/kubectl-val
 cd kubectl-val
-pip install .
+poetry install
 ```
 
 # Specifying solver location
