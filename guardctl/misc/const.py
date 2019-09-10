@@ -1,5 +1,5 @@
 from poodle import Object
-from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy
+from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy, TypeServ
 
 
 STATUS_POD = {
