@@ -68,7 +68,7 @@ def test_eviction_synthetic():
             i=i+1
             # print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
 
-@pytest.mark.skip(reason="this does not work anymore as we removed linking method from SAS")
+# @pytest.mark.skip(reason="this does not work anymore as we removed linking method from SAS")
 def test_eviction_synthetic_auto_link():
     p = TestServiceInterruptedAutoLink()
     p.problem()

@@ -34,8 +34,3 @@ POLICY = {
     "PreemptLowerPriority" : TypePolicy("PreemptLowerPriority"),
     "Never" : TypePolicy("Never")
 }
-
-EXCLUDED_SERV = {
-    "redis-master" : TypeServ("redis-master"),
-    # "redis-master-evict" : TypeServ("redis-master-evict")
-}

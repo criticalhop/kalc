@@ -21,10 +21,6 @@ class Service(HasLabel):
         self.amountOfActivePods = 0
         self.status = STATUS_SERV["Pending"]
         self.searchable = True
-                
-    def hook_after_load(self, object_space, _ignore_orphan=False):
-        if self.metadata_name in  list(EXCLUDED_SERV): 
-            self.searchable = False
  
 
     # def __repr__(self):
