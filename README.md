@@ -59,11 +59,11 @@ To search for a failure scenario, kubectl-val builds a model representation of t
 
 Scenario output can later be used by the pipeline operator to aid with decision making - e.g. whether stop the deployment, log the event to the dashboard, etc.
 
-Kubectl also calculates the probability of the scenario by multiplying the probability associated with every step.
+`kubectl-val` also calculates the probability of the scenario by multiplying the probability associated with every step.
 
 ![kubectl-val architecture](doc/img/architecture.png)
 
-`kubectl-val` depends on a configured PDDL AI-planning solver running as http service and talking to poodle. You can grab one from [criticalhop-solver](https://github.com/criticalhop/criticalhop-solver) repository. By default `kubectl-val` uses a hosted [CriticalHop](https://www.criticalhop.com/) demo SaaS solver.
+`kubectl-val` depends on a configured PDDL AI-planning `poodlesolver` running as http service. By default it uses a cloud solver hosted by [CriticalHop](https://www.criticalhop.com/). `poodlesolver` comes with `poodle` python library and installs automatically when `kubectl-val` is installed via `pip install`. To run a local solver, please refer to [poodle documentation](https://github.com/criticalhop/poodle). 
 
 # Build from source
 
@@ -89,6 +89,6 @@ The goal for the project is to create an intent-driven, self-healing Kubernetes 
 
 `kubectl-val` is a developer preview and currently supports a subset of resource/limits validation and partial label match validation.
 
-We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [Twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kubectl-val/issues).
+We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [Twitter](https://twitter.com/criticalhop) and to chat with the team at [#kubectl-val](https://tinyurl.com/y5s98dw6) on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kubectl-val/issues) or contact andrew@criticalhop.com directly.
 
-For enterprise enquiries, use the following form: [criticalhop.com/demo](https://www.criticalhop.com/demo) or write us an email at info@criticalhop.com
+For enterprise enquiries, use the form on CriticalHop website: [criticalhop.com/demo](https://www.criticalhop.com/demo) or write us an email at info@criticalhop.com
