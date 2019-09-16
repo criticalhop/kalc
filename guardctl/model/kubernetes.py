@@ -3,7 +3,7 @@ import os
 from collections import defaultdict
 from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
-from guardctl.misc.util import dget, objwalk, find_property, k8s_to_domain_object
+from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object
 from guardctl.model.full import kinds_collection
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
