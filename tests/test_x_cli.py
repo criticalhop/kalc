@@ -28,8 +28,10 @@ def test_result_readable():
 def test_result_any_scenario():
     if not "redis-master" in RESULT.output:
         print(RESULT.output)
-    raise Exception("Wrong solution \n"+RESULT.output)
+        raise Exception("Wrong solution \n"+RESULT.output)
 
 
 def test_result_specific_senario():
-    assert "redis-master-evict" in RESULT.output
+    if not "redis-master-evict" in RESULT.output:
+        print(RESULT.output)
+        raise Exception("Wrong solution \n"+RESULT.output)

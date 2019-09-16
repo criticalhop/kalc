@@ -14,12 +14,15 @@ from poodle.schedule import EmptyPlanError
 from guardctl.model.scenario import Scenario
 import guardctl.model.kinds.Service as mservice
 
+
+
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 EXCLUDED_SERV = {
     "redis-master" : TypeServ("redis-master"),
     # "redis-master-evict" : TypeServ("redis-master-evict")
+    "heapster": TypeServ("heapster")
 }
 
 def mark_excluded_service(object_space):
