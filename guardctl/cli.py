@@ -6,6 +6,19 @@ from guardctl.model.scenario import Scenario
 # from yaspin import yaspin
 # from yaspin.spinners import Spinners
 from sys import stdout
+from guardctl.model.system.primitives import TypeServ
+import guardctl.model.kinds.Service as mservice
+EXCLUDED_SERV = {
+    "redis-master" : TypeServ("redis-master"),
+    # "redis-master-evict" : TypeServ("redis-master-evict")
+    "heapster": TypeServ("heapster")
+}
+
+def mark_excluded_service(object_space):
+    services = filter(lambda x: isinstance(x, mservice.Service), object_space)
+    for service in services:
+        if service.metadata_name in list(EXCLUDED_SERV):
+           service.searchable = False
 
 # @click.group()
 # def cli():
@@ -33,6 +46,7 @@ def run(from_dir, output, filename, timeout=150):
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
+    mark_excluded_service(k.state_objects)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
 
