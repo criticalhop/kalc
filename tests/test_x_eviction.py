@@ -14,8 +14,6 @@ from poodle.schedule import EmptyPlanError
 from guardctl.model.scenario import Scenario
 import guardctl.model.kinds.Service as mservice
 
-
-
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
