@@ -7,6 +7,13 @@ from guardctl.misc.const import *
 from guardctl.misc.problem import ProblemTemplate
 from guardctl.model.scenario import ScenarioStep, describe
 import sys
+from guardctl.model.system.primitives import TypeServ
+
+EXCLUDED_SERV = {
+    "redis-master" : TypeServ("redis-master"),
+    # "redis-master-evict" : TypeServ("redis-master-evict")
+    "heapster": TypeServ("heapster")
+}
 
 
 class KubernetesModel(ProblemTemplate):
@@ -47,7 +54,12 @@ class K8ServiceInterruptSearch(KubernetesModel):
             probability=1.0,
             affected=[describe(service1)]
         )
-    
+
+def mark_excluded_service(object_space):
+    services = filter(lambda x: isinstance(x, Service), object_space)
+    for service in services:
+        if service.metadata_name in list(EXCLUDED_SERV):
+           service.searchable = False
 
     
     # @planned(cost=10000)
