@@ -6,20 +6,7 @@ from guardctl.model.scenario import Scenario
 # from yaspin import yaspin
 # from yaspin.spinners import Spinners
 from sys import stdout
-from guardctl.model.system.primitives import TypeServ
-import guardctl.model.kinds.Service as mservice
-EXCLUDED_SERV = {
-    "redis-master" : TypeServ("redis-master"),
-    # "redis-master-evict" : TypeServ("redis-master-evict")
-    "heapster": TypeServ("heapster")
-}
-
-def mark_excluded_service(object_space):
-    services = filter(lambda x: isinstance(x, mservice.Service), object_space)
-    for service in services:
-        if service.metadata_name in list(EXCLUDED_SERV):
-           service.searchable = False
-
+from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
 # @click.group()
 # def cli():
 #     pass
