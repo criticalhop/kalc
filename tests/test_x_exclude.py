@@ -14,6 +14,7 @@ def test_load_from_dir():
     result = CliRunner().invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
         "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-master"])
     assert result.exit_code == 0
-    # yaml.load(result.output)
-    assert "redis-master" in result.output
-    assert "redis-master-evict" in result.output
+    yaml.load(result.output)
+    print(result.output)
+    assert not("redis-master\n" in result.output[-200:])
+    assert not("redis-master-evict\n" in result.output[-200:])
