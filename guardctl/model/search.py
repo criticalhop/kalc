@@ -55,12 +55,11 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(service1)]
         )
 
-def mark_excluded_service(object_space):
+def mark_excluded_service(object_space, exclude):
     services = filter(lambda x: isinstance(x, Service), object_space)
     for service in services:
-        if service.metadata_name in list(EXCLUDED_SERV):
-           service.searchable = False
-
+        if service.metadata_name in list(exclude):
+            service.searchable = False
     
     # @planned(cost=10000)
     # def UnsolveableServiceStart(self,

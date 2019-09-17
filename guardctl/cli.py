@@ -7,6 +7,8 @@ from guardctl.model.scenario import Scenario
 # from yaspin.spinners import Spinners
 from sys import stdout
 from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
+from guardctl.model.system.primitives import TypeServ
+
 # @click.group()
 # def cli():
 #     pass
@@ -22,8 +24,9 @@ from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
 @click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
-                type=str, required=False)
-def run(from_dir, output, filename, timeout=150):
+                required=False, default=None)
+def run(from_dir, output, filename, timeout, exclude):
+
     k = KubernetesCluster()
 
     click.echo(f"# Loading cluster definitions from {from_dir} ...")
@@ -35,7 +38,14 @@ def run(from_dir, output, filename, timeout=150):
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
-    mark_excluded_service(k.state_objects)
+    excludeDict = {}
+    if exclude != None:
+         excludeDict = {}
+         for kn in exclude.split(","):
+             kinda = kn.split(":")[0]
+             name = kn.split(":")[1]
+             excludeDict[name] = TypeServ(name)
+    mark_excluded_service(k.state_objects, excludeDict)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
 
