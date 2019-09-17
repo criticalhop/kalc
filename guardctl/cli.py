@@ -21,6 +21,8 @@ from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
+@click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
+                type=str, required=False)
 def run(from_dir, output, filename, timeout=150):
     k = KubernetesCluster()
 
