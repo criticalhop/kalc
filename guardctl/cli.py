@@ -6,7 +6,9 @@ from guardctl.model.scenario import Scenario
 # from yaspin import yaspin
 # from yaspin.spinners import Spinners
 from sys import stdout
-from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
+from guardctl.model.search import ExcludeDict, mark_excluded
+from guardctl.model.system.primitives import TypeServ
+
 # @click.group()
 # def cli():
 #     pass
@@ -21,7 +23,11 @@ from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
-def run(from_dir, output, filename, timeout=150):
+@click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
+                required=False, default=None)
+@click.option("--ignore-nonexistent-exclusions", type=bool, is_flag=True, required=False, default=False)
+def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions):
+
     k = KubernetesCluster()
 
     click.echo(f"# Loading cluster definitions from {from_dir} ...")
@@ -33,7 +39,12 @@ def run(from_dir, output, filename, timeout=150):
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
-    mark_excluded_service(k.state_objects)
+    if exclude != None:
+        excludeList = []
+        for kn in exclude.split(","):
+             excludeList.append(ExcludeDict(kn))
+        click.echo(f"# Exclude ...")
+        mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
 
