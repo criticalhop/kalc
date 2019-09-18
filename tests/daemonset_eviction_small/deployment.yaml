@@ -44,7 +44,60 @@ items:
           resources:
             requests:
               cpu: 100m
-              memory: 2000Mi
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: 2019-07-24T20:32:15Z
+    generation: 1
+    name: redis-master-evict
+    namespace: default
+    resourceVersion: "9416933"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-master
+    uid: 1fb6bcf4-ae52-11e9-98f3-42010a8000c4
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis-evict
+        role: master
+        tier: backend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis-evict
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
@@ -97,7 +150,7 @@ items:
           resources:
             requests:
               cpu: 100m
-              memory: 2000Mi
+              memory: 500Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
@@ -152,7 +205,7 @@ items:
           resources:
             requests:
               cpu: 100m
-              memory: 1000Mi
+              memory: 500Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
@@ -275,6 +328,168 @@ items:
     selfLink: /apis/scheduling.k8s.io/v1beta1/priorityclasses/high-priority
     uid: a46578fd-bede-11e9-98f3-42010a8000c4
   value: 1000000   
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: master
+      tier: backend
+    name: redis-master
+    namespace: default
+    resourceVersion: "9416863"
+    selfLink: /api/v1/namespaces/default/services/redis-master
+    uid: 1fb431db-ae52-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.7.240.3
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis2
+      role: master
+      tier: backend
+    name: redis-master2
+    namespace: default
+    resourceVersion: "9416863"
+    selfLink: /api/v1/namespaces/default/services/redis-master
+    uid: 1fb431db-ae52-11e9-98f3-42010a8000c1
+  spec:
+    clusterIP: 10.7.240.30
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis2
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-09-04T21:24:52Z
+    labels:
+      app: redis-evict
+      role: master
+      tier: backend
+    name: redis-master-evict
+    namespace: default
+    resourceVersion: "20774605"
+    selfLink: /api/v1/namespaces/default/services/redis-master-evict
+    uid: 6ee8b5c7-cf5a-11e9-98f3-42010a8000c2
+  spec:
+    clusterIP: 10.7.240.4
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis-evict
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave
+      tier: backend
+    name: redis-slave
+    namespace: default
+    resourceVersion: "9416869"
+    selfLink: /api/v1/namespaces/default/services/redis-slave
+    uid: 1fb9a12c-ae52-11e9-98f3-42010a8000c3
+  spec:
+    clusterIP: 10.7.240.5
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: slave
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit
+    namespace: default
+    resourceVersion: "9416896"
+    selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit
+    uid: 1fd2c61c-ae52-11e9-98f3-42010a8000c3
+  spec:
+    clusterIP: 10.7.240.12
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave-unlimit-2
+      tier: backend
+    name: redis-slave-unlimit-2
+    namespace: default
+    resourceVersion: "9416896"
+    selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit
+    uid: 1fd2c61c-ae52-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.7.240.14
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit-2
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
 kind: List
 metadata:
   resourceVersion: ""
