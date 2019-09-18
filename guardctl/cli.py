@@ -83,4 +83,4 @@ def fetch(f):
 # cli.add_command(run)
 
 if getattr(sys, 'frozen', False):
-    run(sys.argv[1:])
+    run(sys.argv[1:]) # pylint: disable=no-value-for-parameter
