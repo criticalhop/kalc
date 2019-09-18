@@ -6,7 +6,7 @@ from guardctl.model.scenario import Scenario
 # from yaspin import yaspin
 # from yaspin.spinners import Spinners
 from sys import stdout
-from guardctl.model.search import EXCLUDED_SERV, mark_excluded_service
+from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
 
 # @click.group()
@@ -38,14 +38,12 @@ def run(from_dir, output, filename, timeout, exclude):
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
-    excludeDict = {}
     if exclude != None:
-         excludeDict = {}
-         for kn in exclude.split(","):
-             kinda = kn.split(":")[0]
-             name = kn.split(":")[1]
-             excludeDict[name] = TypeServ(name)
-    mark_excluded_service(k.state_objects, excludeDict)
+        excludeList = []
+        for kn in exclude.split(","):
+             excludeList.append(ExcludeDict(kn))
+        click.echo(f"# Exclude ...")
+        mark_excluded(k.state_objects, excludeList)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
 
