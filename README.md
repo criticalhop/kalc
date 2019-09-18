@@ -44,10 +44,10 @@ Before checking the cluster you should first "dump" all of current resources int
 ```shell
 mkdir my-cluster-dump
 cd my-cluster-dump
-kubectl get nodes -o=yaml > nodes.yaml
-kubectl get pods -o=yaml > pods.yaml
-kubectl get services -o=yaml > services.yaml
-kubectl get priority -o=yaml > priority.yaml
+kubectl get nodes --all-namespaces -o=yaml > nodes.yaml
+kubectl get pods --all-namespaces -o=yaml > pods.yaml
+kubectl get services --all-namespaces -o=yaml > services.yaml
+kubectl get priority --all-namespaces -o=yaml > priority.yaml
 ...
 ```
 
@@ -75,11 +75,7 @@ poetry install
 
 # Specifying solver location
 
-If you run your own solver (recommended for testing purposes) - you can specify its URL with environment variable `POODLE_SOLVER_URL`:
-
-```shell
-export POODLE_SOLVER_URL=http://localhost:8082
-```
+By default `kubectl-val` uses a hosted solver. You can learn how to run you local solver by checking [poodle](https://github.com/criticalhop/poodle) repository.
 
 # Vision
 

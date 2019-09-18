@@ -4,9 +4,11 @@ import sys
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import AnyServiceInterrupted 
 from guardctl.model.scenario import Scenario
-from yaspin import yaspin
-from yaspin.spinners import Spinners
+# from yaspin import yaspin
+# from yaspin.spinners import Spinners
 from sys import stdout
+from guardctl.model.search import ExcludeDict, mark_excluded
+from guardctl.model.system.primitives import TypeServ
 
 # @click.group()
 # def cli():
@@ -22,7 +24,11 @@ from sys import stdout
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
-def run(from_dir, output, filename, timeout=150):
+@click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
+                required=False, default=None)
+@click.option("--ignore-nonexistent-exclusions", type=bool, is_flag=True, required=False, default=False)
+def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions):
+
     k = KubernetesCluster()
 
     click.echo(f"# Loading cluster definitions from {from_dir} ...")
@@ -34,19 +40,25 @@ def run(from_dir, output, filename, timeout=150):
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
+    if exclude != None:
+        excludeList = []
+        for kn in exclude.split(","):
+             excludeList.append(ExcludeDict(kn))
+        click.echo(f"# Exclude ...")
+        mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
 
     click.echo("# Solving ...")
 
     if stdout.isatty():
-        with yaspin(Spinners.earth, text="") as sp:
+        # with yaspin(Spinners.earth, text="") as sp:
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
-                sp.ok("✅ ")
+                # sp.ok("✅ ")
                 click.echo("# No scenario was found.")
             else:
-                sp.fail("💥 ")
+                # sp.fail("💥 ")
                 click.echo("# Scenario found.")
                 click.echo(Scenario(p.plan).asyaml())
     else:
