@@ -1,5 +1,6 @@
 import click
 import os
+import sys
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import AnyServiceInterrupted 
 from guardctl.model.scenario import Scenario
@@ -68,3 +69,6 @@ def fetch(f):
 
 # cli.add_command(test)
 # cli.add_command(run)
+
+if getattr(sys, 'frozen', False):
+    run(sys.argv[1:])
