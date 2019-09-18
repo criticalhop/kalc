@@ -14,7 +14,7 @@ items:
     uid: 1fb6bcf4-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
-    replicas: 6
+    replicas: 1
     revisionHistoryLimit: 10
     selector:
       matchLabels:
@@ -52,25 +52,7 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
-  status:
-    availableReplicas: 1
-    conditions:
-    - lastTransitionTime: 2019-07-24T20:32:17Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
-      type: Available
-    - lastTransitionTime: 2019-07-24T20:32:15Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: ReplicaSet "redis-master-57fc67768d" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-    observedGeneration: 1
-    readyReplicas: 6
-    replicas: 6
-    updatedReplicas: 6
+
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -85,7 +67,7 @@ items:
     uid: 1fb6bcf4-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
-    replicas: 6
+    replicas: 1
     revisionHistoryLimit: 10
     selector:
       matchLabels:
@@ -123,25 +105,6 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
-  status:
-    availableReplicas: 1
-    conditions:
-    - lastTransitionTime: 2019-07-24T20:32:17Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
-      type: Available
-    - lastTransitionTime: 2019-07-24T20:32:15Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: ReplicaSet "redis-master-57fc67768d" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-    observedGeneration: 1
-    readyReplicas: 6
-    replicas: 6
-    updatedReplicas: 6
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -197,25 +160,6 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
-  status:
-    availableReplicas: 3
-    conditions:
-    - lastTransitionTime: 2019-07-24T20:32:17Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
-      type: Available
-    - lastTransitionTime: 2019-07-24T20:32:15Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: ReplicaSet "redis-slave-57f9f8db74" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-    observedGeneration: 1
-    readyReplicas: 3
-    replicas: 3
-    updatedReplicas: 3
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -223,7 +167,7 @@ items:
       deployment.kubernetes.io/revision: "1"
     creationTimestamp: 2019-07-24T20:32:15Z
     generation: 1
-    name: redis-slave-unlimit
+    name: redis-slave-unlimit-norequest
     namespace: default
     resourceVersion: "9416945"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-slave-unlimit
@@ -268,25 +212,7 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
-  status:
-    availableReplicas: 2
-    conditions:
-    - lastTransitionTime: 2019-07-24T20:32:17Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
-      type: Available
-    - lastTransitionTime: 2019-07-24T20:32:15Z
-      lastUpdateTime: 2019-07-24T20:32:17Z
-      message: ReplicaSet "redis-slave-unlimit-6c56584f98" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-    observedGeneration: 1
-    readyReplicas: 2
-    replicas: 2
-    updatedReplicas: 2
+  
 - apiVersion: extensions/v1beta1
   kind: Deployment
   metadata:
@@ -294,7 +220,7 @@ items:
       deployment.kubernetes.io/revision: "1"
     creationTimestamp: 2019-08-14T20:44:50Z
     generation: 1
-    name: redis-slave-unlimit-2
+    name: redis-slave-unlimit-norequest-2
     namespace: default
     resourceVersion: "14871315"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-slave-unlimit-2
@@ -339,25 +265,16 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
-  status:
-    availableReplicas: 2
-    conditions:
-    - lastTransitionTime: 2019-08-14T20:44:58Z
-      lastUpdateTime: 2019-08-14T20:44:58Z
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
-      type: Available
-    - lastTransitionTime: 2019-08-14T20:44:50Z
-      lastUpdateTime: 2019-08-14T20:44:58Z
-      message: ReplicaSet "redis-slave-unlimit-2-6ccc9b67fd" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-    observedGeneration: 1
-    readyReplicas: 2
-    replicas: 2
-    updatedReplicas: 2
+- apiVersion: scheduling.k8s.io/v1beta1
+  kind: PriorityClass
+  metadata:
+    creationTimestamp: 2019-08-14T21:58:26Z
+    generation: 1
+    name: high-priority
+    resourceVersion: "14886069"
+    selfLink: /apis/scheduling.k8s.io/v1beta1/priorityclasses/high-priority
+    uid: a46578fd-bede-11e9-98f3-42010a8000c4
+  value: 1000000   
 kind: List
 metadata:
   resourceVersion: ""
