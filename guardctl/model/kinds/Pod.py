@@ -42,6 +42,7 @@ class Pod(HasLabel, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.priority = 0
+        self.spec_priorityClassName = "KUBECTL-VAL-NONE"
         self.priorityClass = zeroPriorityClass
         self.targetService = self.TARGET_SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
@@ -78,6 +79,15 @@ class Pod(HasLabel, HasLimitsRequests):
                 if self.status == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
                         list(service.metadata_labels._get_value())[0])
+
+        if str(self.spec_priorityClassName) != "KUBECTL-VAL-NONE":
+            try:
+                self.priorityClass = next(filter(lambda x: isinstance(x, PriorityClass)\
+                    and str(x.metadata_name) == str(self.spec_priorityClassName), \
+                        object_space))
+            except StopIteration:
+                raise Exception("Could not find priorityClass %s, maybe you \
+did not dump PriorityClass?" % str(self.spec_priorityClassName))
 
     @property
     def spec_containers__resources_requests_cpu(self):
@@ -340,21 +350,21 @@ class Pod(HasLabel, HasLimitsRequests):
             affected=[describe(pod)]
         )
 
-    @planned
-    def fill_priority_class_object(self,
-            pod: "Pod",
-            pclass: PriorityClass):
-        assert pod.spec_priorityClassName == pclass.metadata_name
-        pod.priorityClass = pclass
+    # @planned
+    # def fill_priority_class_object(self,
+    #         pod: "Pod",
+    #         pclass: PriorityClass):
+    #     assert pod.spec_priorityClassName == pclass.metadata_name
+    #     pod.priorityClass = pclass
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[describe(pod)]
-        )
+    #     return ScenarioStep(
+    #         name=sys._getframe().f_code.co_name,
+    #         subsystem=self.__class__.__name__,
+    #         description="no description provided",
+    #         parameters={},
+    #         probability=1.0,
+    #         affected=[describe(pod)]
+    #     )
 
     @planned(cost=100)
     def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "mnode.Node" ):
