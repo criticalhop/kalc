@@ -25,7 +25,8 @@ from guardctl.model.system.primitives import TypeServ
                 type=int, required=False, default=150)
 @click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
                 required=False, default=None)
-def run(from_dir, output, filename, timeout, exclude):
+@click.option("--ignore-nonexistent-exclusions", type=bool, is_flag=True, required=False, default=False)
+def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions):
 
     k = KubernetesCluster()
 
@@ -43,7 +44,7 @@ def run(from_dir, output, filename, timeout, exclude):
         for kn in exclude.split(","):
              excludeList.append(ExcludeDict(kn))
         click.echo(f"# Exclude ...")
-        mark_excluded(k.state_objects, excludeList)
+        mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
 

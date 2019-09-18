@@ -58,7 +58,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(service1)]
         )
 
-def mark_excluded(object_space, exclude):
+def mark_excluded(object_space, exclude, skip_check=False):
     names = []
     types = []
     for obj in object_space:
@@ -68,6 +68,7 @@ def mark_excluded(object_space, exclude):
         for objExclude in exclude:
             if (obj.__class__.__name__ == objExclude.objType) and (obj.metadata_name == objExclude.name):
                 obj.searchable = False
+    if skip_check : return
     for objExclude in exclude:
         if not(objExclude.objType in types):
             assert False, "Error: no such type '{0}'".format(objExclude.objType)
