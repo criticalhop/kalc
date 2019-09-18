@@ -19,6 +19,12 @@ def test_load_from_dir():
     global RESULT
     RESULT=result
 
+#@pytest.mark.skip(reason="specific scenario is not selected")
+def test_result_any_scenario():
+    if not "redis-master" in RESULT.output:
+        print(RESULT.output)
+        raise Exception("Wrong solution \n"+RESULT.output)
+
 # @pytest.mark.skip(reason="need to find a way to trigger no-tty mode")
 # def test_result_readable():
 #     import yaml
