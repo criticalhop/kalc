@@ -29,6 +29,6 @@ def test_result_any_scenario():
 #     import yaml
 #     yaml.load(RESULT.output)
 
-@pytest.mark.skip(reason="need to find a way to trigger no-tty mode")
-def test_result_specific_senario():
-    assert "redis-master-evict" in RESULT.output
+# @pytest.mark.skip(reason="need to find a way to trigger no-tty mode")
+# def test_result_specific_senario():
+#     assert "redis-master-evict" in RESULT.output
