@@ -24,13 +24,13 @@ def test_result_readable():
     import yaml
     yaml.load(RESULT.output)
 
-@pytest.mark.skip(reason="specific scenario is not selected")
+#@pytest.mark.skip(reason="specific scenario is not selected")
 def test_result_any_scenario():
     if not "redis-master" in RESULT.output:
         print(RESULT.output)
         raise Exception("Wrong solution \n"+RESULT.output)
 
-
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_result_specific_senario():
     if not "redis-master-evict" in RESULT.output:
         print(RESULT.output)
