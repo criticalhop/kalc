@@ -71,9 +71,9 @@ def mark_excluded(object_space, exclude, skip_check=False):
     if skip_check : return
     for objExclude in exclude:
         if not(objExclude.objType in types):
-            assert False, "Error: no such type '{0}'".format(objExclude.objType)
+            raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
         if not(objExclude.name in names):
-            assert False, "Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType)
+            raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
     # @planned(cost=10000)
     # def UnsolveableServiceStart(self,
