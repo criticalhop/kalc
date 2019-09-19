@@ -1,3 +1,12 @@
+import os
+import sys
+sys.path.insert(0, os.getcwd())
+sys.path.insert(0, os.getcwd()+"/tests/problem")
+sys.path.insert(0, os.getcwd()+"/tests")
+sys.path.insert(0, "../") 
+print(os.getcwd())
+from goals import *
+# raise Exception(list(sys.path))
 import pytest
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.kinds.Pod import Pod
@@ -7,9 +16,9 @@ from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
-from  tests.problem.goals import *
 import yaml
 from poodle.schedule import EmptyPlanError
+# from tests.problem.goals import *
 # from mem_top import mem_top
 
 def test_eviction_synthetic():
@@ -25,4 +34,4 @@ def test_eviction_synthetic():
         for a in p.plan:
             i=i+1
             # print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
-
+            

@@ -2,6 +2,7 @@ import pytest
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Service import Service
+from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.misc.object_factory import labelFactory
@@ -11,6 +12,7 @@ import logzero
 logzero.logfile("./test.log", disableStderrLogger=True)
 
 TEST_PODS = "./tests/kube-config/pods.yaml"
+TEST_PRIORITYCLASS = "./tests/kube-config/priorityclass.yaml"
 TEST_NODES = "./tests/kube-config/nodes.yaml"
 TEST_DEPLOYMENTS = "./tests/kube-config/deployments.yaml"
 
@@ -19,6 +21,7 @@ TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 def test_load_pods():
     k = KubernetesCluster()
+    k.load(open(TEST_PRIORITYCLASS).read())
     k.load(open(TEST_PODS).read())
     k._build_state()
     assert k.state_objects
@@ -31,6 +34,7 @@ def test_load_nodes():
 
 def test_load_deployments():
     k = KubernetesCluster()
+    k.load(open(TEST_PRIORITYCLASS).read())
     k.load(open(TEST_NODES).read())
     k.load(open(TEST_PODS).read())
     k.load(open(TEST_DEPLOYMENTS).read())
@@ -40,15 +44,53 @@ def test_load_deployments():
 # @pytest.mark.filterwarnings("ignore:*")
 def test_load_pods_new():
     k = KubernetesCluster()
+    k.load(open(TEST_PRIORITYCLASS).read())
     k.load(open(TEST_PODS).read())
     k._build_state()
     # TODO: check if pod is fully loaded
-    pod = k.state_objects[2]
+    pod = k.state_objects[2+3]
     assert isinstance(pod, Pod)
     assert len(pod.metadata_labels._get_value()) > 0
     assert pod.status == STATUS_POD["Running"]
 
     assert k.state_objects
+
+def test_load_priorityclass_system_critical():
+    k = KubernetesCluster()
+    k.load(open(TEST_PRIORITYCLASS).read())
+    k._build_state()
+    found = False
+    for pc in filter(lambda x: isinstance(x, PriorityClass), k.state_objects):
+        if pc.metadata_name == "system-cluster-critical":
+            # print(pc.priority, pc.priority._get_value())
+            assert pc.priority > 0
+            found = True
+    assert found
+
+def test_load_priorityclass_custom_high_priority():
+    k = KubernetesCluster()
+    k.load(open(TEST_PRIORITYCLASS).read())
+    k._build_state()
+    found = False
+    for pc in filter(lambda x: isinstance(x, PriorityClass), k.state_objects):
+        if pc.metadata_name == "high-priority":
+            # print(pc.priority, pc.priority._get_value())
+            assert pc.priority > 0
+            found = True
+    assert found
+
+
+def test_heapster_load():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    heapsterpod = next(filter(lambda x: isinstance(x, Pod) and \
+        "heapster" in str(x.metadata_name), k.state_objects))
+    criticalpc = next(filter(lambda x: isinstance(x, PriorityClass) \
+        and x.metadata_name == "system-cluster-critical", k.state_objects))
+    # print(heapsterpod.priorityClass._get_value(), criticalpc._get_value())
+    assert heapsterpod.priorityClass._get_value() == criticalpc._get_value()
+    assert heapsterpod.priorityClass == criticalpc
 
 def test_load_folder():
     k = KubernetesCluster()
