@@ -4,8 +4,8 @@ import sys
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import AnyServiceInterrupted 
 from guardctl.model.scenario import Scenario
-# from yaspin import yaspin
-# from yaspin.spinners import Spinners
+from yaspin import yaspin
+from yaspin.spinners import Spinners
 from sys import stdout
 from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
@@ -47,13 +47,13 @@ def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusi
     click.echo("# Solving ...")
 
     if stdout.isatty():
-        # with yaspin(Spinners.earth, text="") as sp:
+        with yaspin(Spinners.earth, text="") as sp:
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
-                # sp.ok("✅ ")
+                sp.ok("✅ ")
                 click.echo("# No scenario was found.")
             else:
-                # sp.fail("💥 ")
+                sp.fail("💥 ")
                 click.echo("# Scenario found.")
                 click.echo(Scenario(p.plan).asyaml())
     else:
