@@ -22,7 +22,8 @@ from guardctl.model.system.primitives import TypeServ
 @click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
                 required=False, default=None)
 @click.option("--ignore-nonexistent-exclusions", type=bool, is_flag=True, required=False, default=False)
-def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions):
+@click.option("--pipe", type=bool, is_flag=True, required=False, default=False)
+def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe):
 
     k = KubernetesCluster()
 
@@ -46,7 +47,7 @@ def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusi
 
     click.echo("# Solving ...")
 
-    if stdout.isatty():
+    if stdout.isatty() and not pipe:
         with yaspin(Spinners.earth, text="") as sp:
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
