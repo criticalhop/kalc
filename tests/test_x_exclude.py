@@ -34,7 +34,7 @@ def test_ignore_check_mUster():
 
 def test_excluded_search():
     result = CliRunner().invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
-        "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-master"])
+        "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-master", "--pipe"])
     assert result.exit_code == 0
     yaml.load(result.output)
     assert not("redis-master\n" in result.output[-200:])
