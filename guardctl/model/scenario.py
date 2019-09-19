@@ -21,8 +21,13 @@ class Scenario:
             probability = probability * s.probability
         return yaml.dump({
                 "probability": probability,
-                "steps": [asdict(x) for x in self.steps]
+                "steps": [dict_rename(asdict(x),"name","actionName") for x in self.steps]
                 })
+
+def dict_rename(d, nfrom, nto):
+    d[nto] = d[nfrom]
+    del d[nfrom]
+    return d
 
 @dataclass
 class ScenarioStep:
