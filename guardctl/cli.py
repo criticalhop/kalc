@@ -10,11 +10,6 @@ from sys import stdout
 from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
 
-# @click.group()
-# def cli():
-#     pass
-
-# @click.command()
 @click.group(invoke_without_command=True)
 @click.option("--from-dir", "-d", help="Directory with cluster resources definitions", \
                 type=str, required=True)
@@ -64,23 +59,6 @@ def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusi
     else:
         p.run(timeout=timeout, sessionName="cli_run")
         click.echo(Scenario(p.plan).asyaml())
-
-@click.command()
-@click.option("-f", help="Create new resource from YAML file", type=str, required=False, multiple=True)
-def fetch(f):
-    c = KubernetesCluster()
-
-    click.echo("Fetching cluster state ...")
-
-    c.fetch_state_default()
-
-    scenario = c.run()
-
-    if scenario: click.echo(scenario.yaml())
-    else: click.echo("Cluster clean!")
-
-# cli.add_command(test)
-# cli.add_command(run)
 
 if getattr(sys, 'frozen', False):
     run(sys.argv[1:]) # pylint: disable=no-value-for-parameter
