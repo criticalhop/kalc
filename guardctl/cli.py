@@ -14,7 +14,7 @@ from guardctl.model.system.primitives import TypeServ
 @click.option("--from-dir", "-d", help="Directory with cluster resources definitions", \
                 type=str, required=True)
 @click.option("--output", "-o", help="Select output format", \
-                type=click.Choice(["json", "yaml", "wide"]), required=False, default="wide")
+                type=click.Choice(["yaml"]), required=False, default="yaml")
 @click.option("--filename", "-f", help="Create new resource from YAML file", \
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
