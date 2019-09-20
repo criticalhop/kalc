@@ -20,7 +20,7 @@ TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 EXCLUDED_SERV = {
     "redis-master" : TypeServ("redis-master"),
-    # "redis-master-evict" : TypeServ("redis-master-evict"),
+    # "redis-master-evict" : TypeServ("redis-master-evict")
     "heapster": TypeServ("heapster")
 }
 
