@@ -519,5 +519,3 @@ class ProblemAutoLink(ProblemTemplate):
         self.scheduler1.podQueue.add(self.pod7)
         self.scheduler1.status = STATUS_SCHED["Changed"]
         self.scheduler1.queueLength = 3
-
-   
