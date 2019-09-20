@@ -149,7 +149,6 @@ def test_service_active_pods():
     assert pods_active
 
 def test_service_link_to_pods():
-    # print_objects(ALL_STATE)
     objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
     serv = None
     for p in objects:
