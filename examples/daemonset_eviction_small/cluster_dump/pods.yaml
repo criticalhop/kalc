@@ -1,0 +1,889 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-master-2-bd5cb4d85-
+    labels:
+      app: redis2
+      pod-template-hash: bd5cb4d85
+      role: master
+      tier: backend
+    name: redis-master-2-bd5cb4d85-p8wkh
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-master-2-bd5cb4d85
+      uid: 406c0a1b-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901736"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-2-bd5cb4d85-p8wkh
+    uid: 4072c41c-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:36Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:36Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://ef2be4c07029a11249c128cf74de686c1a2275291855f808e4a9ff357a6c6356
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:35Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.95
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:33Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-20T21:47:32Z"
+    generateName: redis-master-85dc7c69bf-
+    labels:
+      app: redis
+      pod-template-hash: 85dc7c69bf
+      role: master
+      tier: backend
+    name: redis-master-85dc7c69bf-nltd9
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-master-85dc7c69bf
+      uid: 40459859-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901740"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-85dc7c69bf-nltd9
+    uid: 404a2c47-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:32Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:36Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:36Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:32Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://06de6d258a146392ce4cc4899b7ba369229db69bf9eab65c616907682345c91d
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:35Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.94
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:32Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-20T21:47:32Z"
+    generateName: redis-master-evict-cc4cbc9fc-
+    labels:
+      app: redis-evict
+      pod-template-hash: cc4cbc9fc
+      role: master
+      tier: backend
+    name: redis-master-evict-cc4cbc9fc-2wpnj
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-master-evict-cc4cbc9fc
+      uid: 4051592f-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901754"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-evict-cc4cbc9fc-2wpnj
+    uid: 405312b6-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:37Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:37Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://b48bce987810a7a728c26ba490cc1e6c9a67a20adfc1a47f708197d2d3435127
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:37Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.99
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:33Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-slave-84455f8579-
+    labels:
+      app: redis
+      pod-template-hash: 84455f8579
+      role: slave
+      tier: backend
+    name: redis-slave-84455f8579-6tp4g
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-84455f8579
+      uid: 4079ec27-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901750"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-84455f8579-6tp4g
+    uid: 40a0a01f-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:37Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:37Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://c2328c2353b60d1000e552bc0e575dd355d317baf586b12e39f28ec4e66b3885
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:36Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.96
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:33Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-slave-84455f8579-
+    labels:
+      app: redis
+      pod-template-hash: 84455f8579
+      role: slave
+      tier: backend
+    name: redis-slave-84455f8579-qx57z
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-84455f8579
+      uid: 4079ec27-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901767"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-84455f8579-qx57z
+    uid: 4083b1df-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:38Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:38Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://aed8b3aa1805b0332813e82d64a6cf0cf8ce2c998bf51d84fa28d4945286c6e7
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:37Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.100
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:33Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        slave'
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-slave-unlimit-norequest-2-56d54b89bf-
+    labels:
+      app: redis
+      pod-template-hash: 56d54b89bf
+      role: slave-unlimit-2
+      tier: backend
+    name: redis-slave-unlimit-norequest-2-56d54b89bf-jsjd2
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-unlimit-norequest-2-56d54b89bf
+      uid: 40b2d58e-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901722"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-2-56d54b89bf-jsjd2
+    uid: 40cb2023-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6367
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      message: '0/2 nodes are available: 2 Insufficient cpu.'
+      reason: Unschedulable
+      status: "False"
+      type: PodScheduled
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        slave'
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-slave-unlimit-norequest-2-56d54b89bf-
+    labels:
+      app: redis
+      pod-template-hash: 56d54b89bf
+      role: slave-unlimit-2
+      tier: backend
+    name: redis-slave-unlimit-norequest-2-56d54b89bf-wc7bg
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-unlimit-norequest-2-56d54b89bf
+      uid: 40b2d58e-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901771"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-2-56d54b89bf-wc7bg
+    uid: 40b7d3b1-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6367
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:34Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:38Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:38Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://6a1736b44749186a536909383a871dabe24d3950d28121e11b6d05614c8414d5
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:37Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.101
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:34Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        slave'
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-slave-unlimit-norequest-58c44757b9-
+    labels:
+      app: redis
+      pod-template-hash: 58c44757b9
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit-norequest-58c44757b9-27vf5
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-unlimit-norequest-58c44757b9
+      uid: 409ade02-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901746"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-58c44757b9-27vf5
+    uid: 40b73003-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6366
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:37Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:37Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://d6835456aae69bf85462ff545347a002efcc7ffa7f5bab89bb6ca762339ecde0
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:36Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.97
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:33Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        slave'
+    creationTimestamp: "2019-09-20T21:47:33Z"
+    generateName: redis-slave-unlimit-norequest-58c44757b9-
+    labels:
+      app: redis
+      pod-template-hash: 58c44757b9
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit-norequest-58c44757b9-hk54z
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-unlimit-norequest-58c44757b9
+      uid: 409ade02-dbf0-11e9-bb74-42010a8001fc
+    resourceVersion: "901763"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-58c44757b9-hk54z
+    uid: 40a3cf49-dbf0-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
+      ports:
+      - containerPort: 6366
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:38Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:38Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-20T21:47:33Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://6a0d2af5d41f0123c399b2a46610f1e29c082c8bc2b743a51fa617ae6c86161a
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-20T21:47:37Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.102
+    qosClass: Burstable
+    startTime: "2019-09-20T21:47:33Z"
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
