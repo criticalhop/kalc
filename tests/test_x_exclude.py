@@ -21,7 +21,6 @@ def test_assert_ServUce():
         "-t", "150", "-e",  "Service:redis-master-evict,ServUce:redis-master"])
     assert result.__str__() == "<Result AssertionError(\"Error: no such type \'ServUce\'\")>"
 
-# @pytest.mark.skip(reason="exclude for testing purpose")
 def test_assert_mUster():
     result = CliRunner().invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
         "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-mUster"])
