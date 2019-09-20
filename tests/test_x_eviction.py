@@ -222,4 +222,4 @@ def test_anyservice_interrupted_fromfiles():
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
-   
+  
