@@ -21,6 +21,7 @@ class Service(HasLabel):
         self.amountOfActivePods = 0
         self.status = STATUS_SERV["Pending"]
         self.searchable = True
+       
  
 
     # def __repr__(self):
