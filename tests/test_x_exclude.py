@@ -24,7 +24,7 @@ def test_assert_mUster():
     result = CliRunner().invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
         "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-mUster"])
     assert result.__str__() == "<Result AssertionError(\"Error: no such Service: \'redis-mUster\'\")>"
-    
+
 def test_ignore_check_mUster():
     #  run(["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
     #      "-t", "150", "-e",  "Service:redis-master-evict,ServUc1e:redis-mUster","--ignore-nonexistent-exclusions"])
