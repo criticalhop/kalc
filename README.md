@@ -18,6 +18,20 @@ kubectl-val is written in modern Python and requires **Python 3.7+**, so please 
 
 ## Installation
 
+### Binary release
+
+Easiest way is to use our binary release which auto-updates itself. You can download one from [releases](https://github.com/criticalhop/kubectl-val/releases) or you can execute these commands:
+
+```shell
+wget https://github.com/criticalhop/kubectl-val/releases/download/v0.1.3/kubectl-val 
+chmod +x ./kubectl-val
+sudo ln -s $(pwd)/kubectl-val /usr/local/bin/kubectl-val
+```
+
+remember to mark the file executable by issuing `chmod +x ./kubectl-val`
+    
+### PyPi release
+
     $ pip install kubectl-val
 
 `kubectl-val` comes as a simple [kubectl plugin](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/), so a working `kubectl` is a requirement if you want to access real cluster. If you do not have `kubectl` you can use it just as standalone shell command `kubectl-val` instead of `kubectl val ...`
@@ -28,8 +42,11 @@ kubectl-val is written in modern Python and requires **Python 3.7+**, so please 
 
 To try it against sample "broken" kubernetes configurations, use `-d` option to supply a folder with a collection of Kubernetes resources' stored from `kubectl get <...> -o=yaml > <...>.yaml`, and try to create a new resource with `-f`, e.g.:
 
-    $ cd examples/daemonset-eviction
+    $ git clone https://github.com/criticalhop/kubectl-val
+    $ cd kubectl-val/examples/daemonset-eviction
     $ kubectl val -d cluster-dump/ -f daemonset_create.yaml
+    
+You can find a bigger cluster example in tests/ folder.
     
 ### Checking a Kubernetes configuration for correctness
 
@@ -47,11 +64,20 @@ cd my-cluster-dump
 kubectl get nodes --all-namespaces -o=yaml > nodes.yaml
 kubectl get pods --all-namespaces -o=yaml > pods.yaml
 kubectl get services --all-namespaces -o=yaml > services.yaml
-kubectl get priority --all-namespaces -o=yaml > priority.yaml
-...
+kubectl get priorityclass --all-namespaces -o=yaml > priority.yaml
 ```
 
 After you have the dump folder, you can continue with a check described above.
+
+### Excluding a Scenario
+
+There may be more than one issue with the configuration and `kubectl-val` will only detect one scenario at a time. To select next scenario it is possible to exclude certain resources from search by issuing `-e Service:<service-name>` command:
+
+```shell
+kubectl-val -d ... -f ... -e Service:redis-master
+```
+
+so if `kubectl-val` detects a scenario with a kind `Service` and name `redis-master` this command would exclude it from search and you will either get the next scenario, if any - or a clean cluster state as a result.
 
 # Architecture
 
