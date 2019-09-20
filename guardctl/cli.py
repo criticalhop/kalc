@@ -20,10 +20,13 @@ from guardctl.model.system.primitives import TypeServ
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
-@click.option("--exclude", "-e", help="-e <Kind1>:<name1>,<Kind2>:<name2>,...", \
+@click.option("--exclude", "-e", help="Exclude from search <Kind1>:<name1>,<Kind2>:<name2>,...", \
                 required=False, default=None)
-@click.option("--ignore-nonexistent-exclusions", type=bool, is_flag=True, required=False, default=False)
-@click.option("--pipe", type=bool, is_flag=True, required=False, default=False)
+@click.option("--ignore-nonexistent-exclusions", \
+    help="Ignore mistyped/absent exclusions from --exclude", type=bool, \
+                            is_flag=True, required=False, default=False)
+@click.option("--pipe", help="Terse mode to reduce verbosity for shell piping", \
+                    type=bool, is_flag=True, required=False, default=False)
 def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe):
 
     k = KubernetesCluster()
@@ -40,8 +43,8 @@ def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusi
     if exclude != None:
         excludeList = []
         for kn in exclude.split(","):
-             excludeList.append(ExcludeDict(kn))
-        click.echo(f"# Exclude ...")
+            click.echo(f"# Exclude {kn} ...")
+            excludeList.append(ExcludeDict(kn))
         mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
     p = AnyServiceInterrupted(k.state_objects)
     # p.select_target_service()
