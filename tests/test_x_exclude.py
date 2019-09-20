@@ -9,7 +9,6 @@ from tests.test_util import print_objects
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
-# @pytest.mark.skip(reason="exclude for testing purpose")
 def test_assert_ServUce():
     # try:
     #     run(["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
