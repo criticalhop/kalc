@@ -14,7 +14,7 @@ from pyupdater.client import Client
 from guardctl.misc.client_config import ClientConfig
 
 APP_NAME = 'kubectl-val'
-APP_VERSION = '0.1.4'
+APP_VERSION = '0.1.3'
 
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)

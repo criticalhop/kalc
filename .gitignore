@@ -12,3 +12,4 @@ test.log
 .pytest_cache/*
 keypack.pyu
 pyu-data/
+pyu.log
