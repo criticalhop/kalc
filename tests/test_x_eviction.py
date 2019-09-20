@@ -22,7 +22,7 @@ EXCLUDED_SERV = {
     "redis-master" : TypeServ("redis-master"),
     # "redis-master-evict" : TypeServ("redis-master-evict"),
     "heapster": TypeServ("heapster"),
-   }
+}
 
 def mark_excluded_service(object_space):
     services = filter(lambda x: isinstance(x, mservice.Service), object_space)
