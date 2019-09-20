@@ -7,7 +7,6 @@ from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 from sys import stdout
-
 from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
 
