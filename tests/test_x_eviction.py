@@ -7,14 +7,30 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.model.search import K8ServiceInterruptSearch, AnyServiceInterrupted
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
 from guardctl.model.scenario import Scenario
+import guardctl.model.kinds.Service as mservice
+from tests.test_util import print_objects
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
+
+EXCLUDED_SERV = {
+    "redis-master" : TypeServ("redis-master"),
+    # "redis-master-evict" : TypeServ("redis-master-evict")
+    "heapster": TypeServ("heapster")
+}
+
+def mark_excluded_service(object_space):
+    services = filter(lambda x: isinstance(x, mservice.Service), object_space)
+    for service in services:
+        if service.metadata_name in list(EXCLUDED_SERV):
+           service.searchable = False
+
+
 
 ALL_STATE = None
 
@@ -34,43 +50,6 @@ class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
 
     goal = lambda self: self.targetservice.status == STATUS_SERV["Interrupted"] and \
             self.scheduler.status == STATUS_SCHED["Clean"]
-
-    def print_objects(self):
-        print("=====>")
-        pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
-        for poditem in pod_loaded_list:
-            print("pod:"+ str(poditem.metadata_name._get_value()) + \
-                " status: " + str(poditem.status) + \
-                " priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
-                " toNode: " + str(poditem.toNode._property_value) + \
-                " atNode: " + str(poditem.atNode._property_value) + \
-                " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + \
-                " cpuLimit: " + str(poditem.cpuLimit._get_value()) + " memLimit: " + str(poditem.memLimit._get_value()) + \
-                " targetService: "+ str(poditem.targetService._property_value) +\
-                " metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]))
-        node_loaded_list = filter(lambda x: isinstance(x, Node), self.objectList)
-        for nodeitem in node_loaded_list:
-            print("node:"+ str(nodeitem.metadata_name._get_value()) + " cpuCapacity: " + str(nodeitem.cpuCapacity._get_value()) + " memCapacity: " + str(nodeitem.memCapacity._get_value()) + \
-            " currentFormalCpuConsumption: "  + str(nodeitem.currentFormalCpuConsumption._get_value()) + \
-            " currentFormalMemConsumption: " + str(nodeitem.currentFormalMemConsumption._get_value()) + \
-            " AmountOfPodsOverwhelmingMemLimits: " + str(nodeitem.AmountOfPodsOverwhelmingMemLimits._get_value()) + \
-            " podAmount: "  + str(nodeitem.podAmount._get_value()) + \
-            " isNull:"  + str(nodeitem.isNull._get_value()) + \
-            " status:"  + str(nodeitem.status._get_value()))
-        services = filter(lambda x: isinstance(x, Service), self.objectList)
-        for service in services:
-            print("service: "+str(service.metadata_name)+\
-                " amountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
-                " status: "+str(service.status._get_value()) +
-                " spec_selector: "+str([str(x) for x in service.spec_selector._property_value]))
-
-        prios = filter(lambda x: isinstance(x, PriorityClass), self.objectList)
-        for prio in prios:
-            print("priorityClass: "+str(prio.metadata_name)+" "+str(prio.priority._get_value()))
-
-
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
-
 
 def test_priority_is_loaded():
     k = KubernetesCluster()
@@ -145,7 +124,6 @@ class StartServiceGoal(K8ServiceInterruptSearch):
             goal=lambda:(self.goal()),
             plan=[Pod().connect_pod_service_labels]
         )
-
 def test_service_active_pods():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -214,7 +192,6 @@ def test_nodes_pods_allocated():
     "test that all pods in status running are allocated to nodes"
     pass
 
-# @pytest.mark.skip(reason="need to test everything else first")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -222,11 +199,8 @@ def test_eviction_fromfiles_strictgoal():
     k._build_state()
     p = SingleGoalEvictionDetect(k.state_objects)
     p.select_target_service()
-    p.print_objects()
     p.run(timeout=360, sessionName="test_eviction_fromfiles_strictgoal")
-    # p.run(timeout=60)
     if not p.plan:
-        # print("Could not solve %s" % p.__class__.__name__)
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
     if p.plan:
@@ -235,3 +209,16 @@ def test_eviction_fromfiles_strictgoal():
             i=i+1
             print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
 
+
+def test_anyservice_interrupted_fromfiles():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k.create_resource(open(TEST_DAEMONET).read())
+    k._build_state()
+    mark_excluded_service(k.state_objects)
+    p = AnyServiceInterrupted(k.state_objects)
+    print_objects(k.state_objects)
+    p.run(timeout=360, sessionName="test_anyservice_interrupted_fromfiles")
+    if not p.plan:
+        raise Exception("Could not solve %s" % p.__class__.__name__)
+    print(Scenario(p.plan).asyaml())

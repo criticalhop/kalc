@@ -31,3 +31,6 @@ class Label(Object):
 
 class TypePolicy(Object):
     pass
+
+class TypeServ(Object):
+    pass

@@ -7,7 +7,17 @@ from guardctl.misc.const import *
 from guardctl.misc.problem import ProblemTemplate
 from guardctl.model.scenario import ScenarioStep, describe
 import sys
+from guardctl.model.system.primitives import TypeServ
 
+class ExcludeDict:
+    name: str
+    objType: str
+    obj: TypeServ
+
+    def __init__(self, kn):
+        self.objType = kn.split(":")[0]
+        self.name = kn.split(":")[1]
+        self.obj = TypeServ(self.name)
 
 class KubernetesModel(ProblemTemplate):
     def problem(self):
@@ -31,6 +41,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert scheduler1.status == STATUS_SCHED["Clean"] 
         assert service1.amountOfActivePods == 0
         assert service1.status == STATUS_SERV["Started"]
+        assert service1.searchable == True
         assert pod1.targetService == service1
         assert pod1.cpuRequest == cpuRequestLoc
         assert pod1.memRequest == memRequestLoc
@@ -46,9 +57,24 @@ class K8ServiceInterruptSearch(KubernetesModel):
             probability=1.0,
             affected=[describe(service1)]
         )
-    
 
-    
+def mark_excluded(object_space, exclude, skip_check=False):
+    names = []
+    types = []
+    for obj in object_space:
+        if hasattr(obj, 'metadata_name'):
+            names.append(obj.metadata_name)
+        types.append(obj.__class__.__name__)
+        for objExclude in exclude:
+            if (obj.__class__.__name__ == objExclude.objType) and (obj.metadata_name == objExclude.name):
+                obj.searchable = False
+    if skip_check : return
+    for objExclude in exclude:
+        if not(objExclude.objType in types):
+            raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
+        if not(objExclude.name in names):
+            raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
+
     # @planned(cost=10000)
     # def UnsolveableServiceStart(self,
     #             service1: Service,
