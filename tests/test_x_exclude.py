@@ -32,7 +32,6 @@ def test_ignore_check_mUster():
         "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-mUster","--ignore-nonexistent-exclusions"])
     assert result.exit_code == 0
 
-# @pytest.mark.skip(reason="exclude for testing purpose")
 def test_excluded_search():
     result = CliRunner().invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", \
         "-t", "150", "-e",  "Service:redis-master-evict,Service:redis-master", "--pipe"])
