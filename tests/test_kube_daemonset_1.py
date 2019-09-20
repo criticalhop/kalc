@@ -34,4 +34,3 @@ def test_eviction_synthetic():
         for a in p.plan:
             i=i+1
             # print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
-            

@@ -519,38 +519,3 @@ class ProblemAutoLink(ProblemTemplate):
         self.scheduler1.podQueue.add(self.pod7)
         self.scheduler1.status = STATUS_SCHED["Changed"]
         self.scheduler1.queueLength = 3
-
-    def print_objects(self):
-        print("=====>")
-        pod_loaded_list = filter(lambda x: isinstance(x, Pod), self.objectList)
-        for poditem in pod_loaded_list:
-            print("pod:"+ str(poditem.metadata_name._get_value()) + \
-                " status: " + str(poditem.status) + \
-                " priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
-                " toNode: " + str(poditem.toNode._property_value) + \
-                " atNode: " + str(poditem.atNode._property_value) + \
-                " cpuRequest: " + str(poditem.cpuRequest._get_value()) + " memRequest: " + str(poditem.memRequest._get_value()) + \
-                " cpuLimit: " + str(poditem.cpuLimit._get_value()) + " memLimit: " + str(poditem.memLimit._get_value()) + \
-                " targetService: "+ str(poditem.targetService._property_value) +\
-                " metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]))
-        node_loaded_list = filter(lambda x: isinstance(x, Node), self.objectList)
-        for nodeitem in node_loaded_list:
-            print("node:"+ str(nodeitem.metadata_name._get_value()) + " cpuCapacity: " + str(nodeitem.cpuCapacity._get_value()) + " memCapacity: " + str(nodeitem.memCapacity._get_value()) + \
-            " currentFormalCpuConsumption: "  + str(nodeitem.currentFormalCpuConsumption._get_value()) + \
-            " currentFormalMemConsumption: " + str(nodeitem.currentFormalMemConsumption._get_value()) + \
-            " AmountOfPodsOverwhelmingMemLimits: " + str(nodeitem.AmountOfPodsOverwhelmingMemLimits._get_value()) + \
-            " podAmount: "  + str(nodeitem.podAmount._get_value()) + \
-            " isNull:"  + str(nodeitem.isNull._get_value()) + \
-            " status:"  + str(nodeitem.status._get_value()))
-        services = filter(lambda x: isinstance(x, Service), self.objectList)
-        for service in services:
-            print("service: "+str(service.metadata_name)+\
-                " amountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
-                " status: "+str(service.status._get_value()) +
-                " spec_selector: "+str([str(x) for x in service.spec_selector._property_value]))
-
-        prios = filter(lambda x: isinstance(x, PriorityClass), self.objectList)
-        for prio in prios:
-            print("priorityClass: "+str(prio.metadata_name)+" "+str(prio.priority._get_value()))
-
-
