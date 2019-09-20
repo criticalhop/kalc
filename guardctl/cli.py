@@ -12,6 +12,8 @@ from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
 from pyupdater.client import Client
 from guardctl.misc.client_config import ClientConfig
+import poodle
+poodle.log.setLevel(logging.ERROR)
 
 APP_NAME = 'kubectl-val'
 APP_VERSION = '0.1.3'
