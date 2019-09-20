@@ -10,3 +10,5 @@ build/
 Session.vim
 test.log
 .pytest_cache/*
+keypack.pyu
+pyu-data/
