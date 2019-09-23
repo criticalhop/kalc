@@ -20,10 +20,10 @@ kubectl-val is written in modern Python and requires **Python 3.7+**, so please 
 
 ### Binary release
 
-Easiest way is to use our binary release which auto-updates itself. You can download one from [releases](https://github.com/criticalhop/kubectl-val/releases) or you can execute these commands:
+Easiest way is to use our binary release which auto-updates itself. You can [download latest release here](https://github.com/criticalhop/kubectl-val/releases/latest/download/kubectl-val), or you can execute these commands:
 
 ```shell
-wget https://github.com/criticalhop/kubectl-val/releases/download/v0.1.3/kubectl-val 
+wget https://github.com/criticalhop/kubectl-val/releases/latest/download/kubectl-val 
 chmod +x ./kubectl-val
 sudo ln -s $(pwd)/kubectl-val /usr/local/bin/kubectl-val
 ```
