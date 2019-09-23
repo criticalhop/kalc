@@ -19,7 +19,7 @@ items:
       failure-domain.beta.kubernetes.io/zone: us-central1-a
       kubernetes.io/hostname: gke-testspace-default-pool-72d9c2b5-562n
     name: gke-testspace-default-pool-72d9c2b5-562n
-    resourceVersion: "901730"
+    resourceVersion: "1467882"
     selfLink: /api/v1/nodes/gke-testspace-default-pool-72d9c2b5-562n
     uid: 21aa5658-d97f-11e9-bb1f-42010a800115
   spec:
@@ -50,73 +50,73 @@ items:
       memory: 3786936Ki
       pods: "110"
     conditions:
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
-      lastTransitionTime: "2019-09-17T19:16:10Z"
-      message: node is functioning properly
-      reason: UnregisterNetDevice
-      status: "False"
-      type: FrequentUnregisterNetDevice
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
-      lastTransitionTime: "2019-09-17T19:16:10Z"
-      message: kubelet is functioning properly
-      reason: FrequentKubeletRestart
-      status: "False"
-      type: FrequentKubeletRestart
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
       lastTransitionTime: "2019-09-17T19:16:11Z"
       message: docker is functioning properly
       reason: FrequentDockerRestart
       status: "False"
       type: FrequentDockerRestart
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
       lastTransitionTime: "2019-09-17T19:16:12Z"
       message: containerd is functioning properly
       reason: FrequentContainerdRestart
       status: "False"
       type: FrequentContainerdRestart
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
       lastTransitionTime: "2019-09-17T19:16:10Z"
       message: docker overlay2 is functioning properly
       reason: CorruptDockerOverlay2
       status: "False"
       type: CorruptDockerOverlay2
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
       lastTransitionTime: "2019-09-17T19:11:08Z"
       message: kernel has no deadlock
       reason: KernelHasNoDeadlock
       status: "False"
       type: KernelDeadlock
-    - lastHeartbeatTime: "2019-09-20T21:47:17Z"
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
       lastTransitionTime: "2019-09-17T19:11:08Z"
       message: Filesystem is not read-only
       reason: FilesystemIsNotReadOnly
       status: "False"
       type: ReadonlyFilesystem
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
+      lastTransitionTime: "2019-09-17T19:16:10Z"
+      message: node is functioning properly
+      reason: UnregisterNetDevice
+      status: "False"
+      type: FrequentUnregisterNetDevice
+    - lastHeartbeatTime: "2019-09-22T20:50:59Z"
+      lastTransitionTime: "2019-09-17T19:16:10Z"
+      message: kubelet is functioning properly
+      reason: FrequentKubeletRestart
+      status: "False"
+      type: FrequentKubeletRestart
     - lastHeartbeatTime: "2019-09-17T19:13:03Z"
       lastTransitionTime: "2019-09-17T19:13:03Z"
       message: RouteController created a route
       reason: RouteCreated
       status: "False"
       type: NetworkUnavailable
-    - lastHeartbeatTime: "2019-09-20T21:47:34Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:10Z"
       lastTransitionTime: "2019-09-17T19:12:46Z"
       message: kubelet has sufficient memory available
       reason: KubeletHasSufficientMemory
       status: "False"
       type: MemoryPressure
-    - lastHeartbeatTime: "2019-09-20T21:47:34Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:10Z"
       lastTransitionTime: "2019-09-17T19:12:46Z"
       message: kubelet has no disk pressure
       reason: KubeletHasNoDiskPressure
       status: "False"
       type: DiskPressure
-    - lastHeartbeatTime: "2019-09-20T21:47:34Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:10Z"
       lastTransitionTime: "2019-09-17T19:12:46Z"
       message: kubelet has sufficient PID available
       reason: KubeletHasSufficientPID
       status: "False"
       type: PIDPressure
-    - lastHeartbeatTime: "2019-09-20T21:47:34Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:10Z"
       lastTransitionTime: "2019-09-17T19:12:47Z"
       message: kubelet is posting ready status. AppArmor enabled
       reason: KubeletReady
@@ -258,7 +258,7 @@ items:
       failure-domain.beta.kubernetes.io/zone: us-central1-a
       kubernetes.io/hostname: gke-testspace-default-pool-72d9c2b5-n5cj
     name: gke-testspace-default-pool-72d9c2b5-n5cj
-    resourceVersion: "901680"
+    resourceVersion: "1467910"
     selfLink: /api/v1/nodes/gke-testspace-default-pool-72d9c2b5-n5cj
     uid: 21a12efc-d97f-11e9-bb1f-42010a800115
   spec:
@@ -289,73 +289,73 @@ items:
       memory: 3786944Ki
       pods: "110"
     conditions:
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
-      lastTransitionTime: "2019-09-17T19:16:13Z"
-      message: containerd is functioning properly
-      reason: FrequentContainerdRestart
-      status: "False"
-      type: FrequentContainerdRestart
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
-      lastTransitionTime: "2019-09-17T19:16:11Z"
-      message: docker overlay2 is functioning properly
-      reason: CorruptDockerOverlay2
-      status: "False"
-      type: CorruptDockerOverlay2
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
-      lastTransitionTime: "2019-09-17T19:11:10Z"
-      message: kernel has no deadlock
-      reason: KernelHasNoDeadlock
-      status: "False"
-      type: KernelDeadlock
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
-      lastTransitionTime: "2019-09-17T19:11:10Z"
-      message: Filesystem is not read-only
-      reason: FilesystemIsNotReadOnly
-      status: "False"
-      type: ReadonlyFilesystem
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
-      lastTransitionTime: "2019-09-17T19:16:11Z"
-      message: node is functioning properly
-      reason: UnregisterNetDevice
-      status: "False"
-      type: FrequentUnregisterNetDevice
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
       lastTransitionTime: "2019-09-17T19:16:11Z"
       message: kubelet is functioning properly
       reason: FrequentKubeletRestart
       status: "False"
       type: FrequentKubeletRestart
-    - lastHeartbeatTime: "2019-09-20T21:46:59Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
       lastTransitionTime: "2019-09-17T19:16:12Z"
       message: docker is functioning properly
       reason: FrequentDockerRestart
       status: "False"
       type: FrequentDockerRestart
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
+      lastTransitionTime: "2019-09-17T19:16:13Z"
+      message: containerd is functioning properly
+      reason: FrequentContainerdRestart
+      status: "False"
+      type: FrequentContainerdRestart
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: docker overlay2 is functioning properly
+      reason: CorruptDockerOverlay2
+      status: "False"
+      type: CorruptDockerOverlay2
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
+      lastTransitionTime: "2019-09-17T19:11:10Z"
+      message: kernel has no deadlock
+      reason: KernelHasNoDeadlock
+      status: "False"
+      type: KernelDeadlock
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
+      lastTransitionTime: "2019-09-17T19:11:10Z"
+      message: Filesystem is not read-only
+      reason: FilesystemIsNotReadOnly
+      status: "False"
+      type: ReadonlyFilesystem
+    - lastHeartbeatTime: "2019-09-22T20:51:12Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: node is functioning properly
+      reason: UnregisterNetDevice
+      status: "False"
+      type: FrequentUnregisterNetDevice
     - lastHeartbeatTime: "2019-09-17T19:12:58Z"
       lastTransitionTime: "2019-09-17T19:12:58Z"
       message: RouteController created a route
       reason: RouteCreated
       status: "False"
       type: NetworkUnavailable
-    - lastHeartbeatTime: "2019-09-20T21:47:33Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:19Z"
       lastTransitionTime: "2019-09-17T19:12:45Z"
       message: kubelet has sufficient memory available
       reason: KubeletHasSufficientMemory
       status: "False"
       type: MemoryPressure
-    - lastHeartbeatTime: "2019-09-20T21:47:33Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:19Z"
       lastTransitionTime: "2019-09-17T19:12:45Z"
       message: kubelet has no disk pressure
       reason: KubeletHasNoDiskPressure
       status: "False"
       type: DiskPressure
-    - lastHeartbeatTime: "2019-09-20T21:47:33Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:19Z"
       lastTransitionTime: "2019-09-17T19:12:45Z"
       message: kubelet has sufficient PID available
       reason: KubeletHasSufficientPID
       status: "False"
       type: PIDPressure
-    - lastHeartbeatTime: "2019-09-20T21:47:33Z"
+    - lastHeartbeatTime: "2019-09-22T20:51:19Z"
       lastTransitionTime: "2019-09-17T19:12:47Z"
       message: kubelet is posting ready status. AppArmor enabled
       reason: KubeletReady

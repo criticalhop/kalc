@@ -1,54 +1,21 @@
 # Testing examples:
-  
-## Prepare test cluster
+  ./tests/daemonset_eviction_small
+## Use-case daemonset_eviction_small
 
-Create cluster: For this test create cluster with 2 nodes, each with 3.75 RAM and 1 CPU
+0. Create cluster: For this test create cluster with 2 nodes, each with 3.75 RAM and 1 CPU
+1. To create cluster one should setup template in the Google cloud platform
+Once default template is setup and use following script to create a cluster: 'bash ./create_cluster.sh'
+3. Update script 'setup.sh' with corresponing cluster name instead of 'testspace'. 
+4. Run "bash run_test.sh"   
 
-Use following commands:
-```bash
-gcloud container clusters create your-testspace-cluster
-kubectl config view
-kubectl config use-context your-testspace-cluster
-kubectl config set-context --current --namespace=default
-```
+Make sure no resources found.
 
-List of test examples directories in directory EXAMPLES:
+## Use-case nopods_for_service
 
-* daemonset_eviction_small
-
-  
-
-## Run
-Open directory with exaple and run commands to perform test (replace cluster name in commands below with name of your cluster):
-
-```python
-kubectl apply -f ./deployment.yaml
-sleep 10
-kubectl get deployments
-mkdir ./cluster_dump
-kubectl get po -o yaml > ./cluster_dump/pods.yaml
-kubectl get no -o yaml > ./cluster_dump/nodes.yaml
-kubectl get services -o yaml > ./cluster_dump/service.yaml
-kubectl get priorityclass -o yaml > ./cluster_dump/priorityclass.yaml
-kubectl val -d ./cluster_dump/ -f ./daemonset_create.yaml
-```
-
-To make sure that scenario found could happen , please run commands below to setup daemonset :
-```python
-kubectl apply -f ./daemonset_create.yaml
-```
-
-## Clean up
-
-To Clean up exaples data from "testspace" cluster run this:
-
-```python
-kubectl delete deployment redis-master redis-master-2 redis-slave redis-slave-unlimit-norequest redis-slave-unlimit-norequest-2 redis-master-evict  
-kubectl delete priorityclass name = high-priority
-kubectl delete daemonset fluentd-elasticsearch
-rm -R ./cluster_dump/
-sleep 10
-kubectl get pods
-```
+0. Create cluster: For this test create cluster with 2 nodes, each with 3.75 RAM and 1 CPU
+1. To create cluster one should setup template in the Google cloud platform
+Once default template is setup and use following script to create a cluster: 'bash ./create_cluster.sh'
+3. Update script 'setup.sh' with corresponing cluster name instead of 'testspace'. 
+4. Run "bash run_test.sh"   
 
 Make sure no resources found.

@@ -3,14 +3,14 @@ items:
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: "2019-09-20T21:47:33Z"
+    creationTimestamp: "2019-09-22T20:51:04Z"
     generateName: redis-master-2-bd5cb4d85-
     labels:
       app: redis2
       pod-template-hash: bd5cb4d85
       role: master
       tier: backend
-    name: redis-master-2-bd5cb4d85-p8wkh
+    name: redis-master-2-bd5cb4d85-dl4xv
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -18,10 +18,10 @@ items:
       controller: true
       kind: ReplicaSet
       name: redis-master-2-bd5cb4d85
-      uid: 406c0a1b-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901736"
-    selfLink: /api/v1/namespaces/default/pods/redis-master-2-bd5cb4d85-p8wkh
-    uid: 4072c41c-dbf0-11e9-bb74-42010a8001fc
+      uid: b1bae976-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467867"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-2-bd5cb4d85-dl4xv
+    uid: b1c02f4f-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - image: k8s.gcr.io/redis:e2e
@@ -42,7 +42,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -67,23 +67,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:36Z"
+      lastTransitionTime: "2019-09-22T20:51:09Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:36Z"
+      lastTransitionTime: "2019-09-22T20:51:09Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://ef2be4c07029a11249c128cf74de686c1a2275291855f808e4a9ff357a6c6356
+    - containerID: docker://06a6dc30ef76d13238f81625dac61cfb6b3c596755172023df8423977b7bed54
       image: k8s.gcr.io/redis:e2e
       imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
       lastState: {}
@@ -92,23 +92,23 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:35Z"
-    hostIP: 10.128.0.29
+          startedAt: "2019-09-22T20:51:07Z"
+    hostIP: 10.128.0.27
     phase: Running
-    podIP: 10.4.1.95
+    podIP: 10.4.0.108
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:33Z"
+    startTime: "2019-09-22T20:51:05Z"
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: "2019-09-20T21:47:32Z"
+    creationTimestamp: "2019-09-22T20:51:04Z"
     generateName: redis-master-85dc7c69bf-
     labels:
       app: redis
       pod-template-hash: 85dc7c69bf
       role: master
       tier: backend
-    name: redis-master-85dc7c69bf-nltd9
+    name: redis-master-85dc7c69bf-lvtsb
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -116,10 +116,10 @@ items:
       controller: true
       kind: ReplicaSet
       name: redis-master-85dc7c69bf
-      uid: 40459859-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901740"
-    selfLink: /api/v1/namespaces/default/pods/redis-master-85dc7c69bf-nltd9
-    uid: 404a2c47-dbf0-11e9-bb74-42010a8001fc
+      uid: b1b445b0-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467840"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-85dc7c69bf-lvtsb
+    uid: b1b9bb5c-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - image: k8s.gcr.io/redis:e2e
@@ -165,23 +165,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:32Z"
+      lastTransitionTime: "2019-09-22T20:51:04Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:36Z"
+      lastTransitionTime: "2019-09-22T20:51:07Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:36Z"
+      lastTransitionTime: "2019-09-22T20:51:07Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:32Z"
+      lastTransitionTime: "2019-09-22T20:51:04Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://06de6d258a146392ce4cc4899b7ba369229db69bf9eab65c616907682345c91d
+    - containerID: docker://018c29d9e6836955ca1970d50bbd639285f0b0bcff9a4cd5f7d887362e30cf70
       image: k8s.gcr.io/redis:e2e
       imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
       lastState: {}
@@ -190,23 +190,23 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:35Z"
+          startedAt: "2019-09-22T20:51:07Z"
     hostIP: 10.128.0.29
     phase: Running
-    podIP: 10.4.1.94
+    podIP: 10.4.1.103
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:32Z"
+    startTime: "2019-09-22T20:51:04Z"
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: "2019-09-20T21:47:32Z"
+    creationTimestamp: "2019-09-22T20:51:04Z"
     generateName: redis-master-evict-cc4cbc9fc-
     labels:
       app: redis-evict
       pod-template-hash: cc4cbc9fc
       role: master
       tier: backend
-    name: redis-master-evict-cc4cbc9fc-2wpnj
+    name: redis-master-evict-cc4cbc9fc-qbkhk
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -214,15 +214,116 @@ items:
       controller: true
       kind: ReplicaSet
       name: redis-master-evict-cc4cbc9fc
-      uid: 4051592f-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901754"
-    selfLink: /api/v1/namespaces/default/pods/redis-master-evict-cc4cbc9fc-2wpnj
-    uid: 405312b6-dbf0-11e9-bb74-42010a8001fc
+      uid: b1b6c0e4-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467847"
+    selfLink: /api/v1/namespaces/default/pods/redis-master-evict-cc4cbc9fc-qbkhk
+    uid: b1be4cd5-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - image: k8s.gcr.io/redis:e2e
       imagePullPolicy: IfNotPresent
       name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:05Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:08Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:08Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:05Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://28167d7d1aff39872238ef45946ae3145a1b3f7711b56392f838a5c42b42af67
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-22T20:51:07Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.104
+    qosClass: Burstable
+    startTime: "2019-09-22T20:51:05Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-22T20:51:05Z"
+    generateName: redis-slave-84455f8579-
+    labels:
+      app: redis
+      pod-template-hash: 84455f8579
+      role: slave
+      tier: backend
+    name: redis-slave-84455f8579-h4h46
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: redis-slave-84455f8579
+      uid: b1c01b1d-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467871"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-84455f8579-h4h46
+    uid: b1e16562-dd7a-11e9-bb74-42010a8001fc
+  spec:
+    containers:
+    - env:
+      - name: GET_HOSTS_FROM
+        value: dns
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imagePullPolicy: IfNotPresent
+      name: slave
       ports:
       - containerPort: 6379
         protocol: TCP
@@ -263,48 +364,48 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:37Z"
+      lastTransitionTime: "2019-09-22T20:51:09Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:37Z"
+      lastTransitionTime: "2019-09-22T20:51:09Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://b48bce987810a7a728c26ba490cc1e6c9a67a20adfc1a47f708197d2d3435127
-      image: k8s.gcr.io/redis:e2e
-      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+    - containerID: docker://674e7593ec37e9379562acfa424bc6ceeb01175636ce8587928e1d4d18e0c575
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
       lastState: {}
-      name: master
+      name: slave
       ready: true
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:37Z"
+          startedAt: "2019-09-22T20:51:08Z"
     hostIP: 10.128.0.27
     phase: Running
-    podIP: 10.4.0.99
+    podIP: 10.4.0.109
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:33Z"
+    startTime: "2019-09-22T20:51:05Z"
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: "2019-09-20T21:47:33Z"
+    creationTimestamp: "2019-09-22T20:51:05Z"
     generateName: redis-slave-84455f8579-
     labels:
       app: redis
       pod-template-hash: 84455f8579
       role: slave
       tier: backend
-    name: redis-slave-84455f8579-6tp4g
+    name: redis-slave-84455f8579-nk6mp
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -312,10 +413,10 @@ items:
       controller: true
       kind: ReplicaSet
       name: redis-slave-84455f8579
-      uid: 4079ec27-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901750"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-84455f8579-6tp4g
-    uid: 40a0a01f-dbf0-11e9-bb74-42010a8001fc
+      uid: b1c01b1d-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467855"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-84455f8579-nk6mp
+    uid: b1d122a6-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - env:
@@ -364,23 +465,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:37Z"
+      lastTransitionTime: "2019-09-22T20:51:08Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:37Z"
+      lastTransitionTime: "2019-09-22T20:51:08Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://c2328c2353b60d1000e552bc0e575dd355d317baf586b12e39f28ec4e66b3885
+    - containerID: docker://3100ad7a6263370213ca523a240a6a42807e5377c070c74dbe420a6930fd0a7d
       image: gcr.io/google_samples/gb-redisslave:v1
       imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
       lastState: {}
@@ -389,34 +490,37 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:36Z"
+          startedAt: "2019-09-22T20:51:08Z"
     hostIP: 10.128.0.29
     phase: Running
-    podIP: 10.4.1.96
+    podIP: 10.4.1.106
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:33Z"
+    startTime: "2019-09-22T20:51:05Z"
 - apiVersion: v1
   kind: Pod
   metadata:
-    creationTimestamp: "2019-09-20T21:47:33Z"
-    generateName: redis-slave-84455f8579-
+    annotations:
+      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
+        slave'
+    creationTimestamp: "2019-09-22T20:51:05Z"
+    generateName: redis-slave-unlimit-norequest-2-56d54b89bf-
     labels:
       app: redis
-      pod-template-hash: 84455f8579
-      role: slave
+      pod-template-hash: 56d54b89bf
+      role: slave-unlimit-2
       tier: backend
-    name: redis-slave-84455f8579-qx57z
+    name: redis-slave-unlimit-norequest-2-56d54b89bf-46mz6
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: redis-slave-84455f8579
-      uid: 4079ec27-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901767"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-84455f8579-qx57z
-    uid: 4083b1df-dbf0-11e9-bb74-42010a8001fc
+      name: redis-slave-unlimit-norequest-2-56d54b89bf
+      uid: b1debc66-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467851"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-2-56d54b89bf-46mz6
+    uid: b1e5c20b-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - env:
@@ -426,12 +530,11 @@ items:
       imagePullPolicy: IfNotPresent
       name: slave
       ports:
-      - containerPort: 6379
+      - containerPort: 6367
         protocol: TCP
       resources:
         requests:
           cpu: 100m
-          memory: 500Mi
       terminationMessagePath: /dev/termination-log
       terminationMessagePolicy: File
       volumeMounts:
@@ -440,7 +543,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -465,23 +568,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:38Z"
+      lastTransitionTime: "2019-09-22T20:51:08Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:38Z"
+      lastTransitionTime: "2019-09-22T20:51:08Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://aed8b3aa1805b0332813e82d64a6cf0cf8ce2c998bf51d84fa28d4945286c6e7
+    - containerID: docker://ad8197c5730896e6f14974e076533202ec01450542d9f8c50db6d560f5963484
       image: gcr.io/google_samples/gb-redisslave:v1
       imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
       lastState: {}
@@ -490,26 +593,26 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:37Z"
-    hostIP: 10.128.0.27
+          startedAt: "2019-09-22T20:51:08Z"
+    hostIP: 10.128.0.29
     phase: Running
-    podIP: 10.4.0.100
+    podIP: 10.4.1.105
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:33Z"
+    startTime: "2019-09-22T20:51:05Z"
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         slave'
-    creationTimestamp: "2019-09-20T21:47:33Z"
+    creationTimestamp: "2019-09-22T20:51:05Z"
     generateName: redis-slave-unlimit-norequest-2-56d54b89bf-
     labels:
       app: redis
       pod-template-hash: 56d54b89bf
       role: slave-unlimit-2
       tier: backend
-    name: redis-slave-unlimit-norequest-2-56d54b89bf-jsjd2
+    name: redis-slave-unlimit-norequest-2-56d54b89bf-n2jz9
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -517,10 +620,10 @@ items:
       controller: true
       kind: ReplicaSet
       name: redis-slave-unlimit-norequest-2-56d54b89bf
-      uid: 40b2d58e-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901722"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-2-56d54b89bf-jsjd2
-    uid: 40cb2023-dbf0-11e9-bb74-42010a8001fc
+      uid: b1debc66-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467825"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-2-56d54b89bf-n2jz9
+    uid: b1f35aed-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - env:
@@ -566,8 +669,8 @@ items:
         secretName: default-token-4n9dn
   status:
     conditions:
-    - lastProbeTime: "2019-09-20T21:47:33Z"
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+    - lastProbeTime: "2019-09-22T20:51:05Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       message: '0/2 nodes are available: 2 Insufficient cpu.'
       reason: Unschedulable
       status: "False"
@@ -580,25 +683,25 @@ items:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         slave'
-    creationTimestamp: "2019-09-20T21:47:33Z"
-    generateName: redis-slave-unlimit-norequest-2-56d54b89bf-
+    creationTimestamp: "2019-09-22T20:51:05Z"
+    generateName: redis-slave-unlimit-norequest-58c44757b9-
     labels:
       app: redis
-      pod-template-hash: 56d54b89bf
-      role: slave-unlimit-2
+      pod-template-hash: 58c44757b9
+      role: slave-unlimit
       tier: backend
-    name: redis-slave-unlimit-norequest-2-56d54b89bf-wc7bg
+    name: redis-slave-unlimit-norequest-58c44757b9-59bpg
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: redis-slave-unlimit-norequest-2-56d54b89bf
-      uid: 40b2d58e-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901771"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-2-56d54b89bf-wc7bg
-    uid: 40b7d3b1-dbf0-11e9-bb74-42010a8001fc
+      name: redis-slave-unlimit-norequest-58c44757b9
+      uid: b1d1b201-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467875"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-58c44757b9-59bpg
+    uid: b1ecbc5b-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - env:
@@ -608,7 +711,7 @@ items:
       imagePullPolicy: IfNotPresent
       name: slave
       ports:
-      - containerPort: 6367
+      - containerPort: 6366
         protocol: TCP
       resources:
         requests:
@@ -646,23 +749,23 @@ items:
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:34Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:38Z"
+      lastTransitionTime: "2019-09-22T20:51:10Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:38Z"
+      lastTransitionTime: "2019-09-22T20:51:10Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-22T20:51:05Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://6a1736b44749186a536909383a871dabe24d3950d28121e11b6d05614c8414d5
+    - containerID: docker://2ef953465328aae2be39cab197d56d2053615b40b6b207dd066485c66f2238a0
       image: gcr.io/google_samples/gb-redisslave:v1
       imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
       lastState: {}
@@ -671,26 +774,26 @@ items:
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:37Z"
+          startedAt: "2019-09-22T20:51:08Z"
     hostIP: 10.128.0.27
     phase: Running
-    podIP: 10.4.0.101
+    podIP: 10.4.0.111
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:34Z"
+    startTime: "2019-09-22T20:51:05Z"
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         slave'
-    creationTimestamp: "2019-09-20T21:47:33Z"
+    creationTimestamp: "2019-09-22T20:51:05Z"
     generateName: redis-slave-unlimit-norequest-58c44757b9-
     labels:
       app: redis
       pod-template-hash: 58c44757b9
       role: slave-unlimit
       tier: backend
-    name: redis-slave-unlimit-norequest-58c44757b9-27vf5
+    name: redis-slave-unlimit-norequest-58c44757b9-8f652
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -698,10 +801,10 @@ items:
       controller: true
       kind: ReplicaSet
       name: redis-slave-unlimit-norequest-58c44757b9
-      uid: 409ade02-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901746"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-58c44757b9-27vf5
-    uid: 40b73003-dbf0-11e9-bb74-42010a8001fc
+      uid: b1d1b201-dd7a-11e9-bb74-42010a8001fc
+    resourceVersion: "1467863"
+    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-58c44757b9-8f652
+    uid: b1e0f297-dd7a-11e9-bb74-42010a8001fc
   spec:
     containers:
     - env:
@@ -721,18 +824,871 @@ items:
       volumeMounts:
       - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
         name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:05Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:09Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:09Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-22T20:51:05Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://63f1a4a6c71ec64a0d5c8507cadab5f0ce2c30cd4651581cdc64c655035c1dbb
+      image: gcr.io/google_samples/gb-redisslave:v1
+      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      lastState: {}
+      name: slave
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-22T20:51:08Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.110
+    qosClass: Burstable
+    startTime: "2019-09-22T20:51:05Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-17T19:12:35Z"
+    generateName: event-exporter-v0.2.4-5f88c66fb7-
+    labels:
+      k8s-app: event-exporter
+      pod-template-hash: 5f88c66fb7
+      version: v0.2.4
+    name: event-exporter-v0.2.4-5f88c66fb7-t2w8c
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: event-exporter-v0.2.4-5f88c66fb7
+      uid: 1b5d6c9f-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "626"
+    selfLink: /api/v1/namespaces/kube-system/pods/event-exporter-v0.2.4-5f88c66fb7-t2w8c
+    uid: 1b5facc4-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - command:
+      - /event-exporter
+      - -sink-opts=-stackdriver-resource-model=old
+      image: k8s.gcr.io/event-exporter:v0.2.4
+      imagePullPolicy: IfNotPresent
+      name: event-exporter
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: event-exporter-sa-token-96s5z
+        readOnly: true
+    - command:
+      - /monitor
+      - --stackdriver-prefix=container.googleapis.com/internal/addons
+      - --api-override=https://monitoring.googleapis.com/
+      - --source=event_exporter:http://localhost:80?whitelisted=stackdriver_sink_received_entry_count,stackdriver_sink_request_count,stackdriver_sink_successfully_sent_entry_count
+      - --pod-id=$(POD_NAME)
+      - --namespace-id=$(POD_NAMESPACE)
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd-exporter
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: event-exporter-sa-token-96s5z
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: event-exporter-sa
+    serviceAccountName: event-exporter-sa
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - hostPath:
+        path: /etc/ssl/certs
+        type: ""
+      name: ssl-certs
+    - name: event-exporter-sa-token-96s5z
+      secret:
+        defaultMode: 420
+        secretName: event-exporter-sa-token-96s5z
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:55Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:55Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://a273018770cc1b29afe7dc1d06ceef6f5c99a6a338e1d6e9f694bbe0215cc16c
+      image: k8s.gcr.io/event-exporter:v0.2.4
+      imageID: docker-pullable://k8s.gcr.io/event-exporter@sha256:16ca66e2b5dc7a1ce6a5aafcb21d0885828b75cdfc08135430480f7ad2364adc
+      lastState: {}
+      name: event-exporter
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:12:51Z"
+    - containerID: docker://1fb16796237ca2041d1430bba9cf89836d2c57acad572f7c21a01eded63bab6f
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:14666989f40bb7c896c3e775a93c6873e2b791d65bc65579f58a078b7f9a764e
+      lastState: {}
+      name: prometheus-to-sd-exporter
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:12:52Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.3
+    qosClass: BestEffort
+    startTime: "2019-09-17T19:12:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-17T19:12:49Z"
+    generateName: fluentd-gcp-scaler-59b7b75cd7-
+    labels:
+      k8s-app: fluentd-gcp-scaler
+      pod-template-hash: 59b7b75cd7
+    name: fluentd-gcp-scaler-59b7b75cd7-q5brl
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: fluentd-gcp-scaler-59b7b75cd7
+      uid: 23740783-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "731"
+    selfLink: /api/v1/namespaces/kube-system/pods/fluentd-gcp-scaler-59b7b75cd7-q5brl
+    uid: 237995bf-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - command:
+      - /scaler.sh
+      - --ds-name=fluentd-gcp-v3.2.0
+      - --scaling-policy=fluentd-gcp-scaling-policy
+      env:
+      - name: CPU_REQUEST
+        value: 100m
+      - name: MEMORY_REQUEST
+        value: 200Mi
+      - name: CPU_LIMIT
+        value: 1000m
+      - name: MEMORY_LIMIT
+        value: 500Mi
+      image: k8s.gcr.io/fluentd-gcp-scaler:0.5.2
+      imagePullPolicy: IfNotPresent
+      name: fluentd-gcp-scaler
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: fluentd-gcp-scaler-token-9gbkp
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: fluentd-gcp-scaler
+    serviceAccountName: fluentd-gcp-scaler
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: fluentd-gcp-scaler-token-9gbkp
+      secret:
+        defaultMode: 420
+        secretName: fluentd-gcp-scaler-token-9gbkp
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:59Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:07Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:07Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:58Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://f0f08a2be407e4c1d482be64ee2870886c98f4f2f2726f769fb41b53707971b5
+      image: k8s.gcr.io/fluentd-gcp-scaler:0.5.2
+      imageID: docker-pullable://k8s.gcr.io/fluentd-gcp-scaler@sha256:4f28f10fb89506768910b858f7a18ffb996824a16d70d5ac895e49687df9ff58
+      lastState: {}
+      name: fluentd-gcp-scaler
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:05Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.8
+    qosClass: BestEffort
+    startTime: "2019-09-17T19:12:59Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+    creationTimestamp: "2019-09-17T19:13:14Z"
+    generateName: fluentd-gcp-v3.2.0-
+    labels:
+      controller-revision-hash: 68f79b58dd
+      k8s-app: fluentd-gcp
+      kubernetes.io/cluster-service: "true"
+      pod-template-generation: "2"
+      version: v3.2.0
+    name: fluentd-gcp-v3.2.0-6j4mh
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: fluentd-gcp-v3.2.0
+      uid: 1b955fe0-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "789"
+    selfLink: /api/v1/namespaces/kube-system/pods/fluentd-gcp-v3.2.0-6j4mh
+    uid: 32cd5f40-d97f-11e9-bb1f-42010a800115
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - gke-testspace-default-pool-72d9c2b5-n5cj
+    containers:
+    - env:
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: spec.nodeName
+      - name: STACKDRIVER_METADATA_AGENT_URL
+        value: http://$(NODE_NAME):8799
+      image: gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.8
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        exec:
+          command:
+          - /bin/sh
+          - -c
+          - |
+            LIVENESS_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-300}; STUCK_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-900}; if [ ! -e /var/log/fluentd-buffers ]; then
+              exit 1;
+            fi; touch -d "${STUCK_THRESHOLD_SECONDS} seconds ago" /tmp/marker-stuck; if [[ -z "$(find /var/log/fluentd-buffers -type f -newer /tmp/marker-stuck -print -quit)" ]]; then
+              rm -rf /var/log/fluentd-buffers;
+              exit 1;
+            fi; touch -d "${LIVENESS_THRESHOLD_SECONDS} seconds ago" /tmp/marker-liveness; if [[ -z "$(find /var/log/fluentd-buffers -type f -newer /tmp/marker-liveness -print -quit)" ]]; then
+              exit 1;
+            fi;
+        failureThreshold: 3
+        initialDelaySeconds: 600
+        periodSeconds: 60
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: fluentd-gcp
+      resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: 100m
+          memory: 200Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/log
+        name: varlog
+      - mountPath: /var/lib/docker/containers
+        name: varlibdockercontainers
+        readOnly: true
+      - mountPath: /etc/google-fluentd/config.d
+        name: config-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: fluentd-gcp-token-rnbs5
+        readOnly: true
+    - command:
+      - /monitor
+      - --stackdriver-prefix=container.googleapis.com/internal/addons
+      - --api-override=https://monitoring.googleapis.com/
+      - --source=fluentd:http://localhost:24231?whitelisted=stackdriver_successful_requests_count,stackdriver_failed_requests_count,stackdriver_ingested_entries_count,stackdriver_dropped_entries_count
+      - --pod-id=$(POD_NAME)
+      - --namespace-id=$(POD_NAMESPACE)
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd-exporter
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: fluentd-gcp-token-rnbs5
+        readOnly: true
+    dnsPolicy: Default
+    enableServiceLinks: true
+    hostNetwork: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    nodeSelector:
+      beta.kubernetes.io/fluentd-ds-ready: "true"
+    priority: 2000001000
+    priorityClassName: system-node-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: fluentd-gcp
+    serviceAccountName: fluentd-gcp
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      operator: Exists
+    - effect: NoSchedule
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /var/log
+        type: ""
+      name: varlog
+    - hostPath:
+        path: /var/lib/docker/containers
+        type: ""
+      name: varlibdockercontainers
+    - configMap:
+        defaultMode: 420
+        name: fluentd-gcp-config-old-v1.2.5
+      name: config-volume
+    - name: fluentd-gcp-token-rnbs5
+      secret:
+        defaultMode: 420
+        secretName: fluentd-gcp-token-rnbs5
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:14Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:19Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:19Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:14Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://d0af3095c28a2675d65f4aa171c8446f176d5888f3b4f733bc17a5736421a6de
+      image: gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.8
+      imageID: docker-pullable://gcr.io/stackdriver-agents/stackdriver-logging-agent@sha256:6c8574a40816676cd908cfa89d16463002b56ca05fa76d0c912e116bc0ab867e
+      lastState: {}
+      name: fluentd-gcp
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:17Z"
+    - containerID: docker://2ecc4a0e11f8571da6be55d3d3e6a8c515a60746dbb9707581757863c38f6bb7
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:14666989f40bb7c896c3e775a93c6873e2b791d65bc65579f58a078b7f9a764e
+      lastState: {}
+      name: prometheus-to-sd-exporter
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:18Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.128.0.27
+    qosClass: Burstable
+    startTime: "2019-09-17T19:13:14Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+    creationTimestamp: "2019-09-17T19:13:43Z"
+    generateName: fluentd-gcp-v3.2.0-
+    labels:
+      controller-revision-hash: 68f79b58dd
+      k8s-app: fluentd-gcp
+      kubernetes.io/cluster-service: "true"
+      pod-template-generation: "2"
+      version: v3.2.0
+    name: fluentd-gcp-v3.2.0-b8zl9
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: fluentd-gcp-v3.2.0
+      uid: 1b955fe0-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "937"
+    selfLink: /api/v1/namespaces/kube-system/pods/fluentd-gcp-v3.2.0-b8zl9
+    uid: 443626d0-d97f-11e9-bb1f-42010a800115
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - gke-testspace-default-pool-72d9c2b5-562n
+    containers:
+    - env:
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: spec.nodeName
+      - name: STACKDRIVER_METADATA_AGENT_URL
+        value: http://$(NODE_NAME):8799
+      image: gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.8
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        exec:
+          command:
+          - /bin/sh
+          - -c
+          - |
+            LIVENESS_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-300}; STUCK_THRESHOLD_SECONDS=${LIVENESS_THRESHOLD_SECONDS:-900}; if [ ! -e /var/log/fluentd-buffers ]; then
+              exit 1;
+            fi; touch -d "${STUCK_THRESHOLD_SECONDS} seconds ago" /tmp/marker-stuck; if [[ -z "$(find /var/log/fluentd-buffers -type f -newer /tmp/marker-stuck -print -quit)" ]]; then
+              rm -rf /var/log/fluentd-buffers;
+              exit 1;
+            fi; touch -d "${LIVENESS_THRESHOLD_SECONDS} seconds ago" /tmp/marker-liveness; if [[ -z "$(find /var/log/fluentd-buffers -type f -newer /tmp/marker-liveness -print -quit)" ]]; then
+              exit 1;
+            fi;
+        failureThreshold: 3
+        initialDelaySeconds: 600
+        periodSeconds: 60
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: fluentd-gcp
+      resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: 100m
+          memory: 200Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/log
+        name: varlog
+      - mountPath: /var/lib/docker/containers
+        name: varlibdockercontainers
+        readOnly: true
+      - mountPath: /etc/google-fluentd/config.d
+        name: config-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: fluentd-gcp-token-rnbs5
+        readOnly: true
+    - command:
+      - /monitor
+      - --stackdriver-prefix=container.googleapis.com/internal/addons
+      - --api-override=https://monitoring.googleapis.com/
+      - --source=fluentd:http://localhost:24231?whitelisted=stackdriver_successful_requests_count,stackdriver_failed_requests_count,stackdriver_ingested_entries_count,stackdriver_dropped_entries_count
+      - --pod-id=$(POD_NAME)
+      - --namespace-id=$(POD_NAMESPACE)
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd-exporter
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: fluentd-gcp-token-rnbs5
+        readOnly: true
+    dnsPolicy: Default
+    enableServiceLinks: true
+    hostNetwork: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeSelector:
+      beta.kubernetes.io/fluentd-ds-ready: "true"
+    priority: 2000001000
+    priorityClassName: system-node-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: fluentd-gcp
+    serviceAccountName: fluentd-gcp
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      operator: Exists
+    - effect: NoSchedule
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /var/log
+        type: ""
+      name: varlog
+    - hostPath:
+        path: /var/lib/docker/containers
+        type: ""
+      name: varlibdockercontainers
+    - configMap:
+        defaultMode: 420
+        name: fluentd-gcp-config-old-v1.2.5
+      name: config-volume
+    - name: fluentd-gcp-token-rnbs5
+      secret:
+        defaultMode: 420
+        secretName: fluentd-gcp-token-rnbs5
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:44Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:46Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:46Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:44Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://216990245e63b2e9831260a4d1b9b480db98055fbb4060c5a851182dc5ae6375
+      image: gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.8
+      imageID: docker-pullable://gcr.io/stackdriver-agents/stackdriver-logging-agent@sha256:6c8574a40816676cd908cfa89d16463002b56ca05fa76d0c912e116bc0ab867e
+      lastState: {}
+      name: fluentd-gcp
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:44Z"
+    - containerID: docker://ca456ff2dd0d16e5fe4a6ff769bc52bd63c4acb23c400c0388780ec5ff7fdb17
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:14666989f40bb7c896c3e775a93c6873e2b791d65bc65579f58a078b7f9a764e
+      lastState: {}
+      name: prometheus-to-sd-exporter
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:45Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.128.0.29
+    qosClass: Burstable
+    startTime: "2019-09-17T19:13:44Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+      seccomp.security.alpha.kubernetes.io/pod: docker/default
+    creationTimestamp: "2019-09-18T19:15:29Z"
+    generateName: heapster-v1.6.1-5ffd48875f-
+    labels:
+      k8s-app: heapster
+      pod-template-hash: 5ffd48875f
+      version: v1.6.1
+    name: heapster-v1.6.1-5ffd48875f-7tgf9
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: heapster-v1.6.1-5ffd48875f
+      uid: ad9a1f82-da48-11e9-9f90-42010a80020f
+    resourceVersion: "297956"
+    selfLink: /api/v1/namespaces/kube-system/pods/heapster-v1.6.1-5ffd48875f-7tgf9
+    uid: ada00ea6-da48-11e9-9f90-42010a80020f
+  spec:
+    containers:
+    - command:
+      - /heapster
+      - --source=kubernetes.summary_api:?host_id_annotation=container.googleapis.com/instance_id
+      - --sink=stackdriver:?cluster_name=testspace&use_old_resources=true&use_new_resources=false&min_interval_sec=100&batch_export_timeout_sec=110&cluster_location=us-central1-a
+      image: gcr.io/stackdriver-agents/heapster-amd64:v1.6.1
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8082
+          scheme: HTTP
+        initialDelaySeconds: 180
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: heapster
+      resources:
+        limits:
+          cpu: 13m
+          memory: 120Mi
+        requests:
+          cpu: 13m
+          memory: 120Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: heapster-token-mgtv9
+        readOnly: true
+    - command:
+      - /monitor
+      - --source=heapster:http://localhost:8082?whitelisted=stackdriver_requests_count,stackdriver_timeseries_count
+      - --stackdriver-prefix=container.googleapis.com/internal/addons
+      - --api-override=https://monitoring.googleapis.com/
+      - --pod-id=$(POD_NAME)
+      - --namespace-id=$(POD_NAMESPACE)
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imagePullPolicy: IfNotPresent
+      name: prom-to-sd
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: heapster-token-mgtv9
+        readOnly: true
+    - command:
+      - /pod_nanny
+      - --config-dir=/etc/config
+      - --cpu=10m
+      - --extra-cpu=0.5m
+      - --memory=100Mi
+      - --extra-memory=4Mi
+      - --threshold=5
+      - --deployment=heapster-v1.6.1
+      - --container=heapster
+      - --poll-period=300000
+      - --estimator=exponential
+      - --minClusterSize=5
+      env:
+      - name: MY_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: MY_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/addon-resizer:1.8.3
+      imagePullPolicy: IfNotPresent
+      name: heapster-nanny
+      resources:
+        limits:
+          cpu: 50m
+          memory: 92760Ki
+        requests:
+          cpu: 50m
+          memory: 92760Ki
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/config
+        name: heapster-config-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: heapster-token-mgtv9
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
     nodeName: gke-testspace-default-pool-72d9c2b5-562n
-    priority: 0
+    priority: 2000000000
+    priorityClassName: system-cluster-critical
     restartPolicy: Always
     schedulerName: default-scheduler
-    securityContext: {}
-    serviceAccount: default
-    serviceAccountName: default
+    securityContext:
+      fsGroup: 65534
+      supplementalGroups:
+      - 65534
+    serviceAccount: heapster
+    serviceAccountName: heapster
     terminationGracePeriodSeconds: 30
     tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
     - effect: NoExecute
       key: node.kubernetes.io/not-ready
       operator: Exists
@@ -742,88 +1698,1051 @@ items:
       operator: Exists
       tolerationSeconds: 300
     volumes:
-    - name: default-token-4n9dn
+    - configMap:
+        defaultMode: 420
+        name: heapster-config
+      name: heapster-config-volume
+    - name: heapster-token-mgtv9
       secret:
         defaultMode: 420
-        secretName: default-token-4n9dn
+        secretName: heapster-token-mgtv9
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-18T19:15:32Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:37Z"
+      lastTransitionTime: "2019-09-18T19:15:38Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:37Z"
+      lastTransitionTime: "2019-09-18T19:15:38Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-18T19:15:32Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://d6835456aae69bf85462ff545347a002efcc7ffa7f5bab89bb6ca762339ecde0
-      image: gcr.io/google_samples/gb-redisslave:v1
-      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+    - containerID: docker://f96053ad35984ab58e68eff5df3ff02f5178415ca8a5d4a9dc862f2a4e53a367
+      image: gcr.io/stackdriver-agents/heapster-amd64:v1.6.1
+      imageID: docker-pullable://gcr.io/stackdriver-agents/heapster-amd64@sha256:b00d659e538bedecf7014fffb7a6d0d3377326a921b4416a7727a7022a7be901
       lastState: {}
-      name: slave
+      name: heapster
       ready: true
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:36Z"
+          startedAt: "2019-09-18T19:15:35Z"
+    - containerID: docker://4310e667193ea38599bf16b495033b91556ff14d8dd133e2e0fa54869f3c2cfe
+      image: k8s.gcr.io/addon-resizer:1.8.3
+      imageID: docker-pullable://k8s.gcr.io/addon-resizer@sha256:07353f7b26327f0d933515a22b1de587b040d3d85c464ea299c1b9f242529326
+      lastState: {}
+      name: heapster-nanny
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-18T19:15:37Z"
+    - containerID: docker://f35b8dab0675dd77fee8d2bcc4a52d50f383b7f265c63444b583c22953888001
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.0
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:14666989f40bb7c896c3e775a93c6873e2b791d65bc65579f58a078b7f9a764e
+      lastState: {}
+      name: prom-to-sd
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-18T19:15:36Z"
     hostIP: 10.128.0.29
     phase: Running
-    podIP: 10.4.1.97
+    podIP: 10.4.1.83
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:33Z"
+    startTime: "2019-09-18T19:15:32Z"
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
-      kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
-        slave'
-    creationTimestamp: "2019-09-20T21:47:33Z"
-    generateName: redis-slave-unlimit-norequest-58c44757b9-
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+      seccomp.security.alpha.kubernetes.io/pod: docker/default
+    creationTimestamp: "2019-09-17T19:12:35Z"
+    generateName: kube-dns-6987857fdb-
     labels:
-      app: redis
-      pod-template-hash: 58c44757b9
-      role: slave-unlimit
-      tier: backend
-    name: redis-slave-unlimit-norequest-58c44757b9-hk54z
-    namespace: default
+      k8s-app: kube-dns
+      pod-template-hash: 6987857fdb
+    name: kube-dns-6987857fdb-8pzjc
+    namespace: kube-system
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: redis-slave-unlimit-norequest-58c44757b9
-      uid: 409ade02-dbf0-11e9-bb74-42010a8001fc
-    resourceVersion: "901763"
-    selfLink: /api/v1/namespaces/default/pods/redis-slave-unlimit-norequest-58c44757b9-hk54z
-    uid: 40a3cf49-dbf0-11e9-bb74-42010a8001fc
+      name: kube-dns-6987857fdb
+      uid: 1b1db80a-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "848"
+    selfLink: /api/v1/namespaces/kube-system/pods/kube-dns-6987857fdb-8pzjc
+    uid: 1b1ebfff-d97f-11e9-bb1f-42010a800115
   spec:
     containers:
-    - env:
-      - name: GET_HOSTS_FROM
-        value: dns
-      image: gcr.io/google_samples/gb-redisslave:v1
+    - args:
+      - --domain=cluster.local.
+      - --dns-port=10053
+      - --config-dir=/kube-dns-config
+      - --v=2
+      env:
+      - name: PROMETHEUS_PORT
+        value: "10055"
+      image: k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
       imagePullPolicy: IfNotPresent
-      name: slave
+      livenessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /healthcheck/kubedns
+          port: 10054
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: kubedns
       ports:
-      - containerPort: 6366
+      - containerPort: 10053
+        name: dns-local
+        protocol: UDP
+      - containerPort: 10053
+        name: dns-tcp-local
+        protocol: TCP
+      - containerPort: 10055
+        name: metrics
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readiness
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources:
+        limits:
+          memory: 170Mi
+        requests:
+          cpu: 100m
+          memory: 70Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /kube-dns-config
+        name: kube-dns-config
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    - args:
+      - -v=2
+      - -logtostderr
+      - -configDir=/etc/k8s/dns/dnsmasq-nanny
+      - -restartDnsmasq=true
+      - --
+      - -k
+      - --cache-size=1000
+      - --no-negcache
+      - --log-facility=-
+      - --server=/cluster.local/127.0.0.1#10053
+      - --server=/in-addr.arpa/127.0.0.1#10053
+      - --server=/ip6.arpa/127.0.0.1#10053
+      image: k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.13
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /healthcheck/dnsmasq
+          port: 10054
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: dnsmasq
+      ports:
+      - containerPort: 53
+        name: dns
+        protocol: UDP
+      - containerPort: 53
+        name: dns-tcp
         protocol: TCP
       resources:
         requests:
-          cpu: 100m
+          cpu: 150m
+          memory: 20Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/k8s/dns/dnsmasq-nanny
+        name: kube-dns-config
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    - args:
+      - --v=2
+      - --logtostderr
+      - --probe=kubedns,127.0.0.1:10053,kubernetes.default.svc.cluster.local,5,SRV
+      - --probe=dnsmasq,127.0.0.1:53,kubernetes.default.svc.cluster.local,5,SRV
+      image: k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /metrics
+          port: 10054
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: sidecar
+      ports:
+      - containerPort: 10054
+        name: metrics
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 10m
+          memory: 20Mi
       terminationMessagePath: /dev/termination-log
       terminationMessagePolicy: File
       volumeMounts:
       - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-        name: default-token-4n9dn
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    - command:
+      - /monitor
+      - --source=kubedns:http://localhost:10054?whitelisted=probe_kubedns_latency_ms,probe_kubedns_errors,dnsmasq_misses,dnsmasq_hits
+      - --stackdriver-prefix=container.googleapis.com/internal/addons
+      - --api-override=https://monitoring.googleapis.com/
+      - --pod-id=$(POD_NAME)
+      - --namespace-id=$(POD_NAMESPACE)
+      - --v=2
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/prometheus-to-sd:v0.4.2
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    dnsPolicy: Default
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 2000000000
+    priorityClassName: system-cluster-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: kube-dns
+    serviceAccountName: kube-dns
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: kube-dns
+        optional: true
+      name: kube-dns-config
+    - name: kube-dns-token-rwmfh
+      secret:
+        defaultMode: 420
+        secretName: kube-dns-token-rwmfh
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:29Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:29Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://323fa78b4c3d2868a5077f22c3c8f0c5e56fb6e66ed39786d2b247af5841cb64
+      image: k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.13
+      imageID: docker-pullable://k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64@sha256:45df3e8e0c551bd0c79cdba48ae6677f817971dcbd1eeed7fd1f9a35118410e4
+      lastState: {}
+      name: dnsmasq
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:14Z"
+    - containerID: docker://a3710bcfd0a76f5f34cd39ff72b441403f64b9715112350e4959056a103bbe04
+      image: k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
+      imageID: docker-pullable://k8s.gcr.io/k8s-dns-kube-dns-amd64@sha256:618a82fa66cf0c75e4753369a6999032372be7308866fc9afb381789b1e5ad52
+      lastState: {}
+      name: kubedns
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:12:56Z"
+    - containerID: docker://65bb4e343473b1f820a8e4287b3d1e32be4c85dc39f75c9a1008c897ba7df426
+      image: k8s.gcr.io/prometheus-to-sd:v0.4.2
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:aca8ef83a7fae83f1f8583e978dd4d1ff655b9f2ca0a76bda5edce6d8965bdf2
+      lastState: {}
+      name: prometheus-to-sd
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:20Z"
+    - containerID: docker://f069a1b64411396e627f2eed8daff8d474e6374b64031d10c89f6a77f3acd09f
+      image: k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+      imageID: docker-pullable://k8s.gcr.io/k8s-dns-sidecar-amd64@sha256:cedc8fe2098dffc26d17f64061296b7aa54258a31513b6c52df271a98bb522b3
+      lastState: {}
+      name: sidecar
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:17Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.4
+    qosClass: Burstable
+    startTime: "2019-09-17T19:12:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+      seccomp.security.alpha.kubernetes.io/pod: docker/default
+    creationTimestamp: "2019-09-17T19:13:06Z"
+    generateName: kube-dns-6987857fdb-
+    labels:
+      k8s-app: kube-dns
+      pod-template-hash: 6987857fdb
+    name: kube-dns-6987857fdb-f764z
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kube-dns-6987857fdb
+      uid: 1b1db80a-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "755"
+    selfLink: /api/v1/namespaces/kube-system/pods/kube-dns-6987857fdb-f764z
+    uid: 2dc8b04c-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - args:
+      - --domain=cluster.local.
+      - --dns-port=10053
+      - --config-dir=/kube-dns-config
+      - --v=2
+      env:
+      - name: PROMETHEUS_PORT
+        value: "10055"
+      image: k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /healthcheck/kubedns
+          port: 10054
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: kubedns
+      ports:
+      - containerPort: 10053
+        name: dns-local
+        protocol: UDP
+      - containerPort: 10053
+        name: dns-tcp-local
+        protocol: TCP
+      - containerPort: 10055
+        name: metrics
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readiness
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources:
+        limits:
+          memory: 170Mi
+        requests:
+          cpu: 100m
+          memory: 70Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /kube-dns-config
+        name: kube-dns-config
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    - args:
+      - -v=2
+      - -logtostderr
+      - -configDir=/etc/k8s/dns/dnsmasq-nanny
+      - -restartDnsmasq=true
+      - --
+      - -k
+      - --cache-size=1000
+      - --no-negcache
+      - --log-facility=-
+      - --server=/cluster.local/127.0.0.1#10053
+      - --server=/in-addr.arpa/127.0.0.1#10053
+      - --server=/ip6.arpa/127.0.0.1#10053
+      image: k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.13
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /healthcheck/dnsmasq
+          port: 10054
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: dnsmasq
+      ports:
+      - containerPort: 53
+        name: dns
+        protocol: UDP
+      - containerPort: 53
+        name: dns-tcp
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 150m
+          memory: 20Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/k8s/dns/dnsmasq-nanny
+        name: kube-dns-config
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    - args:
+      - --v=2
+      - --logtostderr
+      - --probe=kubedns,127.0.0.1:10053,kubernetes.default.svc.cluster.local,5,SRV
+      - --probe=dnsmasq,127.0.0.1:53,kubernetes.default.svc.cluster.local,5,SRV
+      image: k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 5
+        httpGet:
+          path: /metrics
+          port: 10054
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: sidecar
+      ports:
+      - containerPort: 10054
+        name: metrics
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 10m
+          memory: 20Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    - command:
+      - /monitor
+      - --source=kubedns:http://localhost:10054?whitelisted=probe_kubedns_latency_ms,probe_kubedns_errors,dnsmasq_misses,dnsmasq_hits
+      - --stackdriver-prefix=container.googleapis.com/internal/addons
+      - --api-override=https://monitoring.googleapis.com/
+      - --pod-id=$(POD_NAME)
+      - --namespace-id=$(POD_NAMESPACE)
+      - --v=2
+      env:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/prometheus-to-sd:v0.4.2
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-token-rwmfh
+        readOnly: true
+    dnsPolicy: Default
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 2000000000
+    priorityClassName: system-cluster-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: kube-dns
+    serviceAccountName: kube-dns
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: kube-dns
+        optional: true
+      name: kube-dns-config
+    - name: kube-dns-token-rwmfh
+      secret:
+        defaultMode: 420
+        secretName: kube-dns-token-rwmfh
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:06Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:13Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:13Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:06Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://2b7fb4c228fc1e8e19b3c2b5778264ae4a72170fc6f6315a87095273148ac549
+      image: k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64:1.14.13
+      imageID: docker-pullable://k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64@sha256:45df3e8e0c551bd0c79cdba48ae6677f817971dcbd1eeed7fd1f9a35118410e4
+      lastState: {}
+      name: dnsmasq
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:08Z"
+    - containerID: docker://18a1e9bc31172e020ddcd9b239c22ef50afce4ad63f9de0372aa4cc33c0e1667
+      image: k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
+      imageID: docker-pullable://k8s.gcr.io/k8s-dns-kube-dns-amd64@sha256:618a82fa66cf0c75e4753369a6999032372be7308866fc9afb381789b1e5ad52
+      lastState: {}
+      name: kubedns
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:08Z"
+    - containerID: docker://db3875cf19b53445d56230d29f72189ba196e571180475ef0beb6bc90863b927
+      image: k8s.gcr.io/prometheus-to-sd:v0.4.2
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:aca8ef83a7fae83f1f8583e978dd4d1ff655b9f2ca0a76bda5edce6d8965bdf2
+      lastState: {}
+      name: prometheus-to-sd
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:10Z"
+    - containerID: docker://8271353c0944caf59026a1f8ab48aa18408b8308ff518c4dae8f7cb8a9ad0a7d
+      image: k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+      imageID: docker-pullable://k8s.gcr.io/k8s-dns-sidecar-amd64@sha256:cedc8fe2098dffc26d17f64061296b7aa54258a31513b6c52df271a98bb522b3
+      lastState: {}
+      name: sidecar
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:09Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.2
+    qosClass: Burstable
+    startTime: "2019-09-17T19:13:06Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+      seccomp.security.alpha.kubernetes.io/pod: docker/default
+    creationTimestamp: "2019-09-17T19:12:56Z"
+    generateName: kube-dns-autoscaler-bb58c6784-
+    labels:
+      k8s-app: kube-dns-autoscaler
+      pod-template-hash: bb58c6784
+    name: kube-dns-autoscaler-bb58c6784-xxxpn
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kube-dns-autoscaler-bb58c6784
+      uid: 1b2fde08-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "719"
+    selfLink: /api/v1/namespaces/kube-system/pods/kube-dns-autoscaler-bb58c6784-xxxpn
+    uid: 27ff3af3-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - command:
+      - /cluster-proportional-autoscaler
+      - --namespace=kube-system
+      - --configmap=kube-dns-autoscaler
+      - --target=Deployment/kube-dns
+      - --default-params={"linear":{"coresPerReplica":256,"nodesPerReplica":16,"preventSinglePointFailure":true}}
+      - --logtostderr=true
+      - --v=2
+      image: k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.3.0
+      imagePullPolicy: IfNotPresent
+      name: autoscaler
+      resources:
+        requests:
+          cpu: 20m
+          memory: 10Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-dns-autoscaler-token-7zqbn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 2000000000
+    priorityClassName: system-cluster-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 65534
+      supplementalGroups:
+      - 65534
+    serviceAccount: kube-dns-autoscaler
+    serviceAccountName: kube-dns-autoscaler
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-dns-autoscaler-token-7zqbn
+      secret:
+        defaultMode: 420
+        secretName: kube-dns-autoscaler-token-7zqbn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:59Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:07Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:07Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:58Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://60d3f2c690cc7c459b6c48a6f7b6feeabec4d4616234f8905e036baff67f0f66
+      image: k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.3.0
+      imageID: docker-pullable://k8s.gcr.io/cluster-proportional-autoscaler-amd64@sha256:4fd37c5b29a38b02c408c56254bd1a3a76f3e236610bc7a8382500bbf9ecfc76
+      lastState: {}
+      name: autoscaler
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:05Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.7
+    qosClass: Burstable
+    startTime: "2019-09-17T19:12:59Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/config.hash: 09697cb4fb4b5339c806a3bca1ffaf5a
+      kubernetes.io/config.mirror: 09697cb4fb4b5339c806a3bca1ffaf5a
+      kubernetes.io/config.seen: "2019-09-17T19:12:45.708673849Z"
+      kubernetes.io/config.source: file
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+    creationTimestamp: "2019-09-17T19:12:46Z"
+    labels:
+      component: kube-proxy
+      tier: node
+    name: kube-proxy-gke-testspace-default-pool-72d9c2b5-562n
+    namespace: kube-system
+    resourceVersion: "532"
+    selfLink: /api/v1/namespaces/kube-system/pods/kube-proxy-gke-testspace-default-pool-72d9c2b5-562n
+    uid: 21c15ae1-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - command:
+      - /bin/sh
+      - -c
+      - exec kube-proxy --master=https://35.226.133.104 --kubeconfig=/var/lib/kube-proxy/kubeconfig
+        --cluster-cidr=10.4.0.0/14 --resource-container="" --oom-score-adj=-998 --v=2
+        --feature-gates=DynamicKubeletConfig=false,NodeLease=false,TaintBasedEvictions=false,RotateKubeletServerCertificate=true,ExperimentalCriticalPodAnnotation=true
+        --iptables-sync-period=1m --iptables-min-sync-period=10s --ipvs-sync-period=1m
+        --ipvs-min-sync-period=10s 1>>/var/log/kube-proxy.log 2>&1
+      image: k8s.gcr.io/kube-proxy:v1.13.7-gke.8
+      imagePullPolicy: IfNotPresent
+      name: kube-proxy
+      resources:
+        requests:
+          cpu: 100m
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/ssl/certs
+        name: etc-ssl-certs
+        readOnly: true
+      - mountPath: /usr/share/ca-certificates
+        name: usr-ca-certs
+        readOnly: true
+      - mountPath: /var/log
+        name: varlog
+      - mountPath: /var/lib/kube-proxy/kubeconfig
+        name: kubeconfig
+      - mountPath: /run/xtables.lock
+        name: iptableslock
+      - mountPath: /lib/modules
+        name: lib-modules
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostNetwork: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 2000001000
+    priorityClassName: system-node-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      operator: Exists
+    - effect: NoSchedule
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /usr/share/ca-certificates
+        type: ""
+      name: usr-ca-certs
+    - hostPath:
+        path: /etc/ssl/certs
+        type: ""
+      name: etc-ssl-certs
+    - hostPath:
+        path: /var/lib/kube-proxy/kubeconfig
+        type: FileOrCreate
+      name: kubeconfig
+    - hostPath:
+        path: /var/log
+        type: ""
+      name: varlog
+    - hostPath:
+        path: /run/xtables.lock
+        type: FileOrCreate
+      name: iptableslock
+    - hostPath:
+        path: /lib/modules
+        type: ""
+      name: lib-modules
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:47Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:47Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://8baa37f0a67325422aff829ef00f26b0c7c853e838b6c0750fb6752b01a5b51c
+      image: k8s.gcr.io/kube-proxy:v1.13.7-gke.8
+      imageID: docker://sha256:c18dd36f0f3426d02034bc4c46ffd7781e82401aded31fc1b466acb7f3516576
+      lastState: {}
+      name: kube-proxy
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:12:47Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.128.0.29
+    qosClass: Burstable
+    startTime: "2019-09-17T19:12:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/config.hash: 09697cb4fb4b5339c806a3bca1ffaf5a
+      kubernetes.io/config.mirror: 09697cb4fb4b5339c806a3bca1ffaf5a
+      kubernetes.io/config.seen: "2019-09-17T19:12:45.615540817Z"
+      kubernetes.io/config.source: file
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+    creationTimestamp: "2019-09-17T19:12:46Z"
+    labels:
+      component: kube-proxy
+      tier: node
+    name: kube-proxy-gke-testspace-default-pool-72d9c2b5-n5cj
+    namespace: kube-system
+    resourceVersion: "597"
+    selfLink: /api/v1/namespaces/kube-system/pods/kube-proxy-gke-testspace-default-pool-72d9c2b5-n5cj
+    uid: 21becc5f-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - command:
+      - /bin/sh
+      - -c
+      - exec kube-proxy --master=https://35.226.133.104 --kubeconfig=/var/lib/kube-proxy/kubeconfig
+        --cluster-cidr=10.4.0.0/14 --resource-container="" --oom-score-adj=-998 --v=2
+        --feature-gates=DynamicKubeletConfig=false,NodeLease=false,TaintBasedEvictions=false,RotateKubeletServerCertificate=true,ExperimentalCriticalPodAnnotation=true
+        --iptables-sync-period=1m --iptables-min-sync-period=10s --ipvs-sync-period=1m
+        --ipvs-min-sync-period=10s 1>>/var/log/kube-proxy.log 2>&1
+      image: k8s.gcr.io/kube-proxy:v1.13.7-gke.8
+      imagePullPolicy: IfNotPresent
+      name: kube-proxy
+      resources:
+        requests:
+          cpu: 100m
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/ssl/certs
+        name: etc-ssl-certs
+        readOnly: true
+      - mountPath: /usr/share/ca-certificates
+        name: usr-ca-certs
+        readOnly: true
+      - mountPath: /var/log
+        name: varlog
+      - mountPath: /var/lib/kube-proxy/kubeconfig
+        name: kubeconfig
+      - mountPath: /run/xtables.lock
+        name: iptableslock
+      - mountPath: /lib/modules
+        name: lib-modules
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostNetwork: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 2000001000
+    priorityClassName: system-node-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      operator: Exists
+    - effect: NoSchedule
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /usr/share/ca-certificates
+        type: ""
+      name: usr-ca-certs
+    - hostPath:
+        path: /etc/ssl/certs
+        type: ""
+      name: etc-ssl-certs
+    - hostPath:
+        path: /var/lib/kube-proxy/kubeconfig
+        type: FileOrCreate
+      name: kubeconfig
+    - hostPath:
+        path: /var/log
+        type: ""
+      name: varlog
+    - hostPath:
+        path: /run/xtables.lock
+        type: FileOrCreate
+      name: iptableslock
+    - hostPath:
+        path: /lib/modules
+        type: ""
+      name: lib-modules
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:48Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:48Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://2822a018ccece9c8a7e239285382e987abc7aacf88d37645553b1ee28d7e4277
+      image: k8s.gcr.io/kube-proxy:v1.13.7-gke.8
+      imageID: docker://sha256:c18dd36f0f3426d02034bc4c46ffd7781e82401aded31fc1b466acb7f3516576
+      lastState: {}
+      name: kube-proxy
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:12:47Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.128.0.27
+    qosClass: Burstable
+    startTime: "2019-09-17T19:12:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      seccomp.security.alpha.kubernetes.io/pod: docker/default
+    creationTimestamp: "2019-09-17T19:12:34Z"
+    generateName: l7-default-backend-fd59995cd-
+    labels:
+      k8s-app: glbc
+      name: glbc
+      pod-template-hash: fd59995cd
+    name: l7-default-backend-fd59995cd-5mzc9
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: l7-default-backend-fd59995cd
+      uid: 1acc0e34-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "686"
+    selfLink: /api/v1/namespaces/kube-system/pods/l7-default-backend-fd59995cd-5mzc9
+    uid: 1acf5728-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - image: k8s.gcr.io/defaultbackend-amd64:1.5
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: default-http-backend
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 10m
+          memory: 20Mi
+        requests:
+          cpu: 10m
+          memory: 20Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-tv4b5
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
@@ -845,44 +2764,469 @@ items:
       operator: Exists
       tolerationSeconds: 300
     volumes:
-    - name: default-token-4n9dn
+    - name: default-token-tv4b5
       secret:
         defaultMode: 420
-        secretName: default-token-4n9dn
+        secretName: default-token-tv4b5
   status:
     conditions:
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-17T19:12:46Z"
       status: "True"
       type: Initialized
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:38Z"
+      lastTransitionTime: "2019-09-17T19:13:05Z"
       status: "True"
       type: Ready
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:38Z"
+      lastTransitionTime: "2019-09-17T19:13:05Z"
       status: "True"
       type: ContainersReady
     - lastProbeTime: null
-      lastTransitionTime: "2019-09-20T21:47:33Z"
+      lastTransitionTime: "2019-09-17T19:12:46Z"
       status: "True"
       type: PodScheduled
     containerStatuses:
-    - containerID: docker://6a0d2af5d41f0123c399b2a46610f1e29c082c8bc2b743a51fa617ae6c86161a
-      image: gcr.io/google_samples/gb-redisslave:v1
-      imageID: docker-pullable://gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+    - containerID: docker://9e0605b3afa62290ae7b0ad9383ce1a21fbd03013109757cc79090284f1426f9
+      image: k8s.gcr.io/defaultbackend-amd64:1.5
+      imageID: docker-pullable://k8s.gcr.io/defaultbackend-amd64@sha256:4dc5e07c8ca4e23bddb3153737d7b8c556e5fb2f29c4558b7cd6e6df99c512c7
       lastState: {}
-      name: slave
+      name: default-http-backend
       ready: true
       restartCount: 0
       state:
         running:
-          startedAt: "2019-09-20T21:47:37Z"
+          startedAt: "2019-09-17T19:13:00Z"
     hostIP: 10.128.0.27
     phase: Running
-    podIP: 10.4.0.102
+    podIP: 10.4.0.6
+    qosClass: Guaranteed
+    startTime: "2019-09-17T19:12:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      scheduler.alpha.kubernetes.io/critical-pod: ""
+      seccomp.security.alpha.kubernetes.io/pod: docker/default
+    creationTimestamp: "2019-09-17T19:12:53Z"
+    generateName: metrics-server-v0.3.1-57c75779f-
+    labels:
+      k8s-app: metrics-server
+      pod-template-hash: 57c75779f
+      version: v0.3.1
+    name: metrics-server-v0.3.1-57c75779f-8zpjx
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: metrics-server-v0.3.1-57c75779f
+      uid: 261c9835-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "722"
+    selfLink: /api/v1/namespaces/kube-system/pods/metrics-server-v0.3.1-57c75779f-8zpjx
+    uid: 261dee76-d97f-11e9-bb1f-42010a800115
+  spec:
+    containers:
+    - command:
+      - /metrics-server
+      - --metric-resolution=30s
+      - --kubelet-port=10255
+      - --deprecated-kubelet-completely-insecure=true
+      - --kubelet-preferred-address-types=InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP
+      image: k8s.gcr.io/metrics-server-amd64:v0.3.1
+      imagePullPolicy: IfNotPresent
+      name: metrics-server
+      ports:
+      - containerPort: 443
+        name: https
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 43m
+          memory: 55Mi
+        requests:
+          cpu: 43m
+          memory: 55Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: metrics-server-token-4wlqs
+        readOnly: true
+    - command:
+      - /pod_nanny
+      - --config-dir=/etc/config
+      - --cpu=40m
+      - --extra-cpu=0.5m
+      - --memory=35Mi
+      - --extra-memory=4Mi
+      - --threshold=5
+      - --deployment=metrics-server-v0.3.1
+      - --container=metrics-server
+      - --poll-period=300000
+      - --estimator=exponential
+      - --minClusterSize=5
+      env:
+      - name: MY_POD_NAME
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.name
+      - name: MY_POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: k8s.gcr.io/addon-resizer:1.8.4
+      imagePullPolicy: IfNotPresent
+      name: metrics-server-nanny
+      resources:
+        limits:
+          cpu: 100m
+          memory: 300Mi
+        requests:
+          cpu: 5m
+          memory: 50Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/config
+        name: metrics-server-config-volume
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: metrics-server-token-4wlqs
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 2000000000
+    priorityClassName: system-cluster-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: metrics-server
+    serviceAccountName: metrics-server
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - configMap:
+        defaultMode: 420
+        name: metrics-server-config
+      name: metrics-server-config-volume
+    - name: metrics-server-token-4wlqs
+      secret:
+        defaultMode: 420
+        secretName: metrics-server-token-4wlqs
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:59Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:07Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:07Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:58Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://3ae8af4b27ced1dab3c7068c0c5e289c15eff93bed84b95516802d1de28bbeae
+      image: k8s.gcr.io/metrics-server-amd64:v0.3.1
+      imageID: docker-pullable://k8s.gcr.io/metrics-server-amd64@sha256:78938f933822856f443e6827fe5b37d6cc2f74ae888ac8b33d06fdbe5f8c658b
+      lastState: {}
+      name: metrics-server
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:05Z"
+    - containerID: docker://a16a8e453d8ff075090e3e39668d15b6f8758f67024ba5579ce6d033a6e4422b
+      image: k8s.gcr.io/addon-resizer:1.8.4
+      imageID: docker-pullable://k8s.gcr.io/addon-resizer@sha256:a31822f30e947885d038812f4a5a5675e72f92c06cef17b1989c80426aa89012
+      lastState: {}
+      name: metrics-server-nanny
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:06Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.9
     qosClass: Burstable
-    startTime: "2019-09-20T21:47:33Z"
+    startTime: "2019-09-17T19:12:59Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-17T19:12:46Z"
+    generateName: prometheus-to-sd-
+    labels:
+      controller-revision-hash: 776c6cbcb
+      k8s-app: prometheus-to-sd
+      pod-template-generation: "1"
+    name: prometheus-to-sd-p98m6
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: prometheus-to-sd
+      uid: 1c0cc3a2-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "690"
+    selfLink: /api/v1/namespaces/kube-system/pods/prometheus-to-sd-p98m6
+    uid: 21eb99c2-d97f-11e9-bb1f-42010a800115
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - gke-testspace-default-pool-72d9c2b5-n5cj
+    containers:
+    - command:
+      - /monitor
+      - --source=kube-proxy:http://localhost:10249?whitelisted=sync_proxy_rules_latency_microseconds&metricsPrefix=container.googleapis.com/internal/addons
+      - --source=kubelet:http://localhost:10255?whitelisted=kubelet_docker_operations,kubelet_docker_operations_errors,kubelet_runtime_operations,kubelet_runtime_operations_errors,kubelet_runtime_operations_latency_microseconds,kubelet_pleg_relist_latency_microseconds,kubelet_pod_start_latency_microseconds,rest_client_requests_total,storage_operation_duration_seconds,storage_operation_errors_total,run_podsandbox_duration_seconds,run_podsandbox_errors_total,storage_operation_status_count
+      - --stackdriver-prefix=container.googleapis.com/internal/nodes
+      - --api-override=https://monitoring.googleapis.com/
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.2
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd
+      resources:
+        limits:
+          cpu: 3m
+          memory: 20Mi
+        requests:
+          cpu: 1m
+          memory: 20Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: prometheus-to-sd-token-4nv8g
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostNetwork: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    nodeSelector:
+      beta.kubernetes.io/os: linux
+    priority: 2000001000
+    priorityClassName: system-node-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: prometheus-to-sd
+    serviceAccountName: prometheus-to-sd
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - name: prometheus-to-sd-token-4nv8g
+      secret:
+        defaultMode: 420
+        secretName: prometheus-to-sd-token-4nv8g
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:05Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:05Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://619a2d314b7fb1a39cd2ac7c73abd734bbd7c3019cd3d88a3bd11b5c6068361e
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.2
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:916d01e197885450ca45447f1c8a9cbc04d30c93d5382461eb202dcbf2b8d0b0
+      lastState: {}
+      name: prometheus-to-sd
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:03Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.128.0.27
+    qosClass: Burstable
+    startTime: "2019-09-17T19:12:46Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-09-17T19:12:47Z"
+    generateName: prometheus-to-sd-
+    labels:
+      controller-revision-hash: 776c6cbcb
+      k8s-app: prometheus-to-sd
+      pod-template-generation: "1"
+    name: prometheus-to-sd-qnzdb
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: prometheus-to-sd
+      uid: 1c0cc3a2-d97f-11e9-bb1f-42010a800115
+    resourceVersion: "692"
+    selfLink: /api/v1/namespaces/kube-system/pods/prometheus-to-sd-qnzdb
+    uid: 223f2bf1-d97f-11e9-bb1f-42010a800115
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - gke-testspace-default-pool-72d9c2b5-562n
+    containers:
+    - command:
+      - /monitor
+      - --source=kube-proxy:http://localhost:10249?whitelisted=sync_proxy_rules_latency_microseconds&metricsPrefix=container.googleapis.com/internal/addons
+      - --source=kubelet:http://localhost:10255?whitelisted=kubelet_docker_operations,kubelet_docker_operations_errors,kubelet_runtime_operations,kubelet_runtime_operations_errors,kubelet_runtime_operations_latency_microseconds,kubelet_pleg_relist_latency_microseconds,kubelet_pod_start_latency_microseconds,rest_client_requests_total,storage_operation_duration_seconds,storage_operation_errors_total,run_podsandbox_duration_seconds,run_podsandbox_errors_total,storage_operation_status_count
+      - --stackdriver-prefix=container.googleapis.com/internal/nodes
+      - --api-override=https://monitoring.googleapis.com/
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.2
+      imagePullPolicy: IfNotPresent
+      name: prometheus-to-sd
+      resources:
+        limits:
+          cpu: 3m
+          memory: 20Mi
+        requests:
+          cpu: 1m
+          memory: 20Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: prometheus-to-sd-token-4nv8g
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostNetwork: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeSelector:
+      beta.kubernetes.io/os: linux
+    priority: 2000001000
+    priorityClassName: system-node-critical
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: prometheus-to-sd
+    serviceAccountName: prometheus-to-sd
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/network-unavailable
+      operator: Exists
+    volumes:
+    - name: prometheus-to-sd-token-4nv8g
+      secret:
+        defaultMode: 420
+        secretName: prometheus-to-sd-token-4nv8g
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:47Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:05Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:13:05Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-09-17T19:12:47Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://5a82b432d7bfeffac5a8fd21f4c0cf13b1f779a4c8bc84eb9293d185b166f4b3
+      image: k8s.gcr.io/prometheus-to-sd:v0.5.2
+      imageID: docker-pullable://k8s.gcr.io/prometheus-to-sd@sha256:916d01e197885450ca45447f1c8a9cbc04d30c93d5382461eb202dcbf2b8d0b0
+      lastState: {}
+      name: prometheus-to-sd
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-09-17T19:13:04Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.128.0.29
+    qosClass: Burstable
+    startTime: "2019-09-17T19:12:47Z"
 kind: List
 metadata:
   resourceVersion: ""
