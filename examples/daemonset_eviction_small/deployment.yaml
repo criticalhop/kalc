@@ -11,7 +11,6 @@ items:
     namespace: default
     resourceVersion: "9416933"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-master
-    uid: 1fb6bcf4-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
     replicas: 1
@@ -64,14 +63,13 @@ items:
     namespace: default
     resourceVersion: "9416933"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-master
-    uid: 1fb6bcf4-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
     replicas: 1
     revisionHistoryLimit: 10
     selector:
       matchLabels:
-        app: redis-evict
+        app: redis
         role: master
         tier: backend
     strategy:
@@ -83,7 +81,7 @@ items:
       metadata:
         creationTimestamp: null
         labels:
-          app: redis-evict
+          app: redis
           role: master
           tier: backend
       spec:
@@ -117,7 +115,6 @@ items:
     namespace: default
     resourceVersion: "9416933"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-master
-    uid: 1fb6bcf4-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
     replicas: 1
@@ -169,7 +166,6 @@ items:
     namespace: default
     resourceVersion: "9416949"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-slave
-    uid: 1fbe527d-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
     replicas: 2
@@ -224,7 +220,6 @@ items:
     namespace: default
     resourceVersion: "9416945"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-slave-unlimit
-    uid: 1fddffe9-ae52-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
     replicas: 2
@@ -277,7 +272,6 @@ items:
     namespace: default
     resourceVersion: "14871315"
     selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-slave-unlimit-2
-    uid: 5c3f49fe-bed4-11e9-98f3-42010a8000c4
   spec:
     progressDeadlineSeconds: 600
     replicas: 2
@@ -326,7 +320,6 @@ items:
     name: high-priority
     resourceVersion: "14886069"
     selfLink: /apis/scheduling.k8s.io/v1beta1/priorityclasses/high-priority
-    uid: a46578fd-bede-11e9-98f3-42010a8000c4
   value: 1000000   
 - apiVersion: v1
   kind: Service
@@ -340,7 +333,6 @@ items:
     namespace: default
     resourceVersion: "9416863"
     selfLink: /api/v1/namespaces/default/services/redis-master
-    uid: 1fb431db-ae52-11e9-98f3-42010a8000c4
   spec:
     clusterIP: 10.7.240.3
     ports:
@@ -367,7 +359,6 @@ items:
     namespace: default
     resourceVersion: "9416863"
     selfLink: /api/v1/namespaces/default/services/redis-master
-    uid: 1fb431db-ae52-11e9-98f3-42010a8000c1
   spec:
     clusterIP: 10.7.240.30
     ports:
@@ -394,7 +385,6 @@ items:
     namespace: default
     resourceVersion: "20774605"
     selfLink: /api/v1/namespaces/default/services/redis-master-evict
-    uid: 6ee8b5c7-cf5a-11e9-98f3-42010a8000c2
   spec:
     clusterIP: 10.7.240.4
     ports:
@@ -421,7 +411,6 @@ items:
     namespace: default
     resourceVersion: "9416869"
     selfLink: /api/v1/namespaces/default/services/redis-slave
-    uid: 1fb9a12c-ae52-11e9-98f3-42010a8000c3
   spec:
     clusterIP: 10.7.240.5
     ports:
@@ -448,7 +437,6 @@ items:
     namespace: default
     resourceVersion: "9416896"
     selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit
-    uid: 1fd2c61c-ae52-11e9-98f3-42010a8000c3
   spec:
     clusterIP: 10.7.240.12
     ports:
@@ -475,7 +463,6 @@ items:
     namespace: default
     resourceVersion: "9416896"
     selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit
-    uid: 1fd2c61c-ae52-11e9-98f3-42010a8000c4
   spec:
     clusterIP: 10.7.240.14
     ports:

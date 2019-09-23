@@ -203,6 +203,36 @@ items:
     type: ClusterIP
   status:
     loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"no-pods","role":"slave-unlimit-2","tier":"backend"},"name":"serice-without-pods","namespace":"default","resourceVersion":"9416896","selfLink":"/api/v1/namespaces/default/services/redis-slave-unlimit","uid":"1fd2c61c-ae52-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.15","ports":[{"port":6366,"protocol":"TCP","targetPort":6366}],"selector":{"app":"no-pods","role":"slave-unlimit-2","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-22T22:13:39Z"
+    labels:
+      app: no-pods
+      role: slave-unlimit-2
+      tier: backend
+    name: serice-without-pods
+    namespace: default
+    resourceVersion: "1484675"
+    selfLink: /api/v1/namespaces/default/services/serice-without-pods
+    uid: 3ab39027-dd86-11e9-bb74-42010a8001fc
+  spec:
+    clusterIP: 10.7.240.15
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: no-pods
+      role: slave-unlimit-2
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
 kind: List
 metadata:
   resourceVersion: ""

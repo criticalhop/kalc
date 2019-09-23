@@ -5,13 +5,13 @@ items:
   metadata:
     annotations:
       kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"scheduling.k8s.io/v1beta1","kind":"PriorityClass","metadata":{"annotations":{},"creationTimestamp":"2019-08-14T21:58:26Z","generation":1,"name":"high-priority","resourceVersion":"14886069","selfLink":"/apis/scheduling.k8s.io/v1beta1/priorityclasses/high-priority","uid":"a46578fd-bede-11e9-98f3-42010a8000c4"},"value":1000000}
-    creationTimestamp: "2019-09-20T21:47:33Z"
+        {"apiVersion":"scheduling.k8s.io/v1beta1","kind":"PriorityClass","metadata":{"annotations":{},"creationTimestamp":"2019-08-14T21:58:26Z","generation":1,"name":"high-priority","resourceVersion":"14886069","selfLink":"/apis/scheduling.k8s.io/v1beta1/priorityclasses/high-priority"},"value":1000000}
+    creationTimestamp: "2019-09-23T18:52:58Z"
     generation: 1
     name: high-priority
-    resourceVersion: "901715"
+    resourceVersion: "1733081"
     selfLink: /apis/scheduling.k8s.io/v1beta1/priorityclasses/high-priority
-    uid: 40ca4876-dbf0-11e9-bb74-42010a8001fc
+    uid: 5c6a42b3-de33-11e9-bb74-42010a8001fc
   value: 1000000
 - apiVersion: scheduling.k8s.io/v1beta1
   description: Used for system critical pods that must run in the cluster, but can
