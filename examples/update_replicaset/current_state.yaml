@@ -1,0 +1,421 @@
+apiVersion: v1
+items:
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: redis-master
+    namespace: default
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: redis
+        role: master
+        tier: backend
+    template:
+      metadata:
+        labels:
+          app: redis
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: redis-master-evict
+    namespace: default
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 0
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis-evict
+        role: master
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis-evict
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 10 00Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: redis-master-2
+    namespace: default
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 0
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis2
+        role: master
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis2
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    generation: 1
+    name: redis-slave
+    namespace: default
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis
+        role: slave
+        tier: backend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          role: slave
+          tier: backend
+      spec:
+        containers:
+        - env:
+          - name: GET_HOSTS_FROM
+            value: dns
+          image: gcr.io/google_samples/gb-redisslave:v1
+          imagePullPolicy: IfNotPresent
+          name: slave
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: redis-slave-unlimit-norequest
+    namespace: default
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis
+        role: slave-unlimit
+        tier: backend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          role: slave-unlimit
+          tier: backend
+      spec:
+        containers:
+        - env:
+          - name: GET_HOSTS_FROM
+            value: dns
+          image: gcr.io/google_samples/gb-redisslave:v1
+          imagePullPolicy: IfNotPresent
+          name: slave
+          ports:
+          - containerPort: 6366
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: redis-slave-unlimit-norequest-2
+    namespace: default
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis
+        role: slave-unlimit-2
+        tier: backend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          role: slave-unlimit-2
+          tier: backend
+      spec:
+        containers:
+        - env:
+          - name: GET_HOSTS_FROM
+            value: dns
+          image: gcr.io/google_samples/gb-redisslave:v1
+          imagePullPolicy: IfNotPresent
+          name: slave
+          ports:
+          - containerPort: 6367
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+- apiVersion: scheduling.k8s.io/v1beta1
+  kind: PriorityClass
+  metadata:
+    creationTimestamp: 2019-08-14T21:58:26Z
+    generation: 1
+    name: high-priority
+
+  value: 1000000   
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: master
+      tier: backend
+    name: redis-master
+    namespace: default
+
+  spec:
+    clusterIP: 10.7.240.3
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: redis2
+      role: master
+      tier: backend
+    name: redis-master2
+    namespace: default
+
+  spec:
+    clusterIP: 10.7.240.30
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis2
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-09-04T21:24:52Z
+    labels:
+      app: redis-evict
+      role: master
+      tier: backend
+    name: redis-master-evict
+    namespace: default
+  spec:
+    clusterIP: 10.7.240.4
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis-evict
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave
+      tier: backend
+    name: redis-slave
+    namespace: default
+    resourceVersion: "9416869"
+  
+  spec:
+    clusterIP: 10.7.240.5
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: slave
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit
+    namespace: default
+  spec:
+    clusterIP: 10.7.240.12
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave-unlimit-2
+      tier: backend
+    name: redis-slave-unlimit-2
+    namespace: default
+
+  spec:
+    clusterIP: 10.7.240.14
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit-2
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
