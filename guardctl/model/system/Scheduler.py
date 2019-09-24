@@ -69,7 +69,7 @@ class Scheduler(Object):
             affected=[describe(podStarted), describe(node1)]
         )
            
-    @planned(cost=1000)
+    @planned(cost=10000)
     def ScheduleQueueProcessed1(self, scheduler1: "Scheduler"):
         scheduler1.queueLength -= 1
         return ScenarioStep(
