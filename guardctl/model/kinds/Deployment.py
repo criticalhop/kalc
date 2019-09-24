@@ -32,10 +32,7 @@ class Deployment(Controller, HasLimitsRequests):
         
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
-        for obj in object_space:
-            print(obj)
         for deploymentController in deployments:
-            print(deploymentController.metadata_name)
             if str(deploymentController.metadata_name) == str(self.metadata_name):
                 message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
                 logger.error(message)

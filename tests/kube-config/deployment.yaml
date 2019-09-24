@@ -27,6 +27,8 @@ items:
           - containerPort: 6379
             protocol: TCP
           resources:
+            limits:
+              memory: 500Mi
             requests:
               cpu: 100m
               memory: 500Mi
@@ -37,6 +39,7 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
+        priorityClassName: high-priority
 kind: List
 metadata:
   resourceVersion: ""
