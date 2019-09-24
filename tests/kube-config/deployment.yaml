@@ -3,7 +3,7 @@ items:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: redis-master2
+    name: redis-master
     namespace: default
   spec:
     replicas: 3

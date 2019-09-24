@@ -11,7 +11,7 @@ from typing import Set
 from logzero import logger
 
 class Deployment(Controller, HasLimitsRequests):
-    spec_replicas: int
+    spec_replicas: str
     metadata_name: str
     metadata_namespace: str
     apiVersion: str
@@ -34,11 +34,11 @@ class Deployment(Controller, HasLimitsRequests):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
         for deploymentController in deployments:
             if deploymentController.metadata_name == self.metadata_name:
-                message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists").format(self.apiVersion.split("/")[0], self.metadata_name)
+                message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(self.apiVersion.split("/")[0], self.metadata_name)
                 logger.error(message)
                 raise message
 
-        for replicaNum in range(self.spec_replicas):
+        for replicaNum in range(int(self.spec_replicas)):
             new_pod = mpod.Pod()
             hash1 = self.hash
             hash2 = str(replicaNum)

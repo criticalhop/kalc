@@ -12,6 +12,7 @@ from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 
 
+TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/kube-config/deployment.yaml"
 
 def test_load_twise_exeption():
@@ -24,7 +25,7 @@ def test_load_twise_exeption():
 #     k.load_dir(TEST_CLUSTER_FOLDER)
 #     k.create_resource(open(TEST_DEPLOYMENT).read())
 #     k._build_state()
-#     objects = filter(lambda x: isinstance(x, DaemonSet), k.state_objects)
+#     objects = filter(lambda x: isinstance(x, Deployment), k.state_objects)
 #     for p in objects:
 #         if p.metadata_name == "fluentd-elasticsearch" and \
 #             p.cpuRequest > -1 and \
