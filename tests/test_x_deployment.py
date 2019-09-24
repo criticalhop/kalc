@@ -4,7 +4,7 @@ from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.DaemonSet import DaemonSet
+from guardctl.model.kinds.Deployment import Deployment
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
@@ -19,6 +19,16 @@ def test_load_twise_exeption():
     k = KubernetesCluster()
     k.create_resource(open(TEST_DEPLOYMENT).read())
     k.create_resource(open(TEST_DEPLOYMENT).read())
+    try:
+        k._build_state()
+    except AssertionError as e:
+         print(str(e))
+         assert str(e) == "Error from server (AlreadyExists): deployments.apps \"redis-master\" already exists"
+    objects = filter(lambda x: isinstance(x, Deployment), k.state_objects)
+    for p in objects:
+        if p.metadata_name == "redis-master":
+            return
+    raise ValueError("Could not find service loded")
 
 # def test_load_limits():
 #     k = KubernetesCluster()

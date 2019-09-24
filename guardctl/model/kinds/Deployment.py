@@ -5,13 +5,13 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.primitives import Status
-from guardctl.misc.const import STATUS_POD
+from guardctl.misc.const import STATUS_POD, STATUS_SCHED
 from poodle import *
 from typing import Set
 from logzero import logger
 
 class Deployment(Controller, HasLimitsRequests):
-    spec_replicas: str
+    spec_replicas: int
     metadata_name: str
     metadata_namespace: str
     apiVersion: str
@@ -32,18 +32,20 @@ class Deployment(Controller, HasLimitsRequests):
         
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
+        for obj in object_space:
+            print(obj)
         for deploymentController in deployments:
-            if deploymentController.metadata_name == self.metadata_name:
-                message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(self.apiVersion.split("/")[0], self.metadata_name)
+            print(deploymentController.metadata_name)
+            if str(deploymentController.metadata_name) == str(self.metadata_name):
+                message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
                 logger.error(message)
-                raise message
+                raise AssertionError(message)
 
-        for replicaNum in range(int(self.spec_replicas)):
+        for replicaNum in range(self.spec_replicas._get_value()):
             new_pod = mpod.Pod()
             hash1 = self.hash
             hash2 = str(replicaNum)
-            new_pod.metadata_name = str(self.metadata_name) + '-Deployment-' + hash1 + "-" + hash2
-            new_pod.toNode = None
+            new_pod.metadata_name = "{0}-Deployment-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit
