@@ -10,7 +10,10 @@ from poodle import *
 from typing import Set
 from logzero import logger
 
+
+#TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
 class DaemonSet(Controller, HasLimitsRequests):
+    metadata_name: str
     lastPod: "mpod.Pod"
     amountOfActivePods: int
     status: Status
@@ -22,6 +25,8 @@ class DaemonSet(Controller, HasLimitsRequests):
         super().__init__( *args, **kwargs)
 
     def hook_after_create(self, object_space):
+        # TODO throw error if name already exist
+        # Error from server (AlreadyExists): error when creating "./tests/daemonset_eviction/daemonset_create.yaml": daemonsets.apps "fluentd-elasticsearch" already exists
         nodes = filter(lambda x: isinstance(x, Node), object_space)
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         i = 0
