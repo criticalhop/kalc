@@ -22,7 +22,7 @@ List of test examples directories in directory EXAMPLES:
 Open directory with exaple and run commands to perform test (replace cluster name in commands below with name of your cluster):
 
 ```python
-kubectl apply -f ./deployment.yaml
+kubectl apply -f ./deployments.yaml
 sleep 10
 kubectl get deployments
 mkdir ./cluster_dump
