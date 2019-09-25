@@ -24,7 +24,7 @@ APP_VERSION = '0.1.3'
                 type=str, required=True)
 @click.option("--output", "-o", help="Select output format", \
                 type=click.Choice(["yaml"]), required=False, default="yaml")
-@click.option("--filename", "-f", help="Create new resource from YAML file", \
+@click.option("--create-from-file", "-f", help="Create new resource from YAML file", \
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
@@ -35,14 +35,14 @@ APP_VERSION = '0.1.3'
                             is_flag=True, required=False, default=False)
 @click.option("--pipe", help="Terse mode to reduce verbosity for shell piping", \
                     type=bool, is_flag=True, required=False, default=False)
-def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe):
+def run(from_dir, output, create_from_file, timeout, exclude, ignore_nonexistent_exclusions, pipe):
 
     k = KubernetesCluster()
 
     click.echo(f"# Loading cluster definitions from {from_dir} ...")
     k.load_dir(from_dir)
 
-    for f in filename:
+    for f in create_from_file:
         click.echo(f"# Creating resource from {f} ...")
         k.create_resource(open(f).read())
 
