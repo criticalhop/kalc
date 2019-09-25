@@ -152,14 +152,14 @@ def test_service_link_to_pods():
     objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
     serv = None
     for p in objects:
-        if p.metadata_name == "redis-master-create" and \
-            labelFactory.get("app", "redis-create") in p.metadata_labels._get_value() and \
+        if p.metadata_name == "redis-master-evict" and \
+            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
                 p.status == STATUS_SERV["Started"]:
                 serv = p
     assert not serv is None
     objects = filter(lambda x: isinstance(x, Pod), ALL_STATE)
     for p in objects:
-        if str(p.metadata_name).startswith("redis-master-create")\
+        if str(p.metadata_name).startswith("redis-master-evict")\
              and p.targetService == serv:
             return
     raise ValueError("Could not find service loded")

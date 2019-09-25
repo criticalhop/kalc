@@ -21,6 +21,7 @@ class Deployment(Controller, HasLimitsRequests):
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
     hash: str
+    # template_metadata_labels: Set[str]
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
@@ -48,6 +49,7 @@ class Deployment(Controller, HasLimitsRequests):
             new_pod.cpuLimit = self.cpuLimit
             new_pod.memLimit = self.memLimit
             new_pod.status = STATUS_POD["Pending"]
+            # new_pod.metadata_labels = self.template_metadata_labels  #TODO  Make this functionality supported in POODLE
             new_pod.hook_after_load(object_space, _ignore_orphan=True) # for service<>pod link
             try:
                 new_pod.priorityClass = \
@@ -63,4 +65,4 @@ class Deployment(Controller, HasLimitsRequests):
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1
             scheduler.status = STATUS_SCHED["Changed"]
-
+        
