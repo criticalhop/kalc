@@ -71,6 +71,6 @@ def print_objects(objectList):
         " Namespace: " + str(deployment.metadata_namespace._get_value())+\
         " AmountOfActivePods: " + str(deployment.amountOfActivePods._get_value())+\
         " Status: " + str(deployment.status._get_value())+\
-        " PodList: " + str([str(x) for x in deployment.podList._get_value()]))+\
-        " PriorityClassName: " + str(deployment.spec_template_spec_priorityClassName._property_value))#+\
-        # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
+        " PodList: " + str([str(x) for x in deployment.podList._get_value()])+\
+        " PriorityClassName: " + str(deployment.spec_template_spec_priorityClassName._property_value)+\
+        " Metadata_labels: " + str([str(x) for x in deployment.spec_template_metadata_labels._property_value]))
