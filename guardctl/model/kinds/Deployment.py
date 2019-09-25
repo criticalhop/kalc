@@ -107,3 +107,10 @@ class Deployment(Controller, HasLimitsRequests):
                     scheduler.podQueue.add(pod)
                     scheduler.queueLength += 1
                     scheduler.status = STATUS_SCHED["Changed"]
+
+    def check_pod(self, new_pod, object_space):
+        for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
+            pod1 = [x for x in list(pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
+            pod2 = [x for x in list(new_pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
+            if set(pod1) == set(pod2):
+                logger.warning("Pods have the same label")

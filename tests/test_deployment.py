@@ -14,6 +14,7 @@ from click.testing import CliRunner
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/kube-config/deployment.yaml"
+TEST_DEPLOYMENT1 = "./tests/test-deployment/deployment1.yaml"
 TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"
 
 def test_load_twise_exeption():
@@ -78,3 +79,8 @@ def test_load_deployment():
     k = KubernetesCluster()
     k.load_dir(TEST_DEPLOYMENT_DUMP)
     k._build_state()
+
+def test_load_twise_warning():
+    k = KubernetesCluster()
+    k.create_resource(open(TEST_DEPLOYMENT).read())
+    k.create_resource(open(TEST_DEPLOYMENT1).read())
