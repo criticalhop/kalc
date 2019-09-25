@@ -75,7 +75,7 @@ class Deployment(Controller, HasLimitsRequests):
         pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
         for pod in pods:
             for labels in list(pod.metadata_labels._get_value()):
-                print("label is{0}".format(labels) )
+                
             return
             try:
                 pod.priorityClass = \
