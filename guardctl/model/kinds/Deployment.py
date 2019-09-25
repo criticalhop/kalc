@@ -64,3 +64,29 @@ class Deployment(Controller, HasLimitsRequests):
             scheduler.queueLength += 1
             scheduler.status = STATUS_SCHED["Changed"]
 
+    def hook_after_load(self, object_space):
+        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
+        deployments = filter(lambda x: isinstance(x, Deployment), object_space)
+        for deploymentController in deployments:
+            if str(deploymentController.metadata_name) == str(self.metadata_name):
+                message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
+                logger.error(message)
+                raise AssertionError(message)
+        pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
+        for pod in pods:
+            for labels in list(pod.metadata_labels._get_value()):
+                print("label is{0}".format(labels) )
+            return
+            try:
+                pod.priorityClass = \
+                    next(filter(\
+                        lambda x: \
+                            isinstance(x, PriorityClass) and \
+                            str(x.metadata_name) == str(self.spec_template_spec_priorityClassName),\
+                        object_space))
+            except StopIteration:
+                logger.warning("Could not reference priority class")
+            self.podList.add(pod)
+            scheduler.podQueue.add(pod)
+            scheduler.queueLength += 1
+            scheduler.status = STATUS_SCHED["Changed"]
