@@ -16,7 +16,6 @@ TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/kube-config/deployment.yaml"
 TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"
 
-@pytest.mark.skip(reason="covered by above")
 def test_load_twise_exeption():
     k = KubernetesCluster()
     k.create_resource(open(TEST_DEPLOYMENT).read())
@@ -32,7 +31,21 @@ def test_load_twise_exeption():
             return
     raise ValueError("Could not find service loded")
 
-@pytest.mark.skip(reason="covered by above")
+def test_load_load_create_exeption():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k.create_resource(open(TEST_DEPLOYMENT).read())
+    try:
+        k._build_state()
+    except AssertionError as e:
+         print(str(e))
+         assert str(e) == "Error from server (AlreadyExists): deployments.apps \"redis-master\" already exists"
+    objects = filter(lambda x: isinstance(x, Deployment), k.state_objects)
+    for p in objects:
+        if p.metadata_name == "redis-master":
+            return
+    raise ValueError("Could not find service loded")
+
 def test_load_limits():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -47,7 +60,6 @@ def test_load_limits():
             return
     raise ValueError("Could not find service loded")
 
-@pytest.mark.skip(reason="covered by above")
 def test_limits_for_pods_created():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)

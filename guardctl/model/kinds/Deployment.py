@@ -82,9 +82,9 @@ class Deployment(Controller, HasLimitsRequests):
             if replicaset.metadata_ownerReferences__name == self.metadata_name:
                 for pod_template_hash in list(replicaset.metadata_labels._get_value()):
                     if str(pod_template_hash).split(":")[0] == "pod-template-hash":
-                        print("hash {0}".format(pod_template_hash))
+                        # print("hash {0}".format(pod_template_hash))
                         self.hash = str(pod_template_hash).split(":")[1]
-                        print("hash is {0}".format(self.hash))
+                        # print("hash is {0}".format(self.hash))
                         br = True
                         break
             if br: break
@@ -94,16 +94,16 @@ class Deployment(Controller, HasLimitsRequests):
             # look for right pod-template-hash
             for pod_template_hash in list(pod.metadata_labels._get_value()):
                 if str(pod_template_hash).split(":")[0] == "pod-template-hash" and str(pod_template_hash).split(":")[1] == self.hash :
-                try:
-                    pod.priorityClass = \
-                        next(filter(\
-                            lambda x: \
-                                isinstance(x, PriorityClass) and \
-                                str(x.metadata_name) == str(self.spec_template_spec_priorityClassName),\
-                            object_space))
-                except StopIteration:
-                    logger.warning("Could not reference priority class")
-                self.podList.add(pod)
-                scheduler.podQueue.add(pod)
-                scheduler.queueLength += 1
-                scheduler.status = STATUS_SCHED["Changed"]
+                    try:
+                        pod.priorityClass = \
+                            next(filter(\
+                                lambda x: \
+                                    isinstance(x, PriorityClass) and \
+                                    str(x.metadata_name) == str(self.spec_template_spec_priorityClassName),\
+                                object_space))
+                    except StopIteration:
+                        logger.warning("Could not reference priority class")
+                    self.podList.add(pod)
+                    scheduler.podQueue.add(pod)
+                    scheduler.queueLength += 1
+                    scheduler.status = STATUS_SCHED["Changed"]
