@@ -30,7 +30,7 @@ kubectl get po -o yaml > ./cluster_dump/pods.yaml
 kubectl get no -o yaml > ./cluster_dump/nodes.yaml
 kubectl get services -o yaml > ./cluster_dump/service.yaml
 kubectl get priorityclass -o yaml > ./cluster_dump/priorityclass.yaml
-kubectl val -d ./cluster_dump/ -f ./daemonset_create.yaml
+kubectl sim -d ./cluster_dump/ -f ./daemonset_create.yaml
 ```
 
 To make sure that scenario found could happen , please run commands below to setup daemonset :
