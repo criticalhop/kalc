@@ -19,6 +19,7 @@ class GlobalVar(Object):
     amountOfPods: int
     queueLength: int
     is_service_interrupted: bool
+    is_depl_interrupted: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

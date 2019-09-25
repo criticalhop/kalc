@@ -2,6 +2,7 @@ from poodle import planned
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
+from guardctl.model.kinds.Deployment import Deployment
 from guardctl.model.kinds.Pod import Pod
 from guardctl.misc.const import *
 from guardctl.misc.problem import ProblemTemplate
@@ -30,21 +31,13 @@ class K8ServiceInterruptSearch(KubernetesModel):
                 service1: Service,
                 pod1: Pod,
                 global_: "GlobalVar",
-                scheduler1: "Scheduler",
-                currentFormalCpuConsumptionLoc: int,
-                currentFormalMemConsumptionLoc: int,
-                cpuCapacityLoc:int,
-                memCapacityLoc:int,
-                cpuRequestLoc: int,
-                memRequestLoc: int
+                scheduler1: "Scheduler"
             ):
         assert scheduler1.status == STATUS_SCHED["Clean"] 
         assert service1.amountOfActivePods == 0
-        assert service1.status == STATUS_SERV["Started"]
+        # assert service1.status == STATUS_SERV["Started"]
         assert service1.searchable == True
         assert pod1.targetService == service1
-        assert pod1.cpuRequest == cpuRequestLoc
-        assert pod1.memRequest == memRequestLoc
 
         service1.status = STATUS_SERV["Interrupted"]
         global_.is_service_interrupted = True
@@ -56,6 +49,29 @@ class K8ServiceInterruptSearch(KubernetesModel):
             parameters={"service.amountOfActivePods": 0, "service": describe(service1)},
             probability=1.0,
             affected=[describe(service1)]
+        )
+    @planned
+    def MarkDeploymentOutageEvent(self,
+                deployment_current: Deployment,
+                pod_current: Pod,
+                global_: "GlobalVar",
+                scheduler: "Scheduler"
+            ):
+        assert scheduler.status == STATUS_SCHED["Clean"] 
+        assert deployment_current.amountOfActivePods < deployment_current.spec_replicas
+        assert deployment_current.searchable == True
+        assert pod_current in  deployment_current.podList
+
+        deployment_current.status = STATUS_DEPL["Interrupted"]
+        global_.is_depl_interrupted = True
+        
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Detected deployment outage event",
+            parameters={"Pod": describe(pod_current)},
+            probability=1.0,
+            affected=[describe(deployment_current)]
         )
 
 def mark_excluded(object_space, exclude, skip_check=False):
@@ -75,36 +91,23 @@ def mark_excluded(object_space, exclude, skip_check=False):
         if not(objExclude.name in names):
             raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
-    # @planned(cost=10000)
-    # def UnsolveableServiceStart(self,
-    #             service1: Service,
-    #             scheduler1: "mscheduler.Scheduler"
-    #         ):
-    #     assert scheduler1.status == STATUS_SCHED["Changed"] 
-    #     service1.status = STATUS_SERV["Started"]
     
-    @planned(cost=100)
-    def PodsConnectedToServices(self,
-                service1: Service,
-                scheduler1: "mscheduler.Scheduler"
-            ):
-        assert service1.amountOfActivePods > 0
-        service1.status = STATUS_SERV["Started"]
+@planned(cost=100)
+def PodsConnectedToServices(self,
+            service1: Service,
+            scheduler1: "mscheduler.Scheduler"
+        ):
+    assert service1.amountOfActivePods > 0
+    service1.status = STATUS_SERV["Started"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Mark service as started",
-            parameters={},
-            probability=1.0,
-            affected=[describe(service1)]
-        )
-
-    def goal(self):
-        # TODO: find and define service or fix domain!
-        self.service[0].status == STATUS_SERV["Interrupted"] and \
-            self.scheduler.status == STATUS_SCHED["Clean"]
-
+    return ScenarioStep(
+        name=sys._getframe().f_code.co_name,
+        subsystem=self.__class__.__name__,
+        description="Mark service as started",
+        parameters={},
+        probability=1.0,
+        affected=[describe(service1)]
+    )
 class AnyServiceInterrupted(K8ServiceInterruptSearch):
 
     goal = lambda self: self.globalVar.is_service_interrupted == True and \

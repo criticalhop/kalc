@@ -6,7 +6,7 @@ from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status
-from guardctl.misc.const import STATUS_POD, STATUS_SCHED
+from guardctl.misc.const import STATUS_POD, STATUS_SCHED, STATUS_DEPL
 from poodle import *
 from typing import Set
 from logzero import logger
@@ -22,11 +22,13 @@ class Deployment(Controller, HasLimitsRequests):
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
     hash: str
+    searchable: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
         self.hash = "superhash"
+        self.status = STATUS_DEPL["Interrupted"]
 
 
     def hook_after_create(self, object_space):

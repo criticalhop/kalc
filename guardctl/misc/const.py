@@ -30,6 +30,12 @@ STATUS_SERV = {
     "Pending" : StatusServ("Pending"),
     "Started" : StatusServ("Started")
 }
+STATUS_DEPL = {
+    "Interrupted" : StatusServ("Interrupted"),
+    "Pending" : StatusServ("Pending"),
+    "Started" : StatusServ("Started")
+}
+
 POLICY = {
     "PreemptLowerPriority" : TypePolicy("PreemptLowerPriority"),
     "Never" : TypePolicy("Never")

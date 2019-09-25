@@ -1,0 +1,411 @@
+apiVersion: v1
+items:
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-09-25T20:15:48Z"
+    generation: 1
+    labels:
+      app: redis2
+      pod-template-hash: bd5cb4d85
+      role: master
+      tier: backend
+    name: redis-master-2-bd5cb4d85
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: redis-master-2
+      uid: 438d5fb7-dfd1-11e9-bb74-42010a8001fc
+    resourceVersion: "2333828"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/redis-master-2-bd5cb4d85
+    uid: 438fcfa8-dfd1-11e9-bb74-42010a8001fc
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: redis2
+        pod-template-hash: bd5cb4d85
+        role: master
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis2
+          pod-template-hash: bd5cb4d85
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-09-25T20:15:48Z"
+    generation: 1
+    labels:
+      app: redis
+      pod-template-hash: 85dc7c69bf
+      role: master
+      tier: backend
+    name: redis-master-85dc7c69bf
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: redis-master
+      uid: 43783709-dfd1-11e9-bb74-42010a8001fc
+    resourceVersion: "2333794"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/redis-master-85dc7c69bf
+    uid: 4379f066-dfd1-11e9-bb74-42010a8001fc
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: redis
+        pod-template-hash: 85dc7c69bf
+        role: master
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          pod-template-hash: 85dc7c69bf
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-09-25T20:15:48Z"
+    generation: 1
+    labels:
+      app: redis-evict
+      pod-template-hash: cc4cbc9fc
+      role: master
+      tier: backend
+    name: redis-master-evict-cc4cbc9fc
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: redis-master-evict
+      uid: 437fa6c8-dfd1-11e9-bb74-42010a8001fc
+    resourceVersion: "2333798"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/redis-master-evict-cc4cbc9fc
+    uid: 43810c5d-dfd1-11e9-bb74-42010a8001fc
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: redis-evict
+        pod-template-hash: cc4cbc9fc
+        role: master
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis-evict
+          pod-template-hash: cc4cbc9fc
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-09-25T20:15:48Z"
+    generation: 1
+    labels:
+      app: redis
+      pod-template-hash: 84455f8579
+      role: slave
+      tier: backend
+    name: redis-slave-84455f8579
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: redis-slave
+      uid: 43973e84-dfd1-11e9-bb74-42010a8001fc
+    resourceVersion: "2333820"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/redis-slave-84455f8579
+    uid: 439aad08-dfd1-11e9-bb74-42010a8001fc
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: redis
+        pod-template-hash: 84455f8579
+        role: slave
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          pod-template-hash: 84455f8579
+          role: slave
+          tier: backend
+      spec:
+        containers:
+        - env:
+          - name: GET_HOSTS_FROM
+            value: dns
+          image: gcr.io/google_samples/gb-redisslave:v1
+          imagePullPolicy: IfNotPresent
+          name: slave
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    fullyLabeledReplicas: 2
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-09-25T20:15:48Z"
+    generation: 1
+    labels:
+      app: redis
+      pod-template-hash: 56d54b89bf
+      role: slave-unlimit-2
+      tier: backend
+    name: redis-slave-unlimit-norequest-2-56d54b89bf
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: redis-slave-unlimit-norequest-2
+      uid: 43b70a35-dfd1-11e9-bb74-42010a8001fc
+    resourceVersion: "2333816"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/redis-slave-unlimit-norequest-2-56d54b89bf
+    uid: 43bb5a64-dfd1-11e9-bb74-42010a8001fc
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: redis
+        pod-template-hash: 56d54b89bf
+        role: slave-unlimit-2
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          pod-template-hash: 56d54b89bf
+          role: slave-unlimit-2
+          tier: backend
+      spec:
+        containers:
+        - env:
+          - name: GET_HOSTS_FROM
+            value: dns
+          image: gcr.io/google_samples/gb-redisslave:v1
+          imagePullPolicy: IfNotPresent
+          name: slave
+          ports:
+          - containerPort: 6367
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 2
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 2
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-09-25T20:15:48Z"
+    generation: 1
+    labels:
+      app: redis
+      pod-template-hash: 58c44757b9
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit-norequest-58c44757b9
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: redis-slave-unlimit-norequest
+      uid: 43a67b45-dfd1-11e9-bb74-42010a8001fc
+    resourceVersion: "2333824"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/redis-slave-unlimit-norequest-58c44757b9
+    uid: 43aae6db-dfd1-11e9-bb74-42010a8001fc
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: redis
+        pod-template-hash: 58c44757b9
+        role: slave-unlimit
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: redis
+          pod-template-hash: 58c44757b9
+          role: slave-unlimit
+          tier: backend
+      spec:
+        containers:
+        - env:
+          - name: GET_HOSTS_FROM
+            value: dns
+          image: gcr.io/google_samples/gb-redisslave:v1
+          imagePullPolicy: IfNotPresent
+          name: slave
+          ports:
+          - containerPort: 6366
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    fullyLabeledReplicas: 2
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
