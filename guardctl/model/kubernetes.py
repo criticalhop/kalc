@@ -9,7 +9,7 @@ from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.system.Scheduler import Scheduler
 
-KINDS_LOAD_ORDER = ["PriorityClass", "Service", "Node", "Pod"]
+KINDS_LOAD_ORDER = ["PriorityClass", "Service", "Node", "Pod", "ReplicaSet"]
 
 class KubernetesCluster:
     def __init__(self):

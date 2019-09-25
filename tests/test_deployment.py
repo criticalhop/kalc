@@ -62,7 +62,7 @@ def test_limits_for_pods_created():
             return
     raise ValueError("Could not find service loded")
 
-def test_load_limits():
+def test_load_deployment():
     k = KubernetesCluster()
     k.load_dir(TEST_DEPLOYMENT_DUMP)
     k._build_state()
