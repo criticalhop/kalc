@@ -38,8 +38,10 @@ class Deployment(Controller, HasLimitsRequests):
                 message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
                 logger.error(message)
                 raise AssertionError(message)
+        self.create_pods(self.spec_replicas._get_value())
 
-        for replicaNum in range(self.spec_replicas._get_value()):
+    def create_pods(self, replicas):
+        for replicaNum in range(replicas):
             new_pod = mpod.Pod()
             hash1 = self.hash
             hash2 = str(replicaNum)
@@ -96,6 +98,21 @@ class Deployment(Controller, HasLimitsRequests):
                     self.podList.add(pod)
                     self.check_pod(pod, object_space)
 
+    def hook_scale_before_create(self, object_space, new_replicas):
+        self.spec_replicas = new_replicas
+
+    #Call me only atfter loading this Controller
+    def hook_scale_after_load(self, object_space, new_replicas):
+        diff_replicas = new_replicas - self.spec_replicas
+        if diff_replicas == 0:
+            logger.warning("Nothing to scale. You try to scale deployment {0} for the same replicas value {1}".format(self.metadata_name, self.spec_replicas))
+        if diff_replicas < 0:
+            #remove pods
+            for counter in range(diff_replicas):
+                pod = self.podList.pop(-1)
+                object_space.remove(pod)
+        if diff_replicas > 0:
+            create_pods(diff_replicas)
 
     def check_pod(self, new_pod, object_space):
         for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
