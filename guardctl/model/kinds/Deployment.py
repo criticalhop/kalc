@@ -111,13 +111,13 @@ class Deployment(Controller, HasLimitsRequests):
             self.hook_after_create(object_space)
         else:
             self.podList = old_deployment.podList # copy pods
-            self.hook_scale_after_load(object_space, self.spec_replicas._get_value()) # extend or trimm pods
+            self.hook_scale_after_load(object_space, old_deployment._get_value()) # extend or trimm pods
             object_space.remove(old_deployment) # delete old Deployment
 
 
     #Call me only atfter loading this Controller
-    def hook_scale_after_load(self, object_space, new_replicas):
-        diff_replicas = new_replicas - self.spec_replicas._get_value()
+    def hook_scale_after_load(self, object_space, old_replicas):
+        diff_replicas = self.spec_replicas._get_value() - old_replicas
         if diff_replicas == 0:
             logger.warning("Nothing to scale. You try to scale deployment {0} for the same replicas value {1}".format(self.metadata_name, self.spec_replicas))
         if diff_replicas < 0:
