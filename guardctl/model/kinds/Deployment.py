@@ -30,17 +30,16 @@ class Deployment(Controller, HasLimitsRequests):
 
 
     def hook_after_create(self, object_space):
-        
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
         for deploymentController in deployments:
             if str(deploymentController.metadata_name) == str(self.metadata_name):
                 message = "Error from server (AlreadyExists): deployments.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
                 logger.error(message)
                 raise AssertionError(message)
-        self.create_pods(self.spec_replicas._get_value())
+        self.create_pods(object_space, self.spec_replicas._get_value())
 
-    def create_pods(self, replicas):
+    def create_pods(self, object_space, replicas):
+        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         for replicaNum in range(replicas):
             new_pod = mpod.Pod()
             hash1 = self.hash
@@ -112,7 +111,7 @@ class Deployment(Controller, HasLimitsRequests):
                 pod = self.podList.pop(-1)
                 object_space.remove(pod)
         if diff_replicas > 0:
-            create_pods(diff_replicas)
+            create_pods(object_space, diff_replicas)
 
     def check_pod(self, new_pod, object_space):
         for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
