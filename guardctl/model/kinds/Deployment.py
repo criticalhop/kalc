@@ -111,7 +111,7 @@ class Deployment(Controller, HasLimitsRequests):
             self.hook_after_create(object_space)
         else:
             self.podList = old_deployment.podList # copy pods
-            self.hook_scale_after_load(object_space, old_deployment._get_value()) # extend or trimm pods
+            self.hook_scale_after_load(object_space, old_deployment.spec_replicas._get_value()) # extend or trimm pods
             object_space.remove(old_deployment) # delete old Deployment
 
 
@@ -123,7 +123,9 @@ class Deployment(Controller, HasLimitsRequests):
         if diff_replicas < 0:
             #remove pods
             for _ in range(diff_replicas):
-                pod = self.podList.pop(-1)
+                pod = self.podList._get_value().pop(-1)
+                object_space.remove(pod)
+                pod = self.podList._get_value().pop(-1)
                 object_space.remove(pod)
         if diff_replicas > 0:
             self.create_pods(object_space, diff_replicas)
