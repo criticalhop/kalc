@@ -69,7 +69,6 @@ class Deployment(Controller, HasLimitsRequests):
             scheduler.status = STATUS_SCHED["Changed"]
 
     def hook_after_load(self, object_space):
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
         for deploymentController in deployments:
             if deploymentController != self and str(deploymentController.metadata_name) == str(self.metadata_name):
@@ -102,13 +101,13 @@ class Deployment(Controller, HasLimitsRequests):
 
     def hook_after_apply(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
-        old_deployment = None
+        old_deployment = self
         for deploymentController in deployments:
             if deploymentController != self and str(deploymentController.metadata_name) == str(self.metadata_name):
                 old_deployment = deploymentController
                 break
         # if old DEployment not found
-        if old_deployment == None:
+        if old_deployment == self:
             self.hook_after_create(object_space)
         else:
             self.podList = old_deployment.podList # copy pods
@@ -118,7 +117,7 @@ class Deployment(Controller, HasLimitsRequests):
 
     #Call me only atfter loading this Controller
     def hook_scale_after_load(self, object_space, new_replicas):
-        diff_replicas = new_replicas - self.spec_replicas
+        diff_replicas = new_replicas - self.spec_replicas._get_value()
         if diff_replicas == 0:
             logger.warning("Nothing to scale. You try to scale deployment {0} for the same replicas value {1}".format(self.metadata_name, self.spec_replicas))
         if diff_replicas < 0:
