@@ -121,7 +121,7 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     #     if value > 1000: value = 1000
     #     self.priority = value
 
-    def __str__(self): return str(self._get_value())
+    def __str__(self): return str(self.metadata_name)
 
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,

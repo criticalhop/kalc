@@ -69,8 +69,8 @@ class Scheduler(Object):
             affected=[describe(podStarted), describe(node1)]
         )
            
-    @planned(cost=1000)
-    def ScheduleQueueProcessed1(self, scheduler1: "Scheduler"):
+    @planned(cost=500000)
+    def Scheduler_cant_allocate_pod(self, scheduler1: "Scheduler"):
         scheduler1.queueLength -= 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,

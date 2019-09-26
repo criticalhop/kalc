@@ -29,6 +29,8 @@ class Deployment(Controller, HasLimitsRequests):
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
         self.hash = "superhash"
         self.status = STATUS_DEPL["Interrupted"]
+        self.searchable = True
+        self.amountOfActivePods = 0
 
 
     def hook_after_create(self, object_space):
