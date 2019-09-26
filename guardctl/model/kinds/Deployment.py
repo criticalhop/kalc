@@ -44,6 +44,7 @@ class Deployment(Controller, HasLimitsRequests):
             hash1 = self.hash
             hash2 = str(replicaNum)
             new_pod.metadata_name = "{0}-Deployment-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
+            new_pod.metadata_labels = self.metadata_labels
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit
@@ -94,19 +95,8 @@ class Deployment(Controller, HasLimitsRequests):
             # look for right pod-template-hash
             for pod_template_hash in list(pod.metadata_labels._get_value()):
                 if str(pod_template_hash).split(":")[0] == "pod-template-hash" and str(pod_template_hash).split(":")[1] == self.hash :
-                    try:
-                        pod.priorityClass = \
-                            next(filter(\
-                                lambda x: \
-                                    isinstance(x, PriorityClass) and \
-                                    str(x.metadata_name) == str(self.spec_template_spec_priorityClassName),\
-                                object_space))
-                    except StopIteration:
-                        logger.warning("Could not reference priority class")
                     self.podList.add(pod)
-                    scheduler.podQueue.add(pod)
-                    scheduler.queueLength += 1
-                    scheduler.status = STATUS_SCHED["Changed"]
+
 
     def check_pod(self, new_pod, object_space):
         for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
