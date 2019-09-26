@@ -21,6 +21,8 @@ class StatusSched(Object):
     
 class StatusServ(Object):
     pass
+class StatusDepl(Object):
+    pass
     
 class StatusLim(Object):
     pass

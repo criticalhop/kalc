@@ -112,4 +112,7 @@ class AnyServiceInterrupted(K8ServiceInterruptSearch):
 
     goal = lambda self: self.globalVar.is_service_interrupted == True and \
             self.scheduler.status == STATUS_SCHED["Clean"]
+class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
 
+    goal = lambda self: self.globalVar.is_depl_interrupted == True and \
+            self.scheduler.status == STATUS_SCHED["Clean"]
