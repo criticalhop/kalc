@@ -74,6 +74,31 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(deployment_current)]
         )
 
+    # @planned(cost=10000)
+    # def UnsolveableServiceStart(self,
+    #             service1: Service,
+    #             scheduler1: "mscheduler.Scheduler"
+    #         ):
+    #     assert scheduler1.status == STATUS_SCHED["Changed"] 
+    #     service1.status = STATUS_SERV["Started"]
+    
+    @planned(cost=100)
+    def PodsConnectedToServices(self,
+                service1: Service,
+                scheduler1: "mscheduler.Scheduler"
+            ):
+        assert service1.amountOfActivePods > 0
+        service1.status = STATUS_SERV["Started"]
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Mark service as started",
+            parameters={},
+            probability=1.0,
+            affected=[describe(service1)]
+        )
+
 def mark_excluded(object_space, exclude, skip_check=False):
     names = []
     types = []
@@ -90,15 +115,6 @@ def mark_excluded(object_space, exclude, skip_check=False):
             raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
         if not(objExclude.name in names):
             raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
-
-    
-@planned(cost=100)
-def PodsConnectedToServices(self,
-            service1: Service,
-            scheduler1: "mscheduler.Scheduler"
-        ):
-    assert service1.amountOfActivePods > 0
-    service1.status = STATUS_SERV["Started"]
 
     return ScenarioStep(
         name=sys._getframe().f_code.co_name,

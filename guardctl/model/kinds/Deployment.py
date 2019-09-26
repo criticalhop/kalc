@@ -46,6 +46,7 @@ class Deployment(Controller, HasLimitsRequests):
             hash1 = self.hash
             hash2 = str(replicaNum)
             new_pod.metadata_name = "{0}-Deployment-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
+            new_pod.metadata_labels = self.metadata_labels
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit
@@ -62,6 +63,7 @@ class Deployment(Controller, HasLimitsRequests):
             except StopIteration:
                 logger.warning("Could not reference priority class")
             self.podList.add(new_pod)
+            self.check_pod(new_pod, object_space)
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1
@@ -79,14 +81,11 @@ class Deployment(Controller, HasLimitsRequests):
         replicasets = filter(lambda x: isinstance(x, ReplicaSet), object_space)
         #look for ReplicaSet with corresonding owner reference
         for replicaset in replicasets:
-            # print("replicaset {0} deployment {1}".format(replicaset.metadata_ownerReferences__name, self.metadata_name) )
             br=False
             if replicaset.metadata_ownerReferences__name == self.metadata_name:
                 for pod_template_hash in list(replicaset.metadata_labels._get_value()):
                     if str(pod_template_hash).split(":")[0] == "pod-template-hash":
-                        # print("hash {0}".format(pod_template_hash))
                         self.hash = str(pod_template_hash).split(":")[1]
-                        # print("hash is {0}".format(self.hash))
                         br = True
                         break
             if br: break
@@ -96,19 +95,9 @@ class Deployment(Controller, HasLimitsRequests):
             # look for right pod-template-hash
             for pod_template_hash in list(pod.metadata_labels._get_value()):
                 if str(pod_template_hash).split(":")[0] == "pod-template-hash" and str(pod_template_hash).split(":")[1] == self.hash :
-                    try:
-                        pod.priorityClass = \
-                            next(filter(\
-                                lambda x: \
-                                    isinstance(x, PriorityClass) and \
-                                    str(x.metadata_name) == str(self.spec_template_spec_priorityClassName),\
-                                object_space))
-                    except StopIteration:
-                        logger.warning("Could not reference priority class")
                     self.podList.add(pod)
-                    scheduler.podQueue.add(pod)
-                    scheduler.queueLength += 1
-                    scheduler.status = STATUS_SCHED["Changed"]
+                    self.check_pod(pod, object_space)
+
 
     def check_pod(self, new_pod, object_space):
         for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
