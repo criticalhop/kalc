@@ -5,7 +5,6 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8ServiceInterruptSearch, AnyDeploymentInterrupted
 from guardctl.misc.object_factory import labelFactory

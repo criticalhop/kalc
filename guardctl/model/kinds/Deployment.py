@@ -2,7 +2,7 @@ from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
+import guardctl.model.system.Scheduler as mscheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status, StatusDepl
@@ -35,7 +35,7 @@ class Deployment(Controller, HasLimitsRequests):
 
     def hook_after_create(self, object_space):
         
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
+        scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
         for deploymentController in deployments:
             if str(deploymentController.metadata_name) == str(self.metadata_name):
@@ -72,7 +72,7 @@ class Deployment(Controller, HasLimitsRequests):
             scheduler.status = STATUS_SCHED["Changed"]
 
     def hook_after_load(self, object_space):
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
+        scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
         for deploymentController in deployments:
             if str(deploymentController.metadata_name) == str(self.metadata_name):

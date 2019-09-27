@@ -74,6 +74,25 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(deployment_current)]
         )
 
+    @planned(cost=1000000)
+    def No_Deployment_Outage_Event_possible(self,
+                deployment_current: Deployment,
+                pod_current: Pod,
+                global_: "GlobalVar",
+                scheduler: "Scheduler"
+            ):
+        assert scheduler.status == STATUS_SCHED["Clean"] 
+        
+        global_.is_depl_interrupted = True
+        
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="NO Detected deployment outage event detected",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
     # @planned(cost=10000)
     # def UnsolveableServiceStart(self,
     #             service1: Service,

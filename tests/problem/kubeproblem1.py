@@ -254,8 +254,7 @@ class Problem2(ProblemTemplate):
         self.globalVar1.currentFormalCpuConsumption  = 4
         self.globalVar1.currentFormalMemConsumption  = 4
         self.globalVar1.queueLength =0
-        self.globalVar1.amountOfPods = 5
-
+      
         self.scheduler1 = self.addObject(mscheduler.Scheduler('scheduler1'))
         self.scheduler1.podQueue.add(self.pod5)
         self.scheduler1.podQueue.add(self.pod6)
@@ -511,8 +510,7 @@ class ProblemAutoLink(ProblemTemplate):
         #self.globalVar1.currentFormalCpuConsumption  = 4
         #self.globalVar1.currentFormalMemConsumption  = 4
         #self.globalVar1.queueLength =0
-        #self.globalVar1.amountOfPods = 5
-
+     
         self.scheduler1 = self.addObject(mscheduler.Scheduler('scheduler1'))
         self.scheduler1.podQueue.add(self.pod5)
         self.scheduler1.podQueue.add(self.pod6)
