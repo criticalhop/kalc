@@ -15,7 +15,7 @@ from guardctl.misc.client_config import ClientConfig
 import poodle
 poodle.log.setLevel(logging.ERROR)
 
-APP_NAME = 'kubectl-val'
+APP_NAME = 'kubectl-check'
 APP_VERSION = '0.1.3'
 
 @click.group(invoke_without_command=True)
@@ -81,7 +81,7 @@ def print_status_info(info):
     click.echo("#", downloaded, total, status)
 
 if getattr(sys, 'frozen', False):
-    sys.argv[0] = "kubectl-val"
+    sys.argv[0] = "kubectl-check"
     if "--debug-updater" in sys.argv:
         logging.getLogger("pyupdater").setLevel(logging.DEBUG)
         STDERR_HANDLER = logging.StreamHandler(sys.stderr)
