@@ -74,7 +74,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(deployment_current)]
         )
 
-    @planned(cost=1000000)
+    @planned(cost=10000)
     def No_Deployment_Outage_Event_possible(self,
                 deployment_current: Deployment,
                 pod_current: Pod,

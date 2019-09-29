@@ -175,7 +175,7 @@ class Scheduler(Object):
             affected=[describe(podStarted), describe(node1)]
         )
 
-    @planned(cost=500000)
+    @planned(cost=10000)
     def Scheduler_cant_allocate_pod(self, scheduler1: "Scheduler"):
         scheduler1.queueLength -= 1
         return ScenarioStep(
