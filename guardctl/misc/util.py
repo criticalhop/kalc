@@ -107,3 +107,13 @@ def objDeduplicatorByName(objList):
             nameList.append(obj.metadata_name._get_value())
         counter +=1
     return dedupList
+
+def objRemoveByName(objList, metadata_name):
+    br = True
+    while br:
+        br = False
+        for obj in objList:
+            if obj.metadata_name._get_value() == metadata_name :
+                objList.remove(obj)
+                br = True
+                break

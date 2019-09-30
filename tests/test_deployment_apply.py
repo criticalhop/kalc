@@ -40,7 +40,7 @@ def test_create_n_apply_less():
     for p in filter(lambda x: isinstance(x, Deployment), k.state_objects):
         if p.metadata_name == "redis-master":
             if len(util.objDeduplicatorByName(p.podList._get_value())) != 2.0:
-                raise ValueError("Wrong pods amount - {0} (2)".format(len(p.podList._get_value())/2))
+                raise ValueError("Wrong pods amount - {0} (2)".format(len(util.objDeduplicatorByName(p.podList._get_value()))))
             return
     raise ValueError("Could not find service loded")
 
