@@ -29,7 +29,6 @@ class Deployment(Controller, HasLimitsRequests):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
-        print(" hash is ", self.hash)
 
 
     def hook_after_create(self, object_space):
