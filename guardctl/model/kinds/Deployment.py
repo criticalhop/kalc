@@ -10,6 +10,8 @@ from guardctl.misc.const import STATUS_POD, STATUS_SCHED
 from poodle import *
 from typing import Set
 from logzero import logger
+import guardctl.misc.util as util
+
 
 class Deployment(Controller, HasLimitsRequests):
     spec_replicas: int
@@ -38,12 +40,12 @@ class Deployment(Controller, HasLimitsRequests):
                 raise AssertionError(message)
         self.create_pods(object_space, self.spec_replicas._get_value())
 
-    def create_pods(self, object_space, replicas):
+    def create_pods(self, object_space, replicas, start_from=0):
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         for replicaNum in range(replicas):
             new_pod = mpod.Pod()
             hash1 = self.hash
-            hash2 = str(replicaNum)
+            hash2 = str(replicaNum+start_from)
             new_pod.metadata_name = "{0}-Deployment-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
             new_pod.metadata_labels = self.metadata_labels
             new_pod.cpuRequest = self.cpuRequest
@@ -122,13 +124,15 @@ class Deployment(Controller, HasLimitsRequests):
             logger.warning("Nothing to scale. You try to scale deployment {0} for the same replicas value {1}".format(self.metadata_name, self.spec_replicas))
         if diff_replicas < 0:
             #remove pods
+            goodPodList = util.objDeduplicatorByName(self.podList._get_value())
             for _ in range(diff_replicas):
-                pod = self.podList._get_value().pop(-1)
+                pod = goodPodList.pop(-1)
                 object_space.remove(pod)
-                pod = self.podList._get_value().pop(-1)
-                object_space.remove(pod)
+                self.podList = Set["mpod.Pod"]
+            for pod in goodPodList:
+                self.podList.add(pod)
         if diff_replicas > 0:
-            self.create_pods(object_space, diff_replicas)
+            self.create_pods(object_space, diff_replicas, self.spec_replicas._get_value())
 
     def check_pod(self, new_pod, object_space):
         for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):

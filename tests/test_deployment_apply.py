@@ -11,6 +11,7 @@ from guardctl.misc.const import *
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
+import guardctl.misc.util as util
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/test-deployment/deployment.yaml"
@@ -25,8 +26,8 @@ def test_create_n_apply():
     k._build_state()
     for p in filter(lambda x: isinstance(x, Deployment), k.state_objects):
         if p.metadata_name == "redis-master":
-            if len(p.podList._get_value())/2 != 10.0:
-                raise ValueError("Wrong pods amount - {0} (10)".format(len(p.podList._get_value())/2))
+            if len(util.objDeduplicatorByName(p.podList._get_value())) != 10:
+                raise ValueError("Wrong pods amount - {0} (10)".format(len(util.objDeduplicatorByName(p.podList._get_value()))))
             return
     raise ValueError("Could not find service loded")
 
@@ -38,7 +39,7 @@ def test_create_n_apply_less():
     k._build_state()
     for p in filter(lambda x: isinstance(x, Deployment), k.state_objects):
         if p.metadata_name == "redis-master":
-            if len(p.podList._get_value())/2 != 2.0:
+            if len(util.objDeduplicatorByName(p.podList._get_value())) != 2.0:
                 raise ValueError("Wrong pods amount - {0} (2)".format(len(p.podList._get_value())/2))
             return
     raise ValueError("Could not find service loded")
@@ -51,7 +52,8 @@ def test_load_n_apply():
     k._build_state()
     for p in filter(lambda x: isinstance(x, Deployment), k.state_objects):
         if p.metadata_name == "redis-master":
-            if len(p.podList._get_value())/2 != 10.0:
-                raise ValueError("Wrong pods amount - {0} (10)".format(len(p.podList._get_value())/2))
+            # WARNING poodle bug p.podList._get_value() return list which 
+            if len(util.objDeduplicatorByName(p.podList._get_value())) != 10.0:
+                raise ValueError("Wrong pods amount - {0} (10)".format(len(util.objDeduplicatorByName(p.podList._get_value()))))
             return
     raise ValueError("Could not find service loded")
