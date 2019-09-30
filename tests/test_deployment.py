@@ -15,6 +15,7 @@ from click.testing import CliRunner
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/test-deployment/deployment.yaml"
 TEST_DEPLOYMENT1 = "./tests/test-deployment/deployment1.yaml"
+
 TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"
 
 def test_load_twise_exeption():

@@ -95,3 +95,26 @@ def memConvertToAbstractProblem(mem):
     if ret == 0:
         ret = 1
     return int(ret)
+
+#object deduplicator by metadata_name
+def objDeduplicatorByName(objList):
+    dedupList = []
+    nameList = []
+    counter = 0
+    for obj in objList:
+        if not(obj.metadata_name._get_value() in nameList):
+            dedupList.append(obj)
+            nameList.append(obj.metadata_name._get_value())
+        counter +=1
+    return dedupList
+
+#solve bug in poodle by this
+def objRemoveByName(objList, metadata_name):
+    br = True
+    while br:
+        br = False
+        for obj in objList:
+            if obj.metadata_name._get_value() == metadata_name :
+                objList.remove(obj)
+                br = True
+                break
