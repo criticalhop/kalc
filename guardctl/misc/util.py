@@ -102,11 +102,8 @@ def objDeduplicatorByName(objList):
     nameList = []
     counter = 0
     for obj in objList:
-        print("try dup ", obj.metadata_name._get_value(), " ", not(obj.metadata_name._get_value() in nameList), " ", counter)
         if not(obj.metadata_name._get_value() in nameList):
             dedupList.append(obj)
             nameList.append(obj.metadata_name._get_value())
-            print("ok")
-        print("name list ", nameList)
         counter +=1
     return dedupList
