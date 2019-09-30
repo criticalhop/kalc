@@ -108,6 +108,7 @@ def objDeduplicatorByName(objList):
         counter +=1
     return dedupList
 
+#solve bug in poodle by this
 def objRemoveByName(objList, metadata_name):
     br = True
     while br:

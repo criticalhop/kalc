@@ -31,7 +31,6 @@ def test_create_n_apply():
             return
     raise ValueError("Could not find service loded")
 
-
 def test_create_n_apply_less():
     k = KubernetesCluster()
     k.create_resource(open(TEST_DEPLOYMENT).read())
@@ -44,7 +43,6 @@ def test_create_n_apply_less():
             return
     raise ValueError("Could not find service loded")
 
-@pytest.mark.skip(reason="speed up")
 def test_load_n_apply():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -55,5 +53,14 @@ def test_load_n_apply():
             # WARNING poodle bug p.podList._get_value() return list which 
             if len(util.objDeduplicatorByName(p.podList._get_value())) != 10.0:
                 raise ValueError("Wrong pods amount - {0} (10)".format(len(util.objDeduplicatorByName(p.podList._get_value()))))
+            for pod in p.podList._get_value():
+                ok = False
+                for label in pod.metadata_labels._get_value():
+                    if label._get_value()[0:3] == "app":
+                        ok = True
+                        assert label._get_value() == "app:redis-custom"
+                if not ok:
+                    raise ValueError("Could not find renamed pod")
             return
     raise ValueError("Could not find service loded")
+

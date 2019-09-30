@@ -5,13 +5,13 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
-from guardctl.model.system.primitives import Status
+from guardctl.model.system.primitives import Status, Label
 from guardctl.misc.const import STATUS_POD, STATUS_SCHED
 from poodle import *
 from typing import Set
 from logzero import logger
 import guardctl.misc.util as util
-
+import random
 
 class Deployment(Controller, HasLimitsRequests):
     spec_replicas: int
@@ -28,7 +28,8 @@ class Deployment(Controller, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
-        self.hash = "superhash"
+        self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
+        print(" hash is ", self.hash)
 
 
     def hook_after_create(self, object_space):
@@ -46,8 +47,11 @@ class Deployment(Controller, HasLimitsRequests):
             new_pod = mpod.Pod()
             hash1 = self.hash
             hash2 = str(replicaNum+start_from)
-            new_pod.metadata_name = "{0}-Deployment-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
-            new_pod.metadata_labels = self.metadata_labels
+            new_pod.metadata_name = "{0}-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
+            for label in self.spec_selector_matchLabels._get_value():
+                if not (label in  new_pod.metadata_labels._get_value()):
+                    new_pod.metadata_labels.add(label)
+            new_pod.metadata_labels.add(Label("pod-template-hash:{0}".format(hash1)))
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit

@@ -9,9 +9,9 @@ items:
     replicas: 10
     selector:
       matchLabels:
-        app: redis
+        app: redis-custom
         role: master
-        tier: backend
+        tier: backend-custom
     template:
       metadata:
         labels:
