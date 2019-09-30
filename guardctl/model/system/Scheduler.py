@@ -47,8 +47,8 @@ class Scheduler(Object):
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
-        assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
+        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest <= node1.cpuCapacity 
+        assert node1.currentFormalMemConsumption + podStarted.memRequest <= node1.memCapacity 
         assert podStarted in deployment_of_pod.podList
         deployment_of_pod.amountOfActivePods += 1
         
