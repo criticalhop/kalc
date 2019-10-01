@@ -43,7 +43,7 @@ class Deployment(Controller, HasLimitsRequests):
         self.create_pods(object_space, self.spec_replicas._get_value())
 
     def create_pods(self, object_space, replicas, start_from=0):
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
+        scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
         for replicaNum in range(replicas):
             new_pod = mpod.Pod()
             hash1 = self.hash

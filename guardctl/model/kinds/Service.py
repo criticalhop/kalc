@@ -22,7 +22,7 @@ class Service(HasLabel):
         self.status = STATUS_SERV["Pending"]
         self.searchable = True
  
-
+    def __str__(self): return str(self.metadata_name)
     # def __repr__(self):
     #     return 'Servicename : ' + str(self._get_value()) 
 
