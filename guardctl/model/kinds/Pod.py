@@ -444,80 +444,79 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     #         affected=[]
     #     )
 
-    @planned(cost=100)
-    def KillPod_IF_service_notnull__deployment_isnull(self,
-            podBeingKilled : "Pod",
-            nodeWithPod : "mnode.Node" ,
-            serviceOfPod: "mservice.Service",
-            # globalVar1: "GlobalVar",
-            scheduler1: "mscheduler.Scheduler",
-            amountOfActivePodsPrev: int
+    # @planned(cost=100)
+    # def KillPod_IF_service_notnull__deployment_isnull(self,
+    #         podBeingKilled : "Pod",
+    #         nodeWithPod : "mnode.Node" ,
+    #         serviceOfPod: "mservice.Service",
+    #         # globalVar1: "GlobalVar",
+    #         scheduler1: "mscheduler.Scheduler",
+    #         amountOfActivePodsPrev: int
 
-         ):
-        assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status ==  STATUS_POD["Killing"]
-        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+    #      ):
+    #     assert podBeingKilled.atNode == nodeWithPod
+    #     assert podBeingKilled.targetService == serviceOfPod
+    #     assert podBeingKilled.status ==  STATUS_POD["Killing"]
+    #     # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+    #     assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
-        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
-        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
-        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
-        # globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
-        # globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
-        serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status =  STATUS_POD["Pending"]
-        scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status = STATUS_SCHED["Changed"]
+    #     nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
+    #     nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
+    #     nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+    #     nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
+    #     # globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
+    #     # globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+    #     serviceOfPod.amountOfActivePods -= 1
+    #     podBeingKilled.status =  STATUS_POD["Pending"]
+    #     scheduler1.podQueue.add(podBeingKilled)
+    #     scheduler1.status = STATUS_SCHED["Changed"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing pod",
-            parameters={"podBeingKilled": describe(podBeingKilled)},
-            probability=1.0,
-            affected=[describe(podBeingKilled)]
-        )
+    #     return ScenarioStep(
+    #         name=sys._getframe().f_code.co_name,
+    #         subsystem=self.__class__.__name__,
+    #         description="Killing pod",
+    #         parameters={"podBeingKilled": describe(podBeingKilled)},
+    #         probability=1.0,
+    #         affected=[describe(podBeingKilled)]
+    #     )
 
     @planned(cost=100)
     def KillPod_IF_service_notnull_deployment_notnull(self,
             podBeingKilled : "Pod",
-            nodeWithPod : "mnode.Node" ,
-            serviceOfPod: "mservice.Service",
-            scheduler1: "mscheduler.Scheduler",
+            nodeWithPod : mnode.Node ,
+            serviceOfPod: mservice.Service,
+
             amountOfActivePodsPrev: int,
-            deployment_of_pod: "mdeployment.Deployment"
+            deployment_of_pod: mdeployment.Deployment
          ):
-        assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status ==  STATUS_POD["Killing"]
-        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+        # assert podBeingKilled.atNode == nodeWithPod
+        # assert podBeingKilled.targetService == serviceOfPod
+        # assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        # # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        # assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
         assert podBeingKilled in deployment_of_pod.podList
 
-        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
-        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
-        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
+        # nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
+        # nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
+        # nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        # nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
-        podBeingKilled.status =  STATUS_POD["Pending"]
-        scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status = STATUS_SCHED["Changed"]
-        deployment_of_pod.amountOfActivePods -= 1
+        # podBeingKilled.status =  STATUS_POD["Pending"]
+        # scheduler1.podQueue.add(podBeingKilled)
+        # scheduler1.status = STATUS_SCHED["Changed"]
+        # deployment_of_pod.amountOfActivePods -= 1
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing pod",
-            parameters={"podBeingKilled": describe(podBeingKilled)},
-            probability=1.0,
-            affected=[describe(podBeingKilled)]
-        )    
+        # return ScenarioStep(
+        #     name=sys._getframe().f_code.co_name,
+        #     subsystem=self.__class__.__name__,
+        #     description="Killing pod",
+        #     parameters={"podBeingKilled": describe(podBeingKilled)},
+        #     probability=1.0,
+        #     affected=[describe(podBeingKilled)]
+        # )    
     # Scheduler effects
 
 
 
-Pod.POD_NULL = Pod("NULL")
-Pod.POD_NULL.isNull = True
+
 
