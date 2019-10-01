@@ -2,7 +2,6 @@ from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.primitives import Status
 from guardctl.misc.const import STATUS_POD, STATUS_SCHED

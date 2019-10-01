@@ -2,25 +2,28 @@ from poodle import Object
 
  
 class Type(Object):
-    pass
+    def __str__(self): return str(self._get_value())
 
 class Status(Object):
-    pass
+    def __str__(self): return str(self._get_value())
 
 class StatusPod(Object):
-    pass
+    def __str__(self): return str(self._get_value())
 
 class StatusNode(Object):
-    pass
+    def __str__(self): return str(self._get_value())
 
 class StatusReq(Object):
-    pass
+    def __str__(self): return str(self._get_value())
 
 class StatusSched(Object):
-    pass
+    def __str__(self): return str(self._get_value())
     
 class StatusServ(Object):
-    pass
+    def __str__(self): return str(self._get_value())
+
+class StatusDepl(Object):
+    def __str__(self): return str(self._get_value())
     
 class StatusLim(Object):
     pass

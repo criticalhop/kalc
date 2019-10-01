@@ -76,7 +76,7 @@ def cpuConvertToAbstractProblem(cpuParot):
     else:
         cpu = int(cpuParot)*1000
     # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
-    cpu = int(cpu / 200)
+    cpu = int(cpu / 100)
     if cpu == 0:
         cpu = 1
     return int(cpu)
@@ -91,7 +91,28 @@ def memConvertToAbstractProblem(mem):
         ret = int(int(mem[:-2])/1000)
     else:
         ret = int(int(mem)/1000000)
-    ret = int(ret / 500)
+    ret = int(ret / 250)
     if ret == 0:
         ret = 1
     return int(ret)
+def objDeduplicatorByName(objList):
+    dedupList = []
+    nameList = []
+    counter = 0
+    for obj in objList:
+        if not(obj.metadata_name._get_value() in nameList):
+            dedupList.append(obj)
+            nameList.append(obj.metadata_name._get_value())
+        counter +=1
+    return dedupList
+
+#solve bug in poodle by this
+def objRemoveByName(objList, metadata_name):
+    br = True
+    while br:
+        br = False
+        for obj in objList:
+            if obj.metadata_name._get_value() == metadata_name :
+                objList.remove(obj)
+                br = True
+                break
