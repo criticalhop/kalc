@@ -48,6 +48,20 @@ class DaemonSet(Controller, HasLimitsRequests):
             scheduler.queueLength += 1
             scheduler.status = STATUS_SCHED["Changed"]
 
+    def hook_after_load(self, object_space):
+        daemonSets = filter(lambda x: isinstance(x, DaemonSet), object_space)
+        for daemonSetController in daemonSets:
+            if daemonSetController != self and str(daemonSetController.metadata_name) == str(self.metadata_name):
+                message = "Error from server (AlreadyExists): daemonSetController.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
+                logger.error(message)
+                raise AssertionError(message)
+        pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
+        
+        for pod in pods:
+            if pod.metadata_ownerReferences__name == self.metadata_name:
+                self.podList.add(pod)
+                # self.check_pod(pod, object_space)
+
     def hook_after_apply(self, object_space):
         daemonSets = filter(lambda x: isinstance(x, DaemonSet), object_space)
         old_daemonSet = self

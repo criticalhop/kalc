@@ -21,10 +21,10 @@ spec:
         image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
         resources:
           limits:
-            memory: 500Mi
+            memory: 10Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 10m
+            memory: 10Mi
         volumeMounts:
         - name: varlog
           mountPath: /var/log
@@ -39,4 +39,4 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
-      priorityClassName: high-priority
+      priorityClassName: system-cluster-critical

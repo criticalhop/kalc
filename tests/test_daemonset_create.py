@@ -35,7 +35,7 @@ def test_load_limits():
         if p.metadata_name == "fluentd-elasticsearch" and \
             p.cpuRequest > -1 and \
             p.memRequest > -1 and \
-             p.memLimit > -1:
+            p.memLimit > -1:
             return
     raise ValueError("Could not find service loded")
 
@@ -49,7 +49,7 @@ def test_limits_for_pods_created():
         if str(p.metadata_name).startswith("fluentd-elasticsearch") and \
             p.cpuRequest > -1 and \
             p.memRequest > -1 and \
-             p.memLimit > -1:
+            p.memLimit > -1:
             return
     raise ValueError("Could not find service loded")
 

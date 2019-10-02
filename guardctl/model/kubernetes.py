@@ -76,7 +76,7 @@ class KubernetesCluster:
             obj.hook_after_create(self.state_objects)
         if mode == self.LOAD_MODE and hasattr(obj, "hook_after_load"):
             obj.hook_after_load(self.state_objects)
-        if mode == self.APPLY_MODE and hasattr(obj, "hook_after_load"):
+        if mode == self.APPLY_MODE and hasattr(obj, "hook_after_apply"):
             obj.hook_after_apply(self.state_objects)
         # if mode == self.SCALE_MODE and hasattr(obj, "hook_scale"):
         #     obj.hook_scale(self.state_objects, replicas)
