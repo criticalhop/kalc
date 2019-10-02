@@ -58,23 +58,6 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(service1)]
         )
 
-def mark_excluded(object_space, exclude, skip_check=False):
-    names = []
-    types = []
-    for obj in object_space:
-        if hasattr(obj, 'metadata_name'):
-            names.append(obj.metadata_name)
-        types.append(obj.__class__.__name__)
-        for objExclude in exclude:
-            if (obj.__class__.__name__ == objExclude.objType) and (obj.metadata_name == objExclude.name):
-                obj.searchable = False
-    if skip_check : return
-    for objExclude in exclude:
-        if not(objExclude.objType in types):
-            raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
-        if not(objExclude.name in names):
-            raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
-
     # @planned(cost=10000)
     # def UnsolveableServiceStart(self,
     #             service1: Service,
@@ -100,10 +83,22 @@ def mark_excluded(object_space, exclude, skip_check=False):
             affected=[describe(service1)]
         )
 
-    def goal(self):
-        # TODO: find and define service or fix domain!
-        self.service[0].status == STATUS_SERV["Interrupted"] and \
-            self.scheduler.status == STATUS_SCHED["Clean"]
+def mark_excluded(object_space, exclude, skip_check=False):
+    names = []
+    types = []
+    for obj in object_space:
+        if hasattr(obj, 'metadata_name'):
+            names.append(obj.metadata_name)
+        types.append(obj.__class__.__name__)
+        for objExclude in exclude:
+            if (obj.__class__.__name__ == objExclude.objType) and (obj.metadata_name == objExclude.name):
+                obj.searchable = False
+    if skip_check : return
+    for objExclude in exclude:
+        if not(objExclude.objType in types):
+            raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
+        if not(objExclude.name in names):
+            raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
 class AnyServiceInterrupted(K8ServiceInterruptSearch):
 
