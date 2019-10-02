@@ -60,6 +60,10 @@ class DaemonSet(Controller, HasLimitsRequests):
         for pod in pods:
             if pod.metadata_ownerReferences__name == self.metadata_name:
                 self.podList.add(pod)
+                nodes = filter(lambda x: isinstance(x, Node), object_space)
+                for node in nodes:
+                    if node.metadata_name._get_value() == pod.spec_nodeName._get_value():
+                        pod.toNode = node
                 # self.check_pod(pod, object_space)
 
     def hook_after_apply(self, object_space):
