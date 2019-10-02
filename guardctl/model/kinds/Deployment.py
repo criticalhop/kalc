@@ -48,7 +48,7 @@ class Deployment(Controller, HasLimitsRequests):
             hash2 = str(replicaNum+start_from)
             new_pod.metadata_name = "{0}-{1}-{2}".format(str(self.metadata_name),hash1,hash2)
             for label in self.spec_selector_matchLabels._get_value():
-                if not (label in  new_pod.metadata_labels._get_value()):
+                if not (label in new_pod.metadata_labels._get_value()):
                     new_pod.metadata_labels.add(label)
             new_pod.metadata_labels.add(Label("pod-template-hash:{0}".format(hash1)))
             new_pod.cpuRequest = self.cpuRequest
@@ -57,15 +57,7 @@ class Deployment(Controller, HasLimitsRequests):
             new_pod.memLimit = self.memLimit
             new_pod.status = STATUS_POD["Pending"]
             new_pod.hook_after_load(object_space, _ignore_orphan=True) # for service<>pod link
-            try:
-                new_pod.priorityClass = \
-                    next(filter(\
-                        lambda x: \
-                            isinstance(x, PriorityClass) and \
-                            str(x.metadata_name) == str(self.spec_template_spec_priorityClassName),\
-                        object_space))
-            except StopIteration:
-                logger.warning("Could not reference priority class")
+            new_pod.set_priority(object_space, self)
             self.podList.add(new_pod)
             self.check_pod(new_pod, object_space)
             object_space.append(new_pod)
@@ -132,6 +124,13 @@ class Deployment(Controller, HasLimitsRequests):
                 util.objRemoveByName(self.podList._get_value(), pod.metadata_name)
         if diff_replicas > 0:
             self.create_pods(object_space, diff_replicas, self.spec_replicas._get_value())
+        #scale memory and cpu
+        for pod in util.objDeduplicatorByName(self.podList._get_value()):
+            pod.cpuRequest = self.cpuRequest
+            pod.memRequest = self.memRequest
+            pod.cpuLimit = self.cpuLimit
+            pod.memLimit = self.memLimit
+            pod.set_priority(object_space, self)
 
     def check_pod(self, new_pod, object_space):
         for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):

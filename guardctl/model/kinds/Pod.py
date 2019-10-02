@@ -55,6 +55,14 @@ class Pod(HasLabel, HasLimitsRequests):
         self.currentFormalCpuConsumption = 0
         # self.amountOfActiveRequests = 0 # For Requests
 
+
+    def set_priority(self, object_space, controller):
+        try:
+            self.priorityClass = next(filter(lambda x: isinstance(x, PriorityClass) and \
+                        str(x.metadata_name) == str(controller.spec_template_spec_priorityClassName), object_space))
+        except StopIteration:
+            logger.warning("Could not reference priority class")
+
     def hook_after_load(self, object_space, _ignore_orphan=False):
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
