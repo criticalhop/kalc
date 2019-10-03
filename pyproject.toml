@@ -6,9 +6,6 @@ authors = ["CriticalHop Team <info@criticalhop.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 
-packages = [
-    { include = "guardctl" },
-]
 
 [tool.poetry.dependencies]
 python = ">=3.7"
