@@ -401,28 +401,6 @@ class Pod(HasLabel, HasLimitsRequests):
 
     def __str__(self): return str(self.metadata_name)
 
-    
- 
-
-    @planned(cost=100)
-    def KillPod_IF_service_notnull_deployment_notnull(self,
-            podBeingKilled : "Pod",
-            nodeWithPod : Node ,
-            # serviceOfPod: Service,
-
-            amountOfActivePodsPrev: int,
-            deployment_of_pod: "Deployment"
-         ):
-        assert podBeingKilled in deployment_of_pod.podList
-        deployment_of_pod.amountOfActivePods -= 1
-
-
-
-
-
-
-
-
 ALL_STATE = None
 class Scheduler(Object):
     queueLength: int
@@ -790,11 +768,19 @@ def objRemoveByName(objList, metadata_name):
 
 def test_anyservice_interrupted_fromfiles():
     k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
-    k.create_resource(open(TEST_DAEMONET).read())
-    k._build_state()
+    @planned
+    def KillPod_IF_service_notnull_deployment_notnull(podBeingKilled : "Pod",
+            nodeWithPod : Node ,
+            amountOfActivePodsPrev: int,
+            deployment_of_pod: "Deployment"
+         ):
+        assert podBeingKilled in deployment_of_pod.podList
+        deployment_of_pod.amountOfActivePods -= 1
+
     p = AnyServiceInterrupted(k.state_objects)
-    print_objects(k.state_objects)
+    p.KillPod_IF_service_notnull_deployment_notnull = KillPod_IF_service_notnull_deployment_notnull
+
+    # print_objects(k.state_objects)
     p.run(timeout=360, sessionName="test_anyservice_interrupted_fromfiles")
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
