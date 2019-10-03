@@ -33,8 +33,9 @@ class Scheduler(Object):
             affected=[describe(pod1), describe(SelectedNode)]
         )
 
+
     @planned(cost=100)
-    def StartPod_IF_serice_notnull__deployment_notnull(self, 
+    def StartPod_IF_service_notnull__deployment_notnull(self, 
         podStarted: "mpod.Pod",
         node1: "Node" ,
         scheduler1: "Scheduler",
@@ -54,8 +55,6 @@ class Scheduler(Object):
         
         node1.currentFormalCpuConsumption += podStarted.cpuRequest
         node1.currentFormalMemConsumption += podStarted.memRequest
-        # globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
-        # globalVar1.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node1        
         scheduler1.queueLength -= 1
         scheduler1.podQueue.remove(podStarted)
@@ -73,11 +72,11 @@ class Scheduler(Object):
         )
 
     @planned(cost=100)
-    def StartPod_IF_serice_notnull__deployment_isnull(self, 
+    def StartPod_IF_service_notnull__deployment_isnull(self, 
         podStarted: "mpod.Pod",
         node1: "Node" ,
         scheduler1: "Scheduler",
-        serviceTargetForPod: "mservice.Service",
+        serviceTargetForPod: "mservice.Service"
         # globalVar1: "GlobalVar"
         ):
 
@@ -88,11 +87,10 @@ class Scheduler(Object):
         assert podStarted.memRequest > -1
         assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
         assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
+        assert podStarted.hasDeployment == False
 
         node1.currentFormalCpuConsumption += podStarted.cpuRequest
         node1.currentFormalMemConsumption += podStarted.memRequest
-        # globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
-        # globalVar1.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node1        
         scheduler1.queueLength -= 1
         scheduler1.podQueue.remove(podStarted)
@@ -110,7 +108,7 @@ class Scheduler(Object):
         )
 
     @planned(cost=100)
-    def StartPod_IF_serice_isnull__deployment_isnull(self, 
+    def StartPod_IF_service_isnull__deployment_isnull(self, 
         podStarted: "mpod.Pod",
         node1: "Node" ,
         scheduler1: "Scheduler"
@@ -122,11 +120,11 @@ class Scheduler(Object):
         assert podStarted.memRequest > -1
         assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
         assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
+        assert podStarted.hasService == False
+        assert podStarted.hasDeployment == False
 
         node1.currentFormalCpuConsumption += podStarted.cpuRequest
         node1.currentFormalMemConsumption += podStarted.memRequest
-        # globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
-        # globalVar1.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node1        
         scheduler1.queueLength -= 1
         scheduler1.podQueue.remove(podStarted)
@@ -142,7 +140,7 @@ class Scheduler(Object):
         )
 
     @planned(cost=100)
-    def StartPod_IF_serice_isnull__deployment_notnull(self, 
+    def StartPod_IF_service_isnull__deployment_notnull(self, 
         podStarted: "mpod.Pod",
         node1: "Node" ,
         scheduler1: "Scheduler",
@@ -156,6 +154,9 @@ class Scheduler(Object):
         assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
         assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
         assert podStarted in deployment_of_pod.podList
+        assert podStarted.hasService == False
+        assert podStarted.hasDeployment == True
+
 
         node1.currentFormalCpuConsumption += podStarted.cpuRequest
         node1.currentFormalMemConsumption += podStarted.memRequest

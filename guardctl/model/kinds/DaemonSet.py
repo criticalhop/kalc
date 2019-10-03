@@ -51,6 +51,7 @@ class DaemonSet(Controller, HasLimitsRequests):
             except StopIteration:
                 logger.warning("Could not reference priority class")
             self.podList.add(new_pod)
+            new_pod.hasDaemonset = True
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1

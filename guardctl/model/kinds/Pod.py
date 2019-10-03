@@ -38,6 +38,9 @@ class Pod(HasLabel, HasLimitsRequests):
     status: StatusPod
     isNull: bool
     # amountOfActiveRequests: int # For requests
+    hasDeployment: bool
+    hasService: bool
+    hasDaemonset: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -53,6 +56,9 @@ class Pod(HasLabel, HasLimitsRequests):
         self.realInitialCpuConsumption = 0
         self.currentFormalMemConsumption = 0
         self.currentFormalCpuConsumption = 0
+        self.hasDeployment = False
+        self.hasService = False
+        self.hasDaemoset = False
         # self.amountOfActiveRequests = 0 # For Requests
 
     def hook_after_load(self, object_space, _ignore_orphan=False):
@@ -76,6 +82,7 @@ class Pod(HasLabel, HasLimitsRequests):
                     set(service.spec_selector._get_value())\
                         .issubset(set(self.metadata_labels._get_value())):
                 self.targetService = service
+                self.hasService = True
                 if self.status == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
                         list(service.metadata_labels._get_value())[0])
@@ -338,6 +345,7 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
         assert label in service.spec_selector
         assert pod.status == STATUS_POD["Running"]
         pod.targetService = service
+        pod.hasService = True
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
 
@@ -443,41 +451,43 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
             affected=[]
         )
 
-    # @planned(cost=100)
-    # def KillPod_IF_service_notnull_deployment_notnull(self,
-    #         podBeingKilled : "Pod",
-    #         nodeWithPod : "mnode.Node" ,
-    #         serviceOfPod: "mservice.Service",
-    #         # globalVar1: "GlobalVar",
-    #         scheduler1: "mscheduler.Scheduler",
-    #         amountOfActivePodsPrev: int,
-    #         deployment_of_pod: "Deployment"
-    #      ):
-    #     assert podBeingKilled.atNode == nodeWithPod
-    #     assert podBeingKilled.targetService == serviceOfPod
-    #     assert podBeingKilled.status ==  STATUS_POD["Killing"]
-    #     # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-    #     assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-    #     assert podBeingKilled in deployment_of_pod.podList
+    @planned(cost=100)
+    def KillPod_IF_service_notnull_deployment_notnull_daemonset_notnull(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "mnode.Node" ,
+            serviceOfPod: "mservice.Service",
+            # globalVar1: "GlobalVar",
+            scheduler1: "mscheduler.Scheduler",
+            amountOfActivePodsPrev: int,
+            deployment_of_pod: "Deployment"
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.targetService == serviceOfPod
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+        assert podBeingKilled in deployment_of_pod.podList
+        assert podBeingKilled.hasDeployment == True
+        assert podBeingKilled.hasService == True
 
-    #     nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
-    #     nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
-    #     nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-    #     nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
-    #     serviceOfPod.amountOfActivePods -= 1
-    #     podBeingKilled.status =  STATUS_POD["Pending"]
-    #     scheduler1.podQueue.add(podBeingKilled)
-    #     scheduler1.status = STATUS_SCHED["Changed"]
-    #     deployment_of_pod.amountOfActivePods -= 1
+        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
+        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
+        serviceOfPod.amountOfActivePods -= 1
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler1.podQueue.add(podBeingKilled)
+        scheduler1.status = STATUS_SCHED["Changed"]
+        deployment_of_pod.amountOfActivePods -= 1
 
-    #     return ScenarioStep(
-    #         name=sys._getframe().f_code.co_name,
-    #         subsystem=self.__class__.__name__,
-    #         description="Killing pod",
-    #         parameters={"podBeingKilled": describe(podBeingKilled)},
-    #         probability=1.0,
-    #         affected=[describe(podBeingKilled)]
-    #     )
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
 
     @planned(cost=100)
     def KillPod_IF_service_notnull__deployment_isnull(self,
@@ -494,6 +504,8 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+        assert podBeingKilled.hasDeployment == False
+        assert podBeingKilled.hasService == True
 
         nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
         nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
@@ -515,64 +527,67 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
             affected=[describe(podBeingKilled)]
         )
 
-    # @planned(cost=100)
-    # def KillPod_IF_service_isnull__deployment_notnull(self,
-    #         podBeingKilled : "Pod",
-    #         nodeWithPod : "mnode.Node" ,
-    #         # globalVar1: "GlobalVar",
-    #         scheduler1: "mscheduler.Scheduler",
-    #         amountOfActivePodsPrev: int,
-    #         deployment_of_pod: "Deployment"
-    #      ):
-    #     assert podBeingKilled.atNode == nodeWithPod
-    #     assert podBeingKilled.status ==  STATUS_POD["Killing"]
-    #     # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-    #     assert podBeingKilled in deployment_of_pod.podList
+    @planned(cost=100)
+    def KillPod_IF_service_isnull__deployment_notnull(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "mnode.Node" ,
+            # globalVar1: "GlobalVar",
+            scheduler1: "mscheduler.Scheduler",
+            amountOfActivePodsPrev: int,
+            deployment_of_pod: "Deployment"
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        assert podBeingKilled in deployment_of_pod.podList
+        assert podBeingKilled.hasDeployment == True
+        assert podBeingKilled.hasService == False
 
-    #     nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
-    #     nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
-    #     nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-    #     nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
-    #     podBeingKilled.status =  STATUS_POD["Pending"]
-    #     scheduler1.podQueue.add(podBeingKilled)
-    #     scheduler1.status = STATUS_SCHED["Changed"]
-    #     deployment_of_pod.amountOfActivePods -= 1
+        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
+        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler1.podQueue.add(podBeingKilled)
+        scheduler1.status = STATUS_SCHED["Changed"]
+        deployment_of_pod.amountOfActivePods -= 1
 
-    #     return ScenarioStep(
-    #         name=sys._getframe().f_code.co_name,
-    #         subsystem=self.__class__.__name__,
-    #         description="Killing pod",
-    #         parameters={"podBeingKilled": describe(podBeingKilled)},
-    #         probability=1.0,
-    #         affected=[describe(podBeingKilled)]
-    #     )
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
 
-    # @planned(cost=100)
-    # def KillPod_IF_service_isnull__deployment_isnull(self,
-    #         podBeingKilled : "Pod",
-    #         nodeWithPod : "mnode.Node" ,
-    #         scheduler1: "mscheduler.Scheduler"
-    #      ):
-    #     assert podBeingKilled.atNode == nodeWithPod
-    #     assert podBeingKilled.status ==  STATUS_POD["Killing"]
-    #     # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+    @planned(cost=100)
+    def KillPod_IF_service_isnull__deployment_isnull(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "mnode.Node" ,
+            scheduler1: "mscheduler.Scheduler"
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        assert podBeingKilled.hasDeployment == False
+        assert podBeingKilled.hasService == False
 
-    #     nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
-    #     nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
-    #     nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-    #     nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
-    #     podBeingKilled.status =  STATUS_POD["Pending"]
-    #     scheduler1.podQueue.add(podBeingKilled)
-    #     scheduler1.status = STATUS_SCHED["Changed"]
+        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
+        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler1.podQueue.add(podBeingKilled)
+        scheduler1.status = STATUS_SCHED["Changed"]
 
-    #     return ScenarioStep(
-    #         name=sys._getframe().f_code.co_name,
-    #         subsystem=self.__class__.__name__,
-    #         description="Killing pod",
-    #         parameters={"podBeingKilled": describe(podBeingKilled)},
-    #         probability=1.0,
-    #         affected=[describe(podBeingKilled)]
-    #     )
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
     # Scheduler effects
 
 

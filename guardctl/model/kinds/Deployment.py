@@ -26,11 +26,13 @@ class Deployment(Controller, HasLimitsRequests):
     spec_template_spec_priorityClassName: str
     hash: str
     searchable: bool
+    isNull:bool
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
+        self.isNull = False
 
 
     def hook_after_create(self, object_space):
@@ -69,6 +71,7 @@ class Deployment(Controller, HasLimitsRequests):
             except StopIteration:
                 logger.warning("Could not reference priority class")
             self.podList.add(new_pod)
+            new_pod.hasDeployment = True
             self.check_pod(new_pod, object_space)
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
@@ -101,6 +104,7 @@ class Deployment(Controller, HasLimitsRequests):
             for pod_template_hash in list(pod.metadata_labels._get_value()):
                 if str(pod_template_hash).split(":")[0] == "pod-template-hash" and str(pod_template_hash).split(":")[1] == self.hash :
                     self.podList.add(pod)
+                    pod.hasDeployment = True
                     self.check_pod(pod, object_space)
 
     def hook_scale_before_create(self, object_space, new_replicas):
