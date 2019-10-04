@@ -13,3 +13,7 @@ test.log
 keypack.pyu
 pyu-data/
 pyu.log
+.pyupdater/
+README.rst
+kubectl-check.exe.spec
+kubectl-val
