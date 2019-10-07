@@ -124,45 +124,45 @@ class StartServiceGoal(K8ServiceInterruptSearch):
             goal=lambda:(self.goal()),
             plan=[Pod().connect_pod_service_labels]
         )
-def test_service_active_pods():
-    k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
-    k._build_state()
-    p = StartServiceGoal(k.state_objects)
-    p.select_target_service()
-    global ALL_STATE
-    ALL_STATE = k.state_objects
-    # p.debug()
-    try:
-        p.xrun()
-    except EmptyPlanError:
-        return
-    objects = filter(lambda x: isinstance(x, Service), k.state_objects)
-    pods_active = False
-    for p in objects:
-        if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
-                p.status == STATUS_SERV["Started"] and\
-                    p.amountOfActivePods > 0:
-            pods_active = True
-            break
-    assert pods_active
+# def test_service_active_pods():
+#     k = KubernetesCluster()
+#     k.load_dir(TEST_CLUSTER_FOLDER)
+#     k._build_state()
+#     p = StartServiceGoal(k.state_objects)
+#     p.select_target_service()
+#     global ALL_STATE
+#     ALL_STATE = k.state_objects
+#     # p.debug()
+#     try:
+#         p.xrun()
+#     except EmptyPlanError:
+#         return
+#     objects = filter(lambda x: isinstance(x, Service), k.state_objects)
+#     pods_active = False
+#     for p in objects:
+#         if p.metadata_name == "redis-master-evict" and \
+#             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
+#                 p.status == STATUS_SERV["Started"] and\
+#                     p.amountOfActivePods > 0:
+#             pods_active = True
+#             break
+#     assert pods_active
 
-def test_service_link_to_pods():
-    objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
-    serv = None
-    for p in objects:
-        if p.metadata_name == "redis-master-evict" and \
-            labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
-                p.status == STATUS_SERV["Started"]:
-                serv = p
-    assert not serv is None
-    objects = filter(lambda x: isinstance(x, Pod), ALL_STATE)
-    for p in objects:
-        if str(p.metadata_name).startswith("redis-master-evict")\
-             and p.targetService == serv:
-            return
-    raise ValueError("Could not find service loded")
+# def test_service_link_to_pods():
+#     objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
+#     serv = None
+#     for p in objects:
+#         if p.metadata_name == "redis-master-evict" and \
+#             labelFactory.get("app", "redis-evict") in p.metadata_labels._get_value() and \
+#                 p.status == STATUS_SERV["Started"]:
+#                 serv = p
+#     assert not serv is None
+#     objects = filter(lambda x: isinstance(x, Pod), ALL_STATE)
+#     for p in objects:
+#         if str(p.metadata_name).startswith("redis-master-evict")\
+#              and p.targetService == serv:
+#             return
+#     raise ValueError("Could not find service loded")
 
 def test_queue_status():
     "test length and status of scheduler queue after load"
@@ -176,17 +176,17 @@ def test_queue_status():
     assert scheduler.podQueue._get_value()
     assert scheduler.status == STATUS_SCHED["Changed"]
 
-def test_nodes_status():
-    objects = filter(lambda x: isinstance(x, Node), ALL_STATE)
-    for node in objects:
-        if node.cpuCapacity > 1 and \
-            node.memCapacity > 1 and \
-           node.currentFormalCpuConsumption > 1 and \
-           node.currentFormalMemConsumption > 1:
-           return
-        # assert node.currentRealMemConsumption > 1
-        # assert node.currentRealCpuConsumption > 1
-    raise Exception("Could not find valid nodes")
+# def test_nodes_status():
+#     objects = filter(lambda x: isinstance(x, Node), ALL_STATE)
+#     for node in objects:
+#         if node.cpuCapacity > 1 and \
+#             node.memCapacity > 1 and \
+#            node.currentFormalCpuConsumption > 1 and \
+#            node.currentFormalMemConsumption > 1:
+#            return
+#         # assert node.currentRealMemConsumption > 1
+#         # assert node.currentRealCpuConsumption > 1
+#     raise Exception("Could not find valid nodes")
 
 def test_nodes_pods_allocated():
     "test that all pods in status running are allocated to nodes"

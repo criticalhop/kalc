@@ -1,0 +1,281 @@
+poodledev inst-nodeps: /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/.tmp/package/5/kubectl-val-0.1.3.tar.gz
+poodledev installed: aiohttp==3.6.1,altgraph==0.16.1,appdirs==1.4.3,astroid==2.3.1,async-timeout==3.0.1,atomicwrites==1.3.0,attrs==19.1.0,bowler==0.8.0,bsdiff4==1.1.5,Cerberus==1.3.1,certifi==2019.9.11,chardet==3.0.4,Click==7.0,coverage==4.5.4,dephell==0.7.7,dephell-archive==0.1.5,dephell-discover==0.2.8,dephell-licenses==0.1.6,dephell-links==0.1.4,dephell-markers==1.0.0,dephell-pythons==0.1.12,dephell-shells==0.1.3,dephell-specifier==0.2.1,dephell-venvs==0.1.16,dephell-versioning==0.1.1,docker==4.0.2,dockerpty==0.4.1,docutils==0.15.2,dsdev-utils==1.0.4,ed25519==1.5,fissix==19.2b1,Flask==1.1.1,guardctl==0.1.0,html5lib==1.0.1,idna==2.8,importlib-metadata==0.23,isort==4.3.21,itsdangerous==1.1.0,Jinja2==2.10.1,kubectl-chai==0.1.0,kubectl-val==0.1.3,lazy-object-proxy==1.4.2,logzero==1.5.0,m2r==0.2.1,MarkupSafe==1.1.1,mccabe==0.6.1,mistune==0.8.4,more-itertools==7.2.0,multidict==4.5.2,packaging==19.2,pbr==5.4.3,pexpect==4.7.0,pluggy==0.13.0,poodle==0.1.10,ptyprocess==0.6.0,py==1.8.0,PyInstaller==3.5,pylint==2.4.2,pyparsing==2.4.2,pytest==5.2.0,pytest-cov==2.7.1,pytest-pylint==0.14.1,PyUpdater==3.1.1,PyYAML==5.1.2,requests==2.22.0,sh==1.12.14,shellingham==1.3.1,six==1.12.0,stevedore==1.31.0,tomlkit==0.5.5,typed-ast==1.4.0,urllib3==1.25.6,wcwidth==0.1.7,webencodings==0.5.1,websocket-client==0.56.0,Werkzeug==0.16.0,wrapt==1.11.2,yarl==1.3.0,yaspin==0.15.0,zipp==0.6.0
+poodledev run-test-pre: PYTHONHASHSEED='2594959110'
+poodledev run-test: commands[0] | bash -c 'cd ../poodle && dephell project build --from pyproject.toml'
+WARNING cannot find tool.dephell section in the config (path=pyproject.toml)
+INFO dumping... (format=setuppy)
+INFO dumping... (format=egginfo)
+INFO dumping... (format=sdist)
+INFO dumping... (format=wheel)
+INFO builded 
+poodledev run-test: commands[1] | pip uninstall -y poodle
+Uninstalling poodle-0.1.10:
+  Successfully uninstalled poodle-0.1.10
+poodledev run-test: commands[2] | bash -c 'cd ../poodle && python ./setup.py install'
+running install
+running bdist_egg
+running egg_info
+writing poodle.egg-info/PKG-INFO
+writing dependency_links to poodle.egg-info/dependency_links.txt
+writing entry points to poodle.egg-info/entry_points.txt
+writing requirements to poodle.egg-info/requires.txt
+writing top-level names to poodle.egg-info/top_level.txt
+reading manifest file 'poodle.egg-info/SOURCES.txt'
+writing manifest file 'poodle.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/problem.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/pddlSplitter.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/__init__.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/arithmetic.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/schedule.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/web_solver.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/poodle_main.py -> build/bdist.linux-x86_64/egg/poodle
+byte-compiling build/bdist.linux-x86_64/egg/poodle/problem.py to problem.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/pddlSplitter.py to pddlSplitter.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/__init__.py to __init__.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/arithmetic.py to arithmetic.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/schedule.py to schedule.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/web_solver.py to web_solver.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/poodle_main.py to poodle_main.cpython-37.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/entry_points.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+poodle.__pycache__.poodle_main.cpython-37: module references __file__
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getsourcefile
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.findsource
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getframeinfo
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getouterframes
+creating 'dist/poodle-0.1.10-py3.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing poodle-0.1.10-py3.7.egg
+creating /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg
+Extracting poodle-0.1.10-py3.7.egg to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Adding poodle 0.1.10 to easy-install.pth file
+Installing poodleserver script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Installed /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg
+Processing dependencies for poodle==0.1.10
+Searching for requests==2.22.0
+Best match: requests 2.22.0
+Adding requests 2.22.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Flask==1.1.1
+Best match: Flask 1.1.1
+Adding Flask 1.1.1 to easy-install.pth file
+Installing flask script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for certifi==2019.9.11
+Best match: certifi 2019.9.11
+Adding certifi 2019.9.11 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for chardet==3.0.4
+Best match: chardet 3.0.4
+Adding chardet 3.0.4 to easy-install.pth file
+Installing chardetect script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for urllib3==1.25.6
+Best match: urllib3 1.25.6
+Adding urllib3 1.25.6 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for idna==2.8
+Best match: idna 2.8
+Adding idna 2.8 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for itsdangerous==1.1.0
+Best match: itsdangerous 1.1.0
+Adding itsdangerous 1.1.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Jinja2==2.10.1
+Best match: Jinja2 2.10.1
+Adding Jinja2 2.10.1 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Werkzeug==0.16.0
+Best match: Werkzeug 0.16.0
+Adding Werkzeug 0.16.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Click==7.0
+Best match: Click 7.0
+Adding Click 7.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for MarkupSafe==1.1.1
+Best match: MarkupSafe 1.1.1
+Adding MarkupSafe 1.1.1 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Finished processing dependencies for poodle==0.1.10
+poodledev run-test: commands[3] | bash -c 'fuser -k -n tcp $(echo -n $POODLE_SOLVER_URL|cut -d: -f3) || echo CLEAN'
+4326/tcp:            71649
+poodledev run-test: commands[4] | bash -c 'cd ../downward && timeout 3000 poodleserver 2>&1 >/dev/null &'
+poodledev run-test: commands[5] | python -m pytest -s --disable-pytest-warnings --pylint --pylint-jobs=4 --pylint-error-types=EF tests/test_x_eviction.py
+============================= test session starts ==============================
+platform linux -- Python 3.7.3, pytest-5.2.0, py-1.8.0, pluggy-0.13.0
+cachedir: .tox/poodledev/.pytest_cache
+rootdir: /home/vasily/environment-name/artemm/artem/kubectl-chai
+plugins: pylint-0.14.1, cov-2.7.1
+collected 11 items
+
+tests/test_x_eviction.py s........ERROR: got KeyboardInterrupt signal
+
+
+=================== 8 passed, 1 skipped in 120.47s (0:02:00) ===================
+Traceback (most recent call last):
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/main.py", line 191, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/main.py", line 235, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/hooks.py", line 286, in __call__
+    return self._hookexec(self, self.get_hookimpls(), kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 92, in _hookexec
+    return self._inner_hookexec(hook, methods, kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 86, in <lambda>
+    firstresult=hook.spec.opts.get("firstresult") if hook.spec else False,
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 208, in _multicall
+    return outcome.get_result()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 80, in get_result
+    raise ex[1].with_traceback(ex[2])
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 187, in _multicall
+    res = hook_impl.function(*args)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/main.py", line 256, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/hooks.py", line 286, in __call__
+    return self._hookexec(self, self.get_hookimpls(), kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 92, in _hookexec
+    return self._inner_hookexec(hook, methods, kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 86, in <lambda>
+    firstresult=hook.spec.opts.get("firstresult") if hook.spec else False,
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 208, in _multicall
+    return outcome.get_result()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 80, in get_result
+    raise ex[1].with_traceback(ex[2])
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 187, in _multicall
+    res = hook_impl.function(*args)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 80, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 95, in runtestprotocol
+    reports.append(call_and_report(item, "call", log))
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 176, in call_and_report
+    call = call_runtest_hook(item, when, **kwds)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 201, in call_runtest_hook
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 229, in from_call
+    result = func()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 201, in <lambda>
+    lambda: ihook(item=item, **kwds), when=when, reraise=reraise
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/hooks.py", line 286, in __call__
+    return self._hookexec(self, self.get_hookimpls(), kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 92, in _hookexec
+    return self._inner_hookexec(hook, methods, kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 86, in <lambda>
+    firstresult=hook.spec.opts.get("firstresult") if hook.spec else False,
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 208, in _multicall
+    return outcome.get_result()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 80, in get_result
+    raise ex[1].with_traceback(ex[2])
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 187, in _multicall
+    res = hook_impl.function(*args)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/runner.py", line 125, in pytest_runtest_call
+    item.runtest()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/python.py", line 1423, in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/hooks.py", line 286, in __call__
+    return self._hookexec(self, self.get_hookimpls(), kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 92, in _hookexec
+    return self._inner_hookexec(hook, methods, kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 86, in <lambda>
+    firstresult=hook.spec.opts.get("firstresult") if hook.spec else False,
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 208, in _multicall
+    return outcome.get_result()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 80, in get_result
+    raise ex[1].with_traceback(ex[2])
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 187, in _multicall
+    res = hook_impl.function(*args)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/python.py", line 170, in pytest_pyfunc_call
+    result = testfunction(**testargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/tests/test_x_eviction.py", line 202, in test_eviction_fromfiles_strictgoal
+    p.run(timeout=360, sessionName="test_eviction_fromfiles_strictgoal")
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/guardctl/misc/problem.py", line 54, in run
+    sessionName=sessionName
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg/poodle/schedule.py", line 194, in schedule
+    p.run(timeout=timeout)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg/poodle/poodle_main.py", line 2239, in run
+    r = self.run_cloud(url)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg/poodle/poodle_main.py", line 2184, in run_cloud
+    return self.wait_result(s, url, task_id, rq_hash)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg/poodle/poodle_main.py", line 2121, in wait_result
+    time.sleep(SOLVER_CHECK_TIME)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pytest.py", line 101, in <module>
+    raise SystemExit(pytest.main())
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/config/__init__.py", line 90, in main
+    return config.hook.pytest_cmdline_main(config=config)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/hooks.py", line 286, in __call__
+    return self._hookexec(self, self.get_hookimpls(), kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 92, in _hookexec
+    return self._inner_hookexec(hook, methods, kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 86, in <lambda>
+    firstresult=hook.spec.opts.get("firstresult") if hook.spec else False,
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 208, in _multicall
+    return outcome.get_result()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 80, in get_result
+    raise ex[1].with_traceback(ex[2])
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 187, in _multicall
+    res = hook_impl.function(*args)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/main.py", line 228, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/main.py", line 207, in wrap_session
+    config.hook.pytest_keyboard_interrupt(excinfo=excinfo)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/hooks.py", line 286, in __call__
+    return self._hookexec(self, self.get_hookimpls(), kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 92, in _hookexec
+    return self._inner_hookexec(hook, methods, kwargs)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/manager.py", line 86, in <lambda>
+    firstresult=hook.spec.opts.get("firstresult") if hook.spec else False,
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 208, in _multicall
+    return outcome.get_result()
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 80, in get_result
+    raise ex[1].with_traceback(ex[2])
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/pluggy/callers.py", line 187, in _multicall
+    res = hook_impl.function(*args)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/terminal.py", line 680, in pytest_keyboard_interrupt
+    self._keyboardinterrupt_memo = excinfo.getrepr(funcargs=True)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/_code/code.py", line 597, in getrepr
+    return fmt.repr_excinfo(self)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/_code/code.py", line 829, in repr_excinfo
+    reprtraceback = self.repr_traceback(excinfo)
+  File "/home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/_pytest/_code/code.py", line 778, in repr_traceback
+    entries.append(reprentry)
+KeyboardInterrupt
+___________________________________ summary ____________________________________
+ERROR:   poodledev: keyboardinterrupt
+/bin/bash: line 1: 71875 Killed                  timeout 3000 poodleserver 2>&1 > /dev/null
+Exception ignored in: <_io.TextIOWrapper name='<stdout>' mode='w' encoding='UTF-8'>
+BrokenPipeError: [Errno 32] Broken pipe
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Exception ignored in: <_io.TextIOWrapper name='<stdout>' mode='w' encoding='UTF-8'>
+BrokenPipeError: [Errno 32] Broken pipe

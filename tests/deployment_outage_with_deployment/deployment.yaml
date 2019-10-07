@@ -12,7 +12,7 @@ items:
     resourceVersion: "9416933"
   spec:
     progressDeadlineSeconds: 600
-    replicas: 2
+    replicas: 10
     revisionHistoryLimit: 10
     selector:
       matchLabels:

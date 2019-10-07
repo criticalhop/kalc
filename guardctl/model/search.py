@@ -35,12 +35,12 @@ class K8ServiceInterruptSearch(KubernetesModel):
             ):
         assert scheduler1.status == STATUS_SCHED["Clean"] 
         assert service1.amountOfActivePods == 0
-        # assert service1.status == STATUS_SERV["Started"]
-        assert service1.searchable == True
+        # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
+        assert service1.searchable == True  
         assert pod1.targetService == service1
 
         service1.status = STATUS_SERV["Interrupted"]
-        global_.is_service_interrupted = True
+        global_.is_service_interrupted = True #TODO:  Optimistic search 
         
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,

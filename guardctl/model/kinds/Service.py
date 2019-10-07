@@ -23,7 +23,6 @@ class Service(HasLabel):
         self.searchable = True
  
 
-    # def __repr__(self):
-    #     return 'Servicename : ' + str(self._get_value()) 
+    def __str__(self): return str(self.metadata_name)
 
 Service.SERVICE_NULL = Service("NULL")

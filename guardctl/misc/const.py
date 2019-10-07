@@ -35,7 +35,6 @@ STATUS_DEPL = {
     "Pending" : StatusDepl("Pending"),
     "Started" : StatusDepl("Started")
 }
-
 POLICY = {
     "PreemptLowerPriority" : TypePolicy("PreemptLowerPriority"),
     "Never" : TypePolicy("Never")
