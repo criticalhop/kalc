@@ -10,46 +10,35 @@ from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
+import guardctl.misc.util as util
 
-TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
-TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
+TEST_CLUSTER_FOLDER = "./tests/test-daemonset/dump"
+TEST_DAEMONSET_APPLY = "./tests/test-daemonset/daemonset_apply.yaml"
 
-def test_load_requests():
+def test_load():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
-    k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
     objects = filter(lambda x: isinstance(x, DaemonSet), k.state_objects)
     for p in objects:
         if p.metadata_name == "fluentd-elasticsearch":
+            assert p.cpuRequest._get_value() == util.cpuConvertToAbstractProblem("400m")
+            assert p.memRequest._get_value() == util.memConvertToAbstractProblem("400Mi")
+            assert p.memLimit._get_value() == util.memConvertToAbstractProblem("400Mi")
             return
     raise ValueError("Could not find service loded")
 
-def test_load_limits():
+def test_load_create():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
-    k.create_resource(open(TEST_DAEMONET).read())
+    k.apply_resource(open(TEST_DAEMONSET_APPLY).read())
     k._build_state()
     objects = filter(lambda x: isinstance(x, DaemonSet), k.state_objects)
     for p in objects:
-        if p.metadata_name == "fluentd-elasticsearch" and \
-            p.cpuRequest > -1 and \
-            p.memRequest > -1 and \
-            p.memLimit > -1:
+        if p.metadata_name == "fluentd-elasticsearch":
+            assert len(util.objDeduplicatorByName(p.podList._get_value())) == 2
+            assert p.cpuRequest._get_value() == util.cpuConvertToAbstractProblem("10m")
+            assert p.memRequest._get_value() == util.memConvertToAbstractProblem("10Mi")
+            assert p.memLimit._get_value() == util.memConvertToAbstractProblem("10Mi")
             return
     raise ValueError("Could not find service loded")
-
-def test_limits_for_pods_created():
-    k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
-    k.create_resource(open(TEST_DAEMONET).read())
-    k._build_state()
-    objects = filter(lambda x: isinstance(x, Pod), k.state_objects)
-    for p in objects:
-        if str(p.metadata_name).startswith("fluentd-elasticsearch") and \
-            p.cpuRequest > -1 and \
-            p.memRequest > -1 and \
-            p.memLimit > -1:
-            return
-    raise ValueError("Could not find service loded")
-
