@@ -5,7 +5,7 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 import guardctl.model.system.Scheduler as mscheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
-from guardctl.model.system.primitives import Status, StatusDepl
+from guardctl.model.system.primitives import Status, StatusDepl, Label
 from guardctl.misc.const import STATUS_POD, STATUS_SCHED, STATUS_DEPL
 from guardctl.model.system.primitives import Status, Label
 from poodle import *
@@ -31,6 +31,9 @@ class Deployment(Controller, HasLimitsRequests):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
+        self.amountOfActivePods = 0
+        self.searchable = True
+        self.spec_priorityClassName = "KUBECTL-VAL-NONE"
 
 
     def hook_after_create(self, object_space):
@@ -69,6 +72,9 @@ class Deployment(Controller, HasLimitsRequests):
             except StopIteration:
                 logger.warning("Could not reference priority class")
             self.podList.add(new_pod)
+            new_pod.hasDeployment = True
+            new_pod.toNode = Node.NODE_NULL
+            new_pod.atNode = Node.NODE_NULL
             self.check_pod(new_pod, object_space)
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)

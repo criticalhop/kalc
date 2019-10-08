@@ -31,7 +31,10 @@ def print_objects(objectList):
         ", CpuLimit: " + str(poditem.cpuLimit._get_value()) + \
         ", MemLimit: " + str(poditem.memLimit._get_value()) + \
         ", TargetService: "+ str(poditem.targetService._property_value) +\
-        ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]))
+        ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]) + \
+        ", hasService: " + str(poditem.hasService._get_value()) + \
+        ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
+        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()))
     
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
     print("----------Nodes---------------")
@@ -70,12 +73,13 @@ def print_objects(objectList):
     print("----------Deployments------------")
     for deployment in deployments_loaded_list:
         print("## Deployment: "+str(deployment.metadata_name._get_value()) +\
-        " Replicas: "+ str(deployment.spec_replicas._get_value()) +\
+        " Spec_replicas: "+ str(deployment.spec_replicas._get_value()) +\
         " Namespace: " + str(deployment.metadata_namespace._get_value())+\
         " AmountOfActivePods: " + str(deployment.amountOfActivePods._get_value())+\
         " Status: " + str(deployment.status._get_value())+\
         " PodList: " + str([str(x) for x in deployment.podList._get_value()])+\
-        " PriorityClassName: " + str(deployment.spec_template_spec_priorityClassName._property_value))#+\
+        " PriorityClassName: " + str(deployment.spec_template_spec_priorityClassName._property_value) + \
+        " Searchable:" + str(deployment.searchable._get_value()))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
     
     globalvar_loaded_list = filter(lambda x: isinstance(x, GlobalVar), objectList)

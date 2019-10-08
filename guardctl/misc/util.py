@@ -76,7 +76,7 @@ def cpuConvertToAbstractProblem(cpuParot):
     else:
         cpu = int(cpuParot)*1000
     # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
-    cpu = int(cpu / 100)
+    cpu = int(cpu / 50)
     if cpu == 0:
         cpu = 1
     return int(cpu)
@@ -91,10 +91,12 @@ def memConvertToAbstractProblem(mem):
         ret = int(int(mem[:-2])/1000)
     else:
         ret = int(int(mem)/1000000)
-    ret = int(ret / 250)
+    ret = int(ret / 125)
     if ret == 0:
         ret = 1
     return int(ret)
+
+#object deduplicator by metadata_name
 def objDeduplicatorByName(objList):
     dedupList = []
     nameList = []

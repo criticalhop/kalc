@@ -35,16 +35,28 @@ APP_VERSION = '0.1.3'
                             is_flag=True, required=False, default=False)
 @click.option("--pipe", help="Terse mode to reduce verbosity for shell piping", \
                     type=bool, is_flag=True, required=False, default=False)
-def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe):
+@click.option("--mode", "-m", help="Choose the mode scale/apply/replace/remove/create(default)", \
+                required=False, default=KubernetesCluster.CREATE_MODE)
+@click.option("--replicas", help="take pods amount for scale, default 5", \
+                type=int, required=False, default=5)
+def run(from_dir, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas):
 
     k = KubernetesCluster()
 
     click.echo(f"# Loading cluster definitions from {from_dir} ...")
     k.load_dir(from_dir)
 
-    for f in filename:
-        click.echo(f"# Creating resource from {f} ...")
-        k.create_resource(open(f).read())
+    if mode == KubernetesCluster.CREATE_MODE:
+        for f in filename:
+            click.echo(f"# Creating resource from {f} ...")
+            k.create_resource(open(f).read())
+    if mode == KubernetesCluster.APPLY_MODE:
+        for f in filename:
+            click.echo(f"# Apply resource from {f} ...")
+            k.apply_resource(open(f).read())
+    if mode == KubernetesCluster.SCALE_MODE:
+        k.scale(replicas, mode)
+
 
     click.echo(f"# Building abstract state ...")
     k._build_state()

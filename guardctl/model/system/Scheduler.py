@@ -70,6 +70,43 @@ class Scheduler(Object):
         )
 
     @planned(cost=100)
+    def StartPod_IF_service_notnull__deployment_notnull(self, 
+        podStarted: "mpod.Pod",
+        node1: "Node" ,
+        scheduler1: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        deployment_of_pod: "mdeployment.Deployment"
+        ):
+
+        assert podStarted in scheduler1.podQueue
+        assert podStarted.toNode == node1
+        assert podStarted.targetService == serviceTargetForPod
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest <= node1.cpuCapacity 
+        assert node1.currentFormalMemConsumption + podStarted.memRequest <= node1.memCapacity 
+        assert podStarted in deployment_of_pod.podList
+        deployment_of_pod.amountOfActivePods += 1
+        
+        node1.currentFormalCpuConsumption += podStarted.cpuRequest
+        node1.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node1        
+        scheduler1.queueLength -= 1
+        scheduler1.podQueue.remove(podStarted)
+ 
+        serviceTargetForPod.amountOfActivePods += 1
+        podStarted.status = STATUS_POD["Running"] 
+        serviceTargetForPod.status = STATUS_SERV["Started"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node1)]
+        )
+
+    @planned(cost=100)
     def StartPod_IF_service_notnull__deployment_isnull(self, 
         podStarted: "mpod.Pod",
         node1: "Node" ,
@@ -174,7 +211,7 @@ class Scheduler(Object):
             affected=[describe(podStarted), describe(node1)]
         )
 
-    @planned(cost=5000)
+    @planned(cost=50000)
     def Scheduler_cant_allocate_pod(self, scheduler1: "Scheduler"):
         scheduler1.queueLength -= 1
         return ScenarioStep(

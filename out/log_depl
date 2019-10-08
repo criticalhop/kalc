@@ -1,0 +1,175 @@
+poodledev inst-nodeps: /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/.tmp/package/5/kubectl-val-0.1.3.tar.gz
+poodledev installed: aiohttp==3.6.1,altgraph==0.16.1,appdirs==1.4.3,astroid==2.3.1,async-timeout==3.0.1,atomicwrites==1.3.0,attrs==19.1.0,bowler==0.8.0,bsdiff4==1.1.5,Cerberus==1.3.1,certifi==2019.9.11,chardet==3.0.4,Click==7.0,coverage==4.5.4,dephell==0.7.7,dephell-archive==0.1.5,dephell-discover==0.2.8,dephell-licenses==0.1.6,dephell-links==0.1.4,dephell-markers==1.0.0,dephell-pythons==0.1.12,dephell-shells==0.1.3,dephell-specifier==0.2.1,dephell-venvs==0.1.16,dephell-versioning==0.1.1,docker==4.0.2,dockerpty==0.4.1,docutils==0.15.2,dsdev-utils==1.0.4,ed25519==1.5,fissix==19.2b1,Flask==1.1.1,guardctl==0.1.0,html5lib==1.0.1,idna==2.8,importlib-metadata==0.23,isort==4.3.21,itsdangerous==1.1.0,Jinja2==2.10.1,kubectl-chai==0.1.0,kubectl-val==0.1.3,lazy-object-proxy==1.4.2,logzero==1.5.0,m2r==0.2.1,MarkupSafe==1.1.1,mccabe==0.6.1,mistune==0.8.4,more-itertools==7.2.0,multidict==4.5.2,packaging==19.2,pbr==5.4.3,pexpect==4.7.0,pluggy==0.13.0,poodle==0.1.10,ptyprocess==0.6.0,py==1.8.0,PyInstaller==3.5,pylint==2.4.2,pyparsing==2.4.2,pytest==5.2.0,pytest-cov==2.7.1,pytest-pylint==0.14.1,PyUpdater==3.1.1,PyYAML==5.1.2,requests==2.22.0,sh==1.12.14,shellingham==1.3.1,six==1.12.0,stevedore==1.31.0,tomlkit==0.5.5,typed-ast==1.4.0,urllib3==1.25.6,wcwidth==0.1.7,webencodings==0.5.1,websocket-client==0.56.0,Werkzeug==0.16.0,wrapt==1.11.2,yarl==1.3.0,yaspin==0.15.0,zipp==0.6.0
+poodledev run-test-pre: PYTHONHASHSEED='1686949173'
+poodledev run-test: commands[0] | bash -c 'cd ../poodle && dephell project build --from pyproject.toml'
+WARNING cannot find tool.dephell section in the config (path=pyproject.toml)
+INFO dumping... (format=setuppy)
+INFO dumping... (format=egginfo)
+INFO dumping... (format=sdist)
+INFO dumping... (format=wheel)
+INFO builded 
+poodledev run-test: commands[1] | pip uninstall -y poodle
+Uninstalling poodle-0.1.10:
+  Successfully uninstalled poodle-0.1.10
+poodledev run-test: commands[2] | bash -c 'cd ../poodle && python ./setup.py install'
+running install
+running bdist_egg
+running egg_info
+writing poodle.egg-info/PKG-INFO
+writing dependency_links to poodle.egg-info/dependency_links.txt
+writing entry points to poodle.egg-info/entry_points.txt
+writing requirements to poodle.egg-info/requires.txt
+writing top-level names to poodle.egg-info/top_level.txt
+reading manifest file 'poodle.egg-info/SOURCES.txt'
+writing manifest file 'poodle.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/problem.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/pddlSplitter.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/__init__.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/arithmetic.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/schedule.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/web_solver.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/poodle_main.py -> build/bdist.linux-x86_64/egg/poodle
+byte-compiling build/bdist.linux-x86_64/egg/poodle/problem.py to problem.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/pddlSplitter.py to pddlSplitter.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/__init__.py to __init__.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/arithmetic.py to arithmetic.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/schedule.py to schedule.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/web_solver.py to web_solver.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/poodle_main.py to poodle_main.cpython-37.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/entry_points.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+poodle.__pycache__.poodle_main.cpython-37: module references __file__
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getsourcefile
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.findsource
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getframeinfo
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getouterframes
+creating 'dist/poodle-0.1.10-py3.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing poodle-0.1.10-py3.7.egg
+creating /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg
+Extracting poodle-0.1.10-py3.7.egg to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Adding poodle 0.1.10 to easy-install.pth file
+Installing poodleserver script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Installed /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg
+Processing dependencies for poodle==0.1.10
+Searching for requests==2.22.0
+Best match: requests 2.22.0
+Adding requests 2.22.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Flask==1.1.1
+Best match: Flask 1.1.1
+Adding Flask 1.1.1 to easy-install.pth file
+Installing flask script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for idna==2.8
+Best match: idna 2.8
+Adding idna 2.8 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for urllib3==1.25.6
+Best match: urllib3 1.25.6
+Adding urllib3 1.25.6 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for chardet==3.0.4
+Best match: chardet 3.0.4
+Adding chardet 3.0.4 to easy-install.pth file
+Installing chardetect script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for certifi==2019.9.11
+Best match: certifi 2019.9.11
+Adding certifi 2019.9.11 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for itsdangerous==1.1.0
+Best match: itsdangerous 1.1.0
+Adding itsdangerous 1.1.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Jinja2==2.10.1
+Best match: Jinja2 2.10.1
+Adding Jinja2 2.10.1 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Click==7.0
+Best match: Click 7.0
+Adding Click 7.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Werkzeug==0.16.0
+Best match: Werkzeug 0.16.0
+Adding Werkzeug 0.16.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for MarkupSafe==1.1.1
+Best match: MarkupSafe 1.1.1
+Adding MarkupSafe 1.1.1 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Finished processing dependencies for poodle==0.1.10
+poodledev run-test: commands[3] | bash -c 'fuser -k -n tcp $(echo -n $POODLE_SOLVER_URL|cut -d: -f3) || echo CLEAN'
+CLEAN
+poodledev run-test: commands[4] | bash -c 'cd ../downward && timeout 3000 poodleserver 2>&1 >/dev/null &'
+poodledev run-test: commands[5] | python -m pytest -s --disable-pytest-warnings --pylint --pylint-jobs=4 --pylint-error-types=EF tests/test_x_deployment_outage.py
+============================= test session starts ==============================
+platform linux -- Python 3.7.3, pytest-5.2.0, py-1.8.0, pluggy-0.13.0
+cachedir: .tox/poodledev/.pytest_cache
+rootdir: /home/vasily/environment-name/artemm/artem/kubectl-chai
+plugins: pylint-0.14.1, cov-2.7.1
+collected 2 items
+
+tests/test_x_deployment_outage.py sF
+
+=================================== FAILURES ===================================
+___________________ test_anydeployment_interrupted_fromfiles ___________________
+
+    def test_anydeployment_interrupted_fromfiles():
+        k = KubernetesCluster()
+        k.load_dir(TEST_CLUSTER_FOLDER)
+        k.create_resource(open(TEST_DEPLOYMENT).read())
+>       k._build_state()
+
+tests/test_x_deployment_outage.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+guardctl/model/kubernetes.py:69: in _build_state
+    self._build_item(item)
+guardctl/model/kubernetes.py:55: in _build_item
+    obj.hook_after_create(self.state_objects)
+guardctl/model/kinds/Deployment.py:43: in hook_after_create
+    self.create_pods(object_space, self.spec_replicas._get_value())
+guardctl/model/kinds/Deployment.py:52: in create_pods
+    for label in self.spec_selector_matchLabels._get_value():
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <guardctl.model.kinds.Deployment.Deployment object at 0x7f8158e716a0>
+attr = 'spec_selector_matchLabels'
+
+    def __getattribute__(self, attr):
+        if attr.startswith("_"): return super().__getattribute__(attr)
+        # this does not work and is not needed:::: -->
+        if hasattr(self, "_dot_from") and isinstance(self._dot_from, Property):
+            raise NotImplementedError("Dot-dot dereferencing is not implemeted, please do dereferencing manually")
+        # print(self,":",attr)
+>       v = super().__getattribute__(attr)
+E       AttributeError: 'Deployment' object has no attribute 'spec_selector_matchLabels'
+
+.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg/poodle/poodle_main.py:1771: AttributeError
+========================= 1 failed, 1 skipped in 7.67s =========================
+ERROR: InvocationError for command /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin/python -m pytest -s --disable-pytest-warnings --pylint --pylint-jobs=4 --pylint-error-types=EF tests/test_x_deployment_outage.py (exited with code 1)
+___________________________________ summary ____________________________________
+ERROR:   poodledev: commands failed

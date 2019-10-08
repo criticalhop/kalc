@@ -1,0 +1,443 @@
+poodledev inst-nodeps: /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/.tmp/package/6/kubectl-val-0.1.3.tar.gz
+poodledev installed: aiohttp==3.6.1,altgraph==0.16.1,appdirs==1.4.3,astroid==2.3.1,async-timeout==3.0.1,atomicwrites==1.3.0,attrs==19.1.0,bowler==0.8.0,bsdiff4==1.1.5,Cerberus==1.3.1,certifi==2019.9.11,chardet==3.0.4,Click==7.0,coverage==4.5.4,dephell==0.7.7,dephell-archive==0.1.5,dephell-discover==0.2.8,dephell-licenses==0.1.6,dephell-links==0.1.4,dephell-markers==1.0.0,dephell-pythons==0.1.12,dephell-shells==0.1.3,dephell-specifier==0.2.1,dephell-venvs==0.1.16,dephell-versioning==0.1.1,docker==4.0.2,dockerpty==0.4.1,docutils==0.15.2,dsdev-utils==1.0.4,ed25519==1.5,fissix==19.2b1,Flask==1.1.1,guardctl==0.1.0,html5lib==1.0.1,idna==2.8,importlib-metadata==0.23,isort==4.3.21,itsdangerous==1.1.0,Jinja2==2.10.1,kubectl-chai==0.1.0,kubectl-val==0.1.3,lazy-object-proxy==1.4.2,logzero==1.5.0,m2r==0.2.1,MarkupSafe==1.1.1,mccabe==0.6.1,mistune==0.8.4,more-itertools==7.2.0,multidict==4.5.2,packaging==19.2,pbr==5.4.3,pexpect==4.7.0,pluggy==0.13.0,ptyprocess==0.6.0,py==1.8.0,PyInstaller==3.5,pylint==2.4.2,pyparsing==2.4.2,pytest==5.2.0,pytest-cov==2.7.1,pytest-pylint==0.14.1,PyUpdater==3.1.1,PyYAML==5.1.2,requests==2.22.0,sh==1.12.14,shellingham==1.3.1,six==1.12.0,stevedore==1.31.0,tomlkit==0.5.5,typed-ast==1.4.0,urllib3==1.25.6,wcwidth==0.1.7,webencodings==0.5.1,websocket-client==0.56.0,Werkzeug==0.16.0,wrapt==1.11.2,yarl==1.3.0,yaspin==0.15.0,zipp==0.6.0
+poodledev run-test-pre: PYTHONHASHSEED='1759210807'
+poodledev run-test: commands[0] | bash -c 'cd ../poodle && dephell project build --from pyproject.toml'
+WARNING cannot find tool.dephell section in the config (path=pyproject.toml)
+INFO dumping... (format=setuppy)
+INFO dumping... (format=egginfo)
+INFO dumping... (format=sdist)
+INFO dumping... (format=wheel)
+INFO builded 
+poodledev run-test: commands[1] | pip uninstall -y poodle
+Uninstalling poodle-0.1.10:
+  Successfully uninstalled poodle-0.1.10
+poodledev run-test: commands[2] | bash -c 'cd ../poodle && python ./setup.py install'
+running install
+running bdist_egg
+running egg_info
+writing poodle.egg-info/PKG-INFO
+writing dependency_links to poodle.egg-info/dependency_links.txt
+writing entry points to poodle.egg-info/entry_points.txt
+writing requirements to poodle.egg-info/requires.txt
+writing top-level names to poodle.egg-info/top_level.txt
+reading manifest file 'poodle.egg-info/SOURCES.txt'
+writing manifest file 'poodle.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/problem.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/pddlSplitter.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/__init__.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/arithmetic.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/schedule.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/web_solver.py -> build/bdist.linux-x86_64/egg/poodle
+copying build/lib/poodle/poodle_main.py -> build/bdist.linux-x86_64/egg/poodle
+byte-compiling build/bdist.linux-x86_64/egg/poodle/problem.py to problem.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/pddlSplitter.py to pddlSplitter.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/__init__.py to __init__.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/arithmetic.py to arithmetic.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/schedule.py to schedule.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/web_solver.py to web_solver.cpython-37.pyc
+byte-compiling build/bdist.linux-x86_64/egg/poodle/poodle_main.py to poodle_main.cpython-37.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/entry_points.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying poodle.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+poodle.__pycache__.poodle_main.cpython-37: module references __file__
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getsourcefile
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.findsource
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getframeinfo
+poodle.__pycache__.poodle_main.cpython-37: module MAY be using inspect.getouterframes
+creating 'dist/poodle-0.1.10-py3.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing poodle-0.1.10-py3.7.egg
+creating /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg
+Extracting poodle-0.1.10-py3.7.egg to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Adding poodle 0.1.10 to easy-install.pth file
+Installing poodleserver script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Installed /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages/poodle-0.1.10-py3.7.egg
+Processing dependencies for poodle==0.1.10
+Searching for requests==2.22.0
+Best match: requests 2.22.0
+Adding requests 2.22.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Flask==1.1.1
+Best match: Flask 1.1.1
+Adding Flask 1.1.1 to easy-install.pth file
+Installing flask script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for certifi==2019.9.11
+Best match: certifi 2019.9.11
+Adding certifi 2019.9.11 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for chardet==3.0.4
+Best match: chardet 3.0.4
+Adding chardet 3.0.4 to easy-install.pth file
+Installing chardetect script to /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/bin
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for idna==2.8
+Best match: idna 2.8
+Adding idna 2.8 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for urllib3==1.25.6
+Best match: urllib3 1.25.6
+Adding urllib3 1.25.6 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Click==7.0
+Best match: Click 7.0
+Adding Click 7.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Jinja2==2.10.1
+Best match: Jinja2 2.10.1
+Adding Jinja2 2.10.1 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for Werkzeug==0.16.0
+Best match: Werkzeug 0.16.0
+Adding Werkzeug 0.16.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for itsdangerous==1.1.0
+Best match: itsdangerous 1.1.0
+Adding itsdangerous 1.1.0 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Searching for MarkupSafe==1.1.1
+Best match: MarkupSafe 1.1.1
+Adding MarkupSafe 1.1.1 to easy-install.pth file
+
+Using /home/vasily/environment-name/artemm/artem/kubectl-chai/.tox/poodledev/lib/python3.7/site-packages
+Finished processing dependencies for poodle==0.1.10
+poodledev run-test: commands[3] | bash -c 'fuser -k -n tcp $(echo -n $POODLE_SOLVER_URL|cut -d: -f3) || echo CLEAN'
+CLEAN
+poodledev run-test: commands[4] | bash -c 'cd ../downward && timeout 3000 poodleserver 2>&1 >/dev/null &'
+poodledev run-test: commands[5] | python -m pytest -s --disable-pytest-warnings --pylint --pylint-jobs=4 --pylint-error-types=EF tests/test_x_eviction.py
+============================= test session starts ==============================
+platform linux -- Python 3.7.3, pytest-5.2.0, py-1.8.0, pluggy-0.13.0
+cachedir: .tox/poodledev/.pytest_cache
+rootdir: /home/vasily/environment-name/artemm/artem/kubectl-chai
+plugins: pylint-0.14.1, cov-2.7.1
+collected 8 items
+
+tests/test_x_eviction.py s.....probability: 1.0
+steps:
+- actionName: Evict_and_replace_less_prioritized_pod_when_target_node_is_defined
+  affected:
+  - kind: Pod
+    metadata:
+      name: fluentd-elasticsearch-DaemonSet_CR-5
+  - kind: Pod
+    metadata:
+      name: redis-master-evict-fd97bd94b-n9ns6
+  description: Because pod has lower priority, it is getting evicted to make room
+    for new pod
+  parameters:
+    podPending:
+      kind: Pod
+      metadata:
+        name: fluentd-elasticsearch-DaemonSet_CR-5
+    podToBeReplaced:
+      kind: Pod
+      metadata:
+        name: redis-master-evict-fd97bd94b-n9ns6
+  probability: 1.0
+  subsystem: Pod
+- actionName: KillPod_IF_service_notnull__deployment_isnull
+  affected:
+  - kind: Pod
+    metadata:
+      name: redis-master-evict-fd97bd94b-n9ns6
+  description: Killing pod
+  parameters:
+    podBeingKilled:
+      kind: Pod
+      metadata:
+        name: redis-master-evict-fd97bd94b-n9ns6
+  probability: 1.0
+  subsystem: Pod
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: ScheduleQueueProcessed
+  affected: []
+  description: Finished processing pod queue
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: MarkServiceOutageEvent
+  affected:
+  - kind: Service
+    metadata:
+      name: redis-master-evict
+  description: Detected service outage event
+  parameters:
+    service:
+      kind: Service
+      metadata:
+        name: redis-master-evict
+    service.amountOfActivePods: 0
+  probability: 1.0
+  subsystem: SingleGoalEvictionDetect
+
+1 : Evict_and_replace_less_prioritized_pod_when_target_node_is_defined 
+ nodeForPodPending: None
+podPending: None
+podToBeReplaced: None
+priorityClassOfPendingPod: None
+priorityClassOfPodToBeReplaced: '''ZERO'''
+scheduler1: None
+
+2 : KillPod_IF_service_notnull__deployment_isnull 
+ amountOfActivePodsPrev: '1'
+nodeWithPod: None
+podBeingKilled: None
+scheduler1: None
+serviceOfPod: None
+
+3 : Scheduler_cant_allocate_pod 
+ scheduler1: None
+
+4 : Scheduler_cant_allocate_pod 
+ scheduler1: None
+
+5 : Scheduler_cant_allocate_pod 
+ scheduler1: None
+
+6 : Scheduler_cant_allocate_pod 
+ scheduler1: None
+
+7 : Scheduler_cant_allocate_pod 
+ scheduler1: None
+
+8 : ScheduleQueueProcessed 
+ scheduler1: None
+
+9 : MarkServiceOutageEvent 
+ global_: None
+pod1: None
+scheduler1: None
+service1: None
+
+.<==== Domain Object List =====>
+----------Pods---------------
+## Pod:foobar-wrong-1567697400-7b4np, Status: Succeeded, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-uid:0a420fdd-cff2-11e9-98f3-42010a8000c4', 'controller-uid:0a420fdd-cff2-11e9-98f3-42010a8000c4', 'job-name:foobar-wrong-1567697400', 'job-name:foobar-wrong-1567697400']
+## Pod:foobar-wrong-1567697700-zkpwz, Status: Succeeded, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-uid:bd65e78e-cff2-11e9-98f3-42010a8000c4', 'controller-uid:bd65e78e-cff2-11e9-98f3-42010a8000c4', 'job-name:foobar-wrong-1567697700', 'job-name:foobar-wrong-1567697700']
+## Pod:foobar-wrong-1567698000-5ft9z, Status: Succeeded, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-uid:708facd7-cff3-11e9-98f3-42010a8000c4', 'controller-uid:708facd7-cff3-11e9-98f3-42010a8000c4', 'job-name:foobar-wrong-1567698000', 'job-name:foobar-wrong-1567698000']
+## Pod:foobar-wrong-1567698300-b986p, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-zpc5, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-uid:23b937c6-cff4-11e9-98f3-42010a8000c4', 'controller-uid:23b937c6-cff4-11e9-98f3-42010a8000c4', 'job-name:foobar-wrong-1567698300', 'job-name:foobar-wrong-1567698300']
+## Pod:foobar-wrong-1567698600-hms9c, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-zpc5, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-uid:d6dfbfd3-cff4-11e9-98f3-42010a8000c4', 'controller-uid:d6dfbfd3-cff4-11e9-98f3-42010a8000c4', 'job-name:foobar-wrong-1567698600', 'job-name:foobar-wrong-1567698600']
+## Pod:redis-master-57fc67768d-hl44k, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: redis-master, Metadata_labels:['app:redis', 'app:redis', 'pod-template-hash:57fc67768d', 'pod-template-hash:57fc67768d', 'role:master', 'role:master', 'tier:backend', 'tier:backend']
+## Pod:redis-master-evict-fd97bd94b-n9ns6, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-zpc5, CpuRequest: 5, MemRequest: 6, CpuLimit: -1, MemLimit: -1, TargetService: redis-master-evict, Metadata_labels:['app:redis-evict', 'app:redis-evict', 'pod-template-hash:fd97bd94b', 'pod-template-hash:fd97bd94b', 'role:master', 'role:master', 'tier:backend', 'tier:backend']
+## Pod:redis-slave-57f9f8db74-bcnvr, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: redis-slave, Metadata_labels:['app:redis', 'app:redis', 'pod-template-hash:57f9f8db74', 'pod-template-hash:57f9f8db74', 'role:slave', 'role:slave', 'tier:backend', 'tier:backend']
+## Pod:redis-slave-57f9f8db74-l6sf8, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: redis-slave, Metadata_labels:['app:redis', 'app:redis', 'pod-template-hash:57f9f8db74', 'pod-template-hash:57f9f8db74', 'role:slave', 'role:slave', 'tier:backend', 'tier:backend']
+## Pod:event-exporter-v0.2.4-5f7d5d7dd4-7mfz5, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-z7lx, CpuRequest: -1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['k8s-app:event-exporter', 'k8s-app:event-exporter', 'pod-template-hash:5f7d5d7dd4', 'pod-template-hash:5f7d5d7dd4', 'version:v0.2.4', 'version:v0.2.4']
+## Pod:fluentd-gcp-scaler-7b895cbc89-jwx5z, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: -1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['k8s-app:fluentd-gcp-scaler', 'k8s-app:fluentd-gcp-scaler', 'pod-template-hash:7b895cbc89', 'pod-template-hash:7b895cbc89']
+## Pod:fluentd-gcp-v3.2.0-7kkcj, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-7kwg, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:5f6f57c9d4', 'controller-revision-hash:5f6f57c9d4', 'k8s-app:fluentd-gcp', 'k8s-app:fluentd-gcp', 'kubernetes.io/cluster-service:true', 'kubernetes.io/cluster-service:true', 'pod-template-generation:2', 'pod-template-generation:2', 'version:v3.2.0', 'version:v3.2.0']
+## Pod:fluentd-gcp-v3.2.0-9ps5k, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:5f6f57c9d4', 'controller-revision-hash:5f6f57c9d4', 'k8s-app:fluentd-gcp', 'k8s-app:fluentd-gcp', 'kubernetes.io/cluster-service:true', 'kubernetes.io/cluster-service:true', 'pod-template-generation:2', 'pod-template-generation:2', 'version:v3.2.0', 'version:v3.2.0']
+## Pod:fluentd-gcp-v3.2.0-bfltt, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-zpc5, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:5f6f57c9d4', 'controller-revision-hash:5f6f57c9d4', 'k8s-app:fluentd-gcp', 'k8s-app:fluentd-gcp', 'kubernetes.io/cluster-service:true', 'kubernetes.io/cluster-service:true', 'pod-template-generation:2', 'pod-template-generation:2', 'version:v3.2.0', 'version:v3.2.0']
+## Pod:fluentd-gcp-v3.2.0-fn449, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-z7lx, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:5f6f57c9d4', 'controller-revision-hash:5f6f57c9d4', 'k8s-app:fluentd-gcp', 'k8s-app:fluentd-gcp', 'kubernetes.io/cluster-service:true', 'kubernetes.io/cluster-service:true', 'pod-template-generation:2', 'pod-template-generation:2', 'version:v3.2.0', 'version:v3.2.0']
+## Pod:fluentd-gcp-v3.2.0-lpchk, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:5f6f57c9d4', 'controller-revision-hash:5f6f57c9d4', 'k8s-app:fluentd-gcp', 'k8s-app:fluentd-gcp', 'kubernetes.io/cluster-service:true', 'kubernetes.io/cluster-service:true', 'pod-template-generation:2', 'pod-template-generation:2', 'version:v3.2.0', 'version:v3.2.0']
+## Pod:heapster-v1.6.0-beta.1-68cdfd6769-jlmfs, Status: Running, Priority_class: system-cluster-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 2, MemRequest: 2, CpuLimit: -1, MemLimit: -1, TargetService: heapster, Metadata_labels:['k8s-app:heapster', 'k8s-app:heapster', 'pod-template-hash:68cdfd6769', 'pod-template-hash:68cdfd6769', 'version:v1.6.0-beta.1', 'version:v1.6.0-beta.1']
+## Pod:kube-dns-autoscaler-76fcd5f658-rnlsr, Status: Running, Priority_class: system-cluster-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-7kwg, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['k8s-app:kube-dns-autoscaler', 'k8s-app:kube-dns-autoscaler', 'pod-template-hash:76fcd5f658', 'pod-template-hash:76fcd5f658']
+## Pod:kube-dns-b46cc9485-4zk7g, Status: Running, Priority_class: system-cluster-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-7kwg, CpuRequest: 3, MemRequest: 3, CpuLimit: -1, MemLimit: -1, TargetService: kube-dns, Metadata_labels:['k8s-app:kube-dns', 'k8s-app:kube-dns', 'pod-template-hash:b46cc9485', 'pod-template-hash:b46cc9485']
+## Pod:kube-dns-b46cc9485-9nfcn, Status: Running, Priority_class: system-cluster-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-z7lx, CpuRequest: 3, MemRequest: 3, CpuLimit: -1, MemLimit: -1, TargetService: kube-dns, Metadata_labels:['k8s-app:kube-dns', 'k8s-app:kube-dns', 'pod-template-hash:b46cc9485', 'pod-template-hash:b46cc9485']
+## Pod:kube-proxy-gke-tesg1-default-pool-ff7a1295-7kwg, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-7kwg, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['component:kube-proxy', 'component:kube-proxy', 'tier:node', 'tier:node']
+## Pod:kube-proxy-gke-tesg1-default-pool-ff7a1295-dmtd, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['component:kube-proxy', 'component:kube-proxy', 'tier:node', 'tier:node']
+## Pod:kube-proxy-gke-tesg1-default-pool-ff7a1295-nvv4, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['component:kube-proxy', 'component:kube-proxy', 'tier:node', 'tier:node']
+## Pod:kube-proxy-gke-tesg1-default-pool-ff7a1295-z7lx, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-z7lx, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['component:kube-proxy', 'component:kube-proxy', 'tier:node', 'tier:node']
+## Pod:kube-proxy-gke-tesg1-default-pool-ff7a1295-zpc5, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-zpc5, CpuRequest: 1, MemRequest: -1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['component:kube-proxy', 'component:kube-proxy', 'tier:node', 'tier:node']
+## Pod:l7-default-backend-6f8697844f-2jxzf, Status: Running, Priority_class: Normal-zero, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-z7lx, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: default-http-backend, Metadata_labels:['k8s-app:glbc', 'k8s-app:glbc', 'name:glbc', 'name:glbc', 'pod-template-hash:6f8697844f', 'pod-template-hash:6f8697844f']
+## Pod:metrics-server-v0.3.1-5b4d6d8d98-6d7st, Status: Running, Priority_class: system-cluster-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 2, MemRequest: 2, CpuLimit: -1, MemLimit: -1, TargetService: metrics-server, Metadata_labels:['k8s-app:metrics-server', 'k8s-app:metrics-server', 'pod-template-hash:5b4d6d8d98', 'pod-template-hash:5b4d6d8d98', 'version:v0.3.1', 'version:v0.3.1']
+## Pod:prometheus-to-sd-bxj4q, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-7kwg, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:74558c4b56', 'controller-revision-hash:74558c4b56', 'k8s-app:prometheus-to-sd', 'k8s-app:prometheus-to-sd', 'pod-template-generation:1', 'pod-template-generation:1']
+## Pod:prometheus-to-sd-cfn8s, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-z7lx, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:74558c4b56', 'controller-revision-hash:74558c4b56', 'k8s-app:prometheus-to-sd', 'k8s-app:prometheus-to-sd', 'pod-template-generation:1', 'pod-template-generation:1']
+## Pod:prometheus-to-sd-dtfdm, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-dmtd, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:74558c4b56', 'controller-revision-hash:74558c4b56', 'k8s-app:prometheus-to-sd', 'k8s-app:prometheus-to-sd', 'pod-template-generation:1', 'pod-template-generation:1']
+## Pod:prometheus-to-sd-mc682, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-zpc5, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:74558c4b56', 'controller-revision-hash:74558c4b56', 'k8s-app:prometheus-to-sd', 'k8s-app:prometheus-to-sd', 'pod-template-generation:1', 'pod-template-generation:1']
+## Pod:prometheus-to-sd-w8hsj, Status: Running, Priority_class: system-node-critical, ToNode: <unnamed node>, AtNode: gke-tesg1-default-pool-ff7a1295-nvv4, CpuRequest: 1, MemRequest: 1, CpuLimit: -1, MemLimit: -1, TargetService: None, Metadata_labels:['controller-revision-hash:74558c4b56', 'controller-revision-hash:74558c4b56', 'k8s-app:prometheus-to-sd', 'k8s-app:prometheus-to-sd', 'pod-template-generation:1', 'pod-template-generation:1']
+## Pod:fluentd-elasticsearch-DaemonSet_CR-1, Status: Pending, Priority_class: high-priority, ToNode: gke-tesg1-default-pool-ff7a1295-7kwg, AtNode: <unnamed node>, CpuRequest: 4, MemRequest: 5, CpuLimit: -1, MemLimit: 1, TargetService: None, Metadata_labels:[]
+## Pod:fluentd-elasticsearch-DaemonSet_CR-2, Status: Pending, Priority_class: high-priority, ToNode: gke-tesg1-default-pool-ff7a1295-dmtd, AtNode: <unnamed node>, CpuRequest: 4, MemRequest: 5, CpuLimit: -1, MemLimit: 1, TargetService: None, Metadata_labels:[]
+## Pod:fluentd-elasticsearch-DaemonSet_CR-3, Status: Pending, Priority_class: high-priority, ToNode: gke-tesg1-default-pool-ff7a1295-nvv4, AtNode: <unnamed node>, CpuRequest: 4, MemRequest: 5, CpuLimit: -1, MemLimit: 1, TargetService: None, Metadata_labels:[]
+## Pod:fluentd-elasticsearch-DaemonSet_CR-4, Status: Pending, Priority_class: high-priority, ToNode: gke-tesg1-default-pool-ff7a1295-z7lx, AtNode: <unnamed node>, CpuRequest: 4, MemRequest: 5, CpuLimit: -1, MemLimit: 1, TargetService: None, Metadata_labels:[]
+## Pod:fluentd-elasticsearch-DaemonSet_CR-5, Status: Pending, Priority_class: high-priority, ToNode: gke-tesg1-default-pool-ff7a1295-zpc5, AtNode: <unnamed node>, CpuRequest: 4, MemRequest: 5, CpuLimit: -1, MemLimit: 1, TargetService: None, Metadata_labels:[]
+----------Nodes---------------
+## Node:gke-tesg1-default-pool-ff7a1295-7kwg, cpuCapacity: 9, memCapacity: 10, CurrentFormalCpuConsumption: 7, CurrentFormalMemConsumption: 6, AmountOfPodsOverwhelmingMemLimits: 0, PodAmount: None, IsNull:FALSE, Status:None
+## Node:gke-tesg1-default-pool-ff7a1295-dmtd, cpuCapacity: 9, memCapacity: 10, CurrentFormalCpuConsumption: 7, CurrentFormalMemConsumption: 3, AmountOfPodsOverwhelmingMemLimits: 0, PodAmount: None, IsNull:FALSE, Status:None
+## Node:gke-tesg1-default-pool-ff7a1295-nvv4, cpuCapacity: 9, memCapacity: 10, CurrentFormalCpuConsumption: 9, CurrentFormalMemConsumption: 8, AmountOfPodsOverwhelmingMemLimits: 0, PodAmount: None, IsNull:FALSE, Status:None
+## Node:gke-tesg1-default-pool-ff7a1295-z7lx, cpuCapacity: 9, memCapacity: 10, CurrentFormalCpuConsumption: 7, CurrentFormalMemConsumption: 6, AmountOfPodsOverwhelmingMemLimits: 0, PodAmount: None, IsNull:FALSE, Status:None
+## Node:gke-tesg1-default-pool-ff7a1295-zpc5, cpuCapacity: 9, memCapacity: 10, CurrentFormalCpuConsumption: 10, CurrentFormalMemConsumption: 8, AmountOfPodsOverwhelmingMemLimits: 0, PodAmount: None, IsNull:FALSE, Status:None
+----------Services---------------
+## Service: frontend, AmountOfActivePods: 0, Status: Pending, Spec_selector: ['app:guestbook', 'app:guestbook', 'tier:frontend', 'tier:frontend']
+## Service: kubernetes, AmountOfActivePods: 0, Status: Pending, Spec_selector: []
+## Service: redis-master, AmountOfActivePods: 1, Status: Started, Spec_selector: ['app:redis', 'app:redis', 'role:master', 'role:master', 'tier:backend', 'tier:backend']
+## Service: redis-master-evict, AmountOfActivePods: 1, Status: Started, Spec_selector: ['app:redis-evict', 'app:redis-evict', 'role:master', 'role:master', 'tier:backend', 'tier:backend']
+## Service: redis-slave, AmountOfActivePods: 2, Status: Started, Spec_selector: ['app:redis', 'app:redis', 'role:slave', 'role:slave', 'tier:backend', 'tier:backend']
+## Service: redis-slave-unlimit, AmountOfActivePods: 0, Status: Pending, Spec_selector: ['app:redis', 'app:redis', 'role:slave-unlimit', 'role:slave-unlimit', 'tier:backend', 'tier:backend']
+## Service: default-http-backend, AmountOfActivePods: 1, Status: Started, Spec_selector: ['k8s-app:glbc', 'k8s-app:glbc']
+## Service: heapster, AmountOfActivePods: 1, Status: Started, Spec_selector: ['k8s-app:heapster', 'k8s-app:heapster']
+## Service: kube-dns, AmountOfActivePods: 2, Status: Started, Spec_selector: ['k8s-app:kube-dns', 'k8s-app:kube-dns']
+## Service: metrics-server, AmountOfActivePods: 1, Status: Started, Spec_selector: ['k8s-app:metrics-server', 'k8s-app:metrics-server']
+----------PriorityClasses---------------
+## PriorityClass: high-priority 286
+## PriorityClass: system-cluster-critical 286
+## PriorityClass: system-node-critical 286
+----------Shedulers---------------
+## Sheduler: Changed PodList: ['fluentd-elasticsearch-DaemonSet_CR-1', 'fluentd-elasticsearch-DaemonSet_CR-1', 'fluentd-elasticsearch-DaemonSet_CR-2', 'fluentd-elasticsearch-DaemonSet_CR-2', 'fluentd-elasticsearch-DaemonSet_CR-3', 'fluentd-elasticsearch-DaemonSet_CR-3', 'fluentd-elasticsearch-DaemonSet_CR-4', 'fluentd-elasticsearch-DaemonSet_CR-4', 'fluentd-elasticsearch-DaemonSet_CR-5', 'fluentd-elasticsearch-DaemonSet_CR-5'] QueueLength: 5
+----------Deployments------------
+----------GlobalVar------------
+['', 'is_service_interrupted', 'FALSE', 'is_depl_interrupted', 'FALSE']
+probability: 1.0
+steps:
+- actionName: Evict_and_replace_less_prioritized_pod_when_target_node_is_defined
+  affected:
+  - kind: Pod
+    metadata:
+      name: fluentd-elasticsearch-DaemonSet_CR-2
+  - kind: Pod
+    metadata:
+      name: redis-slave-57f9f8db74-bcnvr
+  description: Because pod has lower priority, it is getting evicted to make room
+    for new pod
+  parameters:
+    podPending:
+      kind: Pod
+      metadata:
+        name: fluentd-elasticsearch-DaemonSet_CR-2
+    podToBeReplaced:
+      kind: Pod
+      metadata:
+        name: redis-slave-57f9f8db74-bcnvr
+  probability: 1.0
+  subsystem: Pod
+- actionName: Evict_and_replace_less_prioritized_pod_when_target_node_is_defined
+  affected:
+  - kind: Pod
+    metadata:
+      name: fluentd-elasticsearch-DaemonSet_CR-5
+  - kind: Pod
+    metadata:
+      name: redis-master-evict-fd97bd94b-n9ns6
+  description: Because pod has lower priority, it is getting evicted to make room
+    for new pod
+  parameters:
+    podPending:
+      kind: Pod
+      metadata:
+        name: fluentd-elasticsearch-DaemonSet_CR-5
+    podToBeReplaced:
+      kind: Pod
+      metadata:
+        name: redis-master-evict-fd97bd94b-n9ns6
+  probability: 1.0
+  subsystem: Pod
+- actionName: KillPod_IF_service_notnull__deployment_isnull
+  affected:
+  - kind: Pod
+    metadata:
+      name: redis-master-evict-fd97bd94b-n9ns6
+  description: Killing pod
+  parameters:
+    podBeingKilled:
+      kind: Pod
+      metadata:
+        name: redis-master-evict-fd97bd94b-n9ns6
+  probability: 1.0
+  subsystem: Pod
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: Scheduler_cant_allocate_pod
+  affected: []
+  description: Can't place a pod
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: ScheduleQueueProcessed
+  affected: []
+  description: Finished processing pod queue
+  parameters: {}
+  probability: 1.0
+  subsystem: Scheduler
+- actionName: MarkServiceOutageEvent
+  affected:
+  - kind: Service
+    metadata:
+      name: redis-master-evict
+  description: Detected service outage event
+  parameters:
+    service:
+      kind: Service
+      metadata:
+        name: redis-master-evict
+    service.amountOfActivePods: 0
+  probability: 1.0
+  subsystem: AnyServiceInterrupted
+
+.
+
+=================== 7 passed, 1 skipped in 251.61s (0:04:11) ===================
+poodledev run-test: commands[6] | bash -c 'fuser -k -n tcp $(echo -n $POODLE_SOLVER_URL|cut -d: -f3) || echo CLEAN'
+4353/tcp:            187342
+___________________________________ summary ____________________________________
+  poodledev: commands succeeded
+  congratulations :)
+/bin/bash: line 1: 187341 Killed                  timeout 3000 poodleserver 2>&1 > /dev/null
