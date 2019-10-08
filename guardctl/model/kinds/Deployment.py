@@ -6,7 +6,7 @@ from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status, Label
-from guardctl.misc.const import STATUS_POD, STATUS_SCHED
+from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDepl
 from poodle import *
 from typing import Set
 from logzero import logger
@@ -20,7 +20,7 @@ class Deployment(Controller, HasLimitsRequests):
     apiVersion: str
     lastPod: "mpod.Pod"
     amountOfActivePods: int
-    status: Status
+    status: StatusDepl
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
     hash: str
@@ -29,7 +29,8 @@ class Deployment(Controller, HasLimitsRequests):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
-
+        self.amountOfActivePods = 0
+        self.searchable = True
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
@@ -39,6 +40,7 @@ class Deployment(Controller, HasLimitsRequests):
                 logger.error(message)
                 raise AssertionError(message)
         self.create_pods(object_space, self.spec_replicas._get_value())
+
 
     def create_pods(self, object_space, replicas, start_from=0):
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
@@ -58,6 +60,7 @@ class Deployment(Controller, HasLimitsRequests):
             new_pod.status = STATUS_POD["Pending"]
             new_pod.hook_after_load(object_space, _ignore_orphan=True) # for service<>pod link
             new_pod.set_priority(object_space, self)
+            new_pod.hasDeployment = True
             self.podList.add(new_pod)
             self.check_pod(new_pod, object_space)
             object_space.append(new_pod)

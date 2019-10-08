@@ -38,6 +38,10 @@ class Pod(HasLabel, HasLimitsRequests):
     status: StatusPod
     isNull: bool
     # amountOfActiveRequests: int # For requests
+    hasDeployment: bool
+    hasService: bool
+    hasDaemonset: bool
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -130,6 +134,7 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     #     self.priority = value
 
     def __str__(self): return str(self._get_value())
+
 
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
