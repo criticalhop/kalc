@@ -33,10 +33,10 @@ def mark_excluded_service(object_space):
         if service.metadata_name in list(EXCLUDED_SERV):
            service.searchable = False
 
-class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
+# class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
 
-    goal = lambda self: self.globalVar.is_depl_interrupted == True and \
-            self.scheduler.status == STATUS_SCHED["Clean"]
+#     goal = lambda self: self.globalVar.is_depl_interrupted == True and \
+#             self.scheduler.status == STATUS_SCHED["Clean"]
 class OptimisticRun(K8ServiceInterruptSearch):
 
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
