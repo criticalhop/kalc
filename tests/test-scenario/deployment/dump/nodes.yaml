@@ -1,0 +1,484 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      container.googleapis.com/instance_id: "7825266721424183618"
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2019-09-17T19:12:46Z"
+    labels:
+      beta.kubernetes.io/arch: amd64
+      beta.kubernetes.io/fluentd-ds-ready: "true"
+      beta.kubernetes.io/instance-type: n1-standard-1
+      beta.kubernetes.io/os: linux
+      cloud.google.com/gke-nodepool: default-pool
+      cloud.google.com/gke-os-distribution: cos
+      failure-domain.beta.kubernetes.io/region: us-central1
+      failure-domain.beta.kubernetes.io/zone: us-central1-a
+      kubernetes.io/hostname: gke-testspace-default-pool-72d9c2b5-562n
+    name: gke-testspace-default-pool-72d9c2b5-562n
+    resourceVersion: "2234824"
+    selfLink: /api/v1/nodes/gke-testspace-default-pool-72d9c2b5-562n
+    uid: 21aa5658-d97f-11e9-bb1f-42010a800115
+  spec:
+    podCIDR: 10.4.1.0/24
+    providerID: gce://closercriticalhop/us-central1-a/gke-testspace-default-pool-72d9c2b5-562n
+  status:
+    addresses:
+    - address: 10.128.0.29
+      type: InternalIP
+    - address: 34.69.191.206
+      type: ExternalIP
+    - address: gke-testspace-default-pool-72d9c2b5-562n.us-central1-a.c.closercriticalhop.internal
+      type: InternalDNS
+    - address: gke-testspace-default-pool-72d9c2b5-562n.us-central1-a.c.closercriticalhop.internal
+      type: Hostname
+    allocatable:
+      attachable-volumes-gce-pd: "128"
+      cpu: 940m
+      ephemeral-storage: "47093746742"
+      hugepages-2Mi: "0"
+      memory: 2701496Ki
+      pods: "110"
+    capacity:
+      attachable-volumes-gce-pd: "128"
+      cpu: "1"
+      ephemeral-storage: 98868448Ki
+      hugepages-2Mi: "0"
+      memory: 3786936Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:11:08Z"
+      message: kernel has no deadlock
+      reason: KernelHasNoDeadlock
+      status: "False"
+      type: KernelDeadlock
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:11:08Z"
+      message: Filesystem is not read-only
+      reason: FilesystemIsNotReadOnly
+      status: "False"
+      type: ReadonlyFilesystem
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:16:10Z"
+      message: node is functioning properly
+      reason: UnregisterNetDevice
+      status: "False"
+      type: FrequentUnregisterNetDevice
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:16:10Z"
+      message: kubelet is functioning properly
+      reason: FrequentKubeletRestart
+      status: "False"
+      type: FrequentKubeletRestart
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: docker is functioning properly
+      reason: FrequentDockerRestart
+      status: "False"
+      type: FrequentDockerRestart
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:16:12Z"
+      message: containerd is functioning properly
+      reason: FrequentContainerdRestart
+      status: "False"
+      type: FrequentContainerdRestart
+    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
+      lastTransitionTime: "2019-09-17T19:16:10Z"
+      message: docker overlay2 is functioning properly
+      reason: CorruptDockerOverlay2
+      status: "False"
+      type: CorruptDockerOverlay2
+    - lastHeartbeatTime: "2019-09-17T19:13:03Z"
+      lastTransitionTime: "2019-09-17T19:13:03Z"
+      message: RouteController created a route
+      reason: RouteCreated
+      status: "False"
+      type: NetworkUnavailable
+    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
+      lastTransitionTime: "2019-09-17T19:12:46Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
+      lastTransitionTime: "2019-09-17T19:12:47Z"
+      message: kubelet is posting ready status. AppArmor enabled
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    images:
+    - names:
+      - k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      - k8s.gcr.io/redis:e2e
+      sizeBytes: 419003740
+    - names:
+      - k8s.gcr.io/node-problem-detector@sha256:f95cab985c26b2f46e9bd43283e0bfa88860c14e0fb0649266babe8b65e9eb2b
+      - k8s.gcr.io/node-problem-detector:v0.4.1
+      sizeBytes: 286572743
+    - names:
+      - gcr.io/stackdriver-agents/stackdriver-logging-agent@sha256:6c8574a40816676cd908cfa89d16463002b56ca05fa76d0c912e116bc0ab867e
+      - gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.8
+      sizeBytes: 264721247
+    - names:
+      - gcr.io/google-containers/fluentd-elasticsearch@sha256:5a704c386f66bb3c24e3bcf2e94269c426f1473100fcd37b31579ca8b709c558
+      - gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+      sizeBytes: 139904122
+    - names:
+      - k8s.gcr.io/fluentd-elasticsearch@sha256:a54e7a450c0bdd19f49f56e487427a08c50f99ea8f8846179acf7d4182ce1fc0
+      - k8s.gcr.io/fluentd-elasticsearch:v2.2.0
+      sizeBytes: 138313727
+    - names:
+      - nginx@sha256:2f68b99bc0d6d25d0c56876b924ec20418544ff28e1fb89a4c27679a40da811b
+      - nginx:1.9.1
+      sizeBytes: 132835913
+    - names:
+      - k8s.gcr.io/kubernetes-dashboard-amd64@sha256:0ae6b69432e78069c5ce2bcde0fe409c5c4d6f0f4d9cd50a17974fea38898747
+      - k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1
+      sizeBytes: 121711221
+    - names:
+      - gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      - gcr.io/google_samples/gb-redisslave:v1
+      sizeBytes: 109508753
+    - names:
+      - k8s.gcr.io/kube-addon-manager@sha256:2fd1daf3d3cf0e94a753f2263b60dbb0d42b107b5cde0c75ee3fc5c830e016e4
+      - k8s.gcr.io/kube-addon-manager:v8.9
+      sizeBytes: 99240637
+    - names:
+      - nginx@sha256:e3456c851a152494c3e4ff5fcc26f240206abac0c9d794affb40e0714846c451
+      - nginx:1.7.9
+      sizeBytes: 91664166
+    - names:
+      - k8s.gcr.io/fluentd-gcp-scaler@sha256:4f28f10fb89506768910b858f7a18ffb996824a16d70d5ac895e49687df9ff58
+      - k8s.gcr.io/fluentd-gcp-scaler:0.5.2
+      sizeBytes: 90498960
+    - names:
+      - k8s.gcr.io/kube-proxy:v1.13.7-gke.8
+      sizeBytes: 81741972
+    - names:
+      - gcr.io/stackdriver-agents/heapster-amd64@sha256:b00d659e538bedecf7014fffb7a6d0d3377326a921b4416a7727a7022a7be901
+      - gcr.io/stackdriver-agents/heapster-amd64:v1.6.1
+      sizeBytes: 78522086
+    - names:
+      - k8s.gcr.io/heapster-amd64@sha256:9fae0af136ce0cf4f88393b3670f7139ffc464692060c374d2ae748e13144521
+      - k8s.gcr.io/heapster-amd64:v1.6.0-beta.1
+      sizeBytes: 76016169
+    - names:
+      - k8s.gcr.io/ingress-gce-glbc-amd64@sha256:14f14351a03038b238232e60850a9cfa0dffbed0590321ef84216a432accc1ca
+      - k8s.gcr.io/ingress-gce-glbc-amd64:v1.2.3
+      sizeBytes: 71797285
+    - names:
+      - k8s.gcr.io/k8s-dns-node-cache@sha256:c67f04ac8b9d30b96eeedc47008e5af403e8ab42d139796de3b03865ab99940b
+      - k8s.gcr.io/k8s-dns-node-cache:1.15.2
+      sizeBytes: 62530777
+    - names:
+      - k8s.gcr.io/cpvpa-amd64@sha256:cfe7b0a11c9c8e18c87b1eb34fef9a7cbb8480a8da11fc2657f78dbf4739f869
+      - k8s.gcr.io/cpvpa-amd64:v0.6.0
+      sizeBytes: 51785854
+    - names:
+      - k8s.gcr.io/k8s-dns-kube-dns-amd64@sha256:618a82fa66cf0c75e4753369a6999032372be7308866fc9afb381789b1e5ad52
+      - k8s.gcr.io/k8s-dns-kube-dns@sha256:c54a527a4ba8f1bc15e4796b09bf5d69313c7f42af9911dc437e056c0264a2fe
+      - k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
+      - k8s.gcr.io/k8s-dns-kube-dns:1.14.13
+      sizeBytes: 51157394
+    - names:
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64@sha256:003f98d9f411ddfa6ff6d539196355e03ddd69fa4ed38c7ffb8fec6f729afe2d
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.1.2-r2
+      sizeBytes: 49648481
+    - names:
+      - k8s.gcr.io/ip-masq-agent-amd64@sha256:1ffda57d87901bc01324c82ceb2145fe6a0448d3f0dd9cb65aa76a867cd62103
+      - k8s.gcr.io/ip-masq-agent-amd64:v2.1.1
+      sizeBytes: 49612505
+    - names:
+      - k8s.gcr.io/event-exporter@sha256:16ca66e2b5dc7a1ce6a5aafcb21d0885828b75cdfc08135430480f7ad2364adc
+      - k8s.gcr.io/event-exporter:v0.2.4
+      sizeBytes: 47261019
+    - names:
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64@sha256:4fd37c5b29a38b02c408c56254bd1a3a76f3e236610bc7a8382500bbf9ecfc76
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.3.0
+      sizeBytes: 45844959
+    - names:
+      - k8s.gcr.io/k8s-dns-sidecar-amd64@sha256:cedc8fe2098dffc26d17f64061296b7aa54258a31513b6c52df271a98bb522b3
+      - k8s.gcr.io/k8s-dns-sidecar@sha256:c4f36a12fa297c48cb80779c89f6a58818d1fa7edccb08bc67d79acacc3871d7
+      - k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+      - k8s.gcr.io/k8s-dns-sidecar:1.14.13
+      sizeBytes: 42852039
+    - names:
+      - k8s.gcr.io/gke-node-termination-handler@sha256:e08ca863a547754fa7b75064bdad04f04cbef86c7b0a181ecc7304e747623181
+      sizeBytes: 42465304
+    - names:
+      - k8s.gcr.io/prometheus-to-sd@sha256:916d01e197885450ca45447f1c8a9cbc04d30c93d5382461eb202dcbf2b8d0b0
+      - k8s.gcr.io/prometheus-to-sd:v0.5.2
+      sizeBytes: 42110407
+    nodeInfo:
+      architecture: amd64
+      bootID: da7d3114-f2c3-445b-9039-32d4f05ce585
+      containerRuntimeVersion: docker://18.9.3
+      kernelVersion: 4.14.127+
+      kubeProxyVersion: v1.13.7-gke.8
+      kubeletVersion: v1.13.7-gke.8
+      machineID: 15879e34933378e2234f4d748d13f336
+      operatingSystem: linux
+      osImage: Container-Optimized OS from Google
+      systemUUID: 15879E34-9333-78E2-234F-4D748D13F336
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      container.googleapis.com/instance_id: "1293138092939317570"
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2019-09-17T19:12:45Z"
+    labels:
+      beta.kubernetes.io/arch: amd64
+      beta.kubernetes.io/fluentd-ds-ready: "true"
+      beta.kubernetes.io/instance-type: n1-standard-1
+      beta.kubernetes.io/os: linux
+      cloud.google.com/gke-nodepool: default-pool
+      cloud.google.com/gke-os-distribution: cos
+      failure-domain.beta.kubernetes.io/region: us-central1
+      failure-domain.beta.kubernetes.io/zone: us-central1-a
+      kubernetes.io/hostname: gke-testspace-default-pool-72d9c2b5-n5cj
+    name: gke-testspace-default-pool-72d9c2b5-n5cj
+    resourceVersion: "2234843"
+    selfLink: /api/v1/nodes/gke-testspace-default-pool-72d9c2b5-n5cj
+    uid: 21a12efc-d97f-11e9-bb1f-42010a800115
+  spec:
+    podCIDR: 10.4.0.0/24
+    providerID: gce://closercriticalhop/us-central1-a/gke-testspace-default-pool-72d9c2b5-n5cj
+  status:
+    addresses:
+    - address: 10.128.0.27
+      type: InternalIP
+    - address: 34.70.152.97
+      type: ExternalIP
+    - address: gke-testspace-default-pool-72d9c2b5-n5cj.us-central1-a.c.closercriticalhop.internal
+      type: InternalDNS
+    - address: gke-testspace-default-pool-72d9c2b5-n5cj.us-central1-a.c.closercriticalhop.internal
+      type: Hostname
+    allocatable:
+      attachable-volumes-gce-pd: "128"
+      cpu: 940m
+      ephemeral-storage: "47093746742"
+      hugepages-2Mi: "0"
+      memory: 2701504Ki
+      pods: "110"
+    capacity:
+      attachable-volumes-gce-pd: "128"
+      cpu: "1"
+      ephemeral-storage: 98868448Ki
+      hugepages-2Mi: "0"
+      memory: 3786944Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: docker overlay2 is functioning properly
+      reason: CorruptDockerOverlay2
+      status: "False"
+      type: CorruptDockerOverlay2
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:11:10Z"
+      message: kernel has no deadlock
+      reason: KernelHasNoDeadlock
+      status: "False"
+      type: KernelDeadlock
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:11:10Z"
+      message: Filesystem is not read-only
+      reason: FilesystemIsNotReadOnly
+      status: "False"
+      type: ReadonlyFilesystem
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: node is functioning properly
+      reason: UnregisterNetDevice
+      status: "False"
+      type: FrequentUnregisterNetDevice
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: kubelet is functioning properly
+      reason: FrequentKubeletRestart
+      status: "False"
+      type: FrequentKubeletRestart
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:16:12Z"
+      message: docker is functioning properly
+      reason: FrequentDockerRestart
+      status: "False"
+      type: FrequentDockerRestart
+    - lastHeartbeatTime: "2019-09-25T12:04:35Z"
+      lastTransitionTime: "2019-09-17T19:16:13Z"
+      message: containerd is functioning properly
+      reason: FrequentContainerdRestart
+      status: "False"
+      type: FrequentContainerdRestart
+    - lastHeartbeatTime: "2019-09-17T19:12:58Z"
+      lastTransitionTime: "2019-09-17T19:12:58Z"
+      message: RouteController created a route
+      reason: RouteCreated
+      status: "False"
+      type: NetworkUnavailable
+    - lastHeartbeatTime: "2019-09-25T12:05:21Z"
+      lastTransitionTime: "2019-09-17T19:12:45Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2019-09-25T12:05:21Z"
+      lastTransitionTime: "2019-09-17T19:12:45Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2019-09-25T12:05:21Z"
+      lastTransitionTime: "2019-09-17T19:12:45Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2019-09-25T12:05:21Z"
+      lastTransitionTime: "2019-09-17T19:12:47Z"
+      message: kubelet is posting ready status. AppArmor enabled
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    images:
+    - names:
+      - k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      - k8s.gcr.io/redis:e2e
+      sizeBytes: 419003740
+    - names:
+      - k8s.gcr.io/node-problem-detector@sha256:f95cab985c26b2f46e9bd43283e0bfa88860c14e0fb0649266babe8b65e9eb2b
+      - k8s.gcr.io/node-problem-detector:v0.4.1
+      sizeBytes: 286572743
+    - names:
+      - gcr.io/stackdriver-agents/stackdriver-logging-agent@sha256:6c8574a40816676cd908cfa89d16463002b56ca05fa76d0c912e116bc0ab867e
+      - gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.8
+      sizeBytes: 264721247
+    - names:
+      - gcr.io/google-containers/fluentd-elasticsearch@sha256:5a704c386f66bb3c24e3bcf2e94269c426f1473100fcd37b31579ca8b709c558
+      - gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+      sizeBytes: 139904122
+    - names:
+      - k8s.gcr.io/fluentd-elasticsearch@sha256:a54e7a450c0bdd19f49f56e487427a08c50f99ea8f8846179acf7d4182ce1fc0
+      - k8s.gcr.io/fluentd-elasticsearch:v2.2.0
+      sizeBytes: 138313727
+    - names:
+      - nginx@sha256:2f68b99bc0d6d25d0c56876b924ec20418544ff28e1fb89a4c27679a40da811b
+      - nginx:1.9.1
+      sizeBytes: 132835913
+    - names:
+      - k8s.gcr.io/kubernetes-dashboard-amd64@sha256:0ae6b69432e78069c5ce2bcde0fe409c5c4d6f0f4d9cd50a17974fea38898747
+      - k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1
+      sizeBytes: 121711221
+    - names:
+      - gcr.io/google_samples/gb-redisslave@sha256:90f62695e641e1a27d1a5e0bbb8b622205a48e18311b51b0da419ffad24b9016
+      - gcr.io/google_samples/gb-redisslave:v1
+      sizeBytes: 109508753
+    - names:
+      - k8s.gcr.io/kube-addon-manager@sha256:2fd1daf3d3cf0e94a753f2263b60dbb0d42b107b5cde0c75ee3fc5c830e016e4
+      - k8s.gcr.io/kube-addon-manager:v8.9
+      sizeBytes: 99240637
+    - names:
+      - nginx@sha256:e3456c851a152494c3e4ff5fcc26f240206abac0c9d794affb40e0714846c451
+      - nginx:1.7.9
+      sizeBytes: 91664166
+    - names:
+      - k8s.gcr.io/fluentd-gcp-scaler@sha256:4f28f10fb89506768910b858f7a18ffb996824a16d70d5ac895e49687df9ff58
+      - k8s.gcr.io/fluentd-gcp-scaler:0.5.2
+      sizeBytes: 90498960
+    - names:
+      - k8s.gcr.io/kube-proxy:v1.13.7-gke.8
+      sizeBytes: 81741972
+    - names:
+      - gcr.io/stackdriver-agents/heapster-amd64@sha256:b00d659e538bedecf7014fffb7a6d0d3377326a921b4416a7727a7022a7be901
+      - gcr.io/stackdriver-agents/heapster-amd64:v1.6.1
+      sizeBytes: 78522086
+    - names:
+      - k8s.gcr.io/heapster-amd64@sha256:9fae0af136ce0cf4f88393b3670f7139ffc464692060c374d2ae748e13144521
+      - k8s.gcr.io/heapster-amd64:v1.6.0-beta.1
+      sizeBytes: 76016169
+    - names:
+      - k8s.gcr.io/ingress-gce-glbc-amd64@sha256:14f14351a03038b238232e60850a9cfa0dffbed0590321ef84216a432accc1ca
+      - k8s.gcr.io/ingress-gce-glbc-amd64:v1.2.3
+      sizeBytes: 71797285
+    - names:
+      - k8s.gcr.io/k8s-dns-node-cache@sha256:c67f04ac8b9d30b96eeedc47008e5af403e8ab42d139796de3b03865ab99940b
+      - k8s.gcr.io/k8s-dns-node-cache:1.15.2
+      sizeBytes: 62530777
+    - names:
+      - k8s.gcr.io/cpvpa-amd64@sha256:cfe7b0a11c9c8e18c87b1eb34fef9a7cbb8480a8da11fc2657f78dbf4739f869
+      - k8s.gcr.io/cpvpa-amd64:v0.6.0
+      sizeBytes: 51785854
+    - names:
+      - k8s.gcr.io/k8s-dns-kube-dns-amd64@sha256:618a82fa66cf0c75e4753369a6999032372be7308866fc9afb381789b1e5ad52
+      - k8s.gcr.io/k8s-dns-kube-dns@sha256:c54a527a4ba8f1bc15e4796b09bf5d69313c7f42af9911dc437e056c0264a2fe
+      - k8s.gcr.io/k8s-dns-kube-dns-amd64:1.14.13
+      - k8s.gcr.io/k8s-dns-kube-dns:1.14.13
+      sizeBytes: 51157394
+    - names:
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64@sha256:003f98d9f411ddfa6ff6d539196355e03ddd69fa4ed38c7ffb8fec6f729afe2d
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.1.2-r2
+      sizeBytes: 49648481
+    - names:
+      - k8s.gcr.io/ip-masq-agent-amd64@sha256:1ffda57d87901bc01324c82ceb2145fe6a0448d3f0dd9cb65aa76a867cd62103
+      - k8s.gcr.io/ip-masq-agent-amd64:v2.1.1
+      sizeBytes: 49612505
+    - names:
+      - k8s.gcr.io/event-exporter@sha256:16ca66e2b5dc7a1ce6a5aafcb21d0885828b75cdfc08135430480f7ad2364adc
+      - k8s.gcr.io/event-exporter:v0.2.4
+      sizeBytes: 47261019
+    - names:
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64@sha256:4fd37c5b29a38b02c408c56254bd1a3a76f3e236610bc7a8382500bbf9ecfc76
+      - k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.3.0
+      sizeBytes: 45844959
+    - names:
+      - k8s.gcr.io/k8s-dns-sidecar-amd64@sha256:cedc8fe2098dffc26d17f64061296b7aa54258a31513b6c52df271a98bb522b3
+      - k8s.gcr.io/k8s-dns-sidecar@sha256:c4f36a12fa297c48cb80779c89f6a58818d1fa7edccb08bc67d79acacc3871d7
+      - k8s.gcr.io/k8s-dns-sidecar-amd64:1.14.13
+      - k8s.gcr.io/k8s-dns-sidecar:1.14.13
+      sizeBytes: 42852039
+    - names:
+      - k8s.gcr.io/gke-node-termination-handler@sha256:e08ca863a547754fa7b75064bdad04f04cbef86c7b0a181ecc7304e747623181
+      sizeBytes: 42465304
+    - names:
+      - k8s.gcr.io/prometheus-to-sd@sha256:916d01e197885450ca45447f1c8a9cbc04d30c93d5382461eb202dcbf2b8d0b0
+      - k8s.gcr.io/prometheus-to-sd:v0.5.2
+      sizeBytes: 42110407
+    nodeInfo:
+      architecture: amd64
+      bootID: f5001005-c491-4f8c-82ac-d29cbadda556
+      containerRuntimeVersion: docker://18.9.3
+      kernelVersion: 4.14.127+
+      kubeProxyVersion: v1.13.7-gke.8
+      kubeletVersion: v1.13.7-gke.8
+      machineID: fffcb3d65f3951129da2d28a84575d12
+      operatingSystem: linux
+      osImage: Container-Optimized OS from Google
+      systemUUID: FFFCB3D6-5F39-5112-9DA2-D28A84575D12
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
