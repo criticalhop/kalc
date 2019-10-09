@@ -1,0 +1,239 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2019-09-17T19:12:12Z"
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "11"
+    selfLink: /api/v1/namespaces/default/services/kubernetes
+    uid: 0dce0ce3-d97f-11e9-bb1f-42010a800115
+  spec:
+    clusterIP: 10.7.240.1
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"redis","role":"master","tier":"backend"},"name":"redis-master","namespace":"default","resourceVersion":"9416863","selfLink":"/api/v1/namespaces/default/services/redis-master","uid":"1fb431db-ae52-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.3","ports":[{"port":6379,"protocol":"TCP","targetPort":6379}],"selector":{"app":"redis","role":"master","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-18T20:22:20Z"
+    labels:
+      app: redis
+      role: master
+      tier: backend
+    name: redis-master
+    namespace: default
+    resourceVersion: "311475"
+    selfLink: /api/v1/namespaces/default/services/redis-master
+    uid: 03fef438-da52-11e9-9f90-42010a80020f
+  spec:
+    clusterIP: 10.7.240.3
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-09-04T21:24:52Z","labels":{"app":"redis-evict","role":"master","tier":"backend"},"name":"redis-master-evict","namespace":"default","resourceVersion":"20774605","selfLink":"/api/v1/namespaces/default/services/redis-master-evict","uid":"6ee8b5c7-cf5a-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.4","ports":[{"port":6379,"protocol":"TCP","targetPort":6379}],"selector":{"app":"redis-evict","role":"master","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-18T20:22:20Z"
+    labels:
+      app: redis-evict
+      role: master
+      tier: backend
+    name: redis-master-evict
+    namespace: default
+    resourceVersion: "311481"
+    selfLink: /api/v1/namespaces/default/services/redis-master-evict
+    uid: 0408b89a-da52-11e9-9f90-42010a80020f
+  spec:
+    clusterIP: 10.7.240.4
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis-evict
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"redis2","role":"master","tier":"backend"},"name":"redis-master2","namespace":"default","resourceVersion":"9416863","selfLink":"/api/v1/namespaces/default/services/redis-master","uid":"1fb431db-ae52-11e9-98f3-42010a8000c1"},"spec":{"clusterIP":"10.7.240.30","ports":[{"port":6379,"protocol":"TCP","targetPort":6379}],"selector":{"app":"redis2","role":"master","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-18T21:07:45Z"
+    labels:
+      app: redis2
+      role: master
+      tier: backend
+    name: redis-master2
+    namespace: default
+    resourceVersion: "320636"
+    selfLink: /api/v1/namespaces/default/services/redis-master2
+    uid: 5c9e4ff5-da58-11e9-9f90-42010a80020f
+  spec:
+    clusterIP: 10.7.240.30
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis2
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"redis","role":"slave","tier":"backend"},"name":"redis-slave","namespace":"default","resourceVersion":"9416869","selfLink":"/api/v1/namespaces/default/services/redis-slave","uid":"1fb9a12c-ae52-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.5","ports":[{"port":6379,"protocol":"TCP","targetPort":6379}],"selector":{"app":"redis","role":"slave","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-18T20:22:20Z"
+    labels:
+      app: redis
+      role: slave
+      tier: backend
+    name: redis-slave
+    namespace: default
+    resourceVersion: "311485"
+    selfLink: /api/v1/namespaces/default/services/redis-slave
+    uid: 04135fe0-da52-11e9-9f90-42010a80020f
+  spec:
+    clusterIP: 10.7.240.5
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: slave
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"redis","role":"slave-unlimit","tier":"backend"},"name":"redis-slave-unlimit","namespace":"default","resourceVersion":"9416896","selfLink":"/api/v1/namespaces/default/services/redis-slave-unlimit","uid":"1fd2c61c-ae52-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.7","ports":[{"port":6366,"protocol":"TCP","targetPort":6366}],"selector":{"app":"redis","role":"slave-unlimit","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-18T20:22:20Z"
+    labels:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit
+    namespace: default
+    resourceVersion: "311489"
+    selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit
+    uid: 041d3913-da52-11e9-9f90-42010a80020f
+  spec:
+    clusterIP: 10.7.240.7
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"redis","role":"slave-unlimit-2","tier":"backend"},"name":"redis-slave-unlimit-2","namespace":"default","resourceVersion":"9416896","selfLink":"/api/v1/namespaces/default/services/redis-slave-unlimit","uid":"1fd2c61c-ae52-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.14","ports":[{"port":6366,"protocol":"TCP","targetPort":6366}],"selector":{"app":"redis","role":"slave-unlimit-2","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-18T21:09:07Z"
+    labels:
+      app: redis
+      role: slave-unlimit-2
+      tier: backend
+    name: redis-slave-unlimit-2
+    namespace: default
+    resourceVersion: "320916"
+    selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit-2
+    uid: 8da33c91-da58-11e9-9f90-42010a80020f
+  spec:
+    clusterIP: 10.7.240.14
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit-2
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"creationTimestamp":"2019-07-24T20:32:15Z","labels":{"app":"no-pods","role":"slave-unlimit-2","tier":"backend"},"name":"serice-without-pods","namespace":"default","resourceVersion":"9416896","selfLink":"/api/v1/namespaces/default/services/redis-slave-unlimit","uid":"1fd2c61c-ae52-11e9-98f3-42010a8000c4"},"spec":{"clusterIP":"10.7.240.15","ports":[{"port":6366,"protocol":"TCP","targetPort":6366}],"selector":{"app":"no-pods","role":"slave-unlimit-2","tier":"backend"},"sessionAffinity":"None","type":"ClusterIP"},"status":{"loadBalancer":{}}}
+    creationTimestamp: "2019-09-22T22:13:39Z"
+    labels:
+      app: no-pods
+      role: slave-unlimit-2
+      tier: backend
+    name: serice-without-pods
+    namespace: default
+    resourceVersion: "1484675"
+    selfLink: /api/v1/namespaces/default/services/serice-without-pods
+    uid: 3ab39027-dd86-11e9-bb74-42010a8001fc
+  spec:
+    clusterIP: 10.7.240.15
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: no-pods
+      role: slave-unlimit-2
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
