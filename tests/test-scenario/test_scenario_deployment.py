@@ -15,11 +15,15 @@ from guardctl.model.scenario import Scenario
 import guardctl.model.kinds.Service as mservice
 from tests.test_util import print_objects
 
-
+#replicas 3 cpu: 100m memory: 500Mi
 DEPLOYMENT_NEW = "./tests/test-scenario/deployment/deployment-new.yaml"
+
 DUMP = "./tests/test-scenario/deployment/dump"
+# cpu = 940m * 2  memory = 2701496Ki + 2701504Ki
 NODES = "./tests/test-scenario/deployment/dump/nodes.yaml"
+# pod cpu = 100m * 7 memory = 500m * 5
 PODS = "./tests/test-scenario/deployment/dump/pods.yaml"
+# the same but one pon in pending TODO may me need to load from cluster
 PODS_PENDING = "./tests/test-scenario/deployment/dump/pods_pending.yaml"
 SERVICES = "./tests/test-scenario/deployment/dump/services.yaml"
 REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
@@ -29,8 +33,8 @@ DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 def test_start_pod():
     k = KubernetesCluster()
     k.load(open(NODES).read())
-    # k.load(open(PODS).read())
-    k.load(open(PODS_PENDING).read())
+    k.load(open(PODS).read())
+    # k.load(open(PODS_PENDING).read())
     k.load(open(SERVICES).read())
     k.load(open(REPLICASETS).read())
     k.load(open(PRIORITYCLASSES).read())

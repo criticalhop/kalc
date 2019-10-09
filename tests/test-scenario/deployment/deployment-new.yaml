@@ -3,15 +3,15 @@ items:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: redis-master
+    name: redis-master-new
     namespace: default
   spec:
     replicas: 3
     selector:
       matchLabels:
-        app: redis
-        role: master
-        tier: backend
+        app: redis-new
+        role: master-new
+        tier: backend-new
     template:
       metadata:
         labels:
