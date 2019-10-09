@@ -39,6 +39,7 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
+        priorityClassName: high-priority
 kind: List
 metadata:
   resourceVersion: ""
