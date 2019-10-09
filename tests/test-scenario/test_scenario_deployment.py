@@ -18,6 +18,7 @@ import guardctl.model.kinds.Pod as mpod
 
 #replicas 3 cpu: 100m memory: 500Mi
 DEPLOYMENT_NEW = "./tests/test-scenario/deployment/deployment-new.yaml"
+DEPLOYMENT_NEW_WO_PRIO = "./tests/test-scenario/deployment/deployment-new-wo-priority.yaml"
 
 DUMP = "./tests/test-scenario/deployment/dump"
 # cpu = 940m * 2  memory = 2701496Ki + 2701504Ki
@@ -30,8 +31,6 @@ PODS_PENDING = "./tests/test-scenario/deployment/dump/pods_pending.yaml"
 SERVICES = "./tests/test-scenario/deployment/dump/services.yaml"
 REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
-
-#config file for deployment
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
 # @pytest.mark.skip(reason="specific scenario is not selected")
@@ -95,7 +94,7 @@ def test_start_pod_from_dump():
     for pod in pods:
         assert pod.atNode in nodes._get_value() # check each pod than each have atNode
 
-#we have pod with Pendining status in dump we should get it in Running status
+#we have pod with Running status in dump kubernites shoul kill pods with lower piority then created
 def test_killpod():
     k = KubernetesCluster()
     k.load(open(NODE1).read()) # trim resource, run only one Node
@@ -105,7 +104,7 @@ def test_killpod():
     k.load(open(PRIORITYCLASSES).read())
     k.load(open(DEPLOYMENT).read())
 
-    k.create_resource(open(NODE1).read())
+    k.create_resource(open(DEPLOYMENT_NEW).read())
 
     k._build_state()
     p = OptimisticRun(k.state_objects) # TODO check me, i'd like to run exiction test with killpod execution
@@ -122,3 +121,31 @@ def test_killpod():
         assert pod.atNode in nodes._get_value() # check each pod than each have atNode
     killingPods = filter(lambda z: z.status != STATUS_POD["Killing"], (filter(lambda x: isinstance(x, mpod.Pod), k.state_objects)))
     assert len(killingPods) > 0 # test that some pod Killed
+
+#we have pod with Running status in dump we should get "pod cant start" because our new pods have the same priority as are ran pods
+def test_pod_cant_start():
+    k = KubernetesCluster()
+    k.load(open(NODE1).read()) # trim resource, run only one Node
+    k.load(open(PODS).read())
+    k.load(open(SERVICES).read())
+    k.load(open(REPLICASETS).read())
+    k.load(open(PRIORITYCLASSES).read())
+    k.load(open(DEPLOYMENT).read())
+
+    k.create_resource(open(DEPLOYMENT_NEW_WO_PRIO).read())
+
+    k._build_state()
+    p = OptimisticRun(k.state_objects) # TODO check me, i'd like to run exiction test with killpod execution
+    # print_objects(k.state_objects)
+    p.run(timeout=360, sessionName="test_pod_cant_start")
+    if not p.plan:
+         raise Exception("Could not solve %s" % p.__class__.__name__)
+    print(Scenario(p.plan).asyaml())
+    #get pods only in Running state to check atNode value
+    #TODO check pod cant start
+    # runningPods = filter(lambda z: z.status != STATUS_POD["Running"], (filter(lambda x: isinstance(x, mpod.Pod), k.state_objects)))
+    # nodes = filter(lambda x: isinstance(x, Node), k.state_objects)
+    # for pod in runningPods:
+    #     assert pod.atNode in nodes._get_value() # check each pod than each have atNode
+    # killingPods = filter(lambda z: z.status != STATUS_POD["Killing"], (filter(lambda x: isinstance(x, mpod.Pod), k.state_objects)))
+    # assert len(killingPods) > 0 # test that some pod Killed
