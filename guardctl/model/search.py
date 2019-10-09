@@ -138,11 +138,11 @@ def mark_excluded(object_space, exclude, skip_check=False):
 
     return ScenarioStep(
         name=sys._getframe().f_code.co_name,
-        subsystem=self.__class__.__name__,
+        subsystem="",
         description="Mark service as started",
         parameters={},
         probability=1.0,
-        affected=[describe(service1)]
+        affected=[""]
     )
 class AnyServiceInterrupted(K8ServiceInterruptSearch):
 
