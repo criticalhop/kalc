@@ -13,7 +13,6 @@ from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.cli import run
 
-
 TEST_DEPLOYMENT_repl10 = "./tests/test-deployment/deployment_repl10.yaml"
 TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"
 
