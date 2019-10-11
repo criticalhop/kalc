@@ -65,7 +65,8 @@ def k8s_to_domain_object(obj):
     elif isinstance(obj, str) and not obj[0] in string.digits+"-":
         return obj
     else:
-        raise ValueError("Value type not suported: %s" % repr(obj))
+        return obj.__str__()
+        # raise ValueError("Value type not suported: %s" % repr(obj))
 
 
 def cpuConvertToAbstractProblem(cpuParot):
