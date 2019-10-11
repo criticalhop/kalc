@@ -71,10 +71,13 @@ def k8s_to_domain_object(obj):
 def cpuConvertToAbstractProblem(cpuParot):
     #log.debug("cpuParot", cpuParot)
     cpu = 0
-    if cpuParot[len(cpuParot)-1] == 'm':
-        cpu = int(cpuParot[:-1])
+    if isinstance(cpuParot, int):
+        cpu = cpuParot*1000
     else:
-        cpu = int(cpuParot)*1000
+        if cpuParot[len(cpuParot)-1] == 'm':
+            cpu = int(cpuParot[:-1])
+        else:
+            cpu = int(cpuParot)*1000
     # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
     cpu = int(cpu / 200)
     if cpu == 0:
