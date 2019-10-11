@@ -56,7 +56,7 @@ def test_anydeployment_interrupted_fromfiles():
     print("------Objects before solver processing------")
     print_objects(k.state_objects)
     p = AnyDeploymentInterrupted(k.state_objects)
-    p.run(timeout=360, sessionName="test_anydeployment_interrupted_fromfiles")
+    p.run(timeout=660, sessionName="test_anydeployment_interrupted_fromfiles")
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print("------Objects after solver processing------")

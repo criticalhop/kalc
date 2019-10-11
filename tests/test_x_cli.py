@@ -18,6 +18,7 @@ def test_load_from_dir():
     assert result.exit_code == 0
     global RESULT
     RESULT=result
+    print(RESULT.output)
 
 #@pytest.mark.skip(reason="specific scenario is not selected")
 def test_result_any_scenario():

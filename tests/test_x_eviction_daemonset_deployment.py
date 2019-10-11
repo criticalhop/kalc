@@ -218,7 +218,7 @@ def test_anyservice_interrupted_fromfiles():
     mark_excluded_service(k.state_objects)
     p = AnyServiceInterrupted(k.state_objects)
     print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_anyservice_interrupted_fromfiles")
+    p.run(timeout=660, sessionName="test_anyservice_interrupted_fromfiles")
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
