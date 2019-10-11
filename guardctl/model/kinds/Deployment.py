@@ -6,7 +6,7 @@ from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status, Label
-from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDepl
+from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
 from poodle import *
 from typing import Set
 from logzero import logger
@@ -20,7 +20,7 @@ class Deployment(Controller, HasLimitsRequests):
     apiVersion: str
     lastPod: "mpod.Pod"
     amountOfActivePods: int
-    status: StatusDepl
+    status: StatusDeployment
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
     hash: str

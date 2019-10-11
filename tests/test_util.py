@@ -87,5 +87,5 @@ def print_objects(objectList):
     list_of_objects_output =['']
     for globalvar_item in globalvar_loaded_list:
         list_of_objects_output.extend(['is_service_interrupted',str(globalvar_item.is_service_interrupted._get_value())])
-        list_of_objects_output.extend(['is_depl_interrupted',str(globalvar_item.is_depl_interrupted._get_value())])
+        list_of_objects_output.extend(['is_deployment_interrupted',str(globalvar_item.is_deployment_interrupted._get_value())])
     print(list_of_objects_output)

@@ -4,7 +4,7 @@ from guardctl.model.kinds.Node import Node
 
 
 class GlobalVar(Object):
-    is_depl_interrupted: bool
+    is_deployment_interrupted: bool
     is_service_interrupted: bool
 
     def __init__(self, *args, **kwargs):

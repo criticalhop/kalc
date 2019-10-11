@@ -31,10 +31,10 @@ class K8ServiceInterruptSearch(KubernetesModel):
                 service1: Service,
                 pod1: Pod,
                 global_: "GlobalVar",
-                scheduler1: "Scheduler"
+                scheduler: "Scheduler"
             ):
             
-        assert scheduler1.status == STATUS_SCHED["Clean"] 
+        assert scheduler.status == STATUS_SCHED["Clean"] 
         assert service1.amountOfActivePods == 0
         # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
         assert service1.searchable == True  
@@ -63,8 +63,8 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert deployment_current.searchable == True
         assert pod_current in  deployment_current.podList
 
-        deployment_current.status = STATUS_DEPL["Interrupted"]
-        global_.is_depl_interrupted = True
+        deployment_current.status = STATUS_DEPLOYMENT["Interrupted"]
+        global_.is_deployment_interrupted = True
         
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -84,7 +84,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             ):
         assert scheduler.status == STATUS_SCHED["Clean"] 
         
-        global_.is_depl_interrupted = True
+        global_.is_deployment_interrupted = True
         
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -97,15 +97,15 @@ class K8ServiceInterruptSearch(KubernetesModel):
     # @planned(cost=10000)
     # def UnsolveableServiceStart(self,
     #             service1: Service,
-    #             scheduler1: "mscheduler.Scheduler"
+    #             scheduler: "mscheduler.Scheduler"
     #         ):
-    #     assert scheduler1.status == STATUS_SCHED["Changed"] 
+    #     assert scheduler.status == STATUS_SCHED["Changed"] 
     #     service1.status = STATUS_SERV["Started"]
     
     @planned(cost=100)
     def PodsConnectedToServices(self,
                 service1: Service,
-                scheduler1: "mscheduler.Scheduler"
+                scheduler: "mscheduler.Scheduler"
             ):
         assert service1.amountOfActivePods > 0
         service1.status = STATUS_SERV["Started"]
@@ -150,7 +150,7 @@ class AnyServiceInterrupted(K8ServiceInterruptSearch):
             self.scheduler.status == STATUS_SCHED["Clean"]
 class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
 
-    goal = lambda self: self.globalVar.is_depl_interrupted == True and \
+    goal = lambda self: self.globalVar.is_deployment_interrupted == True and \
             self.scheduler.status == STATUS_SCHED["Clean"]
 class OptimisticRun(K8ServiceInterruptSearch):
 

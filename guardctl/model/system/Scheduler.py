@@ -35,27 +35,27 @@ class Scheduler(Object):
     @planned(cost=100)
     def StartPod(self, 
         podStarted: "mpod.Pod",
-        node1: "Node" ,
-        scheduler1: "Scheduler",
+        node: "Node" ,
+        scheduler: "Scheduler",
         serviceTargetForPod: "mservice.Service",
         # globalVar1: "GlobalVar"
         ):
 
-        assert podStarted in scheduler1.podQueue
-        assert podStarted.toNode == node1
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
-        assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
+        assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
 
-        node1.currentFormalCpuConsumption += podStarted.cpuRequest
-        node1.currentFormalMemConsumption += podStarted.memRequest
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
         # globalVar1.currentFormalCpuConsumption += podStarted.cpuRequest
         # globalVar1.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node1        
-        scheduler1.queueLength -= 1
-        scheduler1.podQueue.remove(podStarted)
+        podStarted.atNode = node        
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
  
         serviceTargetForPod.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"] 
@@ -66,28 +66,28 @@ class Scheduler(Object):
             description="Starting pod",
             parameters={"podStarted": describe(podStarted)},
             probability=1.0,
-            affected=[describe(podStarted), describe(node1)]
+            affected=[describe(podStarted), describe(node)]
         )
     
     @planned(cost=100)
     def StartPod_IF_hasService_isNull(self, 
         podStarted: "mpod.Pod",
-        node1: "Node" ,
-        scheduler1: "Scheduler"
+        node: "Node" ,
+        scheduler: "Scheduler"
         ):
 
-        assert podStarted in scheduler1.podQueue
-        assert podStarted.toNode == node1
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node1.currentFormalCpuConsumption + podStarted.cpuRequest < node1.cpuCapacity + 1
-        assert node1.currentFormalMemConsumption + podStarted.memRequest < node1.memCapacity + 1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
+        assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
 
-        node1.currentFormalCpuConsumption += podStarted.cpuRequest
-        node1.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node1        
-        scheduler1.queueLength -= 1
-        scheduler1.podQueue.remove(podStarted)
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node        
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
  
         podStarted.status = STATUS_POD["Running"] 
         return ScenarioStep(
@@ -96,13 +96,13 @@ class Scheduler(Object):
             description="Starting pod",
             parameters={"podStarted": describe(podStarted)},
             probability=1.0,
-            affected=[describe(podStarted), describe(node1)]
+            affected=[describe(podStarted), describe(node)]
         )
 
 
     @planned(cost=1000000)
-    def ScheduleQueueProcessed1(self, scheduler1: "Scheduler"):
-        scheduler1.queueLength -= 1
+    def ScheduleQueueProcessed1(self, scheduler: "Scheduler"):
+        scheduler.queueLength -= 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -115,9 +115,9 @@ class Scheduler(Object):
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
     @planned(cost=100)
-    def ScheduleQueueProcessed(self, scheduler1: "Scheduler"):
-        assert  scheduler1.queueLength == 0
-        scheduler1.status = STATUS_SCHED["Clean"]
+    def ScheduleQueueProcessed(self, scheduler: "Scheduler"):
+        assert  scheduler.queueLength == 0
+        scheduler.status = STATUS_SCHED["Clean"]
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,

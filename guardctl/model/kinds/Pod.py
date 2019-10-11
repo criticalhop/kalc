@@ -133,7 +133,7 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     #     if value > 1000: value = 1000
     #     self.priority = value
 
-    def __str__(self): return str(self._get_value())
+    def __str__(self): return str(self.metadata_name)
 
 
     @planned(cost=100)
@@ -179,12 +179,12 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     @planned(cost=100)
     def SetDefaultMemLimitForPod(self,
         pod1: "Pod",
-        node1: "mnode.Node" ,
+        node: "mnode.Node" ,
         memCapacity: int
         ):
             assert pod1.memLimit == -1
-            assert node1 == pod1.atNode
-            assert memCapacity == node1.memCapacity
+            assert node == pod1.atNode
+            assert memCapacity == node.memCapacity
             pod1.memLimit = memCapacity
 
             return ScenarioStep(
@@ -199,12 +199,12 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     @planned(cost=100)
     def SetDefaultCpuLimitForPod(self,
         pod1: "Pod",
-        node1: "mnode.Node" ,
+        node: "mnode.Node" ,
         cpuCapacity: int
         ):
             assert pod1.cpuLimit == -1
-            assert node1 == pod1.atNode
-            assert cpuCapacity == node1.cpuCapacity
+            assert node == pod1.atNode
+            assert cpuCapacity == node.cpuCapacity
 
             pod1.cpuLimit = cpuCapacity
 
@@ -220,12 +220,12 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     @planned(cost=100)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
-        node1: "mnode.Node" ,
+        node: "mnode.Node" ,
         memCapacity: int
         ):
             assert pod1.memLimit == -1
-            assert memCapacity == node1.memCapacity
-            pod1.toNode = node1
+            assert memCapacity == node.memCapacity
+            pod1.toNode = node
             pod1.memLimit = memCapacity
 
             return ScenarioStep(
@@ -240,11 +240,11 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     @planned(cost=100)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
-        node1: "mnode.Node" ,
+        node: "mnode.Node" ,
         cpuCapacity: int):
             assert pod1.cpuLimit == -1
-            assert cpuCapacity == node1.cpuCapacity
-            pod1.toNode = node1
+            assert cpuCapacity == node.cpuCapacity
+            pod1.toNode = node
             pod1.cpuLimit = cpuCapacity
 
             return ScenarioStep(
@@ -259,12 +259,12 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     @planned(cost=100)
     def SetDefaultCpuLimitPerLimitRange(self,
         pod1: "Pod",
-        node1: "mnode.Node" ,
+        node: "mnode.Node" ,
         cpuCapacity: int,
         ):
             assert pod1.cpuLimit == -1
-            assert cpuCapacity == node1.cpuCapacity
-            pod1.toNode = node1
+            assert cpuCapacity == node.cpuCapacity
+            pod1.toNode = node
             pod1.cpuLimit = cpuCapacity
 
             return ScenarioStep(
@@ -280,12 +280,12 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
-                node1: "mnode.Node" , # unused
-                scheduler1: "mscheduler.Scheduler",
+                node: "mnode.Node" , # unused
+                scheduler: "mscheduler.Scheduler",
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
-        assert podPending in scheduler1.podQueue
+        assert podPending in scheduler.podQueue
         assert podPending.toNode == Node.NODE_NULL
         assert podPending.status == STATUS_POD["Pending"]
         assert priorityClassOfPendingPod == podPending.priorityClass
@@ -311,11 +311,11 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
                 nodeForPodPending: "mnode.Node" , # unused
-                scheduler1: "mscheduler.Scheduler",
+                scheduler: "mscheduler.Scheduler",
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass
                 ):
-        assert podPending in scheduler1.podQueue
+        assert podPending in scheduler.podQueue
         assert podPending.toNode == nodeForPodPending
         assert nodeForPodPending.isNull == False
         assert podToBeReplaced.atNode == nodeForPodPending
@@ -462,7 +462,7 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
             nodeWithPod : "mnode.Node" ,
             serviceOfPod: "mservice.Service",
             # globalVar1: "GlobalVar",
-            scheduler1: "mscheduler.Scheduler",
+            scheduler: "mscheduler.Scheduler",
             amountOfActivePodsPrev: int
 
          ):
@@ -480,8 +480,8 @@ did not dump PriorityClass?" % str(self.spec_priorityClassName))
         # globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
         podBeingKilled.status =  STATUS_POD["Pending"]
-        scheduler1.podQueue.add(podBeingKilled)
-        scheduler1.status = STATUS_SCHED["Changed"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
