@@ -2,6 +2,8 @@ from typing import Set
 from guardctl.model.system.primitives import Label, StatusNode
 from guardctl.model.system.base import HasLabel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from guardctl.misc.const import STATUS_NODE
+
 
 class Node(HasLabel):
     # k8s attributes
@@ -19,6 +21,7 @@ class Node(HasLabel):
     podAmount: int
     isNull: bool
     status: StatusNode
+    amountOfActivePods: int
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,6 +33,8 @@ class Node(HasLabel):
         self.cpuCapacity = 0
         self.memCapacity = 0
         self.isNull = False
+        self.status = STATUS_NODE["Active"]
+        self.amountOfActivePods = 0
     
     @property
     def status_allocatable_memory(self):
@@ -51,8 +56,10 @@ class Node(HasLabel):
         return str(self.metadata_name)
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
-
+    
+    def __str__(self): return str(self.metadata_name)
 
 Node.NODE_NULL = Node("NULL")
 Node.NODE_NULL.isNull = True
+Node.NODE_NULL.metadata_name = "Null-Node"
 

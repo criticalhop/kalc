@@ -14,7 +14,7 @@ from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.scenario import ScenarioStep, describe
 from guardctl.misc.const import *
-from guardctl.model.kubeactions import KubernetesModel
+from guardctl.model.kubeactions import KubernetesModel,Random_events
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
 class ExcludeDict:
@@ -113,6 +113,14 @@ class K8ServiceInterruptSearch(KubernetesModel):
             probability=1.0,
             affected=[describe(pod)]
         )
+    @planned(cost=100)
+    def Mark_node_outage_event(self,
+        node:"Node",
+        globalvar:GlobalVar):
+        assert node.status == STATUS_NODE["Inactive"]
+        globalvar.is_node_interrupted = True
+        
+
 
 def mark_excluded(object_space, exclude, skip_check=False):
     names = []
@@ -150,3 +158,7 @@ class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
 class OptimisticRun(K8ServiceInterruptSearch):
 
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
+
+class NodeInterupted(K8ServiceInterruptSearch,Random_events):
+    goal = lambda self: self.globalVar.is_node_interrupted == True and\
+        self.globalVar.is_service_interrupted == True
