@@ -7,6 +7,7 @@ from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.misc.object_factory import labelFactory
 from guardctl.misc.const import *
+from tests.test_util import print_objects
 
 import logzero
 logzero.logfile("./test.log", disableStderrLogger=True)

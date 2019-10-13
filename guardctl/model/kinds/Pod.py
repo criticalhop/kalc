@@ -48,9 +48,10 @@ class Pod(HasLabel, HasLimitsRequests):
         self.priority = 0
         self.spec_priorityClassName = "KUBECTL-VAL-NONE"
         self.priorityClass = zeroPriorityClass
-        # self.targetService = self.TARGET_SERVICE_NULL
+        self.targetService = mservice.Service.SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
+
         self.status = STATUS_POD["Pending"]
         self.isNull = True
         self.realInitialMemConsumption = 0
