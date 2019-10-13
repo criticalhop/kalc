@@ -23,7 +23,7 @@ class KubernetesModel(ProblemTemplate):
         self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
 
     @planned(cost=100)
-    def PodsConnectedToServices(self,
+    def Mark_service_as_started(self,
                 service1: Service,
                 scheduler: "Scheduler"
             ):
@@ -38,6 +38,7 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(service1)]
         )
+
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
         pod1: "Pod",
@@ -144,26 +145,6 @@ class KubernetesModel(ProblemTemplate):
         pod1: "Pod",
         node: "Node" ,
         cpuCapacity: int):
-            assert pod1.cpuLimit == -1
-            assert cpuCapacity == node.cpuCapacity
-            pod1.toNode = node
-            pod1.cpuLimit = cpuCapacity
-
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="no description provided",
-                parameters={},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
-
-    @planned(cost=100)
-    def SetDefaultCpuLimitPerLimitRange(self,
-        pod1: "Pod",
-        node: "Node" ,
-        cpuCapacity: int,
-        ):
             assert pod1.cpuLimit == -1
             assert cpuCapacity == node.cpuCapacity
             pod1.toNode = node
@@ -332,12 +313,8 @@ class KubernetesModel(ProblemTemplate):
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
 
-        nodeWithPod.currentRealMemConsumption -= podBeingKilled.realInitialMemConsumption
-        nodeWithPod.currentRealCpuConsumption -= podBeingKilled.realInitialCpuConsumption
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-        nodeWithPod.currentFormalCpuConsumption -=  podBeingKilled.cpuRequest
-        # globalVar1.currentFormalMemConsumption -= podBeingKilled.memRequest
-        # globalVar1.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
@@ -380,8 +357,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
-        assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest

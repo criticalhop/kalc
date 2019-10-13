@@ -64,6 +64,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert deployment_current.amountOfActivePods < deployment_current.spec_replicas
         assert deployment_current.searchable == True
         assert pod_current in  deployment_current.podList
+        assert pod_current.status == STATUS_POD["Pending"]
 
         deployment_current.status = STATUS_DEPLOYMENT["Interrupted"]
         global_.is_deployment_interrupted = True
