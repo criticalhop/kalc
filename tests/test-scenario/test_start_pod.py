@@ -31,7 +31,7 @@ def test_start_pod_with_scheduler():
     k._build_state()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     scheduler.status = STATUS_SCHED["Changed"]
-    scheduler.podQueue.add(pod[0])
+    scheduler.podQueue.add(pods[0])
     scheduler.queueLength += 1
     k.run()
     print_objects(k.state_objects)
