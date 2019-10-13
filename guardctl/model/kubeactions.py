@@ -384,7 +384,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         scheduler: "Scheduler"
         ):
-
+#TODO: add assert - service is null and other branching
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
@@ -408,7 +408,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=30000)
-    def ScheduleQueueProcessed1(self, scheduler: "Scheduler"):
+    def Scheduler_cant_place_pod(self, scheduler: "Scheduler"):
         scheduler.queueLength -= 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
