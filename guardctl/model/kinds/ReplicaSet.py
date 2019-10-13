@@ -27,4 +27,4 @@ class ReplicaSet(Controller, HasLimitsRequests):
         pass
 
     def hook_after_load(self, object_space):
-        print("replicaset kind {1} name {0}".format(self.metadata_ownerReferences__name, self.metadata_ownerReferences__kind))
+        pass

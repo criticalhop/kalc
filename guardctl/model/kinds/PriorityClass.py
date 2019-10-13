@@ -21,7 +21,8 @@ class PriorityClass(Object):
     def value(self, value):
         if value > 1000: value = 1000
         self.priority = value
-
+        
+    def __str__(self): return str(self._get_value())
 
 zeroPriorityClass = PriorityClass("ZERO")
 zeroPriorityClass.metadata_name = "Normal-zero"

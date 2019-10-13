@@ -1,14 +1,21 @@
+import sys
 from poodle import planned
+from logzero import logger
+from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
+from guardctl.model.system.primitives import TypeServ
+from guardctl.model.system.Controller import Controller
+from guardctl.model.system.primitives import Label
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Deployment import Deployment
 from guardctl.model.kinds.Pod import Pod
-from guardctl.misc.const import *
-from guardctl.misc.problem import ProblemTemplate
+from guardctl.model.kinds.Node import Node
+from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.scenario import ScenarioStep, describe
-import sys
-from guardctl.model.system.primitives import TypeServ
+from guardctl.misc.const import *
+from guardctl.model.kubeactions import KubernetesModel
+from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
 class ExcludeDict:
     name: str
@@ -20,13 +27,8 @@ class ExcludeDict:
         self.name = kn.split(":")[1]
         self.obj = TypeServ(self.name)
 
-class KubernetesModel(ProblemTemplate):
-    def problem(self):
-        self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
-        self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
-
 class K8ServiceInterruptSearch(KubernetesModel):
-    @planned
+    @planned(cost=100)
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
@@ -51,7 +53,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             probability=1.0,
             affected=[describe(service1)]
         )
-    @planned
+    @planned(cost=100)
     def MarkDeploymentOutageEvent(self,
                 deployment_current: Deployment,
                 pod_current: Pod,
@@ -75,7 +77,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(deployment_current)]
         )
 
-    @planned(cost=1000000)
+    @planned(cost=100)
     def No_Deployment_Outage_Event_possible(self,
                 deployment_current: Deployment,
                 pod_current: Pod,
@@ -94,29 +96,21 @@ class K8ServiceInterruptSearch(KubernetesModel):
             probability=1.0,
             affected=[]
         )
-    # @planned(cost=10000)
-    # def UnsolveableServiceStart(self,
-    #             service1: Service,
-    #             scheduler: "mscheduler.Scheduler"
-    #         ):
-    #     assert scheduler.status == STATUS_SCHED["Changed"] 
-    #     service1.status = STATUS_SERV["Started"]
-    
+
     @planned(cost=100)
-    def PodsConnectedToServices(self,
-                service1: Service,
-                scheduler: "mscheduler.Scheduler"
-            ):
-        assert service1.amountOfActivePods > 0
-        service1.status = STATUS_SERV["Started"]
+    def fill_priority_class_object(self,
+            pod: "Pod",
+            pclass: PriorityClass):
+        assert pod.spec_priorityClassName == pclass.metadata_name
+        pod.priorityClass = pclass
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="Mark service as started",
+            description="no description provided",
             parameters={},
             probability=1.0,
-            affected=[describe(service1)]
+            affected=[describe(pod)]
         )
 
 def mark_excluded(object_space, exclude, skip_check=False):
