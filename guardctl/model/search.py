@@ -43,7 +43,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert pod1.targetService == service1
 
         service1.status = STATUS_SERV["Interrupted"]
-        global_.is_service_interrupted = True #TODO:  Optimistic search 
+        global_.is_service_disrupted = True #TODO:  Optimistic search 
         
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -67,7 +67,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert pod_current.status == STATUS_POD["Pending"]
 
         deployment_current.status = STATUS_DEPLOYMENT["Interrupted"]
-        global_.is_deployment_interrupted = True
+        global_.is_deployment_disrupted = True
         
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -118,7 +118,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         node:"Node",
         globalvar:GlobalVar):
         assert node.status == STATUS_NODE["Inactive"]
-        globalvar.is_node_interrupted = True
+        globalvar.is_node_disrupted = True
         
 
 
@@ -149,19 +149,19 @@ def mark_excluded(object_space, exclude, skip_check=False):
     )
 class AnyServiceInterrupted(K8ServiceInterruptSearch):
 
-    goal = lambda self: self.globalVar.is_service_interrupted == True and \
+    goal = lambda self: self.globalVar.is_service_disrupted == True and \
             self.scheduler.status == STATUS_SCHED["Clean"]
 class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
 
-    goal = lambda self: self.globalVar.is_deployment_interrupted == True and \
+    goal = lambda self: self.globalVar.is_deployment_disrupted == True and \
             self.scheduler.status == STATUS_SCHED["Clean"]
 class OptimisticRun(K8ServiceInterruptSearch):
 
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
 
 class NodeInterupted(K8ServiceInterruptSearch,Random_events):
-    goal = lambda self: self.globalVar.is_node_interrupted == True and\
-        self.globalVar.is_service_interrupted == True
+    goal = lambda self: self.globalVar.is_node_disrupted == True and\
+        self.globalVar.is_service_disrupted == True
 
 class AnyGoal(K8ServiceInterruptSearch):
 
@@ -169,7 +169,7 @@ class AnyGoal(K8ServiceInterruptSearch):
 
     @planned(cost=100)
     def AnyServiceInterrupted(self,globalVar:GlobalVar):
-        assert globalVar.is_service_interrupted == True
+        assert globalVar.is_service_disrupted == True
         globalVar.goal_achieved = True 
 
         return ScenarioStep(
@@ -183,7 +183,7 @@ class AnyGoal(K8ServiceInterruptSearch):
     
     @planned(cost=100)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar):
-        assert globalVar.is_deployment_interrupted == True
+        assert globalVar.is_deployment_disrupted == True
         globalVar.goal_achieved = True 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -196,8 +196,8 @@ class AnyGoal(K8ServiceInterruptSearch):
         
     @planned(cost=100)
     def NodeNServiceInterupted(self,globalVar:GlobalVar):
-        assert globalVar.is_node_interrupted == True
-        assert globalVar.is_service_interrupted == True
+        assert globalVar.is_node_disrupted == True
+        assert globalVar.is_service_disrupted == True
         globalVar.goal_achieved = True 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,

@@ -35,7 +35,7 @@ def mark_excluded_service(object_space):
 
 # class AnyDeploymentInterrupted(K8ServiceInterruptSearch):
 
-#     goal = lambda self: self.globalVar.is_deployment_interrupted == True and \
+#     goal = lambda self: self.globalVar.is_deployment_disrupted == True and \
 #             self.scheduler.status == STATUS_SCHED["Clean"]
 
 ALL_STATE = None

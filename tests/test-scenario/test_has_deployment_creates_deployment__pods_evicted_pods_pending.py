@@ -27,7 +27,7 @@ from guardctl.model.system.globals import GlobalVar
 DEPLOYMENT_NEW = "./tests/test-scenario/deployment/deployment-new.yaml"
 DEPLOYMENT_NEW_WO_PRIO = "./tests/test-scenario/deployment/deployment-new-wo-priority.yaml"
 
-DUMP = "./tests/test-scenario/deployment/dump"
+DUMP = "./tests/test-scenario/deployment/dump/"
 # cpu = 940m * 2  memory = 2701496Ki + 2701504Ki
 NODE1 = "./tests/test-scenario/deployment/dump/node1.yaml"
 NODE2 = "./tests/test-scenario/deployment/dump/node2.yaml"
