@@ -37,6 +37,8 @@ ALL_STATE = None
 import logzero
 logzero.logfile("./test.log", disableStderrLogger=False)
 
+
+# warning select_target_service function run after goal statement
 class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
     def select_target_service(self):
         service_found = None
@@ -51,6 +53,7 @@ class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
     goal = lambda self: self.targetservice.status == STATUS_SERV["Interrupted"] and \
             self.scheduler.status == STATUS_SCHED["Clean"]
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_priority_is_loaded():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -62,6 +65,7 @@ def test_priority_is_loaded():
             return
     raise ValueError("Could not find priority loded")
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_service_load():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -73,6 +77,7 @@ def test_service_load():
             return
     raise ValueError("Could not find service loded")
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_service_status():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -124,6 +129,7 @@ class StartServiceGoal(K8ServiceInterruptSearch):
             goal=lambda:(self.goal()),
             plan=[Pod().connect_pod_service_labels]
         )
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_service_active_pods():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -148,6 +154,7 @@ def test_service_active_pods():
             break
     assert pods_active
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_service_link_to_pods():
     objects = filter(lambda x: isinstance(x, Service), ALL_STATE)
     serv = None
@@ -164,6 +171,7 @@ def test_service_link_to_pods():
             return
     raise ValueError("Could not find service loded")
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_queue_status():
     "test length and status of scheduler queue after load"
     k = KubernetesCluster()
@@ -176,6 +184,7 @@ def test_queue_status():
     assert scheduler.podQueue._get_value()
     assert scheduler.status == STATUS_SCHED["Changed"]
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_nodes_status():
     objects = filter(lambda x: isinstance(x, Node), ALL_STATE)
     for node in objects:
@@ -188,10 +197,12 @@ def test_nodes_status():
         # assert node.currentRealCpuConsumption > 1
     raise Exception("Could not find valid nodes")
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_nodes_pods_allocated():
     "test that all pods in status running are allocated to nodes"
     pass
 
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_eviction_fromfiles_strictgoal():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
@@ -208,6 +219,8 @@ def test_eviction_fromfiles_strictgoal():
         for a in p.plan:
             i=i+1
             print(i,":",a.__class__.__name__,"\n",yaml.dump({str(k):repr(v._get_value()) if v else f"NONE_VALUE:{v}" for (k,v) in a.kwargs.items()}, default_flow_style=False))
+    assert "StartPod" in p.plan.__str__()
+
 
 
 def test_anyservice_interrupted_fromfiles():
@@ -222,3 +235,4 @@ def test_anyservice_interrupted_fromfiles():
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
+    assert "StartPod" in p.plan.__str__()
