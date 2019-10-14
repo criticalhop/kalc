@@ -15,15 +15,21 @@ class Service(HasLabel):
     status: StatusServ
     metadata_name: str
     searchable: bool
+    isNull: bool
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.amountOfActivePods = 0
         self.status = STATUS_SERV["Pending"]
         self.searchable = True
- 
+        self.isNull = False
+    
+    def __str__(self): return str(self.metadata_name)
 
     # def __repr__(self):
     #     return 'Servicename : ' + str(self._get_value()) 
 
 Service.SERVICE_NULL = Service("NULL")
+Service.SERVICE_NULL.metadata_name = "Null-Service"
+Service.SERVICE_NULL.isNull = True
+

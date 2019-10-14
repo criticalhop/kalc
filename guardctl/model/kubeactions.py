@@ -316,6 +316,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
+        nodeWithPod.amountOfActivePods -= 1 
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
@@ -362,10 +363,10 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node        
+        podStarted.atNode = node       
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
- 
+        node.amountOfActivePods += 1
         serviceTargetForPod.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
@@ -384,7 +385,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         scheduler: "Scheduler"
         ):
-#TODO: add assert - service is null and other branching
+    #TODO: add assert - service is null and other branching
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
@@ -396,6 +397,7 @@ class KubernetesModel(ProblemTemplate):
         node.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node        
         scheduler.queueLength -= 1
+        node.amountOfActivePods += 1 
         scheduler.podQueue.remove(podStarted)
         podStarted.status = STATUS_POD["Running"] 
         return ScenarioStep(
@@ -433,3 +435,19 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
+class Random_events(ProblemTemplate):
+    @planned(cost=100)
+    def Initiate_killing_of_Pod_because_of_node_outage(self,
+        node_with_outage: "Node",
+        pod_killed: "Pod"
+        ):
+        assert pod_killed.status == STATUS_POD["Running"]
+        assert pod_killed.atNode == node_with_outage
+        pod_killed.status = STATUS_POD["Killing"]
+
+    def NodeOutage(self,
+        node: "Node",
+        ):
+        assert node.amountOfActivePods == 0
+        node.status = STATUS_NODE["Inactive"]
+

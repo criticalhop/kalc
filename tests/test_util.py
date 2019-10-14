@@ -47,7 +47,8 @@ def print_objects(objectList):
         ", AmountOfPodsOverwhelmingMemLimits: " + str(nodeitem.AmountOfPodsOverwhelmingMemLimits._get_value()) + \
         ", PodAmount: "  + str(nodeitem.podAmount._get_value()) + \
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
-        ", Status:"  + str(nodeitem.status._get_value()))
+        ", Status:"  + str(nodeitem.status._get_value()) +\
+        ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()))
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:
@@ -88,4 +89,5 @@ def print_objects(objectList):
     for globalvar_item in globalvar_loaded_list:
         list_of_objects_output.extend(['is_service_interrupted',str(globalvar_item.is_service_interrupted._get_value())])
         list_of_objects_output.extend(['is_deployment_interrupted',str(globalvar_item.is_deployment_interrupted._get_value())])
+        list_of_objects_output.extend(['is_node_interrupted',str(globalvar_item.is_node_interrupted._get_value())])
     print(list_of_objects_output)

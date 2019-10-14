@@ -1,7 +1,7 @@
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass
+from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
@@ -31,6 +31,8 @@ class Deployment(Controller, HasLimitsRequests):
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
         self.amountOfActivePods = 0
         self.searchable = True
+        self.spec_template_spec_priorityClassName = "Normal-zero"
+        self.priorityClass = zeroPriorityClass
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
@@ -62,7 +64,7 @@ class Deployment(Controller, HasLimitsRequests):
             new_pod.set_priority(object_space, self)
             new_pod.hasDeployment = True
             self.podList.add(new_pod)
-            self.check_pod(new_pod, object_space)
+            # self.check_pod(new_pod, object_space)
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1
@@ -94,7 +96,7 @@ class Deployment(Controller, HasLimitsRequests):
             for pod_template_hash in list(pod.metadata_labels._get_value()):
                 if str(pod_template_hash).split(":")[0] == "pod-template-hash" and str(pod_template_hash).split(":")[1] == self.hash :
                     self.podList.add(pod)
-                    self.check_pod(pod, object_space)
+                    # self.check_pod(pod, object_space)
 
     def hook_scale_before_create(self, object_space, new_replicas):
         self.spec_replicas = new_replicas
@@ -135,9 +137,9 @@ class Deployment(Controller, HasLimitsRequests):
             pod.memLimit = self.memLimit
             pod.set_priority(object_space, self)
 
-    def check_pod(self, new_pod, object_space):
-        for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
-            pod1 = [x for x in list(pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
-            pod2 = [x for x in list(new_pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
-            if set(pod1) == set(pod2):
-                logger.warning("Pods have the same label")
+    # def check_pod(self, new_pod, object_space):
+    #     for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
+    #         pod1 = [x for x in list(pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
+    #         pod2 = [x for x in list(new_pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
+    #         if set(pod1) == set(pod2):
+    #             logger.warning("Pods have the same label")

@@ -53,7 +53,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.atNode = mnode.Node.NODE_NULL
 
         self.status = STATUS_POD["Pending"]
-        self.isNull = True
+        self.isNull = False
         self.realInitialMemConsumption = 0
         self.realInitialCpuConsumption = 0
         self.currentFormalMemConsumption = 0
@@ -75,6 +75,7 @@ class Pod(HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
+                node.amountOfActivePods += 1
                 if self.cpuRequest > 0:
                     node.currentFormalCpuConsumption += self.cpuRequest
                 if self.memRequest > 0:
