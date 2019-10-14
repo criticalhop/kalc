@@ -17,5 +17,6 @@ class GlobalVar(Object):
         self.is_service_disrupted = False
         self.goal_achieved = False
         self.is_deployment_distuption_searchable = True
-        self.is_service_disruption_searchable:
+        self.is_service_disruption_searchable = True
+        self.is_node_disruption_searchable = True
         
