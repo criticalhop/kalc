@@ -12,6 +12,7 @@ from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from tests.test_util import print_objects
+from guardctl.model.scenario import Scenario
 
 def test_start_pod_with_scheduler():
     k = KubernetesCluster()
@@ -19,8 +20,9 @@ def test_start_pod_with_scheduler():
     node = Node()
     node.memCapacity = 3
     node.cpuCapacity = 3
-    for _ in range(2):
+    for i in range(2):
         pod = mpod.Pod()
+        pod.metadata_name = str(i)
         pod.memRequest = 2
         pod.cpuRequest = 2
         pods.append(pod)
@@ -28,11 +30,18 @@ def test_start_pod_with_scheduler():
     pods[0].atNode = node
     k.state_objects.extend(pods)
     k.state_objects.append(node)
+
     k._build_state()
+    
+
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     scheduler.status = STATUS_SCHED["Changed"]
     scheduler.podQueue.add(pods[0])
     scheduler.queueLength += 1
-    k.run()
+    class TestRun(K8ServiceInterruptSearch):
+        goal = lambda self: pods[1].status == STATUS_POD["Running"]
+    p = TestRun(k.state_objects)
+    p.run()
+    print(Scenario(p.plan).asyaml())
     print_objects(k.state_objects)
 
