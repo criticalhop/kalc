@@ -13,6 +13,8 @@ from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from tests.test_util import print_objects
 from guardctl.model.scenario import Scenario
+from poodle import planned
+
 
 def test_start_pod_with_scheduler():
     k = KubernetesCluster()
