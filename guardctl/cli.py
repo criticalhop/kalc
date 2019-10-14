@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import AnyServiceInterrupted 
+from guardctl.model.search import AnyGoal 
 from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -72,7 +72,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
             click.echo(f"# Exclude {kn} ...")
             excludeList.append(ExcludeDict(kn))
         mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
-    p = AnyServiceInterrupted(k.state_objects)
+    p = AnyGoal(k.state_objects)
     # p.select_target_service()
 
     click.echo("# Solving ...")

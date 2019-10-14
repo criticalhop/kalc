@@ -162,3 +162,48 @@ class OptimisticRun(K8ServiceInterruptSearch):
 class NodeInterupted(K8ServiceInterruptSearch,Random_events):
     goal = lambda self: self.globalVar.is_node_interrupted == True and\
         self.globalVar.is_service_interrupted == True
+
+class AnyGoal(K8ServiceInterruptSearch):
+
+    goal = lambda self: self.globalVar.goal_achieved == True 
+
+    @planned(cost=100)
+    def AnyServiceInterrupted(self,globalVar:GlobalVar):
+        assert globalVar.is_service_interrupted == True
+        globalVar.goal_achieved = True 
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Some service is interrupted",
+            parameters={""},
+            probability=1.0,
+            affected=[""]
+        )
+    
+    @planned(cost=100)
+    def AnyDeploymentInterrupted(self,globalVar:GlobalVar):
+        assert globalVar.is_deployment_interrupted == True
+        globalVar.goal_achieved = True 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Some deployment is interrupted",
+            parameters={""},
+            probability=1.0,
+            affected=[""]
+        )
+        
+    @planned(cost=100)
+    def NodeNServiceInterupted(self,globalVar:GlobalVar):
+        assert globalVar.is_node_interrupted == True
+        assert globalVar.is_service_interrupted == True
+        globalVar.goal_achieved = True 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Node and Service are interrupted",
+            parameters={""},
+            probability=1.0,
+            affected=[""]
+        )

@@ -6,7 +6,7 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.model.search import AnyGoal
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.misc.object_factory import labelFactory
@@ -42,60 +42,19 @@ REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
-class AnyGoal(K8ServiceInterruptSearch):
 
-    goal = lambda self: self.globalVar.goal_achieved == True 
 
-    @planned(cost=100)
-    def AnyServiceInterrupted(self,globalVar:GlobalVar):
-        assert globalVar.is_service_interrupted == True
-        globalVar.goal_achieved = True 
-
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Some service is interrupted",
-            parameters={""},
-            probability=1.0,
-            affected=[""]
-        )
+# @pytest.mark.skip(reason="temporary skip")
+def test_test():
+    runner = CliRunner()
+    result = runner.invoke(run, ["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml", "--pipe"])
     
-    @planned(cost=100)
-    def AnyDeploymentInterrupted(self,globalVar:GlobalVar):
-        assert globalVar.is_deployment_interrupted == True
-        globalVar.goal_achieved = True 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Some deployment is interrupted",
-            parameters={""},
-            probability=1.0,
-            affected=[""]
-        )
-        
-    @planned(cost=100)
-    def NodeNServiceInterupted(self,globalVar:GlobalVar):
-        assert globalVar.is_node_interrupted == True
-        assert globalVar.is_service_interrupted == True
-        globalVar.goal_achieved = True 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Node and Service are interrupted",
-            parameters={""},
-            probability=1.0,
-            affected=[""]
-        )
+    global RESULT
+    RESULT=result
+    print(RESULT.output)
+    assert result.exit_code == 0
 
 @pytest.mark.skip(reason="temporary skip")
-def test_test():
-    args = []
-    args.extend(["-df", NODE1, PODS, PODS_BIG, SERVICES, REPLICASETS, PRIORITYCLASSES, DEPLOYMENT])
-    args.extend(["-f", DEPLOYMENT_NEW, "-o", "yaml", "-t", "650"])
-    result = CliRunner().invoke(run, args)
-    print(result)
-
-
 def test_AnyGoal():
     k = KubernetesCluster()
     k.load(open(NODE1).read())
