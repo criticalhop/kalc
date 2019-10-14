@@ -72,6 +72,7 @@ class QueueLoadCheck(K8ServiceInterruptSearch):
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Changed"]
 
 #we have pod with Pendining status in dump we should get it in Running status
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_start_pod_from_dump():
     k = KubernetesCluster()
     k.load(open(NODE1).read())
@@ -95,6 +96,7 @@ def test_start_pod_from_dump():
         assert pod.atNode in nodes._get_value() # check each pod than each have atNode
 
 #we have pod with Running status in dump kubernites shoul kill pods with lower piority then created
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_killpod():
     k = KubernetesCluster()
     k.load(open(NODE1).read()) # trim resource, run only one Node
@@ -123,6 +125,7 @@ def test_killpod():
     assert len(killingPods) > 0 # test that some pod Killed
 
 #we have pod with Running status in dump we should get "pod cant start" because our new pods have the same priority as are ran pods
+@pytest.mark.skip(reason="specific scenario is not selected")
 def test_pod_cant_start():
     k = KubernetesCluster()
     k.load(open(NODE1).read()) # trim resource, run only one Node
