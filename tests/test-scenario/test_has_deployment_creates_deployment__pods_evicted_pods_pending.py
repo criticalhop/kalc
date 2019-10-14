@@ -33,7 +33,7 @@ NODE1 = "./tests/test-scenario/deployment/dump/node1.yaml"
 NODE2 = "./tests/test-scenario/deployment/dump/node2.yaml"
 # pod cpu = 100m * 7 memory = 500m * 5
 PODS = "./tests/test-scenario/deployment/dump/pods.yaml"
-PODS_BIG = "./tests/test-scenario/deployment/dump/pods_big.yaml"
+PODS_BIG = "./tests/test-scenario/deployment/dump/pods_big200.yaml"
 
 # the same but one pon in pending TODO may me need to load from cluster
 PODS_PENDING = "./tests/test-scenario/deployment/dump/pods_pending.yaml"

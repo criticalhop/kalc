@@ -78,21 +78,20 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[describe(deployment_current)]
         )
 
-    @planned(cost=100)
-    def No_Deployment_Outage_Event_possible(self,
-                deployment_current: Deployment,
-                pod_current: Pod,
-                global_: "GlobalVar",
-                scheduler: "Scheduler"
-            ):
-        assert scheduler.status == STATUS_SCHED["Clean"] 
-        
-        global_.is_deployment_interrupted = True
+    # @planned(cost=300000)
+    # def No_Searched_Goal_possible(self,
+    #             deployment_current: Deployment,
+    #             pod_current: Pod,
+    #             global_: "GlobalVar",
+    #             scheduler: "Scheduler"
+    #         ):
+    #     assert scheduler.status == STATUS_SCHED["Clean"] 
+    #     global_.goal_achieved = True
         
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="NO Detected deployment outage event detected",
+            description="NO searched goal possible",
             parameters={},
             probability=1.0,
             affected=[]
@@ -113,6 +112,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             probability=1.0,
             affected=[describe(pod)]
         )
+
     @planned(cost=100)
     def Mark_node_outage_event(self,
         node:"Node",
