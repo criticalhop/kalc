@@ -67,12 +67,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
     click.echo(f"# Building abstract state ...")
     k._build_state()
-    if exclude != None:
-        excludeList = []
-        for kn in exclude.split(","):
-            click.echo(f"# Exclude {kn} ...")
-            excludeList.append(ExcludeDict(kn))
-        mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
+    mark_excluded(k.state_objects, exclude, ignore_nonexistent_exclusions)
     p = AnyGoal(k.state_objects)
 
     click.echo("# Solving ...")
