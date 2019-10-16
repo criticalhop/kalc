@@ -156,7 +156,13 @@ class K8ServiceInterruptSearch(KubernetesModel):
         )
 
 
-def mark_excluded(object_space, exclude, skip_check=False):
+def mark_excluded(object_space, excludeStr, skip_check=False):
+    exclude = []
+    if excludeStr != None:
+        for kn in excludeStr.split(","):
+            exclude.append(ExcludeDict(kn))
+    else: 
+        return
     names = []
     types = []
     for obj in object_space:
@@ -168,6 +174,7 @@ def mark_excluded(object_space, exclude, skip_check=False):
                 re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
                 if (re.search(re.compile(re_objType), str(obj.__class__.__name__)) is not None) and \
                     (re.search(re.compile(re_name), str(obj.metadata_name)) is not None):
+                    # print("mark unserchable ", str(obj.__class__.__name__), ":", str(obj.metadata_name ))
                     obj.searchable = False
     if skip_check : return
     for objExclude in exclude:
