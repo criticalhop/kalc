@@ -444,10 +444,26 @@ class Random_events(ProblemTemplate):
         assert pod_killed.status == STATUS_POD["Running"]
         assert pod_killed.atNode == node_with_outage
         pod_killed.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing of pod initiated because of node outage",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
     def NodeOutage(self,
         node: "Node",
         ):
         assert node.amountOfActivePods == 0
         node.status = STATUS_NODE["Inactive"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Node outage",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 

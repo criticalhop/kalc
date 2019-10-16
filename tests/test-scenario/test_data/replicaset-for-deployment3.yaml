@@ -1,0 +1,75 @@
+apiVersion: v1
+items:
+- apiVersion: extensions/v1beta1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "5"
+      deployment.kubernetes.io/max-replicas: "7"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2019-10-16T23:39:10Z"
+    generation: 1
+    labels:
+      app: deployment3
+      pod-template-hash: 54bd6c75f
+      role: master
+      tier: backend
+    name: deployment3-5-100-100-h-54bd6c75f
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: deployment3-5-100-100-h
+      uid: 27203ef1-f06e-11e9-9e6f-42010a800082
+    resourceVersion: "8457002"
+    selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/deployment3-5-100-100-h-54bd6c75f
+    uid: 27224cbe-f06e-11e9-9e6f-42010a800082
+  spec:
+    replicas: 5
+    selector:
+      matchLabels:
+        app: deployment3
+        pod-template-hash: 54bd6c75f
+        role: master
+        tier: backend
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: deployment3
+          pod-template-hash: 54bd6c75f
+          role: master
+          tier: backend
+      spec:
+        containers:
+        - image: k8s.gcr.io/redis:e2e
+          imagePullPolicy: IfNotPresent
+          name: master
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          resources:
+            limits:
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 5
+    fullyLabeledReplicas: 5
+    observedGeneration: 1
+    readyReplicas: 5
+    replicas: 5
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

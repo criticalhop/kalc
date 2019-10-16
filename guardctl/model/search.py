@@ -176,9 +176,9 @@ class AnyGoal(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Some service is interrupted",
-            parameters={str("")},
+            parameters={},
             probability=1.0,
-            affected=[str("")]
+            affected=[]
         )
     
     @planned(cost=100)
@@ -189,9 +189,9 @@ class AnyGoal(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Some deployment is interrupted",
-            parameters={str("")},
+            parameters={},
             probability=1.0,
-            affected=[str("")]
+            affected=[]
         )
         
     @planned(cost=100)
@@ -203,7 +203,7 @@ class AnyGoal(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Node and Service are interrupted",
-            parameters={str("")},
+            parameters={},
             probability=1.0,
-            affected=[str("")]
+            affected=[]
         )

@@ -32,4 +32,6 @@ class Service(HasLabel):
 Service.SERVICE_NULL = Service("NULL")
 Service.SERVICE_NULL.metadata_name = "Null-Service"
 Service.SERVICE_NULL.isNull = True
+Service.SERVICE_NULL.searchable == False
+
 
