@@ -16,6 +16,7 @@ from guardctl.model.scenario import ScenarioStep, describe
 from guardctl.misc.const import *
 from guardctl.model.kubeactions import KubernetesModel,Random_events
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+import re
 
 class ExcludeDict:
     name: str
@@ -130,13 +131,30 @@ def mark_excluded(object_space, exclude, skip_check=False):
             names.append(obj.metadata_name)
         types.append(obj.__class__.__name__)
         for objExclude in exclude:
-            if (obj.__class__.__name__ == objExclude.objType) and (obj.metadata_name == objExclude.name):
+            re_name = "^" + objExclude.name.replace('*', '.*') + "$"
+            re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
+            if (re.search(re.compile(re_objType), obj.__class__.__name__) != None) and \
+                (re.search(re.compile(re_name), obj.metadata_name) != None):
                 obj.searchable = False
     if skip_check : return
     for objExclude in exclude:
-        if not(objExclude.objType in types):
+        re_name = "^" + objExclude.name.replace('*', '.*') + "$"
+        re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
+
+        typeCheck = True
+        for type_name in types:  
+            if re.search(re.compile(re_objType), type_name) != None:
+                print("type_name: ",type_name)
+                typeCheck = False
+        if typeCheck:
             raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
-        if not(objExclude.name in names):
+
+        nameCheck = True
+        for metadata_name in names:
+            if re.search(re.compile(re_name), metadata_name) != None:
+                print("metadata_name: ",metadata_name)
+                nameCheck = False
+        if nameCheck:
             raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
     return ScenarioStep(
