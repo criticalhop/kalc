@@ -20,11 +20,11 @@ APP_VERSION = '0.1.3'
 
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)
-@click.option("--from-dir", "-d", help="Directory with cluster resources definitions", type=str, default=None)
-@click.option("--dump-file", "-df", help="Path with dump", type=str, default=None)
+@click.option("--from-dir", "-d", help="Directory (or directories with space separator) with cluster resources definitions", type=str, default=None)
+@click.option("--dump-file", "-df", help="Path (or file paths with space separator) with dump", type=str, default=None)
 @click.option("--output", "-o", help="Select output format", \
                 type=click.Choice(["yaml"]), required=False, default="yaml")
-@click.option("--filename", "-f", help="Create/Apply new resource from YAML file (select type by mode)", \
+@click.option("--filename", "-f", help="Create/Apply new resource from YAML files (or file paths with space separator) (select type by mode)", \
                 type=str, required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
                 type=int, required=False, default=150)
@@ -43,12 +43,14 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
     k = KubernetesCluster()
 
+    click.echo(f"# Loading cluster definitions from directories {from_dir} ...\n")
     if from_dir != None:
-        for d in from_dir:
-            click.echo(f"# Loading cluster definitions from directory {d} ...")
+        for d in from_dir.split(' '):
+            click.echo(f"# Loading cluster definitions from directory {d} ...\n")
             k.load_dir(d)
+
     if dump_file != None:
-        for df in dump_file:
+        for df in dump_file.split(' '):
             click.echo(f"# Loading cluster definitions from file {df} ...")
             k.load(df)
 
