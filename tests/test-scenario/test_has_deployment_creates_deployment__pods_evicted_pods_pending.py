@@ -33,7 +33,7 @@ NODE1 = "./tests/test-scenario/deployment/dump/node1.yaml"
 NODE2 = "./tests/test-scenario/deployment/dump/node2.yaml"
 # pod cpu = 100m * 7 memory = 500m * 5
 PODS = "./tests/test-scenario/deployment/dump/pods.yaml"
-PODS_BIG = "./tests/test-scenario/deployment/dump/pods_big200.yaml"
+PODS_BIG = "./tests/test-scenario/deployment/dump/pods_big150.yaml"
 
 # the same but one pon in pending TODO may me need to load from cluster
 PODS_PENDING = "./tests/test-scenario/deployment/dump/pods_pending.yaml"
@@ -42,9 +42,12 @@ REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
+#@pytest.mark.skip(reason="temporary skip")
+def test_direct():
+    run(["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml"])
 
 
-# @pytest.mark.skip(reason="temporary skip")
+#@pytest.mark.skip(reason="temporary skip")
 def test_test():
     runner = CliRunner()
     result = runner.invoke(run, ["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml", "--pipe"])
@@ -72,7 +75,7 @@ def test_AnyGoal():
     p = AnyGoal(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
     print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_AnyGoal")
+    p.run(timeout=660, sessionName="test_AnyGoal")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())

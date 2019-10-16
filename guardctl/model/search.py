@@ -88,14 +88,14 @@ class K8ServiceInterruptSearch(KubernetesModel):
     #     assert scheduler.status == STATUS_SCHED["Clean"] 
     #     global_.goal_achieved = True
         
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="NO searched goal possible",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        # return ScenarioStep(
+        #     name=sys._getframe().f_code.co_name,
+        #     subsystem=self.__class__.__name__,
+        #     description="NO searched goal possible",
+        #     parameters={""},
+        #     probability=1.0,
+        #     affected=[]
+        # )
 
     @planned(cost=100)
     def fill_priority_class_object(self,
@@ -108,7 +108,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="no description provided",
-            parameters={},
+            parameters={""},
             probability=1.0,
             affected=[describe(pod)]
         )
@@ -176,9 +176,9 @@ class AnyGoal(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Some service is interrupted",
-            parameters={""},
+            parameters={str("")},
             probability=1.0,
-            affected=[""]
+            affected=[str("")]
         )
     
     @planned(cost=100)
@@ -189,9 +189,9 @@ class AnyGoal(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Some deployment is interrupted",
-            parameters={""},
+            parameters={str("")},
             probability=1.0,
-            affected=[""]
+            affected=[str("")]
         )
         
     @planned(cost=100)
@@ -203,7 +203,7 @@ class AnyGoal(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Node and Service are interrupted",
-            parameters={""},
+            parameters={str("")},
             probability=1.0,
-            affected=[""]
+            affected=[str("")]
         )
