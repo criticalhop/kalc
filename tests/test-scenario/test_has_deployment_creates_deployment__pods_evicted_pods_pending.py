@@ -70,7 +70,6 @@ def test_AnyGoal():
     k.create_resource(open(DEPLOYMENT_NEW).read())
     k._build_state()
     p = AnyGoal(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
-    # print_objects(k.state_objects)
     print_objects(k.state_objects)
     p.run(timeout=360, sessionName="test_AnyGoal")
     if not p.plan:

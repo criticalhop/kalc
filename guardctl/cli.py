@@ -43,7 +43,6 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
     k = KubernetesCluster()
 
-    click.echo(f"# Loading cluster definitions from directories {from_dir} ...\n")
     if from_dir != None:
         for d in from_dir.split(' '):
             click.echo(f"# Loading cluster definitions from directory {d} ...\n")
@@ -75,7 +74,6 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
             excludeList.append(ExcludeDict(kn))
         mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
     p = AnyGoal(k.state_objects)
-    # p.select_target_service()
 
     click.echo("# Solving ...")
 
