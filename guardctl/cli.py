@@ -88,7 +88,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
                 sp.ok("✅ ")
-                click.echo("# No scenario was found.")
+                click.echo("# No scenario was found. Cluster clean or search timeout (try increasing).")
             else:
                 sp.fail("💥 ")
                 click.echo("# Scenario found.")
