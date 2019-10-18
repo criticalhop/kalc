@@ -33,7 +33,7 @@ class ProblemTemplate:
                 except:
                     pass
 
-    def run(self, timeout=600, sessionName=None, schedule=schedule, raise_=False):
+    def run(self, timeout=6000, sessionName=None, schedule=schedule, raise_=False):
         if not sessionName: sessionName = self.__class__.__name__
         self.problem()
         self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m)) and hasattr(getattr(self, m), "_planned")]
@@ -60,7 +60,7 @@ class ProblemTemplate:
             else:
                 pass
     
-    def xrun(self, timeout=600, sessionName=None):
+    def xrun(self, timeout=6000, sessionName=None):
         "Run and execute plan"
         self.run(timeout, sessionName, schedule=xschedule, raise_=True)
 

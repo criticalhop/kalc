@@ -112,7 +112,7 @@ def test_AnyGoal():
     k._build_state()
     p = AnyGoal(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_AnyGoal")
+    p.run(timeout=6600, sessionName="test_AnyGoal")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
