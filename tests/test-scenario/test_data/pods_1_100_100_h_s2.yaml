@@ -41,7 +41,7 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeName: gke-tesg1-default-pool-ff7a1295-dmtd
     priority: 10000
     priorityClassName: high-priority
     restartPolicy: Always
