@@ -453,7 +453,7 @@ class Random_events(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
+    @planned(cost=100)
     def NodeOutage(self,
         node: "Node",
         ):
