@@ -51,7 +51,8 @@ replicaset_for_deployment2 = "./tests/test-scenario/test_data/replicaset_for_dep
 service1 = "./tests/test-scenario/test_data/service1.yaml"
 service2 = "./tests/test-scenario/test_data/service2.yaml"
 
-DUMP_S1_HIGH_PRIORITY_S2_ZERO_PRIORITY = [nodes1_2_940_2700,\
+DUMP_S1_HIGH_PRIORITY_S2_ZERO_PRIORITY = [priorityclass,\
+                                        nodes1_2_940_2700,\
                                         pods_1_100_100_h,\
                                         pods_1_100_100_h_s1,\
                                         pods_1_100_100_z,\
@@ -62,7 +63,6 @@ DUMP_S1_HIGH_PRIORITY_S2_ZERO_PRIORITY = [nodes1_2_940_2700,\
                                         pods_1_500_1000_z,\
                                         pods_1_500_1000_z_s1,\
                                         pods_1_500_1000_z_s2,\
-                                        priorityclass,\
                                         service1,\
                                         service2]
 CHANGE_DEPLOYMENT_HIGH = [deployment1_5_100_100_h]
@@ -72,8 +72,8 @@ CHANGE_DEPLOYMENT_ZERO = [deployment2_5_100_100_z]
 def calculate_variable_dump(DUMP_local):
     DUMP_with_command = []
     for dump_item in DUMP_local:
-        DUMP_with_command.extend(["--from-dir"])
-        DUMP_with_command.extend([dump_item])
+        DUMP_with_command.append("--dump-file")
+        DUMP_with_command.append(dump_item)
     return DUMP_with_command
 
 def calculate_variable_change(CHANGE_local):
@@ -112,7 +112,5 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     args.extend(calculate_variable_dump(DUMP_with_command_local))
     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
     result = runner.invoke(run,args)
-    global RESULT
-    RESULT=result
-    print(RESULT.output)
+    print(result.output)
     assert result.exit_code == 0

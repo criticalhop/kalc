@@ -1,5 +1,5 @@
 import yaml
-import os
+import os, click
 from collections import defaultdict
 from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
@@ -35,6 +35,8 @@ class KubernetesCluster:
     # load - load from dump , scale/apply/replace/remove/create - are modes from kubernetes
     def load(self, str_, mode=LOAD_MODE):
         for doc in yaml.load_all(str_, Loader=yaml.FullLoader):
+            if len(str(doc)) < 100:
+                click.echo(f"# WARNING  doc - {doc} to short!!!!")
             if "items" in doc:
                 for item in doc["items"]: self.load_item(item, mode)
             else: self.load_item(doc, mode)

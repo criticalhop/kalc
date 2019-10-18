@@ -55,7 +55,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
     if dump_file:
         for df in dump_file:
             click.echo(f"# Loading cluster definitions from file {df} ...")
-            k.load(df)
+            k.load(open(df).read())
 
     if mode == KubernetesCluster.CREATE_MODE:
         for f in filename:
