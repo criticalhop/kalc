@@ -21,7 +21,7 @@ items:
       blockOwnerDeletion: true
       controller: true
       kind: Deployment
-      name: deployments-5-100-100-z
+      name: deployment1-5-100-100-h
       uid: 2fc71ecb-f057-11e9-9e6f-42010a800082
     resourceVersion: "8424136"
     selfLink: /apis/extensions/v1beta1/namespaces/default/replicasets/deployments-5-100-100-z-5fb896c5fc

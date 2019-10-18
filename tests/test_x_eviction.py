@@ -7,7 +7,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8ServiceInterruptSearch, AnyServiceInterrupted
+from guardctl.model.search import K8ServiceInterruptSearch, AnyGoal
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
@@ -229,7 +229,7 @@ def test_anyservice_interrupted_fromfiles():
     k.create_resource(open(TEST_DAEMONET).read())
     k._build_state()
     mark_excluded_service(k.state_objects)
-    p = AnyServiceInterrupted(k.state_objects)
+    p = AnyGoal(k.state_objects)
     print_objects(k.state_objects)
     p.run(timeout=660, sessionName="test_anyservice_interrupted_fromfiles")
     if not p.plan:

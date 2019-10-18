@@ -41,6 +41,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
         assert service1.searchable == True  
         assert pod1.targetService == service1
+        assert service1.isNull == False
 
         service1.status = STATUS_SERV["Interrupted"]
         global_.is_service_disrupted = True #TODO:  Optimistic search 
@@ -120,6 +121,14 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert node.status == STATUS_NODE["Inactive"]
         globalvar.is_node_disrupted = True
         
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="node outage",
+            parameters={""},
+            probability=1.0,
+            affected=[describe(node)]
+        )
 
 
 def mark_excluded(object_space, exclude, skip_check=False):
@@ -139,14 +148,6 @@ def mark_excluded(object_space, exclude, skip_check=False):
         if not(objExclude.name in names):
             raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
-    return ScenarioStep(
-        name=sys._getframe().f_code.co_name,
-        subsystem="",
-        description="Mark service as started",
-        parameters={},
-        probability=1.0,
-        affected=[""]
-    )
 class AnyServiceInterrupted(K8ServiceInterruptSearch):
 
     goal = lambda self: self.globalVar.is_service_disrupted == True and \
