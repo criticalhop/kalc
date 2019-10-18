@@ -358,8 +358,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < 1 + node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest < 1 + node.memCapacity
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -390,8 +390,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity 
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < 1 + node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest < 1 + node.memCapacity
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
