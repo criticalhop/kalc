@@ -7,10 +7,10 @@ items:
       deployment.kubernetes.io/revision: "1"
     creationTimestamp: "2019-09-25T12:02:51Z"
     generation: 1
-    name: deployment2-5-100-100-h
+    name: deployment1-5-100-100-h
     namespace: default
     resourceVersion: "2234349"
-    selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/redis-master
+    selfLink: /apis/extensions/v1beta1/namespaces/default/deployment1/redis-master
     uid: 65efde42-df8c-11e9-bb74-42010a8001fc
   spec:
     progressDeadlineSeconds: 600
@@ -18,7 +18,7 @@ items:
     revisionHistoryLimit: 10
     selector:
       matchLabels:
-        app: deployment2
+        app: deployment1
         role: master
         tier: backend
     strategy:
@@ -30,7 +30,7 @@ items:
       metadata:
         creationTimestamp: null
         labels:
-          app: deployment2
+          app: deployment1
           role: master
           tier: backend
       spec:
@@ -54,6 +54,7 @@ items:
         schedulerName: default-scheduler
         securityContext: {}
         terminationGracePeriodSeconds: 30
+        priorityClassName: high-priority
   status:
     availableReplicas: 3
     conditions:

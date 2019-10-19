@@ -6,7 +6,7 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.search import AnyGoal
+from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.misc.object_factory import labelFactory
@@ -33,8 +33,6 @@ NODE1 = "./tests/test-scenario/deployment/dump/node1.yaml"
 NODE2 = "./tests/test-scenario/deployment/dump/node2.yaml"
 # pod cpu = 100m * 7 memory = 500m * 5
 PODS = "./tests/test-scenario/deployment/dump/pods.yaml"
-PODS_BIG = "./tests/test-scenario/deployment/dump/pods_big150.yaml"
-
 # the same but one pon in pending TODO may me need to load from cluster
 PODS_PENDING = "./tests/test-scenario/deployment/dump/pods_pending.yaml"
 SERVICES = "./tests/test-scenario/deployment/dump/services.yaml"
@@ -42,29 +40,69 @@ REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
-#@pytest.mark.skip(reason="temporary skip")
-def test_direct():
-    run(["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml"])
+class AnyGoal(K8ServiceInterruptSearch):
 
+    anyGoal = False
 
-#@pytest.mark.skip(reason="temporary skip")
-def test_test():
-    runner = CliRunner()
-    result = runner.invoke(run, ["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml", "--pipe"])
-    # run(["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml", "--pipe"])
-    global RESULT
-    RESULT=result
-    print(RESULT.output)
-    assert result.exit_code == 0
+    goal = lambda self: self.anyGoal == True
+
+    @planned(cost=100)
+    def AnyServiceInterrupted(self,globalVar:GlobalVar):
+        assert globalVar.is_service_interrupted == True
+        assert self.scheduler.status == STATUS_SCHED["Clean"]
+        self.anyGoal = True
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Some service is interrupted",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
+    
+    @planned(cost=100)
+    def AnyDeploymentInterrupted(self,globalVar:GlobalVar):
+        assert globalVar.is_deployment_interrupted == True
+        assert self.scheduler.status == STATUS_SCHED["Clean"]
+        self.anyGoal = True
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Some deployment is interrupted",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
+        
+    @planned(cost=100)
+    def NodeNServiceInterupted(self,globalVar:GlobalVar):
+        assert globalVar.is_node_interrupted == True
+        assert globalVar.is_service_interrupted == True
+        self.anyGoal = True
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Node and Service are interrupted",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
 @pytest.mark.skip(reason="temporary skip")
+def test_test():
+    args = []
+    args.extend(["-df", NODE1, PODS, SERVICES, REPLICASETS, PRIORITYCLASSES, DEPLOYMENT])
+    args.extend(["-f", DEPLOYMENT_NEW, "-o", "yaml", "-t", "650"])
+    result = CliRunner().invoke(run, args)
+    print(result)
+
+
 def test_AnyGoal():
     k = KubernetesCluster()
     k.load(open(NODE1).read())
     k.load(open(NODE2).read())
     k.load(open(PODS).read())
-    k.load(open(PODS_BIG).read())
-    
     # k.load(open(PODS_PENDING).read())
     k.load(open(SERVICES).read())
     k.load(open(REPLICASETS).read())
@@ -74,9 +112,7 @@ def test_AnyGoal():
     k._build_state()
     p = AnyGoal(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
-    print_objects(k.state_objects)
     p.run(timeout=6600, sessionName="test_AnyGoal")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
-    print_objects(k.state_objects)

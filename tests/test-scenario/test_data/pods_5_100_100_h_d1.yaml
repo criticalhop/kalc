@@ -44,7 +44,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -144,7 +144,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeName: gke-tesg1-default-pool-ff7a1295-dmtd
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -344,7 +344,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler

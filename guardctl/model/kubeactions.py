@@ -28,6 +28,7 @@ class KubernetesModel(ProblemTemplate):
                 scheduler: "Scheduler"
             ):
         assert service1.amountOfActivePods > 0
+        assert service1.isNull == False
         service1.status = STATUS_SERV["Started"]
 
         return ScenarioStep(
@@ -345,7 +346,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(pod1), describe(SelectedNode)]
         )
 
-    @planned(cost=10)
+    @planned(cost=100)
     def StartPod(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -390,7 +391,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity 
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -452,7 +453,7 @@ class Random_events(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
+    @planned(cost=100)
     def NodeOutage(self,
         node: "Node",
         ):

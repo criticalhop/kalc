@@ -199,7 +199,7 @@ def test_eviction_fromfiles_strictgoal():
     k._build_state()
     p = SingleGoalEvictionDetect(k.state_objects)
     p.select_target_service()
-    p.run(timeout=860, sessionName="test_eviction_fromfiles_strictgoal")
+    p.run(timeout=6600, sessionName="test_eviction_fromfiles_strictgoal")
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
@@ -218,7 +218,7 @@ def test_anyservice_interrupted_fromfiles():
     mark_excluded_service(k.state_objects)
     p = AnyServiceInterrupted(k.state_objects)
     print_objects(k.state_objects)
-    p.run(timeout=660, sessionName="test_anyservice_interrupted_fromfiles")
+    p.run(timeout=6600, sessionName="test_anyservice_interrupted_fromfiles")
     if not p.plan:
         raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())

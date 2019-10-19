@@ -57,7 +57,7 @@ def test_start_pod():
 
     p = PodStart(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_start_pods")
+    p.run(timeout=6600, sessionName="test_start_pods")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
@@ -85,7 +85,7 @@ def test_start_pod_from_dump():
     k._build_state()
     p = QueueLoadCheck(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_start_pod_from_dump")
+    p.run(timeout=6600, sessionName="test_start_pod_from_dump")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
@@ -111,7 +111,7 @@ def test_killpod():
     k._build_state()
     p = OptimisticRun(k.state_objects) # TODO check me, i'd like to run exiction test with killpod execution
     # print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_start_pods")
+    p.run(timeout=6600, sessionName="test_start_pods")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())
@@ -140,7 +140,7 @@ def test_pod_cant_start():
     k._build_state()
     p = OptimisticRun(k.state_objects) # TODO check me, i'd like to run exiction test with killpod execution
     # print_objects(k.state_objects)
-    p.run(timeout=360, sessionName="test_pod_cant_start")
+    p.run(timeout=6600, sessionName="test_pod_cant_start")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())

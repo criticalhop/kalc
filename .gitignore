@@ -13,3 +13,5 @@ test.log
 keypack.pyu
 pyu-data/
 pyu.log
+tests/NOT_for_Repo/
+log*
