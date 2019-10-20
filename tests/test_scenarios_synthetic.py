@@ -410,7 +410,6 @@ def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic()
     # for a in p.plan:
         # print(a) 
 
-# @pytest.mark.skip(reason="FIXME - this test fails because of a bug in the model")
 def test_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -476,7 +475,6 @@ def test_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
 
-# @pytest.mark.skip(reason="FIXME - this test fails because of a bug in the model")
 def test_creates_service_and_deployment_insufficient_resource__service_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
