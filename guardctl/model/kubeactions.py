@@ -9,6 +9,7 @@ from guardctl.model.system.Controller import Controller
 from guardctl.model.system.primitives import Label
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Deployment import Deployment
+from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
@@ -299,7 +300,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=100)
-    def KillPod(self,
+    def KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
@@ -313,6 +314,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+        # assert podBeingKilled.hasService == True #TODO add this for branching 
+        # assert podBeingKilled.hasDeployment == False #TODO add this for branching
+        # assert podBeingKilled.hasDaemonset == False #TODO add this for branching
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
@@ -332,7 +336,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=100)
-    def KillDeploymentPodWithoutService(self,
+    def KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             pods_deployment: Deployment,
             nodeWithPod : "Node" ,
@@ -341,6 +345,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
+        # assert podBeingKilled.hasService == False #TODO add this for branching 
+        # assert podBeingKilled.hasDeployment == True #TODO add this for branching 
+        # assert podBeingKilled.hasDaemonset == False #TODO add this for branching
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
@@ -363,8 +370,9 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
+    
     @planned(cost=100)
-    def KillDeploymentPodWithService(self,
+    def KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             serviceOfPod: "Service",
             pods_deployment: Deployment,
@@ -375,6 +383,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
         assert podBeingKilled.targetService == serviceOfPod
+        # assert podBeingKilled.hasService == True #TODO add this for branching 
+        # assert podBeingKilled.hasDeployment == True #TODO add this for branching 
+        # assert podBeingKilled.hasDaemonset == False #TODO add this for branching
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
@@ -398,6 +409,77 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
+    @planned(cost=100)
+    def KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            serviceOfPod: "Service",
+            pods_daemonset: DaemonSet,
+            scheduler: "Scheduler",
+            amountOfActivePodsPrev: int
+
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.targetService == serviceOfPod
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        assert podBeingKilled in pods_daemonset.podList
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+        # assert podBeingKilled.hasService == True #TODO add this for branching 
+        # assert podBeingKilled.hasDeployment == False #TODO add this for branching
+        # assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        serviceOfPod.amountOfActivePods -= 1
+        nodeWithPod.amountOfActivePods -= 1 
+        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=100)
+    def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            pods_daemonset: DaemonSet,
+            scheduler: "Scheduler",
+            amountOfActivePodsPrev: int
+
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        assert podBeingKilled in pods_daemonset.podList
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        # assert podBeingKilled.hasService == True #TODO add this for branching 
+        # assert podBeingKilled.hasDeployment == False #TODO add this for branching
+        # assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        nodeWithPod.amountOfActivePods -= 1 
+        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
 
     @planned(cost=100)
     def SelectNode(self, 
@@ -415,12 +497,15 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=100)
-    def StartPod(self, 
+    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(self, 
         podStarted: "Pod",
         node: "Node" ,
         scheduler: "Scheduler",
         serviceTargetForPod: "mservice.Service"
         ):
+        # assert podStarted.hasService == True #TODO add this for branching 
+        # assert podStarted.hasDeployment == False #TODO add this for branching
+        # assert podStarted.hasDaemonset == False #TODO add this for branching
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
@@ -448,13 +533,16 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podStarted), describe(node)]
         )
     
-    @planned(cost=10)
-    def StartPod_IF_hasService_isNull(self, 
+    @planned(cost=100)
+    def StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(self, 
         podStarted: "Pod",
         node: "Node" ,
         scheduler: "Scheduler"
         ):
-    #TODO: add assert - service is null and other branching
+        # assert podStarted.hasService == False #TODO add this for branching 
+        # assert podStarted.hasDeployment == False #TODO add this for branching
+        # assert podStarted.hasDaemonset == False #TODO add this for branching
+
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
@@ -478,6 +566,156 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podStarted), describe(node)]
         )
 
+    @planned(cost=100)
+    def StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        pods_deployment: Deployment
+        ):
+        # assert podStarted.hasService == True #TODO add this for branching 
+        # assert podStarted.hasDeployment == True #TODO add this for branching
+        # assert podStarted.hasDaemonset == False #TODO add this for branching
+
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert podStarted.targetService == serviceTargetForPod
+        assert podStarted in pods_deployment.podList
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        serviceTargetForPod.amountOfActivePods += 1
+        pods_deployment.amountOfActivePods -= 1  # ERROR HERE
+        podStarted.status = STATUS_POD["Running"] 
+        serviceTargetForPod.status = STATUS_SERV["Started"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+    
+    @planned(cost=100)
+    def StartPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        pods_deployment: Deployment
+        ):
+        # assert podStarted.hasService == False #TODO add this for branching 
+        # assert podStarted.hasDeployment == True #TODO add this for branching
+        # assert podStarted.hasDaemonset == False #TODO add this for branching
+
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert podStarted in pods_deployment.podList
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        pods_deployment.amountOfActivePods -= 1  # ERROR HERE
+        podStarted.status = STATUS_POD["Running"] 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+
+    @planned(cost=100)
+    def StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        pods_daemonset: DaemonSet
+        ):
+        # assert podStarted.hasService == False #TODO add this for branching 
+        # assert podStarted.hasDeployment == False #TODO add this for branching
+        # assert podStarted.hasDaemonset == True #TODO add this for branching
+
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert podStarted in pods_daemonset.podList
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        podStarted.status = STATUS_POD["Running"] 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+
+
+    @planned(cost=100)
+    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        pods_daemonset: DaemonSet
+        ):
+        # assert podStarted.hasService == False #TODO add this for branching 
+        # assert podStarted.hasDeployment == False #TODO add this for branching
+        # assert podStarted.hasDaemonset == True #TODO add this for branching
+
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert podStarted in pods_daemonset.podList
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        podStarted.status = STATUS_POD["Running"] 
+        serviceTargetForPod.status = STATUS_SERV["Started"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
     @planned(cost=30000)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler"):
         scheduler.queueLength -= 1

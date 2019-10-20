@@ -46,11 +46,13 @@ class DaemonSet(Controller, HasLimitsRequests):
             new_pod.status = STATUS_POD["Pending"]
             new_pod.hook_after_load(object_space, _ignore_orphan=True) # for service<>pod link
             new_pod.set_priority(object_space, self)
+            new_pod.hasDaemonset = True
             self.podList.add(new_pod)
             object_space.append(new_pod)
             scheduler.podQueue.add(new_pod)
             scheduler.queueLength += 1
             scheduler.status = STATUS_SCHED["Changed"]
+            self.amountOfActivePods += 1
 
     def hook_after_load(self, object_space):
         daemonSets = filter(lambda x: isinstance(x, DaemonSet), object_space)
