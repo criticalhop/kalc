@@ -585,7 +585,7 @@ def test_synthetic_start_pod_with_scheduler():
         goal = lambda self: pods[1].status == STATUS_POD["Running"]
     p = TestRun(k.state_objects)
     p.run()
-    # print(Scenario(p.plan).asyaml())
+    print(Scenario(p.plan).asyaml())
     print_objects(k.state_objects)
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
         # this one test broken
@@ -621,7 +621,7 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
     k.state_objects.append(d_was)
     for i in range(2):
         pod = Pod()
-        pod.metadata_name = str(i)
+        pod.metadata_name = "pod_number_" + str(i)
         pod.memRequest = 1
         pod.cpuRequest = 1
         pod.status = STATUS_POD["Running"]
@@ -650,5 +650,11 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
     
     p = TestRun(k.state_objects)
     p.run()
-    
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if "d_new" in pod.metadata_name._get_value():
+            pod.status._get_value() == "Pending"
     print_objects(k.state_objects)
+    
+
+
+    print("scenario {0}".format(Scenario(p.plan).asyaml()))
