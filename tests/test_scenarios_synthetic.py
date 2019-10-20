@@ -11,6 +11,12 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.misc.const import *
 import pytest
+from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.misc.object_factory import labelFactory
+from click.testing import CliRunner
+from tests.test_util import print_objects
+from guardctl.model.scenario import Scenario
+from poodle import planned
 
 def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1 = Pod()
@@ -546,3 +552,38 @@ def test_creates_service_and_deployment_insufficient_resource__service_outage():
     # for a in p.plan:
         # print(a) 
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+# Simple test for pod 
+def test_synthetic_start_pod_with_scheduler():
+    k = KubernetesCluster()
+    pods = []
+    node = Node()
+    node.memCapacity = 3
+    node.cpuCapacity = 3
+    for i in range(2):
+        pod = Pod()
+        pod.metadata_name = str(i)
+        pod.memRequest = 1
+        pod.cpuRequest = 1
+        pods.append(pod)
+    pods[0].status = STATUS_POD["Running"]
+    pods[0].atNode = node
+    pods[1].toNode = node
+
+    k.state_objects.extend(pods)
+    k.state_objects.append(node)
+
+    k._build_state()
+    
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    scheduler.status = STATUS_SCHED["Changed"]
+    scheduler.podQueue.add(pods[1])
+    scheduler.queueLength += 1
+    class TestRun(K8ServiceInterruptSearch):
+        goal = lambda self: pods[1].status == STATUS_POD["Running"]
+    p = TestRun(k.state_objects)
+    p.run()
+    # print(Scenario(p.plan).asyaml())
+    print_objects(k.state_objects)
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        assert pod.status._get_value() == "Running", "All pods should be Running in this case. Some pod is {0}".format(pod.status._get_value())
