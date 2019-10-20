@@ -42,12 +42,12 @@ REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
-#@pytest.mark.skip(reason="temporary skip")
+@pytest.mark.skip(reason="temporary skip")
 def test_direct():
     run(["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml"])
 
 
-#@pytest.mark.skip(reason="temporary skip")
+@pytest.mark.skip(reason="temporary skip")
 def test_test():
     runner = CliRunner()
     result = runner.invoke(run, ["--from-dir", DUMP, "-f", DEPLOYMENT_NEW, "-o", "yaml", "--pipe"])
@@ -57,7 +57,7 @@ def test_test():
     print(RESULT.output)
     assert result.exit_code == 0
 
-@pytest.mark.skip(reason="temporary skip")
+# @pytest.mark.skip(reason="temporary skip")
 def test_AnyGoal():
     k = KubernetesCluster()
     k.load(open(NODE1).read())

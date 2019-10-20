@@ -4,20 +4,20 @@ items:
   kind: Pod
   metadata:
     creationTimestamp: 2019-08-31T01:51:54Z
-    generateName: redis-master-57fc67768d-
+    generateName: redis-master-2-57fc67768d-
     labels:
-      app: redis
+      app: redis-2
       pod-template-hash: 57fc67768d
       role: master
       tier: backend
-    name: pods-1-100-100-z-s1-57fc67768d-hl44k
+    name: pods-1-100-100-h-s2-57fc67768d-hl44k
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: redis-master-57fc67768d
+      name: redis-master-2-57fc67768d
       uid: 1fb98600-ae52-11e9-98f3-42010a8000c4
     resourceVersion: "19428192"
     selfLink: /api/v1/namespaces/default/pods/redis-master-57fc67768d-hl44k
@@ -41,8 +41,9 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
-    priority: 0
+    nodeName: gke-node2-3200-3200
+    priority: 10000
+    priorityClassName: high-priority
     restartPolicy: Always
     schedulerName: default-scheduler
     securityContext: {}

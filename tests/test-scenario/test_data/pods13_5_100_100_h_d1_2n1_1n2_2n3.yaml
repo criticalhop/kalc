@@ -10,7 +10,7 @@ items:
       pod-template-hash: 5fb896c5fc
       role: master
       tier: backend
-    name: deployments-5-100-100-z-5fb896c5fc-dn9ng
+    name: pods13_5_100_100_h_d1_2n1_1n2_2n3-1
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -44,7 +44,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
+    nodeName: gke-node1-3200-3200
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -110,7 +110,7 @@ items:
       pod-template-hash: 5fb896c5fc
       role: master
       tier: backend
-    name: deployments-5-100-100-z-5fb896c5fc-rv7lq
+    name: pods13_5_100_100_h_d1_2n1_1n2_2n3-2
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -144,7 +144,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-tesg1-default-pool-ff7a1295-dmtd
+    nodeName: gke-node2-3200-3200
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -210,7 +210,7 @@ items:
       pod-template-hash: 5fb896c5fc
       role: master
       tier: backend
-    name: deployments-5-100-100-z-5fb896c5fc-szbpj
+    name: pods13_5_100_100_h_d1_2n1_1n2_2n3-3
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -244,7 +244,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    nodeName: gke-node3-3000-3000
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -310,7 +310,7 @@ items:
       pod-template-hash: 5fb896c5fc
       role: master
       tier: backend
-    name: deployments-5-100-100-z-5fb896c5fc-tkmmh
+    name: pods13_5_100_100_h_d1_2n1_1n2_2n3-4
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -344,7 +344,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
+    nodeName: gke-node1-3200-3200
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -410,7 +410,7 @@ items:
       pod-template-hash: 5fb896c5fc
       role: master
       tier: backend
-    name: deployments-5-100-100-z-5fb896c5fc-vgcvq
+    name: pods13_5_100_100_h_d1_2n1_1n2_2n3-5
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
@@ -444,7 +444,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    nodeName: gke-node3-3000-3000
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler

@@ -11,7 +11,7 @@ items:
     labels:
       controller-uid: 0a420fdd-cff2-11e9-98f3-42010a8000c4
       job-name: pods-1-1000-1000-z-1567697400
-    name: pods-1-1000-1000-h-1567697400-7b4np
+    name: pods-1-1000-1000-z-1567697400-7b4np
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
@@ -33,7 +33,7 @@ items:
       name: hello
       resources:
         requests:
-          cpu: 500m
+          cpu: 1000m
           memory: 1000Mi
       terminationMessagePath: /dev/termination-log
       terminationMessagePolicy: File
@@ -42,9 +42,8 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
-    priority: 10000
-    priorityClassName: high-priority
+    nodeName: gke-node2-3200-3200
+    priority: 0
     restartPolicy: Never
     schedulerName: default-scheduler
     securityContext: {}

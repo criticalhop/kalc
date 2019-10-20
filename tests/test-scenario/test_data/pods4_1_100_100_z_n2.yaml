@@ -7,21 +7,21 @@ items:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
     creationTimestamp: 2019-09-05T15:30:07Z
-    generateName: pods-1-100-100-h-1567697400-
+    generateName: pods-1-100-100-z1567697400-
     labels:
       controller-uid: 0a420fdd-cff2-11e9-98f3-42010a8000c4
-      job-name: pods-1-100-100-h-1567697400
-    name: pods-1-100-100-h-1567697400-7b4np
+      job-name: pods-1-100-100-z-1567697400
+    name: pods-1-100-100-z1567697400-7b4np
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
       blockOwnerDeletion: true
       controller: true
       kind: Job
-      name: pods-1-100-100-h-1567697400
+      name: pods-1-100-100-z-1567697400
       uid: 0a420fdd-cff2-11e9-98f3-42010a8000c4
     resourceVersion: "20987449"
-    selfLink: /api/v1/namespaces/default/pods/pods-1-100-100-h1567697400-7b4np
+    selfLink: /api/v1/namespaces/default/pods/pods-1-100-100-z-1567697400-7b4np
     uid: 0a457b1c-cff2-11e9-98f3-42010a8000c4
   spec:
     containers:
@@ -42,9 +42,8 @@ items:
         name: default-token-kchbk
         readOnly: true
     dnsPolicy: ClusterFirst
-    nodeName: gke-tesg1-default-pool-ff7a1295-nvv4
-    priority: 10000
-    priorityClassName: high-priority
+    nodeName: gke-node2-3200-3200
+    priority: 0
     restartPolicy: Never
     schedulerName: default-scheduler
     securityContext: {}

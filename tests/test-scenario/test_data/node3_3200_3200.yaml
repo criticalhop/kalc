@@ -4,10 +4,10 @@ items:
   kind: Node
   metadata:
     annotations:
-      container.googleapis.com/instance_id: "7825266721424183618"
+      container.googleapis.com/instance_id: "1293138092939317570"
       node.alpha.kubernetes.io/ttl: "0"
       volumes.kubernetes.io/controller-managed-attach-detach: "true"
-    creationTimestamp: "2019-09-17T19:12:46Z"
+    creationTimestamp: "2019-09-17T19:12:45Z"
     labels:
       beta.kubernetes.io/arch: amd64
       beta.kubernetes.io/fluentd-ds-ready: "true"
@@ -17,106 +17,106 @@ items:
       cloud.google.com/gke-os-distribution: cos
       failure-domain.beta.kubernetes.io/region: us-central1
       failure-domain.beta.kubernetes.io/zone: us-central1-a
-      kubernetes.io/hostname: gke-tesg1-default-pool-ff7a1295-nvv4
-    name: gke-tesg1-default-pool-ff7a1295-nvv4
-    resourceVersion: "2234824"
-    selfLink: /api/v1/nodes/gke-tesg1-default-pool-ff7a1295-nvv4
-    uid: 21aa5658-d97f-11e9-bb1f-42010a800115
+      kubernetes.io/hostname: gke-node3-3000-3000
+    name: gke-node3-3000-3000
+    resourceVersion: "8426150"
+    selfLink: /api/v1/nodes/gke-node3-3000-3000
+    uid: 21a12efc-d97f-11e9-bb1f-42010a800115
   spec:
-    podCIDR: 10.4.1.0/24
-    providerID: gce://closercriticalhop/us-central1-a/gke-tesg1-default-pool-ff7a1295-nvv4
+    podCIDR: 10.4.0.0/24
+    providerID: gce://closercriticalhop/us-central1-a/gke-node3-3000-3000
   status:
     addresses:
-    - address: 10.128.0.29
+    - address: 10.128.0.27
       type: InternalIP
-    - address: 34.69.191.206
+    - address: 34.70.152.97
       type: ExternalIP
-    - address: gke-tesg1-default-pool-ff7a1295-nvv4.us-central1-a.c.closercriticalhop.internal
+    - address: gke-node3-3000-3000.us-central1-a.c.closercriticalhop.internal
       type: InternalDNS
-    - address: gke-tesg1-default-pool-ff7a1295-nvv4.us-central1-a.c.closercriticalhop.internal
+    - address: gke-node3-3000-3000.us-central1-a.c.closercriticalhop.internal
       type: Hostname
     allocatable:
       attachable-volumes-gce-pd: "128"
-      cpu: 940m
+      cpu: 3200m
       ephemeral-storage: "47093746742"
       hugepages-2Mi: "0"
-      memory: 2701496Ki
+      memory: 3200000Ki
       pods: "110"
     capacity:
       attachable-volumes-gce-pd: "128"
       cpu: "1"
       ephemeral-storage: 98868448Ki
       hugepages-2Mi: "0"
-      memory: 3786936Ki
+      memory: 3786944Ki
       pods: "110"
     conditions:
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:11:08Z"
-      message: kernel has no deadlock
-      reason: KernelHasNoDeadlock
-      status: "False"
-      type: KernelDeadlock
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:11:08Z"
-      message: Filesystem is not read-only
-      reason: FilesystemIsNotReadOnly
-      status: "False"
-      type: ReadonlyFilesystem
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:16:10Z"
-      message: node is functioning properly
-      reason: UnregisterNetDevice
-      status: "False"
-      type: FrequentUnregisterNetDevice
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:16:10Z"
-      message: kubelet is functioning properly
-      reason: FrequentKubeletRestart
-      status: "False"
-      type: FrequentKubeletRestart
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:16:11Z"
-      message: docker is functioning properly
-      reason: FrequentDockerRestart
-      status: "False"
-      type: FrequentDockerRestart
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:16:12Z"
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:16:13Z"
       message: containerd is functioning properly
       reason: FrequentContainerdRestart
       status: "False"
       type: FrequentContainerdRestart
-    - lastHeartbeatTime: "2019-09-25T12:04:54Z"
-      lastTransitionTime: "2019-09-17T19:16:10Z"
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
       message: docker overlay2 is functioning properly
       reason: CorruptDockerOverlay2
       status: "False"
       type: CorruptDockerOverlay2
-    - lastHeartbeatTime: "2019-09-17T19:13:03Z"
-      lastTransitionTime: "2019-09-17T19:13:03Z"
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:11:10Z"
+      message: kernel has no deadlock
+      reason: KernelHasNoDeadlock
+      status: "False"
+      type: KernelDeadlock
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:11:10Z"
+      message: Filesystem is not read-only
+      reason: FilesystemIsNotReadOnly
+      status: "False"
+      type: ReadonlyFilesystem
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: node is functioning properly
+      reason: UnregisterNetDevice
+      status: "False"
+      type: FrequentUnregisterNetDevice
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:16:11Z"
+      message: kubelet is functioning properly
+      reason: FrequentKubeletRestart
+      status: "False"
+      type: FrequentKubeletRestart
+    - lastHeartbeatTime: "2019-10-16T21:03:52Z"
+      lastTransitionTime: "2019-09-17T19:16:12Z"
+      message: docker is functioning properly
+      reason: FrequentDockerRestart
+      status: "False"
+      type: FrequentDockerRestart
+    - lastHeartbeatTime: "2019-09-17T19:12:58Z"
+      lastTransitionTime: "2019-09-17T19:12:58Z"
       message: RouteController created a route
       reason: RouteCreated
       status: "False"
       type: NetworkUnavailable
-    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
-      lastTransitionTime: "2019-09-17T19:12:46Z"
+    - lastHeartbeatTime: "2019-10-16T21:04:28Z"
+      lastTransitionTime: "2019-09-17T19:12:45Z"
       message: kubelet has sufficient memory available
       reason: KubeletHasSufficientMemory
       status: "False"
       type: MemoryPressure
-    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
-      lastTransitionTime: "2019-09-17T19:12:46Z"
+    - lastHeartbeatTime: "2019-10-16T21:04:28Z"
+      lastTransitionTime: "2019-09-17T19:12:45Z"
       message: kubelet has no disk pressure
       reason: KubeletHasNoDiskPressure
       status: "False"
       type: DiskPressure
-    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
-      lastTransitionTime: "2019-09-17T19:12:46Z"
+    - lastHeartbeatTime: "2019-10-16T21:04:28Z"
+      lastTransitionTime: "2019-09-17T19:12:45Z"
       message: kubelet has sufficient PID available
       reason: KubeletHasSufficientPID
       status: "False"
       type: PIDPressure
-    - lastHeartbeatTime: "2019-09-25T12:05:15Z"
+    - lastHeartbeatTime: "2019-10-16T21:04:28Z"
       lastTransitionTime: "2019-09-17T19:12:47Z"
       message: kubelet is posting ready status. AppArmor enabled
       reason: KubeletReady
@@ -230,12 +230,16 @@ items:
       sizeBytes: 42110407
     nodeInfo:
       architecture: amd64
-      bootID: da7d3114-f2c3-445b-9039-32d4f05ce585
+      bootID: f5001005-c491-4f8c-82ac-d29cbadda556
       containerRuntimeVersion: docker://18.9.3
       kernelVersion: 4.14.127+
       kubeProxyVersion: v1.13.7-gke.8
       kubeletVersion: v1.13.7-gke.8
-      machineID: 15879e34933378e2234f4d748d13f336
+      machineID: fffcb3d65f3951129da2d28a84575d12
       operatingSystem: linux
       osImage: Container-Optimized OS from Google
-      systemUUID: 15879E34-9333-78E2-234F-4D748D13F336
+      systemUUID: FFFCB3D6-5F39-5112-9DA2-D28A84575D12
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

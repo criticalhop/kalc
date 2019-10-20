@@ -80,7 +80,7 @@ def cpuConvertToAbstractProblem(cpuParot):
         else:
             cpu = int(cpuParot)*1000
     # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
-    cpu = int(cpu / 50)
+    cpu = int(cpu / 100)
     if cpu == 0:
         cpu = 1
     return int(cpu)

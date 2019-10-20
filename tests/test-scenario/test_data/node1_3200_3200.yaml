@@ -17,30 +17,30 @@ items:
       cloud.google.com/gke-os-distribution: cos
       failure-domain.beta.kubernetes.io/region: us-central1
       failure-domain.beta.kubernetes.io/zone: us-central1-a
-      kubernetes.io/hostname: gke-tesg1-default-pool-ff7a1295-dmtd
-    name: gke-tesg1-default-pool-ff7a1295-nvv4
+      kubernetes.io/hostname: gke-node1-3200-3200
+    name: gke-node1-3200-3200
     resourceVersion: "2234824"
-    selfLink: /api/v1/nodes/gke-tesg1-default-pool-ff7a1295-dmtd
+    selfLink: /api/v1/nodes/gke-node1-3200-3200
     uid: 21aa5658-d97f-11e9-bb1f-42010a800115
   spec:
     podCIDR: 10.4.1.0/24
-    providerID: gce://closercriticalhop/us-central1-a/gke-tesg1-default-pool-ff7a1295-dmtd
+    providerID: gce://closercriticalhop/us-central1-a/gke-node1-3200-3200
   status:
     addresses:
     - address: 10.128.0.29
       type: InternalIP
     - address: 34.69.191.206
       type: ExternalIP
-    - address: gke-tesg1-default-pool-ff7a1295-dmtd.us-central1-a.c.closercriticalhop.internal
+    - address: gke-node1-3200-3200.us-central1-a.c.closercriticalhop.internal
       type: InternalDNS
-    - address: gke-tesg1-default-pool-ff7a1295-dmtd.us-central1-a.c.closercriticalhop.internal
+    - address: gke-node1-3200-3200.us-central1-a.c.closercriticalhop.internal
       type: Hostname
     allocatable:
       attachable-volumes-gce-pd: "128"
-      cpu: 940m
+      cpu: 3200m
       ephemeral-storage: "47093746742"
       hugepages-2Mi: "0"
-      memory: 2701496Ki
+      memory: 3200000Ki
       pods: "110"
     capacity:
       attachable-volumes-gce-pd: "128"
