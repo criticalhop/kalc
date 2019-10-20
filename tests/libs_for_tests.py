@@ -102,8 +102,6 @@ DUMP1_S1_H_S2_Z_FREE_200 = [priorityclass,\
                             service1,\
                             service2]
 
-DUMP1_S1_H_S2_Z_FREE_200
-
 DUMP1_S1_H_S2_Z_FREE_200_WITH_D2 = DUMP1_S1_H_S2_Z_FREE_200.extend([deployment2_5_100_100_z,\
                                                                     replicaset_for_deployment2,\
                                                                     pods14_5_100_100_z_d2_3n1_2n3])
