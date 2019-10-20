@@ -585,8 +585,8 @@ def test_synthetic_start_pod_with_scheduler():
         goal = lambda self: pods[1].status == STATUS_POD["Running"]
     p = TestRun(k.state_objects)
     p.run()
-    print(Scenario(p.plan).asyaml())
     print_objects(k.state_objects)
+    print(p.plan)
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
         # this one test broken
         assert pod.status == STATUS_POD["Running"], "All pods should be Running in this case. Some pod is {0}".format(pod.status._get_value())
@@ -641,6 +641,8 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
 
     pod_pending_count = 0
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if "pod_number_" in pod.metadata_name._get_value():
+            assert pod.status._get_value() == "Running", "pod_number_X pods should be Running before planning but have {0} status".format(pod.status._get_value())
         if pod.status._get_value() == "Pending":
             pod_pending_count += 1
     assert pod_pending_count == 2, "should be 2 pod in pending have only {0}".format(pod_pending_count)
@@ -652,9 +654,7 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
     p.run()
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
         if "d_new" in pod.metadata_name._get_value():
-            pod.status._get_value() == "Pending"
+            assert pod.status._get_value() == "Running", "d_new_xxx_x pods should be Running after planning but have {0} status".format(pod.status._get_value())
     print_objects(k.state_objects)
     
-
-
-    print("scenario {0}".format(Scenario(p.plan).asyaml()))
+    print("scenario {0}".format(p.plan))
