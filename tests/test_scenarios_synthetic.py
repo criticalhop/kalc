@@ -11,6 +11,12 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.misc.const import *
 import pytest
+from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.misc.object_factory import labelFactory
+from click.testing import CliRunner
+from tests.test_util import print_objects
+from guardctl.model.scenario import Scenario
+from poodle import planned
 
 def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1 = Pod()
@@ -546,3 +552,109 @@ def test_creates_service_and_deployment_insufficient_resource__service_outage():
     # for a in p.plan:
         # print(a) 
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+# Simple test for pod 
+def test_synthetic_start_pod_with_scheduler():
+    k = KubernetesCluster()
+    pods = []
+    node = Node()
+    node.memCapacity = 3
+    node.cpuCapacity = 3
+    for i in range(2):
+        pod = Pod()
+        pod.metadata_name = "pod_number_" + str(i)
+        pod.memRequest = 1
+        pod.cpuRequest = 1
+        pods.append(pod)
+    pods[0].status = STATUS_POD["Running"]
+    pods[0].atNode = node
+
+    # pods[1].toNode = node
+
+
+    k.state_objects.extend(pods)
+    k.state_objects.append(node)
+
+    # k._build_state() # TODO may be should uncomments
+    
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    scheduler.status = STATUS_SCHED["Changed"]
+    scheduler.podQueue.add(pods[1])
+    scheduler.queueLength += 1
+    class TestRun(K8ServiceInterruptSearch):
+        goal = lambda self: pods[1].status == STATUS_POD["Running"]
+    p = TestRun(k.state_objects)
+    p.run()
+    print_objects(k.state_objects)
+    print(p.plan)
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        # this one test broken
+        assert pod.status == STATUS_POD["Running"], "All pods should be Running in this case. Some pod is {0}".format(pod.status._get_value())
+        # use 
+        assert pod.status._get_value() == "Running", "All pods should be Running in this case. Some pod is {0}".format(pod.status._get_value())
+
+
+def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
+    k = KubernetesCluster()
+    prios = {}
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+    prios["high"] = pc
+    k.state_objects.append(pc)
+    pc = PriorityClass()
+    pc.priority = 1
+    pc.metadata_name = "low-prio-test"
+    prios["low"] = pc
+    k.state_objects.append(pc)
+
+    pods = []
+    node = Node()
+    node.memCapacity = 2
+    node.cpuCapacity = 3
+    d_was = Deployment()
+    d_was.metadata_name = "d_was"
+    d_was.priorityClass = prios["low"]
+    d_was.spec_template_spec_priorityClassName = prios["low"].metadata_name
+    d_was.amountOfActivePods = 2
+    d_was.spec_replicas = 2
+    k.state_objects.append(d_was)
+    for i in range(2):
+        pod = Pod()
+        pod.metadata_name = "pod_number_" + str(i)
+        pod.memRequest = 1
+        pod.cpuRequest = 1
+        pod.status = STATUS_POD["Running"]
+        pod.priorityClass = prios["low"]
+        pod.spec_priorityClassName = prios["low"].metadata_name
+        pods.append(pod)
+        d_was.podList.add(pod)
+    k.state_objects.extend(pods)
+
+    d_new = Deployment()
+    d_new.metadata_name = "d_new"
+    d_new.spec_replicas = 2
+    d_new.priorityClass = prios["high"]
+    d_new.spec_template_spec_priorityClassName = prios["high"].metadata_name
+    d_new.hook_after_create(k.state_objects)
+    k.state_objects.append(d_new)
+
+    pod_pending_count = 0
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if "pod_number_" in pod.metadata_name._get_value():
+            assert pod.status._get_value() == "Running", "pod_number_X pods should be Running before planning but have {0} status".format(pod.status._get_value())
+        if pod.status._get_value() == "Pending":
+            pod_pending_count += 1
+    assert pod_pending_count == 2, "should be 2 pod in pending have only {0}".format(pod_pending_count)
+
+    class TestRun(K8ServiceInterruptSearch):
+        goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
+    
+    p = TestRun(k.state_objects)
+    p.run()
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if "d_new" in pod.metadata_name._get_value():
+            assert pod.status._get_value() == "Running", "d_new_xxx_x pods should be Running after planning but have {0} status".format(pod.status._get_value())
+    print_objects(k.state_objects)
+    
+    print("scenario {0}".format(p.plan))
