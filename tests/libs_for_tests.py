@@ -80,7 +80,7 @@ pods14_5_100_100_z_d2_3n1_2n3 = "./tests/test-scenario/test_data/pods14_5_100_10
 pods15_5_100_100_z_d3_2n2_3n3 = "./tests/test-scenario/test_data/pods15_5_100_100_z_d3_2n2_3n3.yaml"
 pods16_1_1000_1000_h_s1_n2 = "./tests/test-scenario/test_data/pods16_1_1000_1000_h_s1_n2.yaml"
 pods17_1_1000_1000_z_s1_n1 = "./tests/test-scenario/test_data/pods17_1_1000_1000_z_s1_n1.yaml"
-
+pods18_5_100_100_z_d2_3n1_2n2 = "./tests/test-scenario/test_data/pods18_5_100_100_z_d2_3n1_2n2.yaml"
 
 priorityclass = "./tests/test-scenario/test_data/priorityclass.yaml"
 replicaset_for_deployment1 = "./tests/test-scenario/test_data/replicaset_for_deployment1.yaml"
@@ -104,7 +104,7 @@ DUMP1_S1_H_S2_Z_FREE_200 = [priorityclass,\
 
 DUMP1_S1_H_S2_Z_FREE_200_WITH_D2 = DUMP1_S1_H_S2_Z_FREE_200.extend([deployment2_5_100_100_z,\
                                                                     replicaset_for_deployment2,\
-                                                                    pods14_5_100_100_z_d2_3n1_2n3])
+                                                                    pods18_5_100_100_z_d2_3n1_2n2])
 
 DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO = DUMP1_S1_H_S2_Z_FREE_200.extend([daemonset3_500_1000_z])
 
