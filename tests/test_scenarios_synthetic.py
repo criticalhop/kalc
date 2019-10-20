@@ -846,8 +846,6 @@ def test_startpod_with_daemonset_with_service():
         print(a) 
     assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
 
-
-
 def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -1152,3 +1150,171 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
     print_objects(k.state_objects)
     
     print("scenario {0}".format(p.plan))
+
+def test_1154_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synthetic():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n1 = Node("node 1")
+    n1.cpuCapacity = 3
+    n1.memCapacity = 3
+
+    n2 = Node("node 2")
+    n2.cpuCapacity = 3
+    n2.memCapacity = 3
+
+
+    #Create Daemonset
+    ds = DaemonSet()
+    ds.searchable = True
+
+    # Create running pods as Daemonset
+    pod_running_1 = build_running_pod_with_d(1,2,2,n1,None,ds)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n2,None,ds)
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    # s.amountOfActivePods = 2
+    # s.status = STATUS_SERV["Started"]
+    # pod_running_1.targetService = s
+    # pod_running_2.targetService = s
+
+    # Pending pod with deployment
+    d = Deployment()
+    d.spec_replicas = 1
+    d.priorityClass = pc
+
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n1,d,None)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n1, n2, pc, pod_running_1, pod_running_2, pod_pending_1, d,ds])
+    print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        # pass
+        goal = lambda self: globalvar.is_daemonset_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=50)
+    print("---after calculation ----")
+    print_objects(k.state_objects)
+    for a in p.plan:
+        print(a) 
+    # assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    # assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    # assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+
+def construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic():
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n1 = Node()
+    n1.metadata_name = "node 1"
+    n1.cpuCapacity = 3
+    n1.memCapacity = 3
+    n1.isNull == False
+
+    n2 = Node("node 2")
+    n2.metadata_name = "node 2"
+    n2.cpuCapacity = 3
+    n2.memCapacity = 3
+    n2.isNull == False
+
+
+    #Create Daemonset
+    ds = DaemonSet()
+    ds.searchable = True
+
+    # Create running pods as Daemonset
+    pod_running_1 = build_running_pod_with_d(1,2,2,n1,None,ds)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n2,None,ds)
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+
+    # Pending pod with deployment
+    d = Deployment()
+    d.spec_replicas = 1
+    d.priorityClass = pc
+
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n1,None,None)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n1,  pc, pod_running_1, pod_running_2, pod_pending_1, d, ds])
+    return k,pod_running_1
+
+def test_1218_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step1():
+    # Initialize scheduler, globalvar
+    k,pod_running_1=construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    class NewGOal(AnyGoal):
+        # pass
+        # goal = lambda self: globalvar.is_daemonset_disrupted == True
+        goal = lambda self: pod_running_1.status == STATUS_POD["Killing"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=400)
+    # for a in p.plan:
+    #     print(a) 
+    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+    # assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+def test_1292_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step2():
+    # Initialize scheduler, globalvar
+    k,pod_running_1=construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        # pass
+        # goal = lambda self: globalvar.is_daemonset_disrupted == True
+        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=400)
+    print("---after calculation ----")
+    print_objects(k.state_objects)
+    for a in p.plan:
+        print(a) 
+    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+  
+def test_1310_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step3():
+    # Initialize scheduler, globalvar
+    k,pod_running_1=construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGOal(AnyGoal):
+        # pass
+        goal = lambda self: globalvar.is_daemonset_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=400)
+    # print_objects(k.state_objects)
+    # for a in p.plan:
+    #     print(a) 
+    assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])

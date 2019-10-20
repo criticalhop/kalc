@@ -91,7 +91,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert pod_current in  daemonset_current.podList
         assert pod_current.status == STATUS_POD["Pending"]
 
-        daemonset_current.status = STATUS_DAEMONSET_INTERRUPTED
+        # daemonset_current.status = STATUS_DAEMONSET_INTERRUPTED
         global_.is_daemonset_disrupted = True
         
         return ScenarioStep(
