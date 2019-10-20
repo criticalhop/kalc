@@ -14,7 +14,6 @@ import guardctl.misc.util as util
 #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
 class DaemonSet(Controller, HasLimitsRequests):
     metadata_name: str
-    lastPod: "mpod.Pod"
     amountOfActivePods: int
     status: StatusDaemonSet
     podList: Set["mpod.Pod"]

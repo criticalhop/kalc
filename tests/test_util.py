@@ -6,6 +6,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.kinds.Deployment import Deployment
+from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.model.system.globals import GlobalVar
 
 # def test_dget_ok():
@@ -83,10 +84,23 @@ def print_objects(objectList):
         " Searchable:" + str(deployment.searchable))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
     
+    daemonsets_loaded_list = filter(lambda x: isinstance(x, DaemonSet), objectList)
+    print("----------DaemonSets------------")
+    for daemonset in daemonsets_loaded_list:
+        print("## DaemonSet: "+str(daemonset.metadata_name._get_value()) +\
+        " AmountOfActivePods: " + str(daemonset.amountOfActivePods._get_value())+\
+        " Status: " + str(daemonset.status._get_value())+\
+        " PodList: " + str([str(x) for x in daemonset.podList._get_value()])+\
+        " PriorityClassName: " + str(daemonset.spec_template_spec_priorityClassName._property_value) + \
+        " Searchable:" + str(daemonset.searchable))
+        # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
+
     globalvar_loaded_list = filter(lambda x: isinstance(x, GlobalVar), objectList)
     print("----------GlobalVar------------")
     list_of_objects_output =['']
     for globalvar_item in globalvar_loaded_list:
         list_of_objects_output.extend(['is_service_disrupted',str(globalvar_item.is_service_disrupted._get_value())])
         list_of_objects_output.extend(['is_deployment_disrupted',str(globalvar_item.is_deployment_disrupted._get_value())])
+        list_of_objects_output.extend(['is_daemonset_disrupted',str(globalvar_item.is_daemonset_disrupted._get_value())])
+        list_of_objects_output.extend(['is_node_disrupted',str(globalvar_item.is_node_disrupted._get_value())])
     print(list_of_objects_output)

@@ -314,7 +314,7 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-        assert podBeingKilled.hasService == True #TODO add this for branching 
+        assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
 
@@ -335,6 +335,8 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
+
+    
     @planned(cost=100)
     def KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
@@ -345,8 +347,8 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
-        assert podBeingKilled.hasService == False #TODO add this for branching 
-        assert podBeingKilled.hasDeployment == True #TODO add this for branching 
+        assert podBeingKilled.hasService == False 
+        assert podBeingKilled.hasDeployment == True 
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
@@ -370,7 +372,38 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    
+    @planned(cost=100)
+    def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            scheduler: "Scheduler"
+         ):
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled.hasService == False  
+        assert podBeingKilled.hasDeployment == False 
+        assert podBeingKilled.hasDaemonset == False
+
+        ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+
+        nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+        nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        nodeWithPod.amountOfActivePods -= 1 
+        podBeingKilled.status = STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+
+        # scheduler.debug_var = True # TODO DELETEME
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
     @planned(cost=100)
     def KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
@@ -383,8 +416,8 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
         assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.hasService == True #TODO add this for branching 
-        assert podBeingKilled.hasDeployment == True #TODO add this for branching 
+        assert podBeingKilled.hasService == True 
+        assert podBeingKilled.hasDeployment == True 
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
@@ -425,9 +458,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-        assert podBeingKilled.hasService == True #TODO add this for branching 
+        assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
-        assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert podBeingKilled.hasDaemonset == True #TODO add this for branching
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
@@ -460,9 +493,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-        assert podBeingKilled.hasService == True #TODO add this for branching 
-        assert podBeingKilled.hasDeployment == False #TODO add this for branching
-        assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert podBeingKilled.hasService == False 
+        assert podBeingKilled.hasDeployment == False  
+        assert podBeingKilled.hasDaemonset == True 
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
@@ -503,7 +536,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         serviceTargetForPod: "mservice.Service"
         ):
-        assert podStarted.hasService == True #TODO add this for branching 
+        assert podStarted.hasService == True 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
@@ -539,7 +572,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         scheduler: "Scheduler"
         ):
-        assert podStarted.hasService == False #TODO add this for branching 
+        assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
@@ -574,7 +607,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_deployment: Deployment
         ):
-        assert podStarted.hasService == True #TODO add this for branching 
+        assert podStarted.hasService == True 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
@@ -613,7 +646,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         pods_deployment: Deployment
         ):
-        assert podStarted.hasService == False #TODO add this for branching 
+        assert podStarted.hasService == False 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
@@ -649,7 +682,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         pods_daemonset: DaemonSet
         ):
-        assert podStarted.hasService == False #TODO add this for branching 
+        assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == True #TODO add this for branching
 
@@ -687,7 +720,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_daemonset: DaemonSet
         ):
-        assert podStarted.hasService == False #TODO add this for branching 
+        assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == True #TODO add this for branching
 
