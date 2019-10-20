@@ -181,8 +181,8 @@ def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
     args = []
     args.extend(calculate_variable_dump(DUMP_with_command_local))
     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
-    logger.info(">>args>>", args)
-    run(args)
+    print(">>args>>", args)
+    run(args) # pylint: disable=no-value-for-parameter
 
 def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     runner = CliRunner()

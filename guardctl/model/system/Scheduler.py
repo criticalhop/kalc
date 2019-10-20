@@ -12,9 +12,11 @@ class Scheduler(Object):
     queueLength: int
     status: StatusSched
     podQueue: Set["mpod.Pod"]
+    # debug_var: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.queueLength = 0
+        self.debug_var = False
 
     

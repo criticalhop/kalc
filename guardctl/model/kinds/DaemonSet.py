@@ -1,7 +1,7 @@
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass
+from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.primitives import Status
@@ -23,6 +23,10 @@ class DaemonSet(Controller, HasLimitsRequests):
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
+        self.amountOfActivePods = 0
+        self.searchable = True
+        self.spec_template_spec_priorityClassName = "Normal-zero"
+        self.priorityClass = zeroPriorityClass
 
     def hook_after_create(self, object_space):
         # TODO throw error if name already exist

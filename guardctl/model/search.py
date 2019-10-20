@@ -109,7 +109,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="no description provided",
-            parameters={""},
+            parameters={},
             probability=1.0,
             affected=[describe(pod)]
         )
@@ -125,8 +125,8 @@ class K8ServiceInterruptSearch(KubernetesModel):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="node outage",
-            parameters={""},
-            probability=1.0,
+            parameters={},
+            probability=0.01,
             affected=[describe(node)]
         )
 

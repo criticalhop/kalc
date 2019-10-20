@@ -2,6 +2,7 @@ import click
 import logging
 import os
 import sys
+import re
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import AnyGoal 
 from guardctl.model.scenario import Scenario
@@ -43,7 +44,8 @@ APP_VERSION = '0.1.3'
                 required=False, default=KubernetesCluster.CREATE_MODE)
 @click.option("--replicas", help="take pods amount for scale, default 5", \
                 type=int, required=False, default=5)
-def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas):
+@click.option("--profile", help="Search profile", default="default")
+def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
 
     k = KubernetesCluster()
 
@@ -78,7 +80,15 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
             click.echo(f"# Exclude {kn} ...")
             excludeList.append(ExcludeDict(kn))
         mark_excluded(k.state_objects, excludeList, ignore_nonexistent_exclusions)
-    p = AnyGoal(k.state_objects)
+
+    if str(profile) == "default":
+        click.echo("# Using default profile")
+        p = AnyGoal(k.state_objects)
+    else:
+        click.echo("# Using {0} profile".format(profile))
+        re.search("_profile", str(profile))
+        p = globals()[str(profile)](k.state_objects)
+
     # p.select_target_service()
 
     click.echo("# Solving ...")
@@ -88,7 +98,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
                 sp.ok("✅ ")
-                click.echo("# No scenario was found.")
+                click.echo("# No scenario was found. Cluster clean or search timeout (try increasing).")
             else:
                 sp.fail("💥 ")
                 click.echo("# Scenario found.")

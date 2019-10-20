@@ -102,7 +102,7 @@ class Pod(HasLabel, HasLimitsRequests):
                         object_space))
             except StopIteration:
                 raise Exception("Could not find priorityClass %s, maybe you \
-did not dump PriorityClass?" % str(self.spec_priorityClassName._get_value()))
+                        did not dump PriorityClass?" % str(self.spec_priorityClassName))
 
     @property
     def spec_containers__resources_requests_cpu(self):
