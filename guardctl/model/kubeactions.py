@@ -720,9 +720,9 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_daemonset: DaemonSet
         ):
-        assert podStarted.hasService == False 
-        assert podStarted.hasDeployment == False #TODO add this for branching
-        assert podStarted.hasDaemonset == True #TODO add this for branching
+        assert podStarted.hasService == True
+        assert podStarted.hasDeployment == False
+        assert podStarted.hasDaemonset == True
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node

@@ -64,27 +64,23 @@ def build_pending_pod(podName, cpuRequest, memRequest, toNode):
     p.hasDaemonset = False
     return p
 
-# def build_pending_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
-#     p = Pod()
-#     p.metadata_name = "pod"+str(podName)
-#     p.cpuRequest = cpuRequest
-#     p.memRequest = memRequest
-#     p.atNode = atNode
-#     p.status = STATUS_POD["Running"]
-#     p.hasDeployment = False
-#     p.hasService = False
-#     p.hasDaemonset = False
-#     if d is not None:
-#         d.podList.add(p)
-#         d.amountOfActivePods += 1
-#         p.hasDeployment = True
-#     if ds is not None:
-#         ds.podList.add(p)
-#         ds.amountOfActivePods += 1
-#         p.hasDaemonset = True
-#     atNode.currentFormalCpuConsumption += cpuRequest
-#     atNode.currentFormalMemConsumption += memRequest
-#     return p
+def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
+    p = Pod()
+    p.metadata_name = "pod"+str(podName)
+    p.cpuRequest = cpuRequest
+    p.memRequest = memRequest
+    p.status = STATUS_POD["Pending"]
+    p.hasDeployment = False
+    p.hasService = False
+    p.hasDaemonset = False
+    if d is not None:
+        d.podList.add(p)
+        p.hasDeployment = True
+    if ds is not None:
+        ds.podList.add(p)
+        p.hasDaemonset = True
+        p.toNode = toNode
+    return p
 
  
 def test_run_pods_no_eviction():
@@ -633,6 +629,179 @@ def test_evict_and_killpod_with_daemonset_with_service():
     #     print(a) 
 
 
+def test_startpod_without_deployment_without_service():
+    "Test that StartPod works without daemonset/deployment and service"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+ 
+    ds = DaemonSet()
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,None,ds)
+
+    # Service  
+    s = Service()
+    # s.metadata_name = "test-service"
+    # s.amountOfActivePods = 2
+    # s.status = STATUS_SERV["Started"]
+
+ 
+    pod_running_1.targetService = s
+    pod_running_1.hasService = True
+
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n,None,None)
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pod_running_1, s, pod_pending_1,ds])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = NewGOal(k.state_objects)
+    # print_objects(k.state_objects)
+    p.run(timeout=150)
+    assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
+    assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+    # for a in p.plan:
+        # print(a) 
+
+def test_startpod_without_deployment_with_service():
+    "Test that StartPod works without daemonset/deployment but with service"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+ 
+    ds = DaemonSet()
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,None,ds)
+    # Pending pod
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n,None,None)
+    
+    # Service  
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 0
+    s.status = STATUS_SERV["Pending"]
+ 
+    pod_pending_1.targetService = s
+    pod_pending_1.hasService = True
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pod_running_1, s, pod_pending_1,ds])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = NewGOal(k.state_objects)
+    # print_objects(k.state_objects)
+    p.run(timeout=150)
+    assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
+    assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+    # for a in p.plan:
+        # print(a) 
+
+
+def test_startpod_with_deployment_with_service():
+    "Test that StartPod works with deployment and service"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+ 
+    d = Deployment()
+    d.spec_replicas = 2
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,d,None)
+    # Pending pod
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n,d,None)
+    
+    # Service  
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 0
+    s.status = STATUS_SERV["Pending"]
+ 
+    pod_running_1.targetService = s
+    pod_running_1.hasService = True
+    pod_pending_1.targetService = s
+    pod_pending_1.hasService = True
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pod_running_1, s, pod_pending_1,d])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = NewGOal(k.state_objects)
+    # print_objects(k.state_objects)
+    p.run(timeout=150)
+    assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
+    assert "StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+    # for a in p.plan:
+        # print(a)
+
+
+
+def test_startpod_with_daemonset_without_service():
+    "Test that StartPod works with daemonset and without service"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+ 
+    d = DaemonSet()
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,None,d)
+    # Pending pod
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n,None,d)
+    
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pod_running_1, pod_pending_1,d])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = NewGOal(k.state_objects)
+    print_objects(k.state_objects)
+    p.run(timeout=150)
+    for a in p.plan:
+        print(a) 
+    # assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
+    assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+
+
 def test_startpod_with_daemonset_with_service():
     "Test that StartPod works with daemonset and service"
     # Initialize scheduler, globalvar
@@ -642,50 +811,41 @@ def test_startpod_with_daemonset_with_service():
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
-
-    # create Deploymnent that we're going to detect failure of...
-    ds = DaemonSet()
+ 
+    d = DaemonSet()
 
     # Create running pods
-    pod_running_1 = build_running_pod(1,2,2,n,None,ds)
-
-    # priority for pod-to-evict
-    pc = PriorityClass()
-    pc.priority = 10
-    pc.metadata_name = "high-prio-test"
-
-    # Service to detecte eviction
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,None,d)
+    # Pending pod
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n,None,d)
+    
+    # Service  
     s = Service()
     s.metadata_name = "test-service"
-    s.amountOfActivePods = 2
-    s.status = STATUS_SERV["Started"]
-
-    # our service has multiple pods but we are detecting pods pending issue
-    # remove service as we are detecting service outage by a bug above
+    s.amountOfActivePods = 0
+    s.status = STATUS_SERV["Pending"]
+ 
     pod_running_1.targetService = s
     pod_running_1.hasService = True
-
-
-    # Pending pod
-    pod_pending_1 = build_pending_pod(3,2,2,n)
-    pod_pending_1.priorityClass = pc # high prio will evict!
+    pod_pending_1.targetService = s
+    pod_pending_1.hasService = True
 
     ## Add pod to scheduler queue
     scheduler.podQueue.add(pod_pending_1)
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
 
-    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1,ds])
+    k.state_objects.extend([n, pod_running_1, s, pod_pending_1,d])
     # print_objects(k.state_objects)
     class NewGOal(AnyGoal):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    # print_objects(k.state_objects)
+    print_objects(k.state_objects)
     p.run(timeout=150)
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a) 
+    for a in p.plan:
+        print(a) 
+    assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+
 
 
 def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic():
