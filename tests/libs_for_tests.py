@@ -101,12 +101,13 @@ DUMP1_S1_H_S2_Z_FREE_200 = [priorityclass,\
                             pods16_1_1000_1000_h_s1_n2,\
                             service1,\
                             service2]
+DUMP1_S1_H_S2_Z_FREE_200_WITH_D2=DUMP1_S1_H_S2_Z_FREE_200
+DUMP1_S1_H_S2_Z_FREE_200_WITH_D2.extend([deployment2_5_100_100_z,\
+                                        replicaset_for_deployment2,\
+                                        pods18_5_100_100_z_d2_3n1_2n2])
 
-DUMP1_S1_H_S2_Z_FREE_200_WITH_D2 = DUMP1_S1_H_S2_Z_FREE_200.extend([deployment2_5_100_100_z,\
-                                                                    replicaset_for_deployment2,\
-                                                                    pods18_5_100_100_z_d2_3n1_2n2])
-
-DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO = DUMP1_S1_H_S2_Z_FREE_200.extend([daemonset3_500_1000_z])
+DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO=DUMP1_S1_H_S2_Z_FREE_200
+DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO.extend([daemonset3_500_1000_z])
 
 CHANGE_DEPLOYMENT_HIGH = [deployment1_5_100_100_h]
 CHANGE_DAEMONSET_HIGH = [daemonset4_300_300_h]
