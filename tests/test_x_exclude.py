@@ -71,7 +71,6 @@ def test_exclude_regexp():
     result = CliRunner().invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml","-e", "Service:redis-master*", "--pipe"])
     assert result.exit_code == 0
 
-@pytest.mark.skip(reason="temporary skip")
 def test_exclude_regexp_unit():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
