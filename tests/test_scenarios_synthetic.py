@@ -1,6 +1,7 @@
 from tests.test_util import print_objects
 from guardctl.model.search import AnyGoal 
 from guardctl.model.system.Scheduler import Scheduler
+from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Pod import Pod
@@ -409,6 +410,7 @@ def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic()
     # for a in p.plan:
         # print(a) 
 
+# @pytest.mark.skip(reason="FIXME - this test fails because of a bug in the model")
 def test_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -458,11 +460,91 @@ def test_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     d.amountOfActivePods = 2
     d.spec_replicas = 2
 
-    k.state_objects.extend([n, pod_running_1, pod_running_2, pod_pending_1, d])
+    dnew = Deployment()
+    dnew.podList.add(pod_pending_1)
+    dnew.amountOfActivePods = 0
+    dnew.spec_replicas = 1
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2, pod_pending_1, d, dnew])
     # print_objects(k.state_objects)
     class NewGOal(AnyGoal):
         pass
     p = NewGOal(k.state_objects)
     p.run(timeout=50)
-    for a in p.plan:
-        print(a) 
+    # for a in p.plan:
+        # print(a) 
+    assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+
+# @pytest.mark.skip(reason="FIXME - this test fails because of a bug in the model")
+def test_creates_service_and_deployment_insufficient_resource__service_outage():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    # priority for pod-to-evict
+    # pc = PriorityClass()
+    # pc.priority = 10
+    # pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    # pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.podList.add(pod_running_1)
+    d.podList.add(pod_running_2)
+    d.amountOfActivePods = 2
+    d.spec_replicas = 2
+
+    dnew = Deployment()
+    dnew.podList.add(pod_pending_1)
+    dnew.amountOfActivePods = 0
+    dnew.spec_replicas = 1
+
+    snew = Service()
+    snew.metadata_name = "test-service-new"
+    snew.amountOfActivePods = 0
+    # snew.status = STATUS_SERV["Started"]
+    pod_pending_1.targetService = snew
+
+    k.state_objects.extend([n, s, snew, pod_running_1, pod_running_2, pod_pending_1, d, dnew])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_service_disrupted == True and \
+                scheduler.status == STATUS_SCHED["Clean"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=50)
+    # for a in p.plan:
+        # print(a) 
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
