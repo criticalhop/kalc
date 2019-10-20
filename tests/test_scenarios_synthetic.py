@@ -1318,3 +1318,108 @@ def test_1310_has_daemonset_with_service_creates_deployment__pods_evicted_daemon
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
     assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+def construct_space_1322_has_service_only_on_node_that_gets_disrupted():
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n1 = Node()
+    n1.metadata_name = "node 1"
+    n1.cpuCapacity = 6
+    n1.memCapacity = 6
+    n1.isNull == False
+
+    n2 = Node("node 2")
+    n2.metadata_name = "node 2"
+    n2.cpuCapacity = 6
+    n2.memCapacity = 6
+    n2.isNull == False
+
+    # Create running pods as Daemonset
+    pod_running_1 = build_running_pod_with_d(1,2,2,n1,None,None)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n1,None,None)
+    pod_running_3 = build_running_pod_with_d(3,2,2,n1,None,None)
+    pod_running_4 = build_running_pod_with_d(4,2,2,n2,None,None)
+    pod_running_5 = build_running_pod_with_d(5,2,2,n2,None,None)
+    pod_running_6 = build_running_pod_with_d(6,2,2,n2,None,None)
+
+    # # Service to detecte eviction
+    s1 = Service()
+    s1.metadata_name = "test-service1"
+    s1.amountOfActivePods = 2
+    s1.status = STATUS_SERV["Started"]
+    
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 4
+    s2.status = STATUS_SERV["Started"]
+
+    pod_running_1.targetService = s1
+    pod_running_2.targetService = s1
+    pod_running_3.targetService = s2
+    pod_running_4.targetService = s2
+    pod_running_5.targetService = s2
+    pod_running_6.targetService = s2
+
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+    pod_running_3.hasService = True
+    pod_running_4.hasService = True
+    pod_running_5.hasService = True
+    pod_running_6.hasService = True
+
+    ## We have clean scheduler queue
+    scheduler.status = STATUS_SCHED["Clean"]
+
+    k.state_objects.extend([n1,  n2, s1, s2, pod_running_1, pod_running_2, pod_running_3, pod_running_4, pod_running_5, pod_running_6])
+    return k,n1
+
+def test_1372_node_outage_with_service_eviction_step1():
+    # Initialize scheduler, globalvar
+    k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGOal(AnyGoal):
+        goal = lambda self: n1.status == STATUS_NODE["Inactive"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=400)
+    print_objects(k.state_objects)
+    for a in p.plan:
+        print(a) 
+    assert "Initiate_node_outage" in "\n".join([repr(x) for x in p.plan])
+    # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    
+    
+def test_1395_node_outage_with_service_eviction_step2():
+    # Initialize scheduler, globalvar
+    k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalvar.is_node_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=400)
+    print_objects(k.state_objects)
+    for a in p.plan:
+        print(a) 
+    # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+def test_1411_node_outage_with_service_eviction_step3():
+    # Initialize scheduler, globalvar
+    k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalvar.is_node_disrupted == True and globalvar.is_service_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=400)
+    print_objects(k.state_objects)
+    for a in p.plan:
+        print(a) 
+    # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+    # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])

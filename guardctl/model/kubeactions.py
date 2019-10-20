@@ -775,14 +775,33 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-class Random_events(ProblemTemplate):
+
+    @planned(cost=100)
+    def Initiate_node_outage(self,
+        node_with_outage: "Node",
+        globalVar: GlobalVar
+        ):
+        assert globalVar.amountOfNodesDisrupted == 0
+        globalVar.amountOfNodesDisrupted = 1
+        node_with_outage.status = STATUS_NODE["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Outage of Node initiated ",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
+        
     @planned(cost=100)
     def Initiate_killing_of_Pod_because_of_node_outage(self,
         node_with_outage: "Node",
-        pod_killed: "Pod"
+        pod_killed: "Pod",
+        globalVar: GlobalVar
         ):
         assert pod_killed.status == STATUS_POD["Running"]
         assert pod_killed.atNode == node_with_outage
+        assert node_with_outage.status == STATUS_NODE["Killing"]
         pod_killed.status = STATUS_POD["Killing"]
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -793,11 +812,14 @@ class Random_events(ProblemTemplate):
             affected=[]
         )
     @planned(cost=100)
-    def NodeOutage(self,
+    def NodeOutageFinished(self,
         node: "Node",
+        globalVar: GlobalVar
         ):
         assert node.amountOfActivePods == 0
+        assert node.status == STATUS_NODE["Killing"]
         node.status = STATUS_NODE["Inactive"]
+        #TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -807,3 +829,5 @@ class Random_events(ProblemTemplate):
             affected=[]
         )
 
+class Random_events(ProblemTemplate):
+    pass
