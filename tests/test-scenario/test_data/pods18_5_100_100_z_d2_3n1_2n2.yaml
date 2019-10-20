@@ -44,7 +44,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-node2-3000-3000
+    nodeName: gke-node2-3200-3200
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
@@ -344,7 +344,7 @@ items:
         readOnly: true
     dnsPolicy: ClusterFirst
     enableServiceLinks: true
-    nodeName: gke-node2-3000-3000
+    nodeName: gke-node2-30200-3200
     priority: 0
     restartPolicy: Always
     schedulerName: default-scheduler
