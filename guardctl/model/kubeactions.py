@@ -594,7 +594,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
         serviceTargetForPod.amountOfActivePods += 1
-        pods_deployment.amountOfActivePods -= 1  # ERROR HERE
+        pods_deployment.amountOfActivePods += 1  # ERROR HERE
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
         return ScenarioStep(
@@ -631,7 +631,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        pods_deployment.amountOfActivePods -= 1  # ERROR HERE
+        pods_deployment.amountOfActivePods += 1  # ERROR HERE
         podStarted.status = STATUS_POD["Running"] 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -667,7 +667,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        pods_daemonset.amountOfActivePods += 1  # ERROR HERE
         podStarted.status = STATUS_POD["Running"] 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -705,7 +705,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        pods_daemonset.amountOfActivePods += 1  # ERROR HERE
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
         return ScenarioStep(

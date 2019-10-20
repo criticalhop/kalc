@@ -1,5 +1,5 @@
 from poodle import Object
-from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy, TypeServ, StatusDeployment
+from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy, TypeServ, StatusDeployment, StatusDaemonSet
 
 
 STATUS_POD = {
@@ -39,3 +39,7 @@ STATUS_DEPLOYMENT = {
     "Pending" : StatusDeployment("Pending"),
     "Started" : StatusDeployment("Started")
 }
+
+STATUS_DAEMONSET_STARTED = StatusDaemonSet("Started")
+STATUS_DAEMONSET_PENDING = StatusDaemonSet("Pending")
+STATUS_DAEMONSET_INTERRUPTED = StatusDaemonSet("Interrupted")

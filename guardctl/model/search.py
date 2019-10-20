@@ -9,6 +9,7 @@ from guardctl.model.system.Controller import Controller
 from guardctl.model.system.primitives import Label
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.Deployment import Deployment
+from guardctl.model.kinds.DaemonSet import DaemonSet
 from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
@@ -77,6 +78,29 @@ class K8ServiceInterruptSearch(KubernetesModel):
             parameters={"Pod": describe(pod_current)},
             probability=1.0,
             affected=[describe(deployment_current)]
+        )
+    @planned(cost=100)
+    def MarkDaemonsetOutageEvent(self,
+                daemonset_current: DaemonSet,
+                pod_current: Pod,
+                global_: "GlobalVar",
+                scheduler: "Scheduler"
+            ):
+        assert scheduler.status == STATUS_SCHED["Clean"] 
+        assert daemonset_current.searchable == True
+        assert pod_current in  daemonset_current.podList
+        assert pod_current.status == STATUS_POD["Pending"]
+
+        daemonset_current.status = STATUS_DAEMONSET_INTERRUPTED
+        global_.is_daemonset_disrupted = True
+        
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Detected daemonset outage event",
+            parameters={"Pod": describe(pod_current)},
+            probability=1.0,
+            affected=[describe(daemonset_current)]
         )
 
     # @planned(cost=300000)

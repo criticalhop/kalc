@@ -4,7 +4,7 @@ from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.primitives import Status
+from guardctl.model.system.primitives import StatusDaemonSet
 from guardctl.misc.const import *
 from poodle import *
 from typing import Set
@@ -16,7 +16,7 @@ class DaemonSet(Controller, HasLimitsRequests):
     metadata_name: str
     lastPod: "mpod.Pod"
     amountOfActivePods: int
-    status: Status
+    status: StatusDaemonSet
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
 
@@ -27,6 +27,8 @@ class DaemonSet(Controller, HasLimitsRequests):
         self.searchable = True
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
+        self.status = STATUS_DAEMONSET_PENDING
+        #TODO make support for DAEMONSET start status while loading
 
     def hook_after_create(self, object_space):
         # TODO throw error if name already exist

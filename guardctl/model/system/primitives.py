@@ -24,7 +24,10 @@ class StatusServ(Object):
 
 class StatusDeployment(Object):
     def __str__(self): return str(self._get_value())
-    
+
+class StatusDaemonSet(Object):
+    def __str__(self): return str(self._get_value())
+
 class StatusLim(Object):
     pass
 
