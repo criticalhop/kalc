@@ -1181,7 +1181,7 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
         if "d_new" in pod.metadata_name._get_value():
             assert pod.status._get_value() == "Running", "{1} pods should be Running after planning but have {0} status".format(pod.status._get_value(),pod.metadata_name._get_value() )
 
-
+@pytest.mark.skip(reason="This test case is broken see #109")
 def test_scheduller_counter_bug():
     k = KubernetesCluster()
     prios = {}
