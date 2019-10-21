@@ -59,6 +59,9 @@ class Pod(HasLabel, HasLimitsRequests):
         self.currentFormalMemConsumption = 0
         self.currentFormalCpuConsumption = 0
         # self.amountOfActiveRequests = 0 # For Requests
+        self.hasService = False
+        self.hasDaemonset = False
+        self.hasDeployment = False
 
 
     def set_priority(self, object_space, controller):
