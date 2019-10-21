@@ -122,7 +122,7 @@ def test_run_pods_no_eviction():
     class NewGOal(AnyGoal):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # TODO: fix strange behaviour -->>
     # assert "StartPod" in "\n".join([x() for x in p.plan])
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
@@ -167,7 +167,7 @@ def test_run_pods_with_eviction():
     class NewGOal(AnyGoal):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -223,7 +223,7 @@ def test_synthetic_service_outage():
         pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -288,7 +288,7 @@ def test_synthetic_service_outage_multi():
         pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -349,7 +349,7 @@ def test_synthetic_service_NO_outage_multi():
         pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=40)
     if p.plan:
         print("ERROR!!!")
         for a in p.plan:
@@ -408,7 +408,7 @@ def test_evict_and_killpod_deployment_without_service():
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -465,7 +465,7 @@ def test_evict_and_killpod_without_deployment_without_service():
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # for a in p.plan:
     #     print(a) 
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
@@ -523,7 +523,7 @@ def test_evict_and_killpod_with_deployment_and_service():
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -580,7 +580,7 @@ def test_evict_and_killpod_with_daemonset_without_service():
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -636,7 +636,7 @@ def test_evict_and_killpod_with_daemonset_with_service():
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -683,7 +683,7 @@ def test_startpod_without_deployment_without_service():
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
     assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -726,7 +726,7 @@ def test_startpod_without_deployment_with_service():
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
     assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -773,7 +773,7 @@ def test_startpod_with_deployment_with_service():
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
     assert "StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
@@ -809,7 +809,7 @@ def test_startpod_with_daemonset_without_service():
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
     print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     for a in p.plan:
         print(a) 
     # assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
@@ -855,7 +855,7 @@ def test_startpod_with_daemonset_with_service():
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
     # print_objects(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # for a in p.plan:
     #     print(a) 
     assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
@@ -869,13 +869,15 @@ def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic()
     n.cpuCapacity = 5
     n.memCapacity = 5
 
-    # Create running pods
-    pod_running_1 = build_running_pod(1,2,2,n)
-    pod_running_2 = build_running_pod(2,2,2,n)
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2
 
-    ## Set consumptoin as expected
-    n.currentFormalCpuConsumption = 4
-    n.currentFormalMemConsumption = 4
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,d,None)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n,d,None)
+
 
     # priority for pod-to-evict
     pc = PriorityClass()
@@ -894,7 +896,7 @@ def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic()
     # pod_running_2.targetService = s
 
     # Pending pod
-    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n,None,None)
     pod_pending_1.priorityClass = pc # high prio will evict!
 
     ## Add pod to scheduler queue
@@ -902,20 +904,13 @@ def test_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic()
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
 
-    # create Deploymnent that we're going to detect failure of...
-    d = Deployment()
-    d.podList.add(pod_running_1)
-    d.podList.add(pod_running_2)
-    d.amountOfActivePods = 2
-    d.spec_replicas = 2
-
-    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1, d])
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1, d,s])
     # print_objects(k.state_objects)
     class NewGOal(AnyGoal):
         pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -981,7 +976,7 @@ def test_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     class NewGOal(AnyGoal):
         pass
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # for a in p.plan:
         # print(a) 
     assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -1054,7 +1049,7 @@ def test_creates_service_and_deployment_insufficient_resource__service_outage():
         goal = lambda self: globalVar.is_service_disrupted == True and \
                 scheduler.status == STATUS_SCHED["Clean"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # for a in p.plan:
         # print(a)
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -1238,7 +1233,7 @@ def test_1154_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_sy
         # pass
         goal = lambda self: globalvar.is_daemonset_disrupted == True
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # print("---after calculation ----")
     # print_objects(k.state_objects)
     # for a in p.plan:
@@ -1311,7 +1306,7 @@ def test_1218_has_daemonset_with_service_creates_deployment__pods_evicted_daemon
         # goal = lambda self: globalvar.is_daemonset_disrupted == True
         goal = lambda self: pod_running_1.status == STATUS_POD["Killing"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # for a in p.plan:
     #     print(a) 
     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
@@ -1326,7 +1321,7 @@ def test_1292_has_daemonset_with_service_creates_deployment__pods_evicted_daemon
         # goal = lambda self: globalvar.is_daemonset_disrupted == True
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # print("---after calculation ----")
     # print_objects(k.state_objects)
     # for a in p.plan:
@@ -1342,7 +1337,7 @@ def test_1310_has_daemonset_with_service_creates_deployment__pods_evicted_daemon
         # pass
         goal = lambda self: globalvar.is_daemonset_disrupted == True
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # print_objects(k.state_objects)
     # for a in p.plan:
     #     print(a) 
@@ -1414,7 +1409,7 @@ def test_1372_node_outage_with_service_eviction_step1():
     class NewGOal(AnyGoal):
         goal = lambda self: n1.status == STATUS_NODE["Inactive"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # print_objects(k.state_objects)
     # for a in p.plan:
     #     print(a) 
@@ -1431,7 +1426,7 @@ def test_1395_node_outage_with_service_eviction_step2():
     class NewGOal(AnyGoal):
         goal = lambda self: globalvar.is_node_disrupted == True
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # print_objects(k.state_objects)
     # for a in p.plan:
     #     print(a) 
@@ -1447,7 +1442,7 @@ def test_1411_node_outage_with_service_eviction_step3():
     class NewGOal(AnyGoal):
         goal = lambda self: globalvar.is_node_disrupted == True and globalvar.is_service_disrupted == True
     p = NewGOal(k.state_objects)
-    p.run(timeout=1000)
+    p.run(timeout=400)
     # print_objects(k.state_objects)
     # for a in p.plan:
     #     print(a) 
