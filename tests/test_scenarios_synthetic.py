@@ -118,7 +118,7 @@ def test_run_pods_no_eviction():
 
 
     k.state_objects.extend([n, pc, pod_pending_1, ds])
-    print_objects(k.state_objects)
+    # print_objects(k.state_objects)
     class NewGOal(AnyGoal):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
