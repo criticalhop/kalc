@@ -776,7 +776,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=10000)
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar
@@ -796,7 +796,7 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=100)
     def Initiate_killing_of_Pod_because_of_node_outage(self,
         node_with_outage: "Node",
-        pod_killed: "Pod",
+        pod_killed: "podkind.Pod",
         globalVar: GlobalVar
         ):
         assert pod_killed.status == STATUS_POD["Running"]
@@ -811,6 +811,7 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
+
     @planned(cost=100)
     def NodeOutageFinished(self,
         node: "Node",
@@ -828,6 +829,7 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
+
 
 class Random_events(ProblemTemplate):
     pass

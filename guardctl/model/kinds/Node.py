@@ -1,8 +1,11 @@
+import sys
+from guardctl.model.scenario import ScenarioStep, describe
 from typing import Set
 from guardctl.model.system.primitives import Label, StatusNode
 from guardctl.model.system.base import HasLabel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from guardctl.misc.const import STATUS_NODE
+from guardctl.model.scenario import ScenarioStep, describe
 
 
 class Node(HasLabel):
