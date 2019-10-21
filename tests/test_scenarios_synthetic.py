@@ -1168,7 +1168,7 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
 
     p = TestRun(k.state_objects)
     # print_objects(k.state_objects)
-    p.run()
+    # p.run()
     # print("scenario \n{0}".format(p.plan))
     p.xrun()
     # print("---after calculation ----")
@@ -1176,7 +1176,8 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
 
     assert d_new.amountOfActivePods == 2
     assert d_was.amountOfActivePods == 1
-
+    assert node.amountOfActivePods == 3
+    
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
         if "d_new" in pod.metadata_name._get_value():
             assert pod.status._get_value() == "Running", "{1} pods should be Running after planning but have {0} status".format(pod.status._get_value(),pod.metadata_name._get_value() )
