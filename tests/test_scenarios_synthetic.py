@@ -113,13 +113,14 @@ def test_run_pods_no_eviction():
     # Create a "holding" controller - optional
     ds = DaemonSet()
     ds.podList.add(pod_pending_1)
+    pod_pending_1.hasDaemonset = True
 
-    k.state_objects.extend([n, pc, pod_pending_1, ds])
-    # print_objects(k.state_objects)
+    k.state_objects.extend([nu, pc, pod_pending_1, ds])
+    print_objects(k.state_objects)
     class NewGOal(AnyGoal):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=50)
+    p.run(timeout=150)
     # TODO: fix strange behaviour -->>
     # assert "StartPod" in "\n".join([x() for x in p.plan])
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
@@ -1415,7 +1416,7 @@ def test_1411_node_outage_with_service_eviction_step3():
     class NewGOal(AnyGoal):
         goal = lambda self: globalvar.is_node_disrupted == True and globalvar.is_service_disrupted == True
     p = NewGOal(k.state_objects)
-    p.run(timeout=400)
+    p.run(timeout=1000)
     print_objects(k.state_objects)
     for a in p.plan:
         print(a) 
