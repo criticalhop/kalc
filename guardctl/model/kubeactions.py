@@ -325,7 +325,7 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
-
+        scheduler.queueLength += 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -361,7 +361,7 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
-
+        scheduler.queueLength += 1
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -393,7 +393,7 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
-
+        scheduler.queueLength += 1
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -431,7 +431,7 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
-
+        scheduler.queueLength += 1
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -470,7 +470,7 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
-
+        scheduler.queueLength += 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -504,7 +504,7 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
-
+        scheduler.queueLength += 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
