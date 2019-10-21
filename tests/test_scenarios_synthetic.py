@@ -238,6 +238,7 @@ def construct_multi_pods_eviction_problem():
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
+    n.isNull = False
 
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
@@ -276,7 +277,7 @@ def construct_multi_pods_eviction_problem():
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
 
-    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1])
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     # print_objects(k.state_objects)
     return k
 
@@ -287,14 +288,14 @@ def test_synthetic_service_outage_multi():
         pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=50)
+    p.run(timeout=250)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     for a in p.plan:
         print(a)
 
-@pytest.mark.skip(reason="FIXME - this test fails because of a bug in the model")
+# @pytest.mark.skip(reason="FIXME - this test fails because of a bug in the model")
 def test_synthetic_service_NO_outage_multi():
     "No outage is caused by evicting only one pod of a multi-pod service"
     # Initialize scheduler, globalvar
@@ -304,6 +305,7 @@ def test_synthetic_service_NO_outage_multi():
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
+    n.isNull = False
 
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
@@ -330,6 +332,8 @@ def test_synthetic_service_NO_outage_multi():
     pod_running_1.targetService = s
     pod_running_2.targetService = s
 
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
     # Pending pod
     pod_pending_1 = build_pending_pod(3,2,2,n)
     pod_pending_1.priorityClass = pc # high prio will evict!
@@ -339,7 +343,7 @@ def test_synthetic_service_NO_outage_multi():
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
 
-    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1])
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     # print_objects(k.state_objects)
     class NewGOal(AnyGoal):
         pass
