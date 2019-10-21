@@ -306,8 +306,8 @@ class KubernetesModel(ProblemTemplate):
             serviceOfPod: "Service",
             # globalVar1: "GlobalVar",
             scheduler: "Scheduler",
-            amountOfActivePodsPrev: int
-
+            amountOfActivePodsPrev: int,
+            schedulerqueuelengthPrev: int
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
@@ -317,6 +317,7 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert schedulerqueuelengthPrev == scheduler.queueLength
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
@@ -749,8 +750,9 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podStarted), describe(node)]
         )
-    @planned(cost=30000)
+    @planned(cost=500)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler"):
+        assert scheduler 
         scheduler.queueLength -= 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
