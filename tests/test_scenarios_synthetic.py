@@ -182,6 +182,7 @@ def test_synthetic_service_outage():
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
+    n.isNull = False
 
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
@@ -205,6 +206,7 @@ def test_synthetic_service_outage():
     # our service has only one pod so it can detect outage
     #  (we can't evict all pods here with one)
     pod_running_1.targetService = s
+    pod_running_1.hasService = True
 
     # Pending pod
     pod_pending_1 = build_pending_pod(3,2,2,n)
@@ -221,7 +223,7 @@ def test_synthetic_service_outage():
         pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=50)
+    p.run(timeout=150)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -261,6 +263,9 @@ def construct_multi_pods_eviction_problem():
     # TODO: no outage detected if res is not 4
     pod_running_1.targetService = s
     pod_running_2.targetService = s
+
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
 
     # Pending pod
     pod_pending_1 = build_pending_pod(3,4,4,n)
