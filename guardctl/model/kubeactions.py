@@ -580,8 +580,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.toNode == node
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
+        assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest

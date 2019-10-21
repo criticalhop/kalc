@@ -1089,7 +1089,7 @@ def test_synthetic_start_pod_with_scheduler():
     class TestRun(K8ServiceInterruptSearch):
         goal = lambda self: pods[1].status == STATUS_POD["Running"]
     p = TestRun(k.state_objects)
-    p.run()
+    p.xrun()
     print_objects(k.state_objects)
     print(p.plan)
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
@@ -1156,7 +1156,7 @@ def test_has_deployment_creates_deployment__pods_evicted_pods_pending():
         goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
     
     p = TestRun(k.state_objects)
-    p.run()
+    p.xrun()
     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
         if "d_new" in pod.metadata_name._get_value():
             assert pod.status._get_value() == "Running", "d_new_xxx_x pods should be Running after planning but have {0} status".format(pod.status._get_value())
