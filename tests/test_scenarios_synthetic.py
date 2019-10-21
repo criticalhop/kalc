@@ -138,6 +138,7 @@ def test_run_pods_with_eviction():
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
+    n.isNull = False
 
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
@@ -166,7 +167,7 @@ def test_run_pods_with_eviction():
     class NewGOal(AnyGoal):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = NewGOal(k.state_objects)
-    p.run(timeout=50)
+    p.run(timeout=150)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
