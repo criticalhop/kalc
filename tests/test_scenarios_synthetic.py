@@ -113,9 +113,11 @@ def test_run_pods_no_eviction():
     # Create a "holding" controller - optional
     ds = DaemonSet()
     ds.podList.add(pod_pending_1)
+    ds.amountOfActivePods = 0
     pod_pending_1.hasDaemonset = True
 
-    k.state_objects.extend([nu, pc, pod_pending_1, ds])
+
+    k.state_objects.extend([n, pc, pod_pending_1, ds])
     print_objects(k.state_objects)
     class NewGOal(AnyGoal):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
