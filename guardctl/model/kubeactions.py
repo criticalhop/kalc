@@ -311,7 +311,7 @@ class KubernetesModel(ProblemTemplate):
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
-        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        assert podBeingKilled.status == STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
         assert podBeingKilled.hasService == True 
@@ -323,7 +323,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
         nodeWithPod.amountOfActivePods -= 1 
-        podBeingKilled.status =  STATUS_POD["Pending"]
+        podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
         scheduler.queueLength += 1
@@ -336,8 +336,6 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-
-    
     @planned(cost=100)
     def KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
@@ -390,10 +388,10 @@ class KubernetesModel(ProblemTemplate):
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
-        nodeWithPod.amountOfActivePods -= 1 
+        nodeWithPod.amountOfActivePods -= 1
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
-        scheduler.status = STATUS_SCHED["Changed"]
+        scheduler.status = STATUS_SCHED["Changed"] # commented, solves
         scheduler.queueLength += 1
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
@@ -548,6 +546,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -583,6 +582,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
         assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
+        assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -620,6 +620,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -658,6 +659,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
         assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
+        assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -694,6 +696,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -732,6 +735,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
@@ -822,7 +826,7 @@ class KubernetesModel(ProblemTemplate):
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Killing"]
         node.status = STATUS_NODE["Inactive"]
-        #TODO make ability to calculate multiple nodes outage
+        # TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
