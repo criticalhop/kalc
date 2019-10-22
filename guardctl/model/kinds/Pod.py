@@ -94,6 +94,7 @@ class Pod(HasLabel, HasLimitsRequests):
                     set(service.spec_selector._get_value())\
                         .issubset(set(self.metadata_labels._get_value())):
                 self.targetService = service
+                self.hasService = True
                 if self.status == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
                         list(service.metadata_labels._get_value())[0])

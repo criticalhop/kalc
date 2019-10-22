@@ -44,7 +44,7 @@ formatter = logging.Formatter('%(name)s - %(asctime)-15s - %(levelname)s: %(mess
 logzero.formatter(formatter)
 
 # Log some variables
-# logger.info("var1: %s, var2: %s", var1, var2)
+# print("var1: %s, var2: %s", var1, var2)
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONSET = "./tests/daemonset_eviction/daemonset_create.yaml"
@@ -101,12 +101,15 @@ DUMP1_S1_H_S2_Z_FREE_200 = [priorityclass,\
                             pods16_1_1000_1000_h_s1_n2,\
                             service1,\
                             service2]
-DUMP1_S1_H_S2_Z_FREE_200_WITH_D2=DUMP1_S1_H_S2_Z_FREE_200
+
+DUMP1_S1_H_S2_Z_FREE_200_WITH_D2=[]
+DUMP1_S1_H_S2_Z_FREE_200_WITH_D2.extend(DUMP1_S1_H_S2_Z_FREE_200)
 DUMP1_S1_H_S2_Z_FREE_200_WITH_D2.extend([deployment2_5_100_100_z,\
                                         replicaset_for_deployment2,\
                                         pods18_5_100_100_z_d2_3n1_2n2])
 
-DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO=DUMP1_S1_H_S2_Z_FREE_200
+DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO=[]
+DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO.extend(DUMP1_S1_H_S2_Z_FREE_200)
 DUMP1_S1_H_S2_Z_FREE_200_WITH_DAEMONSET_ZERO.extend([daemonset3_500_1000_z])
 
 CHANGE_DEPLOYMENT_HIGH = [deployment1_5_100_100_h]
@@ -131,6 +134,31 @@ def calculate_variable_change(CHANGE_local):
     CHANGE_with_command.extend(["-o", "yaml", "-t", "650","--pipe"])
     return CHANGE_with_command
 
+def run_wo_cli_step1(DUMP_local,CHANGE_local):
+    k = KubernetesCluster()
+    if not (DUMP_local is None):
+        for dump_item in DUMP_local:
+            k.load(open(dump_item).read())
+    if not (CHANGE_local is None):
+        for change_item in CHANGE_local:
+            k.create_resource(open(change_item).read())
+    k._build_state()
+    pod_running = next(filter(lambda x: isinstance(x, Pod) and x.status == STATUS_POD["Running"], k.state_objects))
+    class NewGOal(AnyGoal):
+        goal = lambda self: pod_running.status == STATUS_POD["Killing"]
+    p = NewGOal(k.state_objects)
+    print("---- run_wo_cli:")
+    print("----- print_objects before run: ----------")
+    print(print_objects(k.state_objects))
+
+    p.run(timeout=300, sessionName="test_AnyGoal")
+    if not p.plan:
+         raise Exception("Could not solve %s" % p.__class__.__name__)
+    print("---- Scenario:")
+    print(Scenario(p.plan).asyaml())
+    print("----- print_objects after run: ----------")
+    print(print_objects(k.state_objects))
+
 def run_wo_cli(DUMP_local,CHANGE_local):
     k = KubernetesCluster()
     if not (DUMP_local is None):
@@ -141,17 +169,17 @@ def run_wo_cli(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     p = AnyGoal(k.state_objects)
-    logger.info("---- run_wo_cli:")
-    logger.info("----- print_objects before run: ----------")
-    logger.info(print_objects(k.state_objects))
+    print("---- run_wo_cli:")
+    print("----- print_objects before run: ----------")
+    print(print_objects(k.state_objects))
 
-    p.run(timeout=6600, sessionName="test_AnyGoal")
+    p.run(timeout=300, sessionName="test_AnyGoal")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    logger.info("---- Scenario:")
-    logger.info(Scenario(p.plan).asyaml())
-    logger.info("----- print_objects after run: ----------")
-    logger.info(print_objects(k.state_objects))
+    print("---- Scenario:")
+    print(Scenario(p.plan).asyaml())
+    print("----- print_objects after run: ----------")
+    print(print_objects(k.state_objects))
 
 def run_dir_wo_cli(DUMP_local,CHANGE_local):
     k = KubernetesCluster()
@@ -163,17 +191,17 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     p = AnyGoal(k.state_objects)
-    logger.info("---- run_wo_cli:")
-    logger.info("----- print_objects before run: ----------")
-    logger.info(print_objects(k.state_objects))
+    print("---- run_wo_cli:")
+    print("----- print_objects before run: ----------")
+    print(print_objects(k.state_objects))
 
     p.run(timeout=6600, sessionName="test_AnyGoal")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    logger.info("---- Scenario:")
-    logger.info(Scenario(p.plan).asyaml())
-    logger.info("----- print_objects after run: ----------")
-    logger.info(print_objects(k.state_objects))
+    print("---- Scenario:")
+    print(Scenario(p.plan).asyaml())
+    print("----- print_objects after run: ----------")
+    print(print_objects(k.state_objects))
 
 def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
     k = KubernetesCluster()
@@ -189,6 +217,6 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     args.extend(calculate_variable_dump(DUMP_with_command_local))
     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
     result = runner.invoke(run,args)
-    logger.info("---- run_cli_invoke:")
-    logger.info(result.output)
+    print("---- run_cli_invoke:")
+    print(result.output)
     assert result.exit_code == 0
