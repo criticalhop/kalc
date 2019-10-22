@@ -20,13 +20,10 @@ from poodle import planned
 def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1 = Pod()
     pod_running_1.metadata_name = "pod"+str(podName)
-    pod_running_1.cpuRequest = 2
-    pod_running_1.memRequest = 2
+    pod_running_1.cpuRequest = cpuRequest
+    pod_running_1.memRequest = memRequest
     pod_running_1.atNode = atNode
     pod_running_1.status = STATUS_POD["Running"]
-    pod_running_1.hasDeployment = False
-    pod_running_1.hasService = False
-    pod_running_1.hasDaemonset = False
     return pod_running_1
 
 def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
@@ -51,16 +48,10 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
     atNode.currentFormalMemConsumption += memRequest
     return pod_running_1
 
- 
-
-
 def build_pending_pod(podName, cpuRequest, memRequest, toNode):
     p = build_running_pod(podName, cpuRequest, memRequest, Node.NODE_NULL)
     p.status = STATUS_POD["Pending"]
     p.toNode = toNode
-    p.hasDeployment = False
-    p.hasService = False
-    p.hasDaemonset = False
     return p
 
 def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
@@ -81,8 +72,357 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
         p.toNode = toNode
     return p
 
+####################################################################
 
-def test_single_node_outage():
+def test_single_node_dies():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+
+    k.state_objects.extend([n])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    # for a in p.plan:
+        # print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_pod_killed():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                pod_running_1.status == STATUS_POD["Killing"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    # for a in p.plan:
+        # print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pods_killed():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                pod_running_1.status == STATUS_POD["Killing"] and \
+                                pod_running_2.status == STATUS_POD["Killing"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    # for a in p.plan:
+        # print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_pod_killed_went_pending():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                pod_running_1.status == STATUS_POD["Pending"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    # for a in p.plan:
+        # print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pod_killed_2went_pending_no_disrupt_test():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"] and \
+                                pod_running_2.status == STATUS_POD["Pending"] # and \
+                                    # scheduler.status == STATUS_SCHED["Clean"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    for a in p.plan:
+        print(a) 
+    # assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    # assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pod_killed_2went_pending():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                pod_running_1.status == STATUS_POD["Pending"] and \
+                                pod_running_2.status == STATUS_POD["Pending"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    for a in p.plan:
+        print(a) 
+    # assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    # assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pod_killed_with_service_1pod_went_pending():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2, s])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                pod_running_1.status == STATUS_POD["Pending"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    for a in p.plan:
+        print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    assert "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_1pod_killed_service_outage():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2, s])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True \
+                                and globalVar.is_service_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=100)
+    for a in p.plan:
+        print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pod_killed_with_service_2pod_went_pending():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2, s])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                pod_running_1.status == STATUS_POD["Pending"] and \
+                                pod_running_2.status == STATUS_POD["Pending"]
+    p = NewGOal(k.state_objects)
+    p.run(timeout=70)
+    for a in p.plan:
+        print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    assert "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pod_killed_service_outage():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+
+    k.state_objects.extend([n, pod_running_1, pod_running_2, s])
+    # print_objects(k.state_objects)
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True \
+                                and globalVar.is_service_disrupted == True
+    p = NewGOal(k.state_objects)
+    p.run(timeout=100)
+    for a in p.plan:
+        print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_outage_service_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -99,6 +439,7 @@ def test_single_node_outage():
     ## Set consumptoin as expected
     n.currentFormalCpuConsumption = 4
     n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
 
     # Service to detecte eviction
     s = Service()
