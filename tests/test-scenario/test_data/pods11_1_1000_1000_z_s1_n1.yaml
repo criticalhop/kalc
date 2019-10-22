@@ -10,7 +10,7 @@ items:
       pod-template-hash: 57fc67768d
       role: master
       tier: backend
-    name: pods-1-1000-1000-z-s1-57fc67768d-hl44k
+    name: pods11_1_1000_1000_z_s1_n1
     namespace: default
     ownerReferences:
     - apiVersion: apps/v1
