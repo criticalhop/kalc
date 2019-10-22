@@ -23,6 +23,7 @@ class Deployment(Controller, HasLimitsRequests):
     status: StatusDeployment
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
+    searchable: bool
     hash: str
 
     def __init__(self, *args, **kwargs):

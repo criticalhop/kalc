@@ -19,6 +19,8 @@ class DaemonSet(Controller, HasLimitsRequests):
     podList: Set["mpod.Pod"]
     spec_template_spec_priorityClassName: str
 
+    searchable: bool
+
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)

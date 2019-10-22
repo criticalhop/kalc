@@ -73,7 +73,7 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
     return p
 
 ####################################################################
-
+"""
 def test_single_node_dies():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -241,11 +241,11 @@ def test_single_node_dies_2pod_killed_2went_pending():
                                 pod_running_2.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
     p.run(timeout=70)
-    for a in p.plan:
-        print(a) 
-    # assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
-    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
+    # for a in p.plan:
+    #     print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
 
 def test_single_node_dies_2pod_killed_with_service_1pod_went_pending():
     # Initialize scheduler, globalvar
@@ -378,7 +378,7 @@ def test_single_node_dies_2pod_killed_with_service_2pod_went_pending():
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-
+"""
 def test_single_node_dies_2pod_killed_service_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -421,8 +421,9 @@ def test_single_node_dies_2pod_killed_service_outage():
         print(a) 
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
-def test_single_node_outage_service_outage():
+def test_single_node_dies_2pod_killed_deployment_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -431,7 +432,6 @@ def test_single_node_outage_service_outage():
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
-
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
     pod_running_2 = build_running_pod(2,2,2,n)
@@ -454,24 +454,24 @@ def test_single_node_outage_service_outage():
     pod_running_1.hasService = True
     pod_running_2.hasService = True
 
-    # create Deploymnent that we're going to detect failure of...
     d = Deployment()
-    d.podList.add(pod_running_1)
-    d.podList.add(pod_running_2)
-    d.amountOfActivePods = 2
     d.spec_replicas = 2
+    d.amountOfActivePods = 2
     pod_running_1.hasDeployment = True
     pod_running_2.hasDeployment = True
+    d.podList.add(pod_running_1)
+    d.podList.add(pod_running_2)
 
-    k.state_objects.extend([n, s, pod_running_1, pod_running_2, d])
+    k.state_objects.extend([n, pod_running_1, pod_running_2, s, d])
     # print_objects(k.state_objects)
     class NewGOal(AnyGoal):
-        # goal = lambda self: globalVar.is_service_disrupted == True and \
-                # scheduler.status == STATUS_SCHED["Clean"]
-        goal = lambda self: globalVar.is_node_disrupted == True and globalVar.is_service_disrupted == True
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                globalVar.is_deployment_disrupted == True
     p = NewGOal(k.state_objects)
-    p.run(timeout=70)
+    p.run(timeout=100)
     for a in p.plan:
         print(a) 
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
