@@ -174,11 +174,12 @@ class KubernetesModel(ProblemTemplate):
         assert podPending.toNode == Node.NODE_NULL
         assert podPending.status == STATUS_POD["Pending"]
         assert priorityClassOfPendingPod == podPending.priorityClass
-        assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass
+        assert priorityClassOfPodToBeReplaced == podToBeReplaced.priorityClass
         # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
         # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+        assert podPending.memRequest > node.memCapacity - node.currentFormalCpuConsumption
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
 
@@ -211,6 +212,7 @@ class KubernetesModel(ProblemTemplate):
         # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+        assert podPending.memRequest > nodeForPodPending.memCapacity - nodeForPodPending.currentFormalCpuConsumption
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
 
@@ -754,7 +756,7 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podStarted), describe(node)]
         )
-    @planned(cost=500)
+    @planned(cost=100000)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler"):
         assert scheduler 
         scheduler.queueLength -= 1

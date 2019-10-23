@@ -475,3 +475,4 @@ def test_single_node_dies_2pod_killed_deployment_outage():
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
+# TODO: test node outage exclusion

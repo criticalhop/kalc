@@ -144,6 +144,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         node:"Node",
         globalvar:GlobalVar):
         assert node.status == STATUS_NODE["Inactive"]
+        assert node.searchable == True
         globalvar.is_node_disrupted = True
         
         return ScenarioStep(
@@ -214,6 +215,20 @@ class NodeInterupted(K8ServiceInterruptSearch,Random_events):
 class AnyGoal(K8ServiceInterruptSearch):
 
     goal = lambda self: self.globalVar.goal_achieved == True 
+
+    @planned(cost=101) # cost must be less than Scheduler_cant_place_pod
+    def SchedulerQueueClean(self, scheduler: Scheduler, global_: GlobalVar):
+        assert scheduler.status == STATUS_SCHED["Clean"]
+        global_.goal_achieved = True
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Cluster is clean",
+            parameters={},
+            probability=0.0,
+            affected=[]
+        )
 
     @planned(cost=100)
     def AnyServiceInterrupted(self,globalVar:GlobalVar):
