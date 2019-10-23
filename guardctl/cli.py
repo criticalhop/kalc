@@ -79,11 +79,10 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
 
     if str(profile) == "default":
-        click.echo("# Using default profile")
+        click.echo(f"# Using default profile")
         p = AnyGoal(k.state_objects)
     else:
-        click.echo("# Using {0} profile".format(profile))
-        re.search("_profile", str(profile))
+        click.echo(f"# Using {0} profile".format(profile))
         p = globals()[str(profile)](k.state_objects)
 
     click.echo("# Solving ...")
