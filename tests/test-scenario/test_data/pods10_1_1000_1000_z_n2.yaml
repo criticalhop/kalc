@@ -7,11 +7,11 @@ items:
       kubernetes.io/limit-ranger: 'LimitRanger plugin set: cpu request for container
         hello'
     creationTimestamp: 2019-09-05T15:30:07Z
-    generateName: pods-1-1000-1000-z-1567697400-
+    generateName: pods10_1_1000_1000_z_n2
     labels:
       controller-uid: 0a420fdd-cff2-11e9-98f3-42010a8000c4
       job-name: pods-1-1000-1000-z-1567697400
-    name: pods-1-1000-1000-z-1567697400-7b4np
+    name: pods10_1_1000_1000_z_n2
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1

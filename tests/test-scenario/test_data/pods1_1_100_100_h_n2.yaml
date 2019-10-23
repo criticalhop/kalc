@@ -11,7 +11,7 @@ items:
     labels:
       controller-uid: 0a420fdd-cff2-11e9-98f3-42010a8000c4
       job-name: pods-1-100-100-h-1567697400
-    name: pods-1-100-100-h-1567697400-7b4np
+    name: pods1_1_100_100_h_n2
     namespace: default
     ownerReferences:
     - apiVersion: batch/v1
