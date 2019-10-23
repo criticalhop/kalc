@@ -14,7 +14,7 @@ RESULT=""
 # @pytest.mark.skip(reason="covered by above")
 def test_load_from_dir():
     runner = CliRunner()
-    result = runner.invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", "--pipe"])
+    result = runner.invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", "--pipe", "--timeout", "100"])
     assert result.exit_code == 0
     global RESULT
     RESULT=result
