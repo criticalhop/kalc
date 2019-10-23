@@ -1,5 +1,5 @@
 from tests.test_util import print_objects
-from guardctl.model.search import AnyGoal, AnyGoalLow_profile, AnyGoalHigh_profile
+from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -81,7 +81,6 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
         p.toNode = toNode
     return p
 
- 
 def test_0_run_pods_no_eviction():
     # print("0")
     # TODO: extract final status for loader unit tests from here
@@ -115,19 +114,18 @@ def test_0_run_pods_no_eviction():
     ds.podList.add(pod_pending_1)
     ds.amountOfActivePods = 0
     pod_pending_1.hasDaemonset = True
-
-
     k.state_objects.extend([n, pc, pod_pending_1, ds])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class Task_Check_services(Check_services):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGOal(k.state_objects)
+    class Task_Check_deployments(Check_deployments):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
-    # TODO: fix strange behaviour -->>
-    # assert "StartPod" in "\n".join([x() for x in p.plan])
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a) 
+    p = Task_Check_deployments(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
 
 def construct_scpace_for_test_1_run_pods_with_eviction():
     # Initialize scheduler, globalvar
@@ -168,13 +166,22 @@ def test_1_run_pods_with_eviction():
     # print("1")
     k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class Task_Check_services(Check_services):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGOal(k.state_objects)
+    class Task_Check_deployments(Check_deployments):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    p = Task_Check_deployments(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+
+
     # for a in p.plan:
         # print(a)
 
@@ -188,6 +195,7 @@ def construct_scpace_for_test_2_synthetic_service_outage():
     n.cpuCapacity = 5
     n.memCapacity = 5
     n.isNull = False
+    n.searchable = False
 
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
@@ -226,6 +234,7 @@ def construct_scpace_for_test_2_synthetic_service_outage():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1])
     return k, pod_running_1, pod_pending_1
 
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step1():
     # print("2-1")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -242,6 +251,7 @@ def test_2_synthetic_service_outage_step1():
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
 
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step2():
     # print("2-2")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -259,6 +269,7 @@ def test_2_synthetic_service_outage_step2():
     assert "KillPod" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
 
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step3():
     # print("2-3")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -276,6 +287,7 @@ def test_2_synthetic_service_outage_step3():
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
 
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step4():
     # print("2-4")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -296,6 +308,7 @@ def test_2_synthetic_service_outage_step4():
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
 
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step5():
     # print("2-5")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -317,27 +330,29 @@ def test_2_synthetic_service_outage_step5():
     # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
 
-
-
-
-@pytest.mark.skip(reason="FIXME")
 def test_2_synthetic_service_outage_step6():
     # print("2-6")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
-    p = NewGOal(k.state_objects)
-    p.run(timeout=400)
-    for a in p.plan:
-        print(a)
-    # print_objects(k.state_objects)
+    class Task_Check_deployments(Check_deployments):
+        goal = lambda self: globalVar.is_daemonset_disrupted == True
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    p = Task_Check_deployments(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    
 
 def construct_multi_pods_eviction_problem():
     # Initialize scheduler, globalvar
@@ -391,15 +406,13 @@ def construct_multi_pods_eviction_problem():
     # print_objects(k.state_objects)
     return k
 
-@pytest.mark.skip(reason="FIXME")
 def test_3_synthetic_service_outage_multi():
     # print("3")
     "Multiple pods are evicted from one service to cause outage"
     k = construct_multi_pods_eviction_problem()
-    class NewGOal(AnyGoal):
-        pass
-        # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGOal(k.state_objects)
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.is_service_disrupted == True
+    p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
@@ -407,6 +420,7 @@ def test_3_synthetic_service_outage_multi():
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     # for a in p.plan:
     #     print(a)
+    
 
 def test_4_synthetic_service_NO_outage_multi():
     # print("4")
@@ -414,6 +428,7 @@ def test_4_synthetic_service_NO_outage_multi():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     # initial node state
     n = Node()
     n.cpuCapacity = 5
@@ -459,10 +474,11 @@ def test_4_synthetic_service_NO_outage_multi():
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
-        pass
-    p = NewGOal(k.state_objects)
-    p.run(timeout=70)
+    
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.goal_achieved == True
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
     assert "SchedulerQueueClean" in "\n".join([repr(x) for x in p.plan])
     # if p.plan:
     #     print("ERROR!!!")
@@ -470,7 +486,7 @@ def test_4_synthetic_service_NO_outage_multi():
     #         print(a)
     #     raise Exception("Plan must be empty in this case")
 
-def test_4_clone():
+def test_4_synthetic_service_NO_outage_multi_P_Service_outage():
     # print("4")
     "No outage is caused by evicting only one pod of a multi-pod service"
     # Initialize scheduler, globalvar
@@ -521,14 +537,18 @@ def test_4_clone():
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     # print_objects(k.state_objects)
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.goal_achieved == True
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    if p.plan = None:
+            pass
+    else if p.plan:
+        print("ERROR!!!")
+        for a in p.plan:
+            print(a)
+        raise Exception("Plan must be empty in this case")
 
-    p = AnyGoalLow_profile(k.state_objects)
-    p.run()
-    print(p.plan)
-    # assert "SchedulerQueueClean" in "\n".join([repr(x) for x in p.plan])
-    p = AnyGoalHigh_profile(k.state_objects)
-    p.run()
-    print(p.plan)
 
 def test_synthetic_service_NO_outage_deployment_IS_outage():
     "Deployment (partial) outage must be registered in case where Deployment exists"
@@ -585,10 +605,11 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     pod_running_2.hasDeployment = True
     d.podList.add(pod_running_1)
     d.podList.add(pod_running_2)
+    
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s,d])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(AnyGoalHigh_profile):
         pass
     p = NewGOal(k.state_objects)
     p.run(timeout=70)

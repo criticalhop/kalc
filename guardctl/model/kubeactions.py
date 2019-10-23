@@ -40,7 +40,21 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(service1)]
         )
+    @planned(cost=100)
+    def Fill_priority_class_object(self,
+            pod: "Pod",
+            pclass: PriorityClass):
+        assert pod.spec_priorityClassName == pclass.metadata_name
+        pod.priorityClass = pclass
 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="no description provided",
+            parameters={},
+            probability=1.0,
+            affected=[describe(pod)]
+        )
     @planned(cost=100)
     def SetDefaultMemRequestForPod(self,
         pod1: "Pod",
@@ -756,9 +770,8 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podStarted), describe(node)]
         )
-    @planned(cost=100000)
+    @planned(cost=10000)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler"):
-        assert scheduler 
         scheduler.queueLength -= 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -784,13 +797,13 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=10000)
+    @planned(cost=100000)
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar
         ):
         assert globalVar.amountOfNodesDisrupted == 0
-        globalVar.amountOfNodesDisrupted = 1
+        assert node_with_outage.searchable == True
         node_with_outage.status = STATUS_NODE["Killing"]
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -827,6 +840,7 @@ class KubernetesModel(ProblemTemplate):
         ):
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Killing"]
+        globalVar.amountOfNodesDisrupted = 1
         node.status = STATUS_NODE["Inactive"]
         # TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
