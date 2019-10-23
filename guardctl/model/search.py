@@ -144,6 +144,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         node:"Node",
         globalvar:GlobalVar):
         assert node.status == STATUS_NODE["Inactive"]
+        assert node.searchable == True
         globalvar.is_node_disrupted = True
         
         return ScenarioStep(
@@ -211,9 +212,13 @@ class NodeInterupted(K8ServiceInterruptSearch,Random_events):
     goal = lambda self: self.globalVar.is_node_disrupted == True and\
         self.globalVar.is_service_disrupted == True
 
+
+
 class AnyGoal(K8ServiceInterruptSearch):
 
     goal = lambda self: self.globalVar.goal_achieved == True 
+
+
 
     @planned(cost=100)
     def AnyServiceInterrupted(self,globalVar:GlobalVar):
@@ -252,6 +257,42 @@ class AnyGoal(K8ServiceInterruptSearch):
             subsystem=self.__class__.__name__,
             description="Node and Service are interrupted",
             parameters={},
+            probability=1.0,
+            affected=[]
+        )
+
+class AnyGoalHigh_profile(AnyGoal):
+
+    goal = lambda self: self.globalVar.goal_achieved == True 
+
+    @planned(cost=900000) # this works for deployment-outage case
+    def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
+        assert scheduler.status == STATUS_SCHED["Clean"]
+        global_.goal_achieved = True
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Processing finished",
+            parameters={"podsNotPlaced": scheduler.queueLength},
+            probability=1.0,
+            affected=[]
+        )
+
+class AnyGoalLow_profile(AnyGoal):
+
+    goal = lambda self: self.globalVar.goal_achieved == True 
+
+    @planned(cost=101) # this works for no-outage case
+    def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
+        assert scheduler.status == STATUS_SCHED["Clean"]
+        global_.goal_achieved = True
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Processing finished",
+            parameters={"podsNotPlaced": scheduler.queueLength},
             probability=1.0,
             affected=[]
         )
