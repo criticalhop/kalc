@@ -206,7 +206,7 @@ class Check_services(OptimisticRun):
             affected=[describe(service1)]
         )
 
-    @planned(cost=101) # this works for no-outage case
+    @planned(cost=201) # this works for no-outage case
     def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
         global_.goal_achieved = True
