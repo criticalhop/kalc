@@ -34,6 +34,7 @@ class Deployment(Controller, HasLimitsRequests):
         self.searchable = True
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
+        self.spec_replicas = 0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)

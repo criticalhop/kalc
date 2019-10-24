@@ -220,3 +220,150 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     print("---- run_cli_invoke:")
     print(result.output)
     assert result.exit_code == 0
+
+from guardctl.model.full import kinds_collection
+from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+import guardctl.model.kinds.Node as mnode
+import guardctl.model.kinds.Service as mservice
+import time,random
+def convert_space_to_yaml(space):
+    # resources = []
+    SUPPORTED_KINDS = kinds_collection
+    # processed_objects = []
+    # TODO HERE: sort space so that pods, nodes, services are always processed last
+    # because we would generate pods defs from Deployment, DaemonSet
+    for ob in space:
+        # if ob in processed_objects: continue
+        if str(type(ob)) in SUPPORTED_KINDS:
+            if hasattr(ob, "asdict"): continue
+            print("Converting resource", repr(type(ob)))
+            d = { "apiVersion": "v1", # not used
+                "kind": str(type(ob)), 
+                "metadata": {
+                    "name": str(ob.metadata_name)
+                }
+            }
+            # Pod
+            if str(type(ob)) == "Pod":
+                labels = {"service": str(ob.metadata_name)+str(random.randint(1000000, 999999999))}
+                if str(ob.spec_priorityClassName) != "KUBECTL-VAL-NONE":
+                    if not "spec" in d: d["spec"] = {}
+                    d["spec"] = {"priorityClassName": str(ob.spec_priorityClassName)}
+                if ob.priorityClass != zeroPriorityClass:
+                    pc = ob.priorityClass
+                    if not "spec" in d: d["spec"] = {}
+                    d["spec"] = {"priorityClassName": str(pc.metadata_name)}
+                    # maybe add priority number too?
+                if ob.atNode != mnode.Node.NODE_NULL:
+                    if not "spec" in d: d["spec"] = {}
+                    node = ob.atNode
+                    d["spec"] = {"nodeName": str(node.metadata_name)}
+                if ob.targetService != mservice.Service.SERVICE_NULL:
+                    serv = ob.targetService
+                    if not hasattr(serv, "asdict"):
+                        labels = {"service": str(serv.metadata_name)+str(random.randint(1000000, 999999999))}
+                        d_serv = gen_object(serv)
+                        if "labels" in d_serv["metadata"]:
+                            labels = d_serv["metadata"]["labels"]
+                        d_serv["metadata"]["labels"] = labels
+                        serv.asdict = d_serv
+                    else:
+                        print("skip service")
+                if ob.cpuRequest > -1:
+                    if not "spec" in d: d["spec"] = {}
+                    if not "containeres" in d["spec"]: 
+                        d["spec"]["containers"] = [{"resources": 
+                                                {"requests": {}}}]
+                    d["spec"]["containers"][0]["resources"]["requests"]["cpu"] = \
+                                            "%sm" % int(ob.cpuRequest) * 100
+                if ob.memRequest > -1:
+                    if not "spec" in d: d["spec"] = {}
+                    if not "containeres" in d["spec"]: 
+                        d["spec"]["containers"] = [{"resources": 
+                                                {"requests": {}}}]
+                    d["spec"]["containers"][0]["resources"]["requests"]["memory"] = \
+                                            "%sMi" % int(ob.memRequest) * 100
+                d["metadata"]["labels"] = labels
+                # TODO: support to generate limits too!
+                    
+            if str(type(ob)) in [ "Deployment", "DaemonSet" ]: 
+                labels = {
+                    "name": str(ob.metadata_name)+str(random.randint(1000000, 999999999)),
+                    "pod-template-hash": str(random.randint(1000000, 999999999)) 
+                }
+                d["spec"] = {
+                    "selector": {
+                        "matchLabels": labels
+                    },
+                    "template": {
+                        "metadata": {
+                            "labels": labels
+                        },
+                        "spec": {
+                            "containers": [
+                                {
+                                    "resources": {
+                                        # "limits": { },
+                                        # "requests": { }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+                # TODO HERE: add metadata_name init to all objects!!!
+
+                # Dedup objects to circumvent poodle bug
+                lpods = ob.podList._get_value()
+                dd_lpods = []
+                for podOb in lpods:
+                    found = False
+                    for p in dd_lpods:
+                        if str(p.metadata_name) == str(podOb.metadata_name):
+                           found = True
+                           break
+                    if found: continue
+                    dd_lpods.append(podOb)
+
+                for podOb in dd_lpods: 
+                    assert not hasattr(podOb, "asdict")
+                    d_pod = gen_object(podOb)
+                    try:
+                        pcn = d_pod["spec"]["priorityClassName"]
+                        d["spec"]["template"]["spec"]["priorityClassName"] = pcn
+                    except KeyError:
+                        pass
+                    try:
+                        cpum = d_pod["spec"]["containers"][0]["resources"]["requests"]["cpu"]
+                        d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["cpu"] = cpum
+                    except KeyError:
+                        pass
+                    try:
+                        memm = d_pod["spec"]["containers"][0]["resources"]["requests"]["memory"]
+                        d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["memory"] = memm
+                    except KeyError:
+                        pass
+                    assert not "labels" in d_pod["metadata"]
+                    d_pod["metadata"]["labels"] = labels
+                    podOb.asdict = d_pod
+                d["spec"]["replicas"] = ob.spec_replicas
+                # TODO: render ReplicaSets!!
+                # TODO HERE: render pod-template-hash
+                
+            # Service
+            if str(type(ob)) == "Service":
+                labels = {"service": str(ob.metadata_name)+str(random.randint(1000000, 999999999))}
+                d["metadata"]["spec"] = { "selector": labels }
+                d["metadata"] = {"labels": labels }
+            # Node
+            if str(type(ob)) == "Node":
+                d["metadata"]["status"] = {
+                    "allocatable": {
+                        "cpu": "%sm" % int(ob.cpuCapacity) * 100,
+                        "memory": "%sMi" % int(ob.memCapacity) * 100
+                    }
+                }
+            # PriorityClass
+            if str(type(ob)) == "PriorityClass":
+                d["value"] = int(ob.priority)
+            ob.asdict = d
