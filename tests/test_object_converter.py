@@ -1,4 +1,4 @@
-from guardctl.misc.util import k8s_to_domain_object
+from guardctl.misc.util import k8s_to_domain_object, cpuConvertToAbstractProblem, memConvertToAbstractProblem, MEM_DIVISOR, CPU_DIVISOR
 from guardctl.model.system.primitives import Label
 
 def test_convert_string():
@@ -14,3 +14,39 @@ def test_convert_unit_minus():
     assert k8s_to_domain_object("-123Mi") == "-123Mi"
 def test_convert_labeldict():
     assert isinstance(k8s_to_domain_object({"test":"test2"}), Label)
+
+def test_convert_cpu_normal():
+    x = cpuConvertToAbstractProblem("1000m")
+    assert x == 1000 / CPU_DIVISOR
+
+def test_convert_cpu_toosmall():
+    try:
+        x = cpuConvertToAbstractProblem("-1")
+    except AssertionError:
+        pass
+
+def test_convert_cpu_toobig():
+    try:
+        x = cpuConvertToAbstractProblem("100000000000m")
+    except AssertionError:
+        pass
+
+
+def test_convert_mem_normal():
+    x = memConvertToAbstractProblem("1000Mi")
+    assert x == 1000 / MEM_DIVISOR
+
+def test_convert_mem_toosmall():
+    try:
+        x = memConvertToAbstractProblem("-1")
+    except AssertionError:
+        pass
+
+def test_convert_mem_toobig():
+    try:
+        x = memConvertToAbstractProblem("100000000000Mi")
+    except AssertionError:
+        pass
+
+
+
