@@ -338,21 +338,14 @@ def test_2_synthetic_service_outage_step6():
     # print_objects(k.state_objects)
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
-    class Task_Check_deployments(Check_deployments):
+    class Task_Check_daemonsets(Check_daemonsets):
         goal = lambda self: globalVar.is_daemonset_disrupted == True
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    p = Task_Check_deployments(k.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
 
 def construct_multi_pods_eviction_problem():
     # Initialize scheduler, globalvar
@@ -372,6 +365,7 @@ def construct_multi_pods_eviction_problem():
     n.currentFormalCpuConsumption = 4
     n.currentFormalMemConsumption = 4
     n.amountOfActivePods = 2
+    n.searchable = False
 
     # priority for pod-to-evict
     pc = PriorityClass()
@@ -410,6 +404,8 @@ def test_3_synthetic_service_outage_multi():
     # print("3")
     "Multiple pods are evicted from one service to cause outage"
     k = construct_multi_pods_eviction_problem()
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
     p = Task_Check_services(k.state_objects)
@@ -1898,7 +1894,7 @@ def construct_space_1322_has_service_only_on_node_that_gets_disrupted():
     k.state_objects.extend([n1,  n2, s1, s2, pod_running_1, pod_running_2, pod_running_3, pod_running_4, pod_running_5, pod_running_6])
     return k,n1
 
-@pytest.mark.debug(reason="if debug needed - uncomment me")
+@pytest.mark.skip(reason="if debug needed - uncomment me")
 def test_25_node_outage_with_service_eviction_step1():
     # print("25")
     # Initialize scheduler, globalvar
@@ -1916,7 +1912,7 @@ def test_25_node_outage_with_service_eviction_step1():
     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
     
-@pytest.mark.debug(reason="if debug needed - uncomment me")
+@pytest.mark.skip(reason="if debug needed - uncomment me")
 def test_26_node_outage_with_service_eviction_step2():
     # print("26")
     # Initialize scheduler, globalvar
@@ -1924,7 +1920,7 @@ def test_26_node_outage_with_service_eviction_step2():
     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class Check_services(Check_services):
         goal = lambda self: globalvar.is_node_disrupted == True
-    p = NewGoal(k.state_objects)
+    p = Check_services(k.state_objects)
     p.run(timeout=200)
     # print_objects(k.state_objects)
     # for a in p.plan:
