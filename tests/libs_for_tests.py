@@ -144,9 +144,9 @@ def run_wo_cli_step1(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     pod_running = next(filter(lambda x: isinstance(x, Pod) and x.status == STATUS_POD["Running"], k.state_objects))
-    class NewGOal(OptimisticRun):
+    class NewGoal(OptimisticRun):
         goal = lambda self: pod_running.status == STATUS_POD["Killing"]
-    p = NewGOal(k.state_objects)
+    p = NewGoal(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
