@@ -1,5 +1,5 @@
 from tests.test_util import print_objects
-from guardctl.model.search import AnyGoal 
+from guardctl.model.search import OptimisticRun 
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -86,7 +86,7 @@ def test_single_node_dies():
 
     k.state_objects.extend([n])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True
     p = NewGOal(k.state_objects)
     p.run(timeout=70)
@@ -113,7 +113,7 @@ def test_single_node_dies_pod_killed():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 pod_running_1.status == STATUS_POD["Killing"]
     p = NewGOal(k.state_objects)
@@ -142,7 +142,7 @@ def test_single_node_dies_2pods_killed():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 pod_running_1.status == STATUS_POD["Killing"] and \
                                 pod_running_2.status == STATUS_POD["Killing"]
@@ -172,7 +172,7 @@ def test_single_node_dies_pod_killed_went_pending():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
@@ -203,7 +203,7 @@ def test_single_node_dies_2pod_killed_2went_pending_no_disrupt_test():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"] and \
                                 pod_running_2.status == STATUS_POD["Pending"] # and \
                                     # scheduler.status == STATUS_SCHED["Clean"]
@@ -235,7 +235,7 @@ def test_single_node_dies_2pod_killed_2went_pending():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 pod_running_1.status == STATUS_POD["Pending"] and \
                                 pod_running_2.status == STATUS_POD["Pending"]
@@ -280,7 +280,7 @@ def test_single_node_dies_2pod_killed_with_service_1pod_went_pending():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 pod_running_1.status == STATUS_POD["Pending"]
     p = NewGOal(k.state_objects)
@@ -324,7 +324,7 @@ def test_single_node_dies_1pod_killed_service_outage():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
     p = NewGOal(k.state_objects)
@@ -367,7 +367,7 @@ def test_single_node_dies_2pod_killed_with_service_2pod_went_pending():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 pod_running_1.status == STATUS_POD["Pending"] and \
                                 pod_running_2.status == STATUS_POD["Pending"]
@@ -412,7 +412,7 @@ def test_single_node_dies_2pod_killed_service_outage():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
     p = NewGOal(k.state_objects)
@@ -464,7 +464,7 @@ def test_single_node_dies_2pod_killed_deployment_outage():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s, d])
     # print_objects(k.state_objects)
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 globalVar.is_deployment_disrupted == True
     p = NewGOal(k.state_objects)

@@ -3,13 +3,13 @@ import pytest
 pytestmark = pytest.mark.skip # TODO DELETEME
  
 # # @pytest.mark.skip(reason="temporary skip")
-# def test_AnyGoal_wo_cli():
+# def test_OptimisticRun_wo_cli():
 #     run_dir_wo_cli(TEST_CLUSTER_FOLDER,   TEST_DAEMONSET)
 # @pytest.mark.skip(reason="temporary skip")
-# def test_AnyGoal_cli_direct():
+# def test_OptimisticRun_cli_direct():
 #     run_cli_directly(TEST_CLUSTER_FOLDER,   TEST_DAEMONSET)
 # # @pytest.mark.skip(reason="temporary skip")
-# def test_AnyGoal_cli_invoke():
+# def test_OptimisticRun_cli_invoke():
 #     run_cli_invoke(TEST_CLUSTER_FOLDER,   TEST_DAEMONSET)
 
 print("test_has_deployment_creates_daemonset__pods_evicted_pods_pending")

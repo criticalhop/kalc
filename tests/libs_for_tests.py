@@ -6,7 +6,7 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.search import AnyGoal
+from guardctl.model.search import OptimisticRun
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.misc.object_factory import labelFactory
@@ -144,14 +144,14 @@ def run_wo_cli_step1(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     pod_running = next(filter(lambda x: isinstance(x, Pod) and x.status == STATUS_POD["Running"], k.state_objects))
-    class NewGOal(AnyGoal):
+    class NewGOal(OptimisticRun):
         goal = lambda self: pod_running.status == STATUS_POD["Killing"]
     p = NewGOal(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=300, sessionName="test_AnyGoal")
+    p.run(timeout=300, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("---- Scenario:")
@@ -168,12 +168,12 @@ def run_wo_cli(DUMP_local,CHANGE_local):
         for change_item in CHANGE_local:
             k.create_resource(open(change_item).read())
     k._build_state()
-    p = AnyGoal(k.state_objects)
+    p = OptimisticRun(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=300, sessionName="test_AnyGoal")
+    p.run(timeout=300, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("---- Scenario:")
@@ -190,12 +190,12 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
         for change_item in CHANGE_local:
             k.create_resource(open(change_item).read())
     k._build_state()
-    p = AnyGoal(k.state_objects)
+    p = OptimisticRun(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=6600, sessionName="test_AnyGoal")
+    p.run(timeout=6600, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("---- Scenario:")

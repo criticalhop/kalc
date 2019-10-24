@@ -123,10 +123,9 @@ class K8ServiceInterruptSearch(KubernetesModel):
             if nameCheck:
                 raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
-class AnyGoal(K8ServiceInterruptSearch):
+class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
-
-class Check_deployments(AnyGoal):
+    
     @planned(cost=900000) # this works for deployment-outage case
     def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
@@ -140,11 +139,12 @@ class Check_deployments(AnyGoal):
             probability=1.0,
             affected=[]
         )
+class Check_deployments(OptimisticRun):
     @planned(cost=100)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
                 scheduler: "Scheduler"):
         assert globalVar.is_deployment_disrupted == True
-        assert scheduler.status == STATUS_SCHED["Clean"]
+        # assert scheduler.status == STATUS_SCHED["Clean"]
         globalVar.goal_achieved = True 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -154,7 +154,31 @@ class Check_deployments(AnyGoal):
             probability=1.0,
             affected=[]
         )
-class Check_services(AnyGoal):
+    @planned(cost=100)
+    def MarkDeploymentOutageEvent(self,
+                deployment_current: Deployment,
+                pod_current: Pod,
+                global_: "GlobalVar",
+                scheduler: "Scheduler"
+            ):
+        assert scheduler.status == STATUS_SCHED["Clean"] 
+        assert deployment_current.amountOfActivePods < deployment_current.spec_replicas
+        assert deployment_current.searchable == True
+        assert pod_current in  deployment_current.podList
+        assert pod_current.status == STATUS_POD["Pending"]
+
+        deployment_current.status = STATUS_DEPLOYMENT["Interrupted"]
+        global_.is_deployment_disrupted = True
+        
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Detected deployment outage event",
+            parameters={"Pod": describe(pod_current)},
+            probability=1.0,
+            affected=[describe(deployment_current)]
+        )
+class Check_services(OptimisticRun):
     @planned(cost=100)
     def MarkServiceOutageEvent(self,
                 service1: Service,
@@ -211,7 +235,7 @@ class Check_services(AnyGoal):
             affected=[]
         )
 
-class Check_daemonsets(AnyGoal):        
+class Check_daemonsets(OptimisticRun):        
     @planned(cost=100)
     def MarkDaemonsetOutageEvent(self,
                 daemonset_current: DaemonSet,
