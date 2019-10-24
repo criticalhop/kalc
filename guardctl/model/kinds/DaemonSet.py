@@ -1,3 +1,4 @@
+import random
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
@@ -24,6 +25,7 @@ class DaemonSet(Controller, HasLimitsRequests):
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
+        self.metadata_name = "modelDaemonSet"+str(random.randint(1000000, 999999999))
         self.amountOfActivePods = 0
         self.searchable = True
         self.spec_template_spec_priorityClassName = "Normal-zero"

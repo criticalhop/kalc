@@ -1,3 +1,4 @@
+import random
 from guardctl.model.system.Controller import Controller
 from guardctl.model.system.base import HasLimitsRequests
 from guardctl.model.kinds.Node import Node
@@ -20,6 +21,7 @@ class ReplicaSet(Controller, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
+        self.metadata_name = "modelReplicaSet"+str(random.randint(1000000, 999999999))
         self.hash = "superhash"
 
 

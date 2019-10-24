@@ -1,3 +1,4 @@
+import random
 from typing import Set
 from guardctl.model.system.primitives import Label, StatusServ
 from guardctl.model.kinds.Node import Node
@@ -19,6 +20,7 @@ class Service(HasLabel):
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
+        self.metadata_name = "modelService"+str(random.randint(1000000, 999999999))
         self.amountOfActivePods = 0
         self.status = STATUS_SERV["Pending"]
         self.searchable = True
