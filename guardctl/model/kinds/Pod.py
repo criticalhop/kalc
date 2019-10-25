@@ -15,6 +15,7 @@ from guardctl.misc.const import *
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from guardctl.model.scenario import ScenarioStep, describe
 import sys
+import random
 
 
 class Pod(HasLabel, HasLimitsRequests):
@@ -62,6 +63,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.hasService = False
         self.hasDaemonset = False
         self.hasDeployment = False
+        # self.metadata_name = "modelPriorityClass"+str(random.randint(100000000, 999999999))
         self.metadata_name = "model-default-name"
 
 
