@@ -84,44 +84,44 @@ class K8ServiceInterruptSearch(KubernetesModel):
 
 
 
-    def mark_excluded(object_space, excludeStr, skip_check=False):
-        exclude = []
-        if excludeStr != None:
-            for kn in excludeStr.split(","):
-                exclude.append(ExcludeDict(kn))
-        else: 
-            return
-        names = []
-        types = []
-        for obj in object_space:
-            if hasattr(obj, 'metadata_name'):
-                names.append(str(obj.metadata_name))
-                types.append(str(obj.__class__.__name__))
-                for objExclude in exclude:
-                    re_name = "^" + objExclude.name.replace('*', '.*') + "$"
-                    re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
-                    if (re.search(re.compile(re_objType), str(obj.__class__.__name__)) is not None) and \
-                        (re.search(re.compile(re_name), str(obj.metadata_name)) is not None):
-                        # print("mark unserchable ", str(obj.__class__.__name__), ":", str(obj.metadata_name ))
-                        obj.searchable = False
-        if skip_check : return
-        for objExclude in exclude:
-            re_name = "^" + objExclude.name.replace('*', '.*') + "$"
-            re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
+def mark_excluded(object_space, excludeStr, skip_check=False):
+    exclude = []
+    if excludeStr != None:
+        for kn in excludeStr.split(","):
+            exclude.append(ExcludeDict(kn))
+    else: 
+        return
+    names = []
+    types = []
+    for obj in object_space:
+        if hasattr(obj, 'metadata_name'):
+            names.append(str(obj.metadata_name))
+            types.append(str(obj.__class__.__name__))
+            for objExclude in exclude:
+                re_name = "^" + objExclude.name.replace('*', '.*') + "$"
+                re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
+                if (re.search(re.compile(re_objType), str(obj.__class__.__name__)) is not None) and \
+                    (re.search(re.compile(re_name), str(obj.metadata_name)) is not None):
+                    # print("mark unserchable ", str(obj.__class__.__name__), ":", str(obj.metadata_name ))
+                    obj.searchable = False
+    if skip_check : return
+    for objExclude in exclude:
+        re_name = "^" + objExclude.name.replace('*', '.*') + "$"
+        re_objType =  "^" + objExclude.objType.replace('*', '.*') + "$"
 
-            typeCheck = True
-            for type_name in types:  
-                if re.search(re.compile(re_objType), type_name) is not None:
-                    typeCheck = False
-            if typeCheck:
-                raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
+        typeCheck = True
+        for type_name in types:  
+            if re.search(re.compile(re_objType), type_name) is not None:
+                typeCheck = False
+        if typeCheck:
+            raise AssertionError("Error: no such type '{0}'".format(objExclude.objType))
 
-            nameCheck = True
-            for metadata_name in names:
-                if re.search(re.compile(re_name), metadata_name) is not None:
-                    nameCheck = False
-            if nameCheck:
-                raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
+        nameCheck = True
+        for metadata_name in names:
+            if re.search(re.compile(re_name), metadata_name) is not None:
+                nameCheck = False
+        if nameCheck:
+            raise AssertionError("Error: no such {1}: '{0}'".format(objExclude.name, objExclude.objType))
 
 class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
