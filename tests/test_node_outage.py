@@ -433,7 +433,7 @@ def test_single_node_dies_2pod_killed_service_outage_invload():
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     for y in yamlState: 
-        print(y)
+        # print(y)
         k2.load(y)
     k2._build_state()
     globalVar = k2.state_objects[1]
@@ -441,9 +441,9 @@ def test_single_node_dies_2pod_killed_service_outage_invload():
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
     p = NewGOal(k2.state_objects)
-    print("--- RUN 2 ---")
-    for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
-        print(y)
+    # print("--- RUN 2 ---")
+    # for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
+        # print(y)
     p.run(timeout=100)
     # for a in p.plan:
         # print(a) 
