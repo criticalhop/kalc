@@ -12,7 +12,8 @@ class PriorityClass(Object):
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
-        self.metadata_name = "modelPriorityClass"+str(random.randint(1000000, 999999999))
+        # self.metadata_name = "modelPriorityClass"+str(random.randint(1000000, 999999999))
+        self.metadata_name = "model-default-name"
         self.preemptionPolicy = POLICY["PreemptLowerPriority"]
         self.priority = 0
 

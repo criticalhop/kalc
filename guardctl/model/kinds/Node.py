@@ -30,7 +30,8 @@ class Node(HasLabel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.metadata_name = "modelNode"+str(random.randint(1000000, 999999999))
+        # self.metadata_name = "modelNode"+str(random.randint(100000000, 999999999))
+        self.metadata_name = "model-default-name"
         self.AmountOfPodsOverwhelmingMemLimits = 0
         self.currentFormalCpuConsumption = 0
         self.currentFormalMemConsumption = 0

@@ -25,7 +25,8 @@ class DaemonSet(Controller, HasLimitsRequests):
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
-        self.metadata_name = "modelDaemonSet"+str(random.randint(1000000, 999999999))
+        # self.metadata_name = "modelDaemonSet"+str(random.randint(100000000, 999999999))
+        self.metadata_name = "model-default-name"
         self.amountOfActivePods = 0
         self.searchable = True
         self.spec_template_spec_priorityClassName = "Normal-zero"
