@@ -1,5 +1,5 @@
 from tests.test_util import print_objects
-from tests.libs_for_tests import convert_space_to_yaml
+from tests.libs_for_tests import convert_space_to_yaml, prepare_yamllist_for_diff
 from guardctl.model.search import AnyGoal 
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
@@ -26,6 +26,15 @@ def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1.atNode = atNode
     pod_running_1.status = STATUS_POD["Running"]
     return pod_running_1
+
+def build_pending_pod(podName, cpuRequest, memRequest, toNode):
+    p = build_running_pod(podName, cpuRequest, memRequest, Node.NODE_NULL)
+    p.status = STATUS_POD["Pending"]
+    p.toNode = toNode
+    p.hasDeployment = False
+    p.hasService = False
+    p.hasDaemonset = False
+    return p
 
 def prepare_test_single_node_dies_2pod_killed_service_outage():
     # Initialize scheduler, globalvar
@@ -60,10 +69,10 @@ def prepare_test_single_node_dies_2pod_killed_service_outage():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s])
     # print_objects(k.state_objects)
-    return k, globalVar
+    return k, globalVar, n
 
 def test_cyclic_load_1():
-    k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
+    k, globalVar, n = prepare_test_single_node_dies_2pod_killed_service_outage()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     for y in yamlState: 
@@ -87,4 +96,49 @@ def test_cyclic_load_1():
     assert ys1 == ys2
 
     # assert yamlState == yamlState2 # TODO: this does not entirely match, but close...
+    
+def test_cyclic_create():
+    k, globalVar, n = prepare_test_single_node_dies_2pod_killed_service_outage()
+    yamlStateBeforeCreate = convert_space_to_yaml(k.state_objects, wrap_items=True)
+
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+
+    dnew = Deployment()
+    dnew.amountOfActivePods = 0
+    dnew.spec_replicas = 1
+    dnew.podList.add(pod_pending_1) # important to add as we extract status, priority spec from pod
+
+    snew = Service()
+    snew.metadata_name = "test-service-new"
+    snew.amountOfActivePods = 0
+    pod_pending_1.targetService = snew
+
+    create_objects = [dnew, snew]
+    yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
+
+    # snew.status = STATUS_SERV["Started"]
+    k.state_objects.extend([pod_pending_1, dnew, snew])
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+
+    k2 = KubernetesCluster()
+    for y in yamlStateBeforeCreate: 
+        # print(y)
+        k2.load(y)
+    for y in yamlCreate:
+        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
+    k2._build_state()
+    globalVar = k2.state_objects[1]
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True \
+                                and globalVar.is_service_disrupted == True
+    p = NewGOal(k2.state_objects)
+    # print("--- RUN 2 ---")
+    
+    yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
+    # for y in yamlState2:
+        # print(y)
+
+    assert prepare_yamllist_for_diff(yamlState, ignore_names=True) == \
+                    prepare_yamllist_for_diff(yamlState2, ignore_names=True) 
+
     

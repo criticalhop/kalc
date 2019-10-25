@@ -62,6 +62,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.hasService = False
         self.hasDaemonset = False
         self.hasDeployment = False
+        self.metadata_name = "model-default-name"
 
 
     def set_priority(self, object_space, controller):

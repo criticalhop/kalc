@@ -227,12 +227,14 @@ import guardctl.model.kinds.Node as mnode
 import guardctl.model.kinds.Service as mservice
 from guardctl.misc.util import CPU_DIVISOR, MEM_DIVISOR
 import time,random
+from typing import List
+import re
 import yaml
 yaml.Dumper.ignore_aliases = lambda *args : True
-def convert_space_to_dict(space, create_logic_support=False):
+def convert_space_to_dict(space, load_logic_support=True):
     resources = []
     SUPPORTED_KINDS = kinds_collection
-    UNSUPPORTED_KINDS = ["Scheduler", "GlobalVar"]
+    UNSUPPORTED_KINDS = ["Scheduler", "GlobalVar"] 
     # processed_objects = []
     # TODO HERE: sort space so that pods, nodes, services are always processed last
     pods = [x for x in space if type(x).__name__ == "Pod"]
@@ -248,16 +250,16 @@ def convert_space_to_dict(space, create_logic_support=False):
         if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
             if hasattr(ob, "asdict"): continue
             # print("Converting resource", repr(type(ob).__name__))
-            resources.extend(render_object(ob, create_logic_support=create_logic_support)[1:]) # objects rendered in-place, only take additions
+            resources.extend(render_object(ob, load_logic_support=load_logic_support)[1:]) # objects rendered in-place, only take additions
     # second pass, as object graph may have been rendered in any order
     for ob in sorted_space: 
         if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
             resources.append(ob.asdict)
     return resources
 
-def convert_space_to_yaml(space, wrap_items=False, create_logic_support=False):
+def convert_space_to_yaml(space, wrap_items=False, load_logic_support=True):
     ret = []
-    for x in convert_space_to_dict(space, create_logic_support=create_logic_support):
+    for x in convert_space_to_dict(space, load_logic_support=load_logic_support):
         # print("YAML for", x)
         if wrap_items: x = {"items": [ x ]}
         ret.append(yaml.dump(x))
@@ -266,7 +268,7 @@ def convert_space_to_yaml(space, wrap_items=False, create_logic_support=False):
 def getint(poob):
     return int(poob._get_value())
 
-def render_object(ob, create_logic_support=False):
+def render_object(ob, load_logic_support=True):
     # TODO: dump priorityClass for controllers (look at their pods' priorities)
     ret_obj = []
     d = { "apiVersion": "v1", # not used
@@ -277,7 +279,8 @@ def render_object(ob, create_logic_support=False):
     }
     # Pod
     if str(type(ob).__name__) == "Pod":
-        labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
+        # TODO: add hasDeployment to annotations
+        labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(100000000, 999999999))}
         if str(ob.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             if not "spec" in d: d["spec"] = {}
             d["spec"] = {"priorityClassName": str(ob.spec_priorityClassName)}
@@ -287,7 +290,7 @@ def render_object(ob, create_logic_support=False):
             d["spec"] = {"priorityClassName": str(pc.metadata_name)}
             # maybe add priority number too?
             if not hasattr(pc, "asdict"):
-                r = render_object(pc, create_logic_support=create_logic_support)
+                r = render_object(pc, load_logic_support=load_logic_support)
                 ret_obj.append(r[0])
         if ob.atNode._property_value != mnode.Node.NODE_NULL:
             if not "spec" in d: d["spec"] = {}
@@ -296,8 +299,8 @@ def render_object(ob, create_logic_support=False):
         if ob.targetService._property_value != mservice.Service.SERVICE_NULL:
             serv = ob.targetService._property_value
             if not hasattr(serv, "asdict"):
-                labels = {"service": str(serv.metadata_name)+str(random.randint(1000000, 999999999))}
-                d_serv = render_object(serv, create_logic_support=create_logic_support)[0]
+                labels = {"service": str(serv.metadata_name)+str(random.randint(100000000, 999999999))}
+                d_serv = render_object(serv, load_logic_support=load_logic_support)[0]
                 if "labels" in d_serv["metadata"]:
                     labels = d_serv["metadata"]["labels"]
                 d_serv["metadata"]["labels"] = labels
@@ -330,8 +333,8 @@ def render_object(ob, create_logic_support=False):
             
     if str(type(ob).__name__) in [ "Deployment", "DaemonSet" ]: 
         labels = {
-            "name": str(ob.metadata_name)+"-"+str(random.randint(1000000, 999999999)),
-            "pod-template-hash": str(random.randint(1000000, 999999999)) 
+            "name": str(ob.metadata_name)+"-"+str(random.randint(100000000, 999999999)),
+            "pod-template-hash": str(random.randint(100000000, 999999999)) 
         }
         d["spec"] = {
             "selector": {
@@ -366,10 +369,11 @@ def render_object(ob, create_logic_support=False):
                     break
             if found: continue
             dd_lpods.append(podOb)
+        assert dd_lpods, "Please add some pods to Controller to infer pod template"
 
         for podOb in dd_lpods: 
             assert not hasattr(podOb, "asdict")
-            d_pod = render_object(podOb, create_logic_support=create_logic_support)[0]
+            d_pod = render_object(podOb, load_logic_support=load_logic_support)[0]
             try:
                 pcn = d_pod["spec"]["priorityClassName"]
                 d["spec"]["template"]["spec"]["priorityClassName"] = pcn
@@ -392,12 +396,12 @@ def render_object(ob, create_logic_support=False):
         d["spec"]["template"]["spec"] = d_pod["spec"]
         d["spec"]["replicas"] = getint(ob.spec_replicas)
         d["metadata"]["labels"].update(labels)
-        if create_logic_support:
+        if load_logic_support:
             d2 = { 
                 "apiVersion": "v1", # not used
                 "kind": "ReplicaSet", 
                 "metadata": {
-                    "name": str(ob.metadata_name)+"-"+str(random.randint(1000000, 999999999)),
+                    "name": str(ob.metadata_name)+"-"+str(random.randint(100000000, 999999999)),
                     "labels": labels,
                     "ownerReferences": [
                         {
@@ -425,7 +429,7 @@ def render_object(ob, create_logic_support=False):
             ret_obj.append(d2)
     # Service
     if str(type(ob).__name__) == "Service":
-        labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
+        labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(100000000, 999999999))}
         d["spec"] = { "selector": labels }
         d["metadata"]["labels"] = labels
     # Node
@@ -439,5 +443,45 @@ def render_object(ob, create_logic_support=False):
     # PriorityClass
     if str(type(ob).__name__) == "PriorityClass":
         d["value"] = getint(ob.priority)
+
+    if str(type(ob).__name__) == "ReplicaSet":
+        print("ReplicaSet")
+        d = { 
+            "apiVersion": "v1", # not used
+            "kind": "ReplicaSet", 
+            "metadata": {
+                "name": str(ob.metadata_name),
+                "labels": 'XXX',
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "controller": True,
+                        "kind": str(ob.metadata_ownerReferences__kind),
+                        "name": str(ob.metadata_ownerReferences__name)
+                    }
+                ],
+                "spec": {
+                    "replicas": getint(ob.spec_replicas),
+                    "selector": {
+                        "matchLabels": 'XXX'
+                    },
+                    "template": {
+                        "metadata": {
+                            "labels": 'XXX'
+                        },
+                        "spec": 'XXX'
+                    }
+                }
+            }
+        }
+
+
     ob.asdict = d
     return [d] + ret_obj
+
+def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_names=False):
+    if ignore_replica_set: ylist = [x for x in ylist if not "ReplicaSet" in x ]
+    slist = ''.join([i if not i.isdigit() else "N" for i in repr(ylist).replace("\\n", "\\n\n")])
+    if ignore_names:
+        slist = re.sub(r'name:.+', 'name: XXX', slist)
+    return slist
