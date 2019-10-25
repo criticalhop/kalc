@@ -67,7 +67,7 @@ def test_cyclic_load_1():
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     for y in yamlState: 
-        print(y)
+        # print(y)
         k2.load(y)
     k2._build_state()
     globalVar = k2.state_objects[1]
@@ -75,11 +75,16 @@ def test_cyclic_load_1():
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
     p = NewGOal(k2.state_objects)
-    print("--- RUN 2 ---")
+    # print("--- RUN 2 ---")
     
     yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
-    for y in yamlState2:
-        print(y)
+    # for y in yamlState2:
+        # print(y)
+
+    ys1 = ''.join([i for i in repr(yamlState) if not i.isdigit()])
+    ys2 = ''.join([i for i in repr(yamlState2) if not i.isdigit()])
+
+    assert ys1 == ys2
 
     # assert yamlState == yamlState2 # TODO: this does not entirely match, but close...
     

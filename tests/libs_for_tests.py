@@ -229,7 +229,7 @@ from guardctl.misc.util import CPU_DIVISOR, MEM_DIVISOR
 import time,random
 import yaml
 yaml.Dumper.ignore_aliases = lambda *args : True
-def convert_space_to_dict(space):
+def convert_space_to_dict(space, create_logic_support=False):
     resources = []
     SUPPORTED_KINDS = kinds_collection
     UNSUPPORTED_KINDS = ["Scheduler", "GlobalVar"]
@@ -248,26 +248,25 @@ def convert_space_to_dict(space):
         if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
             if hasattr(ob, "asdict"): continue
             # print("Converting resource", repr(type(ob).__name__))
-            resources.extend(render_object(ob)[1:]) # objects rendered in-place, only take additions
+            resources.extend(render_object(ob, create_logic_support=create_logic_support)[1:]) # objects rendered in-place, only take additions
     # second pass, as object graph may have been rendered in any order
     for ob in sorted_space: 
         if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
             resources.append(ob.asdict)
     return resources
 
-def convert_space_to_yaml(space, wrap_items=False):
+def convert_space_to_yaml(space, wrap_items=False, create_logic_support=False):
     ret = []
-    for x in convert_space_to_dict(space):
+    for x in convert_space_to_dict(space, create_logic_support=create_logic_support):
         # print("YAML for", x)
         if wrap_items: x = {"items": [ x ]}
         ret.append(yaml.dump(x))
-    # return [yaml.dump(x, default_flow_style=False) for x in convert_space_to_dict(space)]
     return ret
 
 def getint(poob):
     return int(poob._get_value())
 
-def render_object(ob):
+def render_object(ob, create_logic_support=False):
     # TODO: dump priorityClass for controllers (look at their pods' priorities)
     ret_obj = []
     d = { "apiVersion": "v1", # not used
@@ -288,7 +287,7 @@ def render_object(ob):
             d["spec"] = {"priorityClassName": str(pc.metadata_name)}
             # maybe add priority number too?
             if not hasattr(pc, "asdict"):
-                r = render_object(pc)
+                r = render_object(pc, create_logic_support=create_logic_support)
                 ret_obj.append(r[0])
         if ob.atNode._property_value != mnode.Node.NODE_NULL:
             if not "spec" in d: d["spec"] = {}
@@ -298,14 +297,14 @@ def render_object(ob):
             serv = ob.targetService._property_value
             if not hasattr(serv, "asdict"):
                 labels = {"service": str(serv.metadata_name)+str(random.randint(1000000, 999999999))}
-                d_serv = render_object(serv)[0]
+                d_serv = render_object(serv, create_logic_support=create_logic_support)[0]
                 if "labels" in d_serv["metadata"]:
                     labels = d_serv["metadata"]["labels"]
                 d_serv["metadata"]["labels"] = labels
                 serv.asdict = d_serv
             else:
                 labels = serv.asdict["metadata"]["labels"]
-                print("skip service")
+                # print("skip service")
         if getint(ob.cpuRequest) > -1:
             if not "spec" in d: d["spec"] = {}
             if not "containers" in d["spec"]: 
@@ -370,7 +369,7 @@ def render_object(ob):
 
         for podOb in dd_lpods: 
             assert not hasattr(podOb, "asdict")
-            d_pod = render_object(podOb)[0]
+            d_pod = render_object(podOb, create_logic_support=create_logic_support)[0]
             try:
                 pcn = d_pod["spec"]["priorityClassName"]
                 d["spec"]["template"]["spec"]["priorityClassName"] = pcn
@@ -393,36 +392,37 @@ def render_object(ob):
         d["spec"]["template"]["spec"] = d_pod["spec"]
         d["spec"]["replicas"] = getint(ob.spec_replicas)
         d["metadata"]["labels"].update(labels)
-        d2 = { 
-            "apiVersion": "v1", # not used
-            "kind": "ReplicaSet", 
-            "metadata": {
-                "name": str(ob.metadata_name)+"-"+str(random.randint(1000000, 999999999)),
-                "labels": labels,
-                "ownerReferences": [
-                    {
-                        "apiVersion": "apps/v1",
-                        "controller": True,
-                        "kind": str(type(ob).__name__),
-                        "name": str(ob.metadata_name)
-                    }
-                ],
-                "spec": {
-                    "replicas": getint(ob.spec_replicas),
-                    "selector": {
-                        "matchLabels": labels
-                    },
-                    "template": {
-                        "metadata": {
-                            "labels": labels
+        if create_logic_support:
+            d2 = { 
+                "apiVersion": "v1", # not used
+                "kind": "ReplicaSet", 
+                "metadata": {
+                    "name": str(ob.metadata_name)+"-"+str(random.randint(1000000, 999999999)),
+                    "labels": labels,
+                    "ownerReferences": [
+                        {
+                            "apiVersion": "apps/v1",
+                            "controller": True,
+                            "kind": str(type(ob).__name__),
+                            "name": str(ob.metadata_name)
+                        }
+                    ],
+                    "spec": {
+                        "replicas": getint(ob.spec_replicas),
+                        "selector": {
+                            "matchLabels": labels
                         },
-                        "spec": d_pod["spec"]
+                        "template": {
+                            "metadata": {
+                                "labels": labels
+                            },
+                            "spec": d_pod["spec"]
+                        }
                     }
                 }
             }
-        }
-        # TODO: add status for ReplicaSets
-        ret_obj.append(d2)
+            # TODO: add status for ReplicaSets
+            ret_obj.append(d2)
     # Service
     if str(type(ob).__name__) == "Service":
         labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
