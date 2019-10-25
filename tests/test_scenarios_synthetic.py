@@ -118,8 +118,36 @@ def prepare_test_0_run_pods_no_eviction():
     k.state_objects.extend([n, pc, pod_pending_1, ds])
     return k, pod_pending_1
 
+@pytest.mark.debug(reason="this test is for debug perspective")
 def test_0_run_pods_no_eviction():
-    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction
+    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction()
+    class Task_Check_services(Check_services):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    class Task_Check_deployments(Check_deployments):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    p = Task_Check_deployments(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+
+@pytest.mark.debug(reason="this test is for debug perspective")
+def test_0_run_pods_no_eviction_invload():
+    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction()
+    class Task_Check_services(Check_services):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    class Task_Check_deployments(Check_deployments):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    p = Task_Check_deployments(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+
+def test_0_run_pods_no_eviction_invload():
+    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
@@ -170,15 +198,40 @@ def construct_scpace_for_test_1_run_pods_with_eviction():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1])
     return k, pod_pending_1
 
+@pytest.mark.debug(reason="this test is for debug perspective")
 def test_1_run_pods_with_eviction():
     # print("1")
     k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
-    # print_objects(k.state_objects)
+
     class Task_Check_services(Check_services):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     class Task_Check_deployments(Check_deployments):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    p = Task_Check_deployments(k.state_objects)
+    p.run(timeout=200)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+
+def test_1_run_pods_with_eviction_invload():
+    # print("1")
+    k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    globalVar = k2.state_objects[1]
+    print_objects_compare(k,k2)
+    print_yaml(yamlState)
+    class Task_Check_services(Check_services):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    class Task_Check_deployments(Check_deployments):
+        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+    p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
