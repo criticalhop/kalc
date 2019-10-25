@@ -304,6 +304,7 @@ def render_object(ob):
                 d_serv["metadata"]["labels"] = labels
                 serv.asdict = d_serv
             else:
+                labels = serv.asdict["metadata"]["labels"]
                 print("skip service")
         if getint(ob.cpuRequest) > -1:
             if not "spec" in d: d["spec"] = {}
@@ -424,7 +425,7 @@ def render_object(ob):
     if str(type(ob).__name__) == "Service":
         labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
         d["metadata"]["spec"] = { "selector": labels }
-        d["metadata"] = {"labels": labels }
+        d["metadata"]["labels"] = labels
     # Node
     if str(type(ob).__name__) == "Node":
         d["metadata"]["status"] = {
