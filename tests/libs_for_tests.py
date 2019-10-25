@@ -424,7 +424,7 @@ def render_object(ob):
     # Service
     if str(type(ob).__name__) == "Service":
         labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
-        d["metadata"]["spec"] = { "selector": labels }
+        d["spec"] = { "selector": labels }
         d["metadata"]["labels"] = labels
     # Node
     if str(type(ob).__name__) == "Node":
