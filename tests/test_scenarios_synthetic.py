@@ -1892,58 +1892,76 @@ def construct_space_1322_has_service_only_on_node_that_gets_disrupted():
     scheduler.status = STATUS_SCHED["Clean"]
 
     k.state_objects.extend([n1,  n2, s1, s2, pod_running_1, pod_running_2, pod_running_3, pod_running_4, pod_running_5, pod_running_6])
-    return k,n1
+    return k,n1,pod_running_1
 
-@pytest.mark.skip(reason="if debug needed - uncomment me")
-def test_25_node_outage_with_service_eviction_step1():
-    # print("25")
-    # Initialize scheduler, globalvar
-    k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
-    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    class NewGoal(OptimisticRun):
-        goal = lambda self: n1.status == STATUS_NODE["Inactive"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # print_objects(k.state_objects)
-    # for a in p.plan:
-    #     print(a) 
-    assert "Initiate_node_outage" in "\n".join([repr(x) for x in p.plan])
-    # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
-    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+# @pytest.mark.skip(reason="if debug needed - uncomment me")
+# def test_25_node_outage_with_service_eviction_step0():
+#     # print("25")
+#     # Initialize scheduler, globalvar
+#     k,n1,pod_running_1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class test_25_node_outage_with_service_eviction_step1(Check_services):
+#         goal = lambda self: self.pod_running_1.status == STATUS_POD["Killing"]
+#     p = test_25_node_outage_with_service_eviction_step1(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Initiate_node_outage" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+# # @pytest.mark.skip(reason="if debug needed - uncomment me")
+# def test_25_node_outage_with_service_eviction_step1():
+#     # print("25")
+#     # Initialize scheduler, globalvar
+#     k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class test_25_node_outage_with_service_eviction_step1(Check_services):
+#         goal = lambda self: n1.status == STATUS_NODE["Inactive"]
+#     p = test_25_node_outage_with_service_eviction_step1(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Initiate_node_outage" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
     
-@pytest.mark.skip(reason="if debug needed - uncomment me")
-def test_26_node_outage_with_service_eviction_step2():
-    # print("26")
-    # Initialize scheduler, globalvar
-    k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
-    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    class Check_services(Check_services):
-        goal = lambda self: globalvar.is_node_disrupted == True
-    p = Check_services(k.state_objects)
-    p.run(timeout=200)
-    # print_objects(k.state_objects)
-    # for a in p.plan:
-    #     print(a) 
-    # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
-    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+# @pytest.mark.skip(reason="if debug needed - uncomment me")
+# def test_26_node_outage_with_service_eviction_step2():
+#     # print("26")
+#     # Initialize scheduler, globalvar
+#     k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class Check_services(Check_services):
+#         goal = lambda self: globalvar.is_node_disrupted == True
+#     p = Check_services(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
-@pytest.mark.debug(reason="if debug needed - uncomment me")
-def test_27_node_outage_with_service_eviction_step3():
-    # print("27")
-    # Initialize scheduler, globalvar
-    k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
-    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    class Check_services_with_node_eviction(Check_services):
-        goal = lambda self: globalvar.is_node_disrupted == True and globalvar.is_service_disrupted == True
-    p = Check_services_with_node_eviction(k.state_objects)
-    p.run(timeout=200)
-    # print_objects(k.state_objects)
-    # for a in p.plan:
-    #     print(a) 
-    # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
-    # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+# @pytest.mark.debug(reason="if debug needed - uncomment me")
+# def test_27_node_outage_with_service_eviction_step3():
+#     # print("27")
+#     # Initialize scheduler, globalvar
+#     k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class Check_services_with_node_eviction(Check_services):
+#         goal = lambda self: globalvar.is_node_disrupted == True and globalvar.is_service_disrupted == True
+#     p = Check_services_with_node_eviction(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])

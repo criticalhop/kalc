@@ -234,7 +234,6 @@ class Check_services(OptimisticRun):
             probability=1.0,
             affected=[]
         )
-
 class Check_daemonsets(OptimisticRun):        
     @planned(cost=100)
     def MarkDaemonsetOutageEvent(self,
@@ -259,3 +258,9 @@ class Check_daemonsets(OptimisticRun):
             probability=1.0,
             affected=[describe(daemonset_current)]
         )
+
+class Check_services_and_deployments(Check_services,Check_deployments):
+    pass
+
+class Check_services_deployments_daemonsets(Check_daemonsets,Check_services,Check_deployments):
+    pass
