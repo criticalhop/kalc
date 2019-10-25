@@ -428,7 +428,7 @@ def render_object(ob):
         d["metadata"]["labels"] = labels
     # Node
     if str(type(ob).__name__) == "Node":
-        d["metadata"]["status"] = {
+        d["status"] = {
             "allocatable": {
                 "cpu": "%sm" % (getint(ob.cpuCapacity) * CPU_DIVISOR),
                 "memory": "%sMi" % (getint(ob.memCapacity) * MEM_DIVISOR)
