@@ -1,6 +1,5 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import convert_space_to_yaml, prepare_yamllist_for_diff
-from guardctl.model.search import AnyGoal 
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -80,10 +79,6 @@ def test_cyclic_load_1():
         k2.load(y)
     k2._build_state()
     globalVar = k2.state_objects[1]
-    class NewGOal(AnyGoal):
-        goal = lambda self: globalVar.is_node_disrupted == True \
-                                and globalVar.is_service_disrupted == True
-    p = NewGOal(k2.state_objects)
     # print("--- RUN 2 ---")
     
     yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
@@ -128,10 +123,6 @@ def test_cyclic_create():
         k2.load(y, mode=KubernetesCluster.CREATE_MODE)
     k2._build_state()
     globalVar = k2.state_objects[1]
-    class NewGOal(AnyGoal):
-        goal = lambda self: globalVar.is_node_disrupted == True \
-                                and globalVar.is_service_disrupted == True
-    p = NewGOal(k2.state_objects)
     # print("--- RUN 2 ---")
     
     yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
