@@ -1,6 +1,6 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import convert_space_to_yaml
-from guardctl.model.search import OptimisticRun 
+from guardctl.model.search import OptimisticRun, Check_deployments, Check_services, Check_daemonsets
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -418,10 +418,10 @@ def prepare_test_single_node_dies_2pod_killed_service_outage():
 
 def test_single_node_dies_2pod_killed_service_outage():
     k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
-    class NewGoal(OptimisticRun):
+    class Task_check_services(Check_services):
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
-    p = NewGoal(k.state_objects)
+    p = Task_check_services(k.state_objects)
     p.run(timeout=100)
     # for a in p.plan:
         # print(a) 
@@ -438,14 +438,14 @@ def test_single_node_dies_2pod_killed_service_outage_invload():
         k2.load(y)
     k2._build_state()
     globalVar = k2.state_objects[1]
-    class NewGoal(OptimisticRun):
+    class Task_check_services(Check_services):
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
-    p = NewGoal(k2.state_objects)
+    p = Task_check_services(k2.state_objects)
     print("--- RUN 2 ---")
     for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
         print(y)
-    p.run(timeout=100)
+    p.run(timeout=200)
     # for a in p.plan:
         # print(a) 
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
@@ -493,11 +493,11 @@ def test_single_node_dies_2pod_killed_deployment_outage():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s, d])
     # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
+    class Task_check_deployments(Check_deployments):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 globalVar.is_deployment_disrupted == True
-    p = NewGoal(k.state_objects)
-    p.run(timeout=100)
+    p = Task_check_deployments(k.state_objects)
+    p.run(timeout=200)
     # for a in p.plan:
         # print(a) 
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
