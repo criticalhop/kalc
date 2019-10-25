@@ -1,4 +1,5 @@
 from tests.test_util import print_objects
+from tests.libs_for_tests import convert_space_to_yaml
 from guardctl.model.search import OptimisticRun 
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
@@ -379,7 +380,7 @@ def test_single_node_dies_2pod_killed_with_service_2pod_went_pending():
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     assert "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
 """
-def test_single_node_dies_2pod_killed_service_outage():
+def prepare_test_single_node_dies_2pod_killed_service_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -412,13 +413,41 @@ def test_single_node_dies_2pod_killed_service_outage():
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, s])
     # print_objects(k.state_objects)
+
+    return k, globalVar
+
+def test_single_node_dies_2pod_killed_service_outage():
+    k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
     class NewGoal(OptimisticRun):
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
     p = NewGoal(k.state_objects)
     p.run(timeout=100)
-    for a in p.plan:
-        print(a) 
+    # for a in p.plan:
+        # print(a) 
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+def test_single_node_dies_2pod_killed_service_outage_invload():
+    k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    for y in yamlState: 
+        print(y)
+        k2.load(y)
+    k2._build_state()
+    globalVar = k2.state_objects[1]
+    class NewGOal(AnyGoal):
+        goal = lambda self: globalVar.is_node_disrupted == True \
+                                and globalVar.is_service_disrupted == True
+    p = NewGOal(k2.state_objects)
+    print("--- RUN 2 ---")
+    for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
+        print(y)
+    p.run(timeout=100)
+    # for a in p.plan:
+        # print(a) 
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -469,8 +498,8 @@ def test_single_node_dies_2pod_killed_deployment_outage():
                                 globalVar.is_deployment_disrupted == True
     p = NewGoal(k.state_objects)
     p.run(timeout=100)
-    for a in p.plan:
-        print(a) 
+    # for a in p.plan:
+        # print(a) 
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])

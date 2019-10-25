@@ -29,11 +29,13 @@ class Deployment(Controller, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
+        self.metadata_name = "modelDeployment"+str(random.randint(1000000, 999999999))
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
         self.amountOfActivePods = 0
         self.searchable = True
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
+        self.spec_replicas = 0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)

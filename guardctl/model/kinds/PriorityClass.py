@@ -1,3 +1,4 @@
+import random
 from poodle import Object
 from guardctl.model.system.primitives import TypePolicy
 from guardctl.misc.const import *
@@ -11,6 +12,7 @@ class PriorityClass(Object):
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
+        self.metadata_name = "modelPriorityClass"+str(random.randint(1000000, 999999999))
         self.preemptionPolicy = POLICY["PreemptLowerPriority"]
         self.priority = 0
 

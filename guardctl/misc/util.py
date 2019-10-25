@@ -2,6 +2,17 @@ from collections.abc import Mapping, Set, Sequence
 from guardctl.misc.object_factory import labelFactory 
 import string
 
+CPU_DIVISOR = 200
+MEM_DIVISOR = 200
+
+from poodle.arithmetic import logSparseIntegerFactory
+for n in range(1,10000):
+    try:
+        i = logSparseIntegerFactory.numbers[n]
+    except KeyError:
+        break
+POODLE_MAXLIN = n-1
+
 try:
     from six import string_types, iteritems
 except ImportError:
@@ -80,9 +91,11 @@ def cpuConvertToAbstractProblem(cpuParot):
         else:
             cpu = int(cpuParot)*1000
     # log.debug("cpuParot ", cpuParot, " ret ", cpuAdd)
-    cpu = int(cpu / 100)
+    cpu = int(cpu / CPU_DIVISOR)
     if cpu == 0:
         cpu = 1
+    assert cpu >= 0
+    assert cpu <= POODLE_MAXLIN, "Number exceeds Poodle power"
     return int(cpu)
 
 def memConvertToAbstractProblem(mem):
@@ -95,9 +108,11 @@ def memConvertToAbstractProblem(mem):
         ret = int(int(mem[:-2])/1000)
     else:
         ret = int(int(mem)/1000000)
-    ret = int(ret / 100)
+    ret = int(ret / MEM_DIVISOR)
     if ret == 0:
         ret = 1
+    assert ret >= 0
+    assert ret <= POODLE_MAXLIN, "Number exceeds Poodle power"
     return int(ret)
 
 #object deduplicator by metadata_name

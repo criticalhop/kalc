@@ -1,4 +1,5 @@
 import sys
+import random
 from guardctl.model.scenario import ScenarioStep, describe
 from typing import Set
 from guardctl.model.system.primitives import Label, StatusNode
@@ -29,6 +30,7 @@ class Node(HasLabel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.metadata_name = "modelNode"+str(random.randint(1000000, 999999999))
         self.AmountOfPodsOverwhelmingMemLimits = 0
         self.currentFormalCpuConsumption = 0
         self.currentFormalMemConsumption = 0

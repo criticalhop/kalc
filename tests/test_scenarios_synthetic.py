@@ -481,6 +481,8 @@ def test_4_synthetic_service_NO_outage_multi():
     #     for a in p.plan:
     #         print(a)
     #     raise Exception("Plan must be empty in this case")
+    for a in p.plan:
+        print(a)
 
 def test_4_synthetic_service_NO_outage_multi_P_Service_outage():
     # print("4")

@@ -220,3 +220,222 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     print("---- run_cli_invoke:")
     print(result.output)
     assert result.exit_code == 0
+
+from guardctl.model.full import kinds_collection
+from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+import guardctl.model.kinds.Node as mnode
+import guardctl.model.kinds.Service as mservice
+from guardctl.misc.util import CPU_DIVISOR, MEM_DIVISOR
+import time,random
+import yaml
+yaml.Dumper.ignore_aliases = lambda *args : True
+def convert_space_to_dict(space):
+    resources = []
+    SUPPORTED_KINDS = kinds_collection
+    UNSUPPORTED_KINDS = ["Scheduler", "GlobalVar"]
+    # processed_objects = []
+    # TODO HERE: sort space so that pods, nodes, services are always processed last
+    pods = [x for x in space if type(x).__name__ == "Pod"]
+    nodes = [x for x in space if type(x).__name__ == "Node"]
+    services = [x for x in space if type(x).__name__ == "Service"]
+    last_res = pods + nodes + services
+    beg_res = [ x for x in space if not x in last_res]
+    sorted_space = beg_res + last_res
+    # because we would generate pods defs from Deployment, DaemonSet
+    for ob in sorted_space:
+        # if ob in processed_objects: continue
+        # print("Doing for", ob, ob.__class__.__name__)
+        if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
+            if hasattr(ob, "asdict"): continue
+            # print("Converting resource", repr(type(ob).__name__))
+            resources.extend(render_object(ob)[1:]) # objects rendered in-place, only take additions
+    # second pass, as object graph may have been rendered in any order
+    for ob in sorted_space: 
+        if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
+            resources.append(ob.asdict)
+    return resources
+
+def convert_space_to_yaml(space, wrap_items=False):
+    ret = []
+    for x in convert_space_to_dict(space):
+        # print("YAML for", x)
+        if wrap_items: x = {"items": [ x ]}
+        ret.append(yaml.dump(x))
+    # return [yaml.dump(x, default_flow_style=False) for x in convert_space_to_dict(space)]
+    return ret
+
+def getint(poob):
+    return int(poob._get_value())
+
+def render_object(ob):
+    # TODO: dump priorityClass for controllers (look at their pods' priorities)
+    ret_obj = []
+    d = { "apiVersion": "v1", # not used
+        "kind": str(type(ob).__name__), 
+        "metadata": {
+            "name": str(ob.metadata_name)
+        }
+    }
+    # Pod
+    if str(type(ob).__name__) == "Pod":
+        labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
+        if str(ob.spec_priorityClassName) != "KUBECTL-VAL-NONE":
+            if not "spec" in d: d["spec"] = {}
+            d["spec"] = {"priorityClassName": str(ob.spec_priorityClassName)}
+        if not (ob.priorityClass._property_value == zeroPriorityClass):
+            pc = ob.priorityClass._property_value
+            if not "spec" in d: d["spec"] = {}
+            d["spec"] = {"priorityClassName": str(pc.metadata_name)}
+            # maybe add priority number too?
+            if not hasattr(pc, "asdict"):
+                r = render_object(pc)
+                ret_obj.append(r[0])
+        if ob.atNode._property_value != mnode.Node.NODE_NULL:
+            if not "spec" in d: d["spec"] = {}
+            node = ob.atNode._property_value
+            d["spec"] = {"nodeName": str(node.metadata_name)}
+        if ob.targetService._property_value != mservice.Service.SERVICE_NULL:
+            serv = ob.targetService._property_value
+            if not hasattr(serv, "asdict"):
+                labels = {"service": str(serv.metadata_name)+str(random.randint(1000000, 999999999))}
+                d_serv = render_object(serv)[0]
+                if "labels" in d_serv["metadata"]:
+                    labels = d_serv["metadata"]["labels"]
+                d_serv["metadata"]["labels"] = labels
+                serv.asdict = d_serv
+            else:
+                labels = serv.asdict["metadata"]["labels"]
+                print("skip service")
+        if getint(ob.cpuRequest) > -1:
+            if not "spec" in d: d["spec"] = {}
+            if not "containers" in d["spec"]: 
+                d["spec"]["containers"] = [{"resources": 
+                                        {"requests": {}}}]
+            d["spec"]["containers"][0]["resources"]["requests"]["cpu"] = \
+                                    "%sm" % (getint(ob.cpuRequest) * CPU_DIVISOR)
+        if getint(ob.memRequest) > -1:
+            if not "spec" in d: d["spec"] = {}
+            if not "containers" in d["spec"]: 
+                d["spec"]["containers"] = [{"resources": 
+                                        {"requests": {}}}]
+            d["spec"]["containers"][0]["resources"]["requests"]["memory"] = \
+                                    "%sMi" % (getint(ob.memRequest) * MEM_DIVISOR)
+        if not "labels" in d["metadata"]:
+            d["metadata"]["labels"] = labels
+        else:
+            d["metadata"]["labels"].update(labels)
+
+        # TODO: support to generate limits too!
+            
+    if str(type(ob).__name__) in [ "Deployment", "DaemonSet" ]: 
+        labels = {
+            "name": str(ob.metadata_name)+"-"+str(random.randint(1000000, 999999999)),
+            "pod-template-hash": str(random.randint(1000000, 999999999)) 
+        }
+        d["spec"] = {
+            "selector": {
+                "matchLabels": labels
+            },
+            "template": {
+                "metadata": {
+                    "labels": labels
+                },
+                "spec": {
+                    "containers": [
+                        {
+                            "resources": {
+                                # "limits": { },
+                                # "requests": { }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        d["metadata"]["labels"] = {}
+
+        # Dedup objects to circumvent poodle bug
+        lpods = ob.podList._get_value()
+        dd_lpods = []
+        for podOb in lpods:
+            found = False
+            for p in dd_lpods:
+                if str(p.metadata_name) == str(podOb.metadata_name):
+                    found = True
+                    break
+            if found: continue
+            dd_lpods.append(podOb)
+
+        for podOb in dd_lpods: 
+            assert not hasattr(podOb, "asdict")
+            d_pod = render_object(podOb)[0]
+            try:
+                pcn = d_pod["spec"]["priorityClassName"]
+                d["spec"]["template"]["spec"]["priorityClassName"] = pcn
+            except KeyError:
+                pass
+            try:
+                cpum = d_pod["spec"]["containers"][0]["resources"]["requests"]["cpu"]
+                d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["cpu"] = cpum
+            except KeyError:
+                pass
+            try:
+                memm = d_pod["spec"]["containers"][0]["resources"]["requests"]["memory"]
+                d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["memory"] = memm
+            except KeyError:
+                pass
+            # assert not "labels" in d_pod["metadata"]
+            d_pod["metadata"]["labels"].update(labels)
+            labels.update(d_pod["metadata"]["labels"])
+            podOb.asdict = d_pod
+        d["spec"]["template"]["spec"] = d_pod["spec"]
+        d["spec"]["replicas"] = getint(ob.spec_replicas)
+        d["metadata"]["labels"].update(labels)
+        d2 = { 
+            "apiVersion": "v1", # not used
+            "kind": "ReplicaSet", 
+            "metadata": {
+                "name": str(ob.metadata_name)+"-"+str(random.randint(1000000, 999999999)),
+                "labels": labels,
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "controller": True,
+                        "kind": str(type(ob).__name__),
+                        "name": str(ob.metadata_name)
+                    }
+                ],
+                "spec": {
+                    "replicas": getint(ob.spec_replicas),
+                    "selector": {
+                        "matchLabels": labels
+                    },
+                    "template": {
+                        "metadata": {
+                            "labels": labels
+                        },
+                        "spec": d_pod["spec"]
+                    }
+                }
+            }
+        }
+        # TODO: add status for ReplicaSets
+        ret_obj.append(d2)
+    # Service
+    if str(type(ob).__name__) == "Service":
+        labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(1000000, 999999999))}
+        d["spec"] = { "selector": labels }
+        d["metadata"]["labels"] = labels
+    # Node
+    if str(type(ob).__name__) == "Node":
+        d["status"] = {
+            "allocatable": {
+                "cpu": "%sm" % (getint(ob.cpuCapacity) * CPU_DIVISOR),
+                "memory": "%sMi" % (getint(ob.memCapacity) * MEM_DIVISOR)
+            }
+        }
+    # PriorityClass
+    if str(type(ob).__name__) == "PriorityClass":
+        d["value"] = getint(ob.priority)
+    ob.asdict = d
+    return [d] + ret_obj
