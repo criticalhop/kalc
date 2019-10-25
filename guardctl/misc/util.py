@@ -137,3 +137,19 @@ def objRemoveByName(objList, metadata_name):
                 objList.remove(obj)
                 br = True
                 break
+
+def poodle_bug_dedup(podList):
+    lpods = podList._get_value()
+    dd_lpods = []
+    for podOb in lpods:
+        found = False
+        for p in dd_lpods:
+            if str(p.metadata_name) == str(podOb.metadata_name):
+                found = True
+                break
+        if found: continue
+        dd_lpods.append(podOb)
+    return dd_lpods
+
+def getint(poob):
+    return int(poob._get_value())
