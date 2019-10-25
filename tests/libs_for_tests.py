@@ -6,7 +6,7 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.search import AnyGoal
+from guardctl.model.search import OptimisticRun
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.misc.object_factory import labelFactory
@@ -117,6 +117,16 @@ CHANGE_DAEMONSET_HIGH = [daemonset4_300_300_h]
 CHANGE_DEPLOYMENT_ZERO = [deployment2_5_100_100_z]
 CHANGE_DEPLOYMENT_ZERO_WITH_SERVICE = [deployment3_5_100_100_z,replicaset_for_deployment3,service3]
 
+def print_plan(p):
+    for a in p.plan:
+        print(a) 
+        
+def print_objects_compare(k,k2):
+    print("---originaly-generated---")
+    print_objects(k.state_objects)
+    print("---loaded-from-yaml----")
+    print_objects(k2.state_objects)
+
 def calculate_variable_dump(DUMP_local):
     DUMP_with_command = []
     if not (DUMP_local is None):
@@ -144,14 +154,14 @@ def run_wo_cli_step1(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     pod_running = next(filter(lambda x: isinstance(x, Pod) and x.status == STATUS_POD["Running"], k.state_objects))
-    class NewGOal(AnyGoal):
+    class NewGoal(OptimisticRun):
         goal = lambda self: pod_running.status == STATUS_POD["Killing"]
-    p = NewGOal(k.state_objects)
+    p = NewGoal(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=300, sessionName="test_AnyGoal")
+    p.run(timeout=300, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("---- Scenario:")
@@ -168,12 +178,12 @@ def run_wo_cli(DUMP_local,CHANGE_local):
         for change_item in CHANGE_local:
             k.create_resource(open(change_item).read())
     k._build_state()
-    p = AnyGoal(k.state_objects)
+    p = OptimisticRun(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=300, sessionName="test_AnyGoal")
+    p.run(timeout=300, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("---- Scenario:")
@@ -190,12 +200,12 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
         for change_item in CHANGE_local:
             k.create_resource(open(change_item).read())
     k._build_state()
-    p = AnyGoal(k.state_objects)
+    p = OptimisticRun(k.state_objects)
     print("---- run_wo_cli:")
     print("----- print_objects before run: ----------")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=6600, sessionName="test_AnyGoal")
+    p.run(timeout=6600, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("---- Scenario:")
@@ -220,6 +230,8 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     print("---- run_cli_invoke:")
     print(result.output)
     assert result.exit_code == 0
+
+
 
 from guardctl.model.full import kinds_collection
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
@@ -264,6 +276,15 @@ def convert_space_to_yaml(space, wrap_items=False, load_logic_support=True):
         if wrap_items: x = {"items": [ x ]}
         ret.append(yaml.dump(x))
     return ret
+
+def print_yaml(k2):
+    for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
+        print(y)
+        
+def load_yaml(yamlState,k):
+    for y in yamlState:
+        k.load(y)
+    k._build_state()
 
 def getint(poob):
     return int(poob._get_value())
@@ -331,7 +352,73 @@ def render_object(ob, load_logic_support=True):
 
         # TODO: support to generate limits too!
             
-    if str(type(ob).__name__) in [ "Deployment", "DaemonSet" ]: 
+    if str(type(ob).__name__) in [ "DaemonSet" ]: 
+        # more like Replicaet than Deployment
+        labels = {
+            "name": str(ob.metadata_name)+"-"+str(random.randint(100000000, 999999999)),
+            "pod-template-hash": str(random.randint(100000000, 999999999)) 
+        }
+        d["spec"] = {
+            "selector": {
+                "matchLabels": labels
+            },
+            "template": {
+                "metadata": {
+                    "labels": labels
+                },
+                "spec": {
+                    "containers": [
+                        {
+                            "resources": {
+                                # "limits": { },
+                                # "requests": { }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        d["metadata"]["labels"] = {}
+
+        # Dedup objects to circumvent poodle bug
+        lpods = ob.podList._get_value()
+        dd_lpods = []
+        for podOb in lpods:
+            found = False
+            for p in dd_lpods:
+                if str(p.metadata_name) == str(podOb.metadata_name):
+                    found = True
+                    break
+            if found: continue
+            dd_lpods.append(podOb)
+        assert dd_lpods, "Please add some pods to Controller to infer pod template"
+
+        for podOb in dd_lpods: 
+            assert not hasattr(podOb, "asdict")
+            d_pod = render_object(podOb, load_logic_support=load_logic_support)[0]
+            try:
+                pcn = d_pod["spec"]["priorityClassName"]
+                d["spec"]["template"]["spec"]["priorityClassName"] = pcn
+            except KeyError:
+                pass
+            try:
+                cpum = d_pod["spec"]["containers"][0]["resources"]["requests"]["cpu"]
+                d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["cpu"] = cpum
+            except KeyError:
+                pass
+            try:
+                memm = d_pod["spec"]["containers"][0]["resources"]["requests"]["memory"]
+                d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["memory"] = memm
+            except KeyError:
+                pass
+            # assert not "labels" in d_pod["metadata"]
+            d_pod["metadata"]["labels"].update(labels)
+            labels.update(d_pod["metadata"]["labels"])
+            podOb.asdict = d_pod
+        d["spec"]["template"]["spec"] = d_pod["spec"]
+        d["metadata"]["labels"].update(labels)
+ 
+    if str(type(ob).__name__) in [ "Deployment" ]: 
         labels = {
             "name": str(ob.metadata_name)+"-"+str(random.randint(100000000, 999999999)),
             "pod-template-hash": str(random.randint(100000000, 999999999)) 

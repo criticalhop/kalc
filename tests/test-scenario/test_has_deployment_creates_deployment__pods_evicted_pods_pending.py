@@ -6,7 +6,7 @@ from guardctl.model.kinds.Pod import Pod
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.search import AnyGoal
+from guardctl.model.search import OptimisticRun
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
 from guardctl.misc.object_factory import labelFactory
@@ -58,7 +58,7 @@ def test_test():
     assert result.exit_code == 0
 
 # @pytest.mark.skip(reason="temporary skip")
-def test_AnyGoal():
+def test_OptimisticRun():
     k = KubernetesCluster()
     k.load(open(NODE1).read())
     k.load(open(NODE2).read())
@@ -72,10 +72,10 @@ def test_AnyGoal():
     k.load(open(DEPLOYMENT).read())
     k.create_resource(open(DEPLOYMENT_NEW).read())
     k._build_state()
-    p = AnyGoal(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
+    p = OptimisticRun(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
     print_objects(k.state_objects)
-    p.run(timeout=6600, sessionName="test_AnyGoal")
+    p.run(timeout=6600, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())

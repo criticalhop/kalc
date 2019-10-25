@@ -40,17 +40,17 @@ REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
-class AnyGoal(K8ServiceInterruptSearch):
+class OptimisticRun(K8ServiceInterruptSearch):
 
-    anyGoal = False
+    OptimisticRun = False
 
-    goal = lambda self: self.anyGoal == True
+    goal = lambda self: self.OptimisticRun == True
 
     @planned(cost=100)
     def AnyServiceInterrupted(self,globalVar:GlobalVar):
         assert globalVar.is_service_interrupted == True
         assert self.scheduler.status == STATUS_SCHED["Clean"]
-        self.anyGoal = True
+        self.OptimisticRun = True
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -65,7 +65,7 @@ class AnyGoal(K8ServiceInterruptSearch):
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar):
         assert globalVar.is_deployment_interrupted == True
         assert self.scheduler.status == STATUS_SCHED["Clean"]
-        self.anyGoal = True
+        self.OptimisticRun = True
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -79,7 +79,7 @@ class AnyGoal(K8ServiceInterruptSearch):
     def NodeNServiceInterupted(self,globalVar:GlobalVar):
         assert globalVar.is_node_interrupted == True
         assert globalVar.is_service_interrupted == True
-        self.anyGoal = True
+        self.OptimisticRun = True
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -98,7 +98,7 @@ def test_test():
     print(result)
 
 
-def test_AnyGoal():
+def test_OptimisticRun():
     k = KubernetesCluster()
     k.load(open(NODE1).read())
     k.load(open(NODE2).read())
@@ -110,9 +110,9 @@ def test_AnyGoal():
     k.load(open(DEPLOYMENT).read())
     k.create_resource(open(DEPLOYMENT_NEW).read())
     k._build_state()
-    p = AnyGoal(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
+    p = OptimisticRun(k.state_objects) # self.scheduler.status == STATUS_SCHED["Clean"]
     # print_objects(k.state_objects)
-    p.run(timeout=6600, sessionName="test_AnyGoal")
+    p.run(timeout=6600, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print(Scenario(p.plan).asyaml())

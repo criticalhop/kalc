@@ -4,7 +4,7 @@ import os
 import sys
 import re
 from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import AnyGoal 
+from guardctl.model.search import OptimisticRun 
 from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -80,7 +80,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
     if str(profile) == "default":
         click.echo(f"# Using default profile")
-        p = AnyGoal(k.state_objects)
+        p = OptimisticRun(k.state_objects)
     else:
         click.echo(f"# Using {0} profile".format(profile))
         p = globals()[str(profile)](k.state_objects)
