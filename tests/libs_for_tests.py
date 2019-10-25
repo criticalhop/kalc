@@ -290,9 +290,9 @@ def render_object(ob):
             if not hasattr(pc, "asdict"):
                 r = render_object(pc)
                 ret_obj.append(r[0])
-        if ob.atNode != mnode.Node.NODE_NULL:
+        if ob.atNode._property_value != mnode.Node.NODE_NULL:
             if not "spec" in d: d["spec"] = {}
-            node = ob.atNode
+            node = ob.atNode._property_value
             d["spec"] = {"nodeName": str(node.metadata_name)}
         if ob.targetService._property_value != mservice.Service.SERVICE_NULL:
             serv = ob.targetService._property_value
