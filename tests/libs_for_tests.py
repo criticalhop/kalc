@@ -324,6 +324,8 @@ def render_object(ob):
             d["metadata"]["labels"] = labels
         else:
             d["metadata"]["labels"].update(labels)
+        if not "status" in d: d["status"] = {}
+        d["status"]["phase"] = str(ob.status._get_value())
 
         # TODO: support to generate limits too!
             
