@@ -101,9 +101,10 @@ class Deployment(Controller, HasLimitsRequests):
                 if str(pod_template_hash).split(":")[0] == "pod-template-hash" and str(pod_template_hash).split(":")[1] == self.hash :
                     self.podList.add(pod)
                     pod.hasDeployment = True
-                    if pod.status._get_value() == "Running":
-                        print("---AmountOfActivePods ->", self.amountOfActivePods ," pod-hash", pod_template_hash , " pod - " , pod.metadata_name)
-                        self.amountOfActivePods += 1
+                    br = True
+            if br and pod.status._get_value() == "Running":
+                print("---AmountOfActivePods ->", self.amountOfActivePods ," pod-hash", pod_template_hash , " pod - " , pod.metadata_name)
+                self.amountOfActivePods += 1
                     # self.check_pod(pod, object_space)
 
     def hook_scale_before_create(self, object_space, new_replicas):
