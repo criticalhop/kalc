@@ -47,6 +47,10 @@ def test_convert_node_problem():
     n.currentFormalMemConsumption = 4
     n.amountOfActivePods = 2
 
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
     # Service to detecte eviction
     s = Service()
     s.metadata_name = "test-service"
@@ -59,6 +63,8 @@ def test_convert_node_problem():
     pod_running_2.targetService = s
     pod_running_1.hasService = True
     pod_running_2.hasService = True
+    pod_running_1.priorityClass = pc
+    pod_running_2.priorityClass = pc
 
     d = Deployment()
     d.spec_replicas = 2
@@ -68,8 +74,11 @@ def test_convert_node_problem():
     d.podList.add(pod_running_1)
     d.podList.add(pod_running_2)
 
-    k.state_objects.extend([n, pod_running_1, pod_running_2, s, d])
-    for y in convert_space_to_yaml(k.state_objects):
+    k.state_objects.extend([n, pod_running_1, pod_running_2, s, d, pc])
+    k2 = KubernetesCluster()
+    for y in convert_space_to_yaml(k.state_objects, wrap_items=True):
         print(y)
+        k2.load(y)
+    k2._build_state()
 
 # TODO: test node outage exclusion

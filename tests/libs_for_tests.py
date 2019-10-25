@@ -225,13 +225,13 @@ from guardctl.model.full import kinds_collection
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 import guardctl.model.kinds.Node as mnode
 import guardctl.model.kinds.Service as mservice
+from guardctl.misc.util import CPU_DIVISOR, MEM_DIVISOR
 import time,random
 import yaml
 yaml.Dumper.ignore_aliases = lambda *args : True
 def convert_space_to_dict(space):
     resources = []
     SUPPORTED_KINDS = kinds_collection
-    print("Converting supported types", SUPPORTED_KINDS)
     UNSUPPORTED_KINDS = ["Scheduler", "GlobalVar"]
     # processed_objects = []
     # TODO HERE: sort space so that pods, nodes, services are always processed last
@@ -244,10 +244,10 @@ def convert_space_to_dict(space):
     # because we would generate pods defs from Deployment, DaemonSet
     for ob in sorted_space:
         # if ob in processed_objects: continue
-        print("Doing for", ob, ob.__class__.__name__)
+        # print("Doing for", ob, ob.__class__.__name__)
         if ob.__class__.__name__ in SUPPORTED_KINDS and not type(ob).__name__ in UNSUPPORTED_KINDS:
             if hasattr(ob, "asdict"): continue
-            print("Converting resource", repr(type(ob).__name__))
+            # print("Converting resource", repr(type(ob).__name__))
             resources.extend(render_object(ob)[1:]) # objects rendered in-place, only take additions
     # second pass, as object graph may have been rendered in any order
     for ob in sorted_space: 
@@ -255,10 +255,11 @@ def convert_space_to_dict(space):
             resources.append(ob.asdict)
     return resources
 
-def convert_space_to_yaml(space):
+def convert_space_to_yaml(space, wrap_items=False):
     ret = []
     for x in convert_space_to_dict(space):
-        print("YAML for", x)
+        # print("YAML for", x)
+        if wrap_items: x = {"items": [ x ]}
         ret.append(yaml.dump(x))
     # return [yaml.dump(x, default_flow_style=False) for x in convert_space_to_dict(space)]
     return ret
@@ -267,7 +268,7 @@ def getint(poob):
     return int(poob._get_value())
 
 def render_object(ob):
-    # TODO HERE: use real normalizer formula from util
+    # TODO: dump priorityClass for controllers (look at their pods' priorities)
     ret_obj = []
     d = { "apiVersion": "v1", # not used
         "kind": str(type(ob).__name__), 
@@ -281,17 +282,20 @@ def render_object(ob):
         if str(ob.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             if not "spec" in d: d["spec"] = {}
             d["spec"] = {"priorityClassName": str(ob.spec_priorityClassName)}
-        if ob.priorityClass != zeroPriorityClass:
-            pc = ob.priorityClass
+        if not (ob.priorityClass._property_value == zeroPriorityClass):
+            pc = ob.priorityClass._property_value
             if not "spec" in d: d["spec"] = {}
             d["spec"] = {"priorityClassName": str(pc.metadata_name)}
             # maybe add priority number too?
+            if not hasattr(pc, "asdict"):
+                r = render_object(pc)
+                ret_obj.append(r[0])
         if ob.atNode != mnode.Node.NODE_NULL:
             if not "spec" in d: d["spec"] = {}
             node = ob.atNode
             d["spec"] = {"nodeName": str(node.metadata_name)}
-        if ob.targetService != mservice.Service.SERVICE_NULL:
-            serv = ob.targetService
+        if ob.targetService._property_value != mservice.Service.SERVICE_NULL:
+            serv = ob.targetService._property_value
             if not hasattr(serv, "asdict"):
                 labels = {"service": str(serv.metadata_name)+str(random.randint(1000000, 999999999))}
                 d_serv = render_object(serv)[0]
@@ -307,15 +311,19 @@ def render_object(ob):
                 d["spec"]["containers"] = [{"resources": 
                                         {"requests": {}}}]
             d["spec"]["containers"][0]["resources"]["requests"]["cpu"] = \
-                                    "%sm" % (getint(ob.cpuRequest) * 100)
+                                    "%sm" % (getint(ob.cpuRequest) * CPU_DIVISOR)
         if getint(ob.memRequest) > -1:
             if not "spec" in d: d["spec"] = {}
             if not "containers" in d["spec"]: 
                 d["spec"]["containers"] = [{"resources": 
                                         {"requests": {}}}]
             d["spec"]["containers"][0]["resources"]["requests"]["memory"] = \
-                                    "%sMi" % (getint(ob.memRequest) * 100)
-        d["metadata"]["labels"] = labels
+                                    "%sMi" % (getint(ob.memRequest) * MEM_DIVISOR)
+        if not "labels" in d["metadata"]:
+            d["metadata"]["labels"] = labels
+        else:
+            d["metadata"]["labels"].update(labels)
+
         # TODO: support to generate limits too!
             
     if str(type(ob).__name__) in [ "Deployment", "DaemonSet" ]: 
@@ -343,6 +351,7 @@ def render_object(ob):
                 }
             }
         }
+        d["metadata"]["labels"] = {}
 
         # Dedup objects to circumvent poodle bug
         lpods = ob.podList._get_value()
@@ -375,11 +384,12 @@ def render_object(ob):
             except KeyError:
                 pass
             # assert not "labels" in d_pod["metadata"]
-            d_pod["metadata"]["labels"] = labels
+            d_pod["metadata"]["labels"].update(labels)
+            labels.update(d_pod["metadata"]["labels"])
             podOb.asdict = d_pod
         d["spec"]["template"]["spec"] = d_pod["spec"]
         d["spec"]["replicas"] = getint(ob.spec_replicas)
-        d["metadata"]["labels"] = labels
+        d["metadata"]["labels"].update(labels)
         d2 = { 
             "apiVersion": "v1", # not used
             "kind": "ReplicaSet", 
@@ -419,8 +429,8 @@ def render_object(ob):
     if str(type(ob).__name__) == "Node":
         d["metadata"]["status"] = {
             "allocatable": {
-                "cpu": "%sm" % (getint(ob.cpuCapacity) * 100),
-                "memory": "%sMi" % (getint(ob.memCapacity) * 100)
+                "cpu": "%sm" % (getint(ob.cpuCapacity) * CPU_DIVISOR),
+                "memory": "%sMi" % (getint(ob.memCapacity) * MEM_DIVISOR)
             }
         }
     # PriorityClass
