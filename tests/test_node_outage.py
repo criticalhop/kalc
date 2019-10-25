@@ -1,5 +1,5 @@
 from tests.test_util import print_objects
-from tests.libs_for_tests import convert_space_to_yaml
+from tests.libs_for_tests import convert_space_to_yaml,print_yaml,print_plan,load_yaml, print_objects_compare
 from guardctl.model.search import OptimisticRun, Check_deployments, Check_services, Check_daemonsets
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
@@ -416,6 +416,7 @@ def prepare_test_single_node_dies_2pod_killed_service_outage():
 
     return k, globalVar
 
+@pytest.mark.debug(reason="this test is for debug perspective")
 def test_single_node_dies_2pod_killed_service_outage():
     k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
     class Task_check_services(Check_services):
@@ -433,26 +434,19 @@ def test_single_node_dies_2pod_killed_service_outage_invload():
     k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
-    for y in yamlState: 
-        print(y)
-        k2.load(y)
-    k2._build_state()
+    load_yaml(yamlState,k2)
     globalVar = k2.state_objects[1]
     class Task_check_services(Check_services):
         goal = lambda self: globalVar.is_node_disrupted == True \
                                 and globalVar.is_service_disrupted == True
     p = Task_check_services(k2.state_objects)
-    print("--- RUN 2 ---")
-    for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
-        print(y)
     p.run(timeout=200)
-    # for a in p.plan:
-        # print(a) 
+    print_plan(p)
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
-def test_single_node_dies_2pod_killed_deployment_outage():
+def prepare_test_single_node_dies_2pod_killed_deployment_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -490,18 +484,34 @@ def test_single_node_dies_2pod_killed_deployment_outage():
     pod_running_2.hasDeployment = True
     d.podList.add(pod_running_1)
     d.podList.add(pod_running_2)
-
     k.state_objects.extend([n, pod_running_1, pod_running_2, s, d])
-    # print_objects(k.state_objects)
+    return k, globalVar
+
+@pytest.mark.debug(reason="this test is for debug perspective")
+def test_single_node_dies_2pod_killed_deployment_outage():
+    k = prepare_test_single_node_dies_2pod_killed_deployment_outage()
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class Task_check_deployments(Check_deployments):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 globalVar.is_deployment_disrupted == True
     p = Task_check_deployments(k.state_objects)
     p.run(timeout=200)
-    # for a in p.plan:
-        # print(a) 
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
-    # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
+def test_single_node_dies_2pod_killed_deployment_outage_invload():
+    k, globalVar = prepare_test_single_node_dies_2pod_killed_deployment_outage()
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    globalVar = k2.state_objects[1]
+    print_objects_compare(k,k2)
+    print_yaml(k2)
+    class Task_check_deployments(Check_deployments):
+        goal = lambda self: globalVar.is_node_disrupted == True and \
+                                globalVar.is_deployment_disrupted == True
+    p = Task_check_deployments(k2.state_objects)
+    p.run(timeout=200)
+    assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
 # TODO: test node outage exclusion

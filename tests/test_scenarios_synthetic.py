@@ -16,6 +16,7 @@ from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.model.scenario import Scenario
 from poodle import planned
+from tests.libs_for_tests import convert_space_to_yaml,print_yaml,print_plan,load_yaml, print_objects_compare
 
 def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1 = Pod()
@@ -81,7 +82,7 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
         p.toNode = toNode
     return p
 
-def test_0_run_pods_no_eviction():
+def prepare_test_0_run_pods_no_eviction():
     # print("0")
     # TODO: extract final status for loader unit tests from here
     # Initialize scheduler, globalvar
@@ -115,12 +116,19 @@ def test_0_run_pods_no_eviction():
     ds.amountOfActivePods = 0
     pod_pending_1.hasDaemonset = True
     k.state_objects.extend([n, pc, pod_pending_1, ds])
-    # print_objects(k.state_objects)
+    return k, pod_pending_1
+
+def test_0_run_pods_no_eviction():
+    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    globalVar = k2.state_objects[1]
     class Task_Check_services(Check_services):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     class Task_Check_deployments(Check_deployments):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = Task_Check_services(k.state_objects)
+    p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     p = Task_Check_deployments(k.state_objects)

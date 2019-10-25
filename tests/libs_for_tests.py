@@ -117,6 +117,16 @@ CHANGE_DAEMONSET_HIGH = [daemonset4_300_300_h]
 CHANGE_DEPLOYMENT_ZERO = [deployment2_5_100_100_z]
 CHANGE_DEPLOYMENT_ZERO_WITH_SERVICE = [deployment3_5_100_100_z,replicaset_for_deployment3,service3]
 
+def print_plan(p):
+    for a in p.plan:
+        print(a) 
+        
+def print_objects_compare(k,k2):
+    print("---originaly-generated---")
+    print_objects(k.state_objects)
+    print("---loaded-from-yaml----")
+    print_objects(k2.state_objects)
+
 def calculate_variable_dump(DUMP_local):
     DUMP_with_command = []
     if not (DUMP_local is None):
@@ -221,6 +231,8 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     print(result.output)
     assert result.exit_code == 0
 
+
+
 from guardctl.model.full import kinds_collection
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 import guardctl.model.kinds.Node as mnode
@@ -263,6 +275,15 @@ def convert_space_to_yaml(space, wrap_items=False):
         ret.append(yaml.dump(x))
     # return [yaml.dump(x, default_flow_style=False) for x in convert_space_to_dict(space)]
     return ret
+
+def print_yaml(k2):
+    for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
+        print(y)
+        
+def load_yaml(yamlState,k):
+    for y in yamlState:
+        k.load(y)
+    k._build_state()
 
 def getint(poob):
     return int(poob._get_value())
