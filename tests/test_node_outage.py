@@ -505,8 +505,6 @@ def test_single_node_dies_2pod_killed_deployment_outage_invload():
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
     globalVar = k2.state_objects[1]
-    print_objects_compare(k,k2)
-    print_yaml(k2)
     class Task_check_deployments(Check_deployments):
         goal = lambda self: globalVar.is_node_disrupted == True and \
                                 globalVar.is_deployment_disrupted == True
