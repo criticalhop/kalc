@@ -442,7 +442,8 @@ def test_2_synthetic_service_outage_step6_noNodeSelected():
         goal = lambda self: globalVar.is_service_disrupted == True
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
-    print_plan(p)
+    # print_plan(p)
+    assert "SelectNode" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -476,6 +477,8 @@ def test_2_synthetic_service_outage_invload():
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node.searchable = False
 
     # print_objects(k.state_objects)
     class Task_Check_services(Check_services):
@@ -485,7 +488,7 @@ def test_2_synthetic_service_outage_invload():
     p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
     # print_plan(p)
-    # assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
@@ -568,6 +571,8 @@ def test_3_synthetic_service_outage_multi_invload():
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node.searchable = False
     print_objects_compare(k,k2)
     print_yaml(k2)
     class Task_Check_services(Check_services):
