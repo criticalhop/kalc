@@ -811,7 +811,7 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.amountOfNodesDisrupted == 0
         assert node_with_outage.searchable == True
         node_with_outage.status = STATUS_NODE["Killing"]
-        globalVar.node_outage_in_progress = True
+        globalVar.block_node_outage_in_progress = True
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -849,7 +849,7 @@ class KubernetesModel(ProblemTemplate):
         assert node.status == STATUS_NODE["Killing"]
         globalVar.amountOfNodesDisrupted = 1
         node.status = STATUS_NODE["Inactive"]
-        globalVar.node_outage_in_progress = False
+        globalVar.block_node_outage_in_progress = False
         # TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,

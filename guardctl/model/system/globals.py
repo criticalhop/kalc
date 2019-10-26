@@ -14,7 +14,7 @@ class GlobalVar(Object):
     is_daemonset_disrupted: bool
     is_daemonset_distuption_searchable: bool
     goal_achieved: bool
-    node_outage_in_progress: bool
+    block_node_outage_in_progress: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,5 +28,5 @@ class GlobalVar(Object):
         self.is_node_disruption_searchable = True
         self.is_daemonset_distuption_searchable = True
         self.amountOfNodesDisrupted = 0
-        self.node_outage_in_progress = False
+        self.block_node_outage_in_progress = False
         
