@@ -651,6 +651,80 @@ def test_4_synthetic_service_NO_outage_multi():
     for a in p.plan:
         print(a)
 
+
+def test_4_synthetic_service_NO_outage_multi_invtest():
+    # print("4")
+    "No outage is caused by evicting only one pod of a multi-pod service"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has only one pod so it can detect outage
+    #  (we can't evict all pods here with one)
+    # TODO: no outage detected if res is not 4
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
+    # print_objects(k.state_objects)
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node.searchable = False
+    print_objects_compare(k,k2)
+    print_yaml(k2)
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.goal_achieved == True
+    p = Task_Check_services(k2.state_objects)
+    p.run(timeout=200)
+    assert "SchedulerQueueClean" in "\n".join([repr(x) for x in p.plan])
+    # if p.plan:
+    #     print("ERROR!!!")
+    #     for a in p.plan:
+    #         print(a)
+    #     raise Exception("Plan must be empty in this case")
+    for a in p.plan:
+        print(a)
+
 def test_4_synthetic_service_NO_outage_multi_P_Service_outage():
     # print("4")
     "No outage is caused by evicting only one pod of a multi-pod service"
