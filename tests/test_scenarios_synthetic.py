@@ -1,4 +1,5 @@
 from tests.test_util import print_objects
+from tests.libs_for_tests import prepare_yamllist_for_diff
 from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
@@ -136,16 +137,26 @@ def test_0_run_pods_no_eviction_invload():
     k, pod_pending_1 = prepare_test_0_run_pods_no_eviction()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
-    load_yaml(yamlState,k2)
-    globalVar = k2.state_objects[1]
+    for y in yamlState: 
+        # print(y)
+        k2.load(y)
+    k2._build_state()
+    pod_pending_1_k2 = next(filter(lambda x: isinstance(x, Pod) \
+                    and str(x.metadata_name) == "pod3", k2.state_objects))
     class Task_Check_services(Check_services):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+        goal = lambda self: pod_pending_1_k2.status == STATUS_POD["Running"]
     class Task_Check_deployments(Check_deployments):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+        goal = lambda self: pod_pending_1_k2.status == STATUS_POD["Running"]
+    yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
+    # print("-----------")
+    # for y in yamlState2: 
+        # print(y)
+    assert prepare_yamllist_for_diff(yamlState, ignore_names=True) == \
+                    prepare_yamllist_for_diff(yamlState2, ignore_names=True) 
     p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    p = Task_Check_deployments(k.state_objects)
+    p = Task_Check_deployments(k2.state_objects)
     p.run(timeout=200)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
 
@@ -204,31 +215,31 @@ def test_1_run_pods_with_eviction():
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
 
-def test_1_run_pods_with_eviction_invload():
-    # print("1")
-    k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
-    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-    k2 = KubernetesCluster()
-    load_yaml(yamlState,k2)
-    globalVar = k2.state_objects[1]
-    class Task_Check_services(Check_services):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    class Task_Check_deployments(Check_deployments):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = Task_Check_services(k2.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    p = Task_Check_deployments(k.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+# def test_1_run_pods_with_eviction_invload():
+#     # print("1")
+#     k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
+#     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+#     k2 = KubernetesCluster()
+#     load_yaml(yamlState,k2)
+#     globalVar = k2.state_objects[1]
+#     class Task_Check_services(Check_services):
+#         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+#     class Task_Check_deployments(Check_deployments):
+#         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
+#     p = Task_Check_services(k2.state_objects)
+#     p.run(timeout=200)
+#     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+#     assert "Evict" in "\n".join([repr(x) for x in p.plan])
+#     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+#     p = Task_Check_deployments(k.state_objects)
+#     p.run(timeout=200)
+#     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+#     assert "Evict" in "\n".join([repr(x) for x in p.plan])
+#     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
 
 
-    # for a in p.plan:
-        # print(a)
+#     # for a in p.plan:
+#         # print(a)
 
 
 def construct_scpace_for_test_2_synthetic_service_outage():
@@ -375,6 +386,72 @@ def test_2_synthetic_service_outage_step5():
     # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
 @pytest.mark.debug(reason="if debug needed - uncomment me")
+def test_2_synthetic_service_outage_step6_noNodeSelected():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+    n.searchable = False
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+    n.amountOfActivePods = 2
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 1
+    s.status = STATUS_SERV["Started"]
+
+    # our service has only one pod so it can detect outage
+    #  (we can't evict all pods here with one)
+    pod_running_1.targetService = s
+    pod_running_1.hasService = True
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,Node.NODE_NULL)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
+    "this test was needed when debugging invloads"
+    # print("2-6")
+
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+
+    # print_objects(k.state_objects)
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.is_service_disrupted == True
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    # print_plan(p)
+    assert "SelectNode" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
+    assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
+
+
+
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step6():
     # print("2-6")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -387,7 +464,8 @@ def test_2_synthetic_service_outage_step6():
         goal = lambda self: globalVar.is_daemonset_disrupted == True
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    # print_plan(p)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
@@ -395,22 +473,22 @@ def test_2_synthetic_service_outage_step6():
 def test_2_synthetic_service_outage_invload():
     # print("2-6")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     yamlState = convert_space_to_yaml(k.state_objects,wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-    globalVar = k2.state_objects[1]
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node.searchable = False
 
     # print_objects(k.state_objects)
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
-    class Task_Check_daemonsets(Check_daemonsets):
-        goal = lambda self: globalVar.is_daemonset_disrupted == True
-    print_objects_compare(k,k2)
-    print_yaml(k2)
-    p = Task_Check_services(k.state_objects)
+    # print_objects_compare(k,k2)
+    # print_yaml(k2)
+    p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    # print_plan(p)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
@@ -467,6 +545,7 @@ def construct_multi_pods_eviction_problem():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     # print_objects(k.state_objects)
     return k
+
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_3_synthetic_service_outage_multi():
     # print("3")
@@ -478,6 +557,7 @@ def test_3_synthetic_service_outage_multi():
         goal = lambda self: globalVar.is_service_disrupted == True
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
+    print_plan(p)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -487,23 +567,23 @@ def test_3_synthetic_service_outage_multi_invload():
     # print("3")
     "Multiple pods are evicted from one service to cause outage"
     k = construct_multi_pods_eviction_problem()
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-    globalVar = k2.state_objects[1]
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node.searchable = False
     print_objects_compare(k,k2)
     print_yaml(k2)
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
     p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
+    print_plan(p)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a)
 
 def test_4_synthetic_service_NO_outage_multi():
     # print("4")
@@ -561,6 +641,80 @@ def test_4_synthetic_service_NO_outage_multi():
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.goal_achieved == True
     p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    assert "SchedulerQueueClean" in "\n".join([repr(x) for x in p.plan])
+    # if p.plan:
+    #     print("ERROR!!!")
+    #     for a in p.plan:
+    #         print(a)
+    #     raise Exception("Plan must be empty in this case")
+    for a in p.plan:
+        print(a)
+
+
+def test_4_synthetic_service_NO_outage_multi_invtest():
+    # print("4")
+    "No outage is caused by evicting only one pod of a multi-pod service"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has only one pod so it can detect outage
+    #  (we can't evict all pods here with one)
+    # TODO: no outage detected if res is not 4
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
+    # print_objects(k.state_objects)
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node.searchable = False
+    print_objects_compare(k,k2)
+    print_yaml(k2)
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.goal_achieved == True
+    p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
     assert "SchedulerQueueClean" in "\n".join([repr(x) for x in p.plan])
     # if p.plan:

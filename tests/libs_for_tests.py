@@ -352,7 +352,73 @@ def render_object(ob, load_logic_support=True):
 
         # TODO: support to generate limits too!
             
-    if str(type(ob).__name__) in [ "Deployment", "DaemonSet" ]: 
+    if str(type(ob).__name__) in [ "DaemonSet" ]: 
+        # more like Replicaet than Deployment
+        labels = {
+            "name": str(ob.metadata_name)+"-"+str(random.randint(100000000, 999999999)),
+            "pod-template-hash": str(random.randint(100000000, 999999999)) 
+        }
+        d["spec"] = {
+            "selector": {
+                "matchLabels": labels
+            },
+            "template": {
+                "metadata": {
+                    "labels": labels
+                },
+                "spec": {
+                    "containers": [
+                        {
+                            "resources": {
+                                # "limits": { },
+                                # "requests": { }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        d["metadata"]["labels"] = {}
+
+        # Dedup objects to circumvent poodle bug
+        lpods = ob.podList._get_value()
+        dd_lpods = []
+        for podOb in lpods:
+            found = False
+            for p in dd_lpods:
+                if str(p.metadata_name) == str(podOb.metadata_name):
+                    found = True
+                    break
+            if found: continue
+            dd_lpods.append(podOb)
+        assert dd_lpods, "Please add some pods to Controller to infer pod template"
+
+        for podOb in dd_lpods: 
+            assert not hasattr(podOb, "asdict")
+            d_pod = render_object(podOb, load_logic_support=load_logic_support)[0]
+            try:
+                pcn = d_pod["spec"]["priorityClassName"]
+                d["spec"]["template"]["spec"]["priorityClassName"] = pcn
+            except KeyError:
+                pass
+            try:
+                cpum = d_pod["spec"]["containers"][0]["resources"]["requests"]["cpu"]
+                d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["cpu"] = cpum
+            except KeyError:
+                pass
+            try:
+                memm = d_pod["spec"]["containers"][0]["resources"]["requests"]["memory"]
+                d["spec"]["template"]["spec"]["containers"][0]["resources"]["requests"]["memory"] = memm
+            except KeyError:
+                pass
+            # assert not "labels" in d_pod["metadata"]
+            d_pod["metadata"]["labels"].update(labels)
+            labels.update(d_pod["metadata"]["labels"])
+            podOb.asdict = d_pod
+        d["spec"]["template"]["spec"] = d_pod["spec"]
+        d["metadata"]["labels"].update(labels)
+ 
+    if str(type(ob).__name__) in [ "Deployment" ]: 
         labels = {
             "name": str(ob.metadata_name)+"-"+str(random.randint(100000000, 999999999)),
             "pod-template-hash": str(random.randint(100000000, 999999999)) 

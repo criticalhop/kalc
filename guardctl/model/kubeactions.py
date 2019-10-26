@@ -175,36 +175,36 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    @planned(cost=100)
-    def Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined(self,
-                podPending: "Pod",
-                podToBeReplaced: "Pod",
-                node: "Node" , # unused
-                scheduler: "Scheduler",
-                priorityClassOfPendingPod: PriorityClass,
-                priorityClassOfPodToBeReplaced: PriorityClass
-                ):
-        assert podPending in scheduler.podQueue
-        assert podPending.toNode == Node.NODE_NULL
-        assert podPending.status == STATUS_POD["Pending"]
-        assert priorityClassOfPendingPod == podPending.priorityClass
-        assert priorityClassOfPodToBeReplaced == podToBeReplaced.priorityClass
-        # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
-        # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
-        # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
-        assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-        assert podPending.memRequest > node.memCapacity - node.currentFormalCpuConsumption
-        assert podToBeReplaced.status == STATUS_POD["Running"]
-        podToBeReplaced.status = STATUS_POD["Killing"]
+    # @planned(cost=100)
+    # def Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined(self,
+    #             podPending: "Pod",
+    #             podToBeReplaced: "Pod",
+    #             node: "Node" , # unused
+    #             scheduler: "Scheduler",
+    #             priorityClassOfPendingPod: PriorityClass,
+    #             priorityClassOfPodToBeReplaced: PriorityClass
+    #             ):
+    #     assert podPending in scheduler.podQueue
+    #     assert podPending.toNode == Node.NODE_NULL
+    #     assert podPending.status == STATUS_POD["Pending"]
+    #     assert priorityClassOfPendingPod == podPending.priorityClass
+    #     assert priorityClassOfPodToBeReplaced == podToBeReplaced.priorityClass
+    #     # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
+    #     # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
+    #     # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
+    #     assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+    #     assert podPending.memRequest > node.memCapacity - node.currentFormalCpuConsumption
+    #     assert podToBeReplaced.status == STATUS_POD["Running"]
+    #     podToBeReplaced.status = STATUS_POD["Killing"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Because pod has lower priority, it is getting evicted to make room for new pod",
-            parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
-            probability=1.0,
-            affected=[describe(podPending), describe(podToBeReplaced)]
-        )
+    #     return ScenarioStep(
+    #         name=sys._getframe().f_code.co_name,
+    #         subsystem=self.__class__.__name__,
+    #         description="Because pod has lower priority, it is getting evicted to make room for new pod",
+    #         parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
+    #         probability=1.0,
+    #         affected=[describe(podPending), describe(podToBeReplaced)]
+    #     )
 
     @planned(cost=100)
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
@@ -441,7 +441,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         nodeWithPod.amountOfActivePods -= 1 
-        pods_deployment.amountOfActivePods -= 1  # ERROR HERE
+        pods_deployment.amountOfActivePods -= 1
         serviceOfPod.amountOfActivePods -= 1
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
@@ -481,7 +481,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
         nodeWithPod.amountOfActivePods -= 1 
-        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        pods_daemonset.amountOfActivePods -= 1
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
@@ -515,7 +515,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         nodeWithPod.amountOfActivePods -= 1 
-        pods_daemonset.amountOfActivePods -= 1  # ERROR HERE
+        pods_daemonset.amountOfActivePods -= 1
         podBeingKilled.status =  STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
@@ -557,6 +557,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node.isNull == False
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -594,6 +595,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node.isNull == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
@@ -630,6 +632,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node.isNull == False
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
@@ -645,7 +648,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
         serviceTargetForPod.amountOfActivePods += 1
-        pods_deployment.amountOfActivePods += 1  # ERROR HERE
+        pods_deployment.amountOfActivePods += 1 
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
         return ScenarioStep(
@@ -670,6 +673,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node.isNull == False
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -683,7 +687,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        pods_deployment.amountOfActivePods += 1  # ERROR HERE
+        pods_deployment.amountOfActivePods += 1 
         podStarted.status = STATUS_POD["Running"] 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -707,6 +711,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -720,7 +725,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        pods_daemonset.amountOfActivePods += 1  # ERROR HERE
+        pods_daemonset.amountOfActivePods += 1 
         podStarted.status = STATUS_POD["Running"] 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -746,6 +751,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -759,7 +765,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        pods_daemonset.amountOfActivePods += 1  # ERROR HERE
+        pods_daemonset.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
         return ScenarioStep(
@@ -805,6 +811,7 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.amountOfNodesDisrupted == 0
         assert node_with_outage.searchable == True
         node_with_outage.status = STATUS_NODE["Killing"]
+        globalVar.node_outage_in_progress = True
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -842,6 +849,7 @@ class KubernetesModel(ProblemTemplate):
         assert node.status == STATUS_NODE["Killing"]
         globalVar.amountOfNodesDisrupted = 1
         node.status = STATUS_NODE["Inactive"]
+        globalVar.node_outage_in_progress = False
         # TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,

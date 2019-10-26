@@ -7,7 +7,7 @@ from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.misc.const import *
-from guardctl.model.search import K8ServiceInterruptSearch, AnyServiceInterrupted, OptimisticRun
+from guardctl.model.search import K8ServiceInterruptSearch, Check_services, OptimisticRun
 from guardctl.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError

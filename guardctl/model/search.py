@@ -129,6 +129,7 @@ class OptimisticRun(K8ServiceInterruptSearch):
     @planned(cost=900000) # this works for deployment-outage case
     def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
+        assert global_.node_outage_in_progress == False
         global_.goal_achieved = True
 
         return ScenarioStep(
@@ -166,6 +167,7 @@ class Check_deployments(OptimisticRun):
         assert deployment_current.searchable == True
         assert pod_current in  deployment_current.podList
         assert pod_current.status == STATUS_POD["Pending"]
+        assert global_.node_outage_in_progress == False
 
         deployment_current.status = STATUS_DEPLOYMENT["Interrupted"]
         global_.is_deployment_disrupted = True
@@ -193,6 +195,7 @@ class Check_services(OptimisticRun):
         assert service1.searchable == True  
         assert pod1.targetService == service1
         assert service1.isNull == False
+        assert global_.node_outage_in_progress == False
 
         service1.status = STATUS_SERV["Interrupted"]
         global_.is_service_disrupted = True #TODO:  Optimistic search 
@@ -209,6 +212,7 @@ class Check_services(OptimisticRun):
     @planned(cost=201) # this works for no-outage case
     def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
+        assert global_.node_outage_in_progress == False
         global_.goal_achieved = True
 
         return ScenarioStep(
@@ -224,6 +228,7 @@ class Check_services(OptimisticRun):
     def AnyServiceInterrupted(self,globalVar:GlobalVar, scheduler: Scheduler):
         assert globalVar.is_service_disrupted == True
         assert scheduler.status == STATUS_SCHED["Clean"]
+        assert globalVar.node_outage_in_progress == False
         globalVar.goal_achieved = True 
 
         return ScenarioStep(
@@ -246,6 +251,7 @@ class Check_daemonsets(OptimisticRun):
         assert daemonset_current.searchable == True
         assert pod_current in  daemonset_current.podList
         assert pod_current.status == STATUS_POD["Pending"]
+        assert global_.node_outage_in_progress == False
 
         # daemonset_current.status = STATUS_DAEMONSET_INTERRUPTED
         global_.is_daemonset_disrupted = True

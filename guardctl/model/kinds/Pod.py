@@ -76,6 +76,11 @@ class Pod(HasLabel, HasLimitsRequests):
                 logger.warning("Could not reference priority class %s %s" % (str(controller.spec_template_spec_priorityClassName), str(self.metadata_name)))
 
     def hook_after_load(self, object_space, _ignore_orphan=False):
+        if self.status._property_value == STATUS_POD["Pending"]:
+            scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
+            scheduler.queueLength += 1
+            scheduler.podQueue.add(self)
+            scheduler.status = STATUS_SCHED["Changed"]
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
         for node in nodes:
@@ -96,9 +101,10 @@ class Pod(HasLabel, HasLimitsRequests):
             if len(service.spec_selector._get_value()) and \
                     set(service.spec_selector._get_value())\
                         .issubset(set(self.metadata_labels._get_value())):
+                # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 self.targetService = service
                 self.hasService = True
-                if self.status == STATUS_POD["Running"]:
+                if self.status._property_value == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
                         list(service.metadata_labels._get_value())[0])
 

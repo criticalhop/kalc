@@ -1,6 +1,5 @@
 
 from tests.test_util import print_objects
-from guardctl.model.search import AnyGoal 
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service

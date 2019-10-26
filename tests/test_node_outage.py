@@ -434,7 +434,10 @@ def test_single_node_dies_2pod_killed_service_outage_invload():
     k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
-    load_yaml(yamlState,k2)
+    for y in yamlState: 
+        # print(y)
+        k2.load(y)
+    k2._build_state()
     globalVar = k2.state_objects[1]
     class Task_check_services(Check_services):
         goal = lambda self: globalVar.is_node_disrupted == True \
@@ -489,7 +492,7 @@ def prepare_test_single_node_dies_2pod_killed_deployment_outage():
 
 @pytest.mark.debug(reason="this test is for debug perspective")
 def test_single_node_dies_2pod_killed_deployment_outage():
-    k = prepare_test_single_node_dies_2pod_killed_deployment_outage()
+    k, globalVar = prepare_test_single_node_dies_2pod_killed_deployment_outage()
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class Task_check_deployments(Check_deployments):
         goal = lambda self: globalVar.is_node_disrupted == True and \
