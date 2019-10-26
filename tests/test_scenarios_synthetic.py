@@ -386,6 +386,71 @@ def test_2_synthetic_service_outage_step5():
     # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
 @pytest.mark.debug(reason="if debug needed - uncomment me")
+def test_2_synthetic_service_outage_step6_noNodeSelected():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+    n.searchable = False
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+    n.amountOfActivePods = 2
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 1
+    s.status = STATUS_SERV["Started"]
+
+    # our service has only one pod so it can detect outage
+    #  (we can't evict all pods here with one)
+    pod_running_1.targetService = s
+    pod_running_1.hasService = True
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,Node.NODE_NULL)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
+    "this test was needed when debugging invloads"
+    # print("2-6")
+
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+
+    # print_objects(k.state_objects)
+    class Task_Check_services(Check_services):
+        goal = lambda self: globalVar.is_service_disrupted == True
+    p = Task_Check_services(k.state_objects)
+    p.run(timeout=200)
+    print_plan(p)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
+    assert "Evict" in "\n".join([repr(x) for x in p.plan])
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
+
+
+
+@pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step6():
     # print("2-6")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
@@ -398,7 +463,8 @@ def test_2_synthetic_service_outage_step6():
         goal = lambda self: globalVar.is_daemonset_disrupted == True
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    # print_plan(p)
+    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
@@ -406,22 +472,20 @@ def test_2_synthetic_service_outage_step6():
 def test_2_synthetic_service_outage_invload():
     # print("2-6")
     k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     yamlState = convert_space_to_yaml(k.state_objects,wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-    globalVar = k2.state_objects[1]
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
 
     # print_objects(k.state_objects)
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
-    class Task_Check_daemonsets(Check_daemonsets):
-        goal = lambda self: globalVar.is_daemonset_disrupted == True
-    print_objects_compare(k,k2)
-    print_yaml(k2)
-    p = Task_Check_services(k.state_objects)
+    # print_objects_compare(k,k2)
+    # print_yaml(k2)
+    p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    # print_plan(p)
+    # assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
@@ -478,6 +542,7 @@ def construct_multi_pods_eviction_problem():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     # print_objects(k.state_objects)
     return k
+
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_3_synthetic_service_outage_multi():
     # print("3")
@@ -489,6 +554,7 @@ def test_3_synthetic_service_outage_multi():
         goal = lambda self: globalVar.is_service_disrupted == True
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
+    print_plan(p)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
@@ -498,23 +564,21 @@ def test_3_synthetic_service_outage_multi_invload():
     # print("3")
     "Multiple pods are evicted from one service to cause outage"
     k = construct_multi_pods_eviction_problem()
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-    globalVar = k2.state_objects[1]
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
     print_objects_compare(k,k2)
     print_yaml(k2)
     class Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
     p = Task_Check_services(k2.state_objects)
     p.run(timeout=200)
+    print_plan(p)
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a)
 
 def test_4_synthetic_service_NO_outage_multi():
     # print("4")
