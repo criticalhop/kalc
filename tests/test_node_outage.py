@@ -492,7 +492,7 @@ def prepare_test_single_node_dies_2pod_killed_deployment_outage():
 
 @pytest.mark.debug(reason="this test is for debug perspective")
 def test_single_node_dies_2pod_killed_deployment_outage():
-    k = prepare_test_single_node_dies_2pod_killed_deployment_outage()
+    k, globalVar = prepare_test_single_node_dies_2pod_killed_deployment_outage()
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class Task_check_deployments(Check_deployments):
         goal = lambda self: globalVar.is_node_disrupted == True and \
