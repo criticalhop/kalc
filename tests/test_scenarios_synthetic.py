@@ -17,7 +17,7 @@ from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.model.scenario import Scenario
 from poodle import planned
-from tests.libs_for_tests import convert_space_to_yaml,print_yaml,print_plan,load_yaml, print_objects_compare
+from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, test_assert_conditions, reload_cluster_from_yaml
 
 global yaml_test_mode
 yaml_test_mode = True
@@ -120,11 +120,14 @@ def prepare_test_0_run_pods_no_eviction():
     ds.amountOfActivePods = 0
     pod_pending_1.hasDaemonset = True
     k.state_objects.extend([n, pc, pod_pending_1, ds])
-    return k, pod_pending_1
+    k2 = reload_cluster_from_yaml(k)
+    return k, k2
 
 @pytest.mark.debug(reason="this test is for debug perspective")
 def test_0_run_pods_no_eviction():
-    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction()
+    k, k2 = prepare_test_0_run_pods_no_eviction()
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
+
     class Task_Check_services(Check_services):
         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
     class Task_Check_deployments(Check_deployments):
@@ -137,31 +140,25 @@ def test_0_run_pods_no_eviction():
     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
 
 def test_0_run_pods_no_eviction_invload():
-    k, pod_pending_1 = prepare_test_0_run_pods_no_eviction()
-    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-    k2 = KubernetesCluster()
-    for y in yamlState: 
-        # print(y)
-        k2.load(y)
-    k2._build_state()
-    pod_pending_1_k2 = next(filter(lambda x: isinstance(x, Pod) \
-                    and str(x.metadata_name) == "pod3", k2.state_objects))
-    class Task_Check_services(Check_services):
-        goal = lambda self: pod_pending_1_k2.status == STATUS_POD["Running"]
-    class Task_Check_deployments(Check_deployments):
-        goal = lambda self: pod_pending_1_k2.status == STATUS_POD["Running"]
-    yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
-    # print("-----------")
-    # for y in yamlState2: 
-        # print(y)
-    assert prepare_yamllist_for_diff(yamlState, ignore_names=True) == \
-                    prepare_yamllist_for_diff(yamlState2, ignore_names=True) 
-    p = Task_Check_services(k2.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    p = Task_Check_deployments(k2.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
+    k, k2 = prepare_test_0_run_pods_no_eviction()
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+
+
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGoal_k1(Check_services):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
+
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    class NewGoal_k2(Check_services):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+
+    assert_conditions = ["StartPod"]
+    not_assert_conditions = ["Evict"]
+    
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def construct_scpace_for_test_1_run_pods_with_eviction():
     # Initialize scheduler, globalvar
@@ -196,53 +193,29 @@ def construct_scpace_for_test_1_run_pods_with_eviction():
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1])
-    return k, pod_pending_1
+    k2 = reload_cluster_from_yaml(k)
+    return k, k2
 
-@pytest.mark.debug(reason="this test is for debug perspective")
-def test_1_run_pods_with_eviction():
-    # print("1")
-    k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
-
-    class Task_Check_services(Check_services):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    class Task_Check_deployments(Check_deployments):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = Task_Check_services(k.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    p = Task_Check_deployments(k.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-
-# def test_1_run_pods_with_eviction_invload():
-#     # print("1")
-#     k, pod_pending_1 = construct_scpace_for_test_1_run_pods_with_eviction()
-#     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-#     k2 = KubernetesCluster()
-#     load_yaml(yamlState,k2)
-#     globalVar = k2.state_objects[1]
-#     class Task_Check_services(Check_services):
-#         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-#     class Task_Check_deployments(Check_deployments):
-#         goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-#     p = Task_Check_services(k2.state_objects)
-#     p.run(timeout=200)
-#     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-#     assert "Evict" in "\n".join([repr(x) for x in p.plan])
-#     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-#     p = Task_Check_deployments(k.state_objects)
-#     p.run(timeout=200)
-#     assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-#     assert "Evict" in "\n".join([repr(x) for x in p.plan])
-#     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+def test_1_run_pods_with_eviction_invload():
+    k, k2 = construct_scpace_for_test_1_run_pods_with_eviction()
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
 
 
-#     # for a in p.plan:
-#         # print(a)
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGoal_k1(Check_services):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
+
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    class NewGoal_k2(Check_services):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+
+    assert_conditions = ["StartPod","Evict"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
 def construct_scpace_for_test_2_synthetic_service_outage():
@@ -291,12 +264,15 @@ def construct_scpace_for_test_2_synthetic_service_outage():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
-    return k, pod_running_1, pod_pending_1
+    k2 = reload_cluster_from_yaml(k)
+    return k, k2
 
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step1():
     # print("2-1")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
     class NewGoal(OptimisticRun):
         # pass
         # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
@@ -313,7 +289,9 @@ def test_2_synthetic_service_outage_step1():
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step2():
     # print("2-2")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
     # print_objects(k.state_objects)
     class NewGoal(OptimisticRun):
         # pass
@@ -331,7 +309,9 @@ def test_2_synthetic_service_outage_step2():
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step3():
     # print("2-3")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
     # print_objects(k.state_objects)
     class NewGoal(OptimisticRun):
         # pass
@@ -349,7 +329,9 @@ def test_2_synthetic_service_outage_step3():
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step4():
     # print("2-4")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
 
@@ -370,7 +352,9 @@ def test_2_synthetic_service_outage_step4():
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step5():
     # print("2-5")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     # print_objects(k.state_objects)
@@ -457,7 +441,9 @@ def test_2_synthetic_service_outage_step6_noNodeSelected():
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step6():
     # print("2-6")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
     # print_objects(k.state_objects)
@@ -475,26 +461,30 @@ def test_2_synthetic_service_outage_step6():
 
 def test_2_synthetic_service_outage_invload():
     # print("2-6")
-    k, pod_running_1, pod_pending_1 =construct_scpace_for_test_2_synthetic_service_outage()
-    yamlState = convert_space_to_yaml(k.state_objects,wrap_items=True)
-    k2 = KubernetesCluster()
-    load_yaml(yamlState,k2)
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
-    node.searchable = False
+    k, k2 =construct_scpace_for_test_2_synthetic_service_outage()
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects))
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    node_1 = next(filter(lambda x: isinstance(x, Node), k.state_objects))
+    node_1.searchable = False
+    node_2 = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node_2.searchable = False
 
-    # print_objects(k.state_objects)
-    class Task_Check_services(Check_services):
-        goal = lambda self: globalVar.is_service_disrupted == True
-    # print_objects_compare(k,k2)
-    # print_yaml(k2)
-    p = Task_Check_services(k2.state_objects)
-    p.run(timeout=200)
-    # print_plan(p)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGoal_k1(Check_services):
+        goal = lambda self: globalVar_k1.is_service_disrupted == True
+    p = NewGoal_k1(k.state_objects)
+
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    class NewGoal_k2(Check_services):
+        goal = lambda self: globalVar_k2.is_service_disrupted == True
+    p2 = NewGoal_k2(k2.state_objects)
+
+    assert_conditions = ["StartPod","Evict","MarkServiceOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def construct_multi_pods_eviction_problem():
     # Initialize scheduler, globalvar
@@ -546,45 +536,35 @@ def construct_multi_pods_eviction_problem():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
+    k2 = reload_cluster_from_yaml(k)
     # print_objects(k.state_objects)
-    return k
-
-@pytest.mark.debug(reason="if debug needed - uncomment me")
-def test_3_synthetic_service_outage_multi():
-    # print("3")
-    "Multiple pods are evicted from one service to cause outage"
-    k = construct_multi_pods_eviction_problem()
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-
-    class Task_Check_services(Check_services):
-        goal = lambda self: globalVar.is_service_disrupted == True
-    p = Task_Check_services(k.state_objects)
-    p.run(timeout=200)
-    print_plan(p)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    return k, k2
 
 def test_3_synthetic_service_outage_multi_invload():
     # print("3")
     "Multiple pods are evicted from one service to cause outage"
-    k = construct_multi_pods_eviction_problem()
-    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-    k2 = KubernetesCluster()
-    load_yaml(yamlState,k2)
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-    node = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
-    node.searchable = False
-    class Task_Check_services(Check_services):
-        goal = lambda self: globalVar.is_service_disrupted == True
-    p = Task_Check_services(k2.state_objects)
-    p.run(timeout=200)
-    print_plan(p)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k, k2 = construct_multi_pods_eviction_problem()
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    node_k1 = next(filter(lambda x: isinstance(x, Node), k.state_objects))
+    node_k2 = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    node_k1.searchable = False
+    node_k2.searchable = False
+
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGoal_k1(Check_deployments):
+        goal = lambda self: globalVar_k1.is_service_disrupted == True
+    p = NewGoal_k1(k.state_objects)
+
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    class NewGoal_k2(Check_deployments):
+        goal = lambda self: globalVar_k2.is_service_disrupted == True
+    p2 = NewGoal_k2(k2.state_objects)
+
+    assert_conditions = ["MarkDeploymentOutageEvent"]
+    not_assert_conditions = []
+    
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def prepare_test_4_synthetic_service_NO_outage_multi():
     # print("4")
@@ -636,30 +616,26 @@ def prepare_test_4_synthetic_service_NO_outage_multi():
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
-    if yaml_test_mode == True:
-        yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-        k2 = KubernetesCluster()
-        load_yaml(yamlState,k2)
-        globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-    # print_objects(k.state_objects)
-    return k2,globalVar
+    k2 = reload_cluster_from_yaml(k)
+    return k,k2
 
 def test_4_synthetic_service_NO_outage_multi():
-    k, globalVar = prepare_test_4_synthetic_service_NO_outage_multi()
-    class Task_Check_services(Check_services):
-        goal = lambda self: globalVar.goal_achieved == True
-    p = Task_Check_services(k.state_objects)
-    print_yaml(k)
-    p.run(timeout=200)
-    assert "SchedulerQueueClean" in "\n".join([repr(x) for x in p.plan])
-    # if p.plan:
-    #     print("ERROR!!!")
-    #     for a in p.plan:
-    #         print(a)
-    #     raise Exception("Plan must be empty in this case")
-    for a in p.plan:
-        print(a)
+    k, k2 = prepare_test_4_synthetic_service_NO_outage_multi()
+   
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGoal_k1(Check_services):
+        goal = lambda self: globalVar_k1.goal_achieved == True
+    p = NewGoal_k1(k.state_objects)
 
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    class NewGoal_k2(Check_services):
+        goal = lambda self: globalVar_k2.goal_achieved == True
+    p2 = NewGoal_k2(k2.state_objects)
+
+    assert_conditions = ["SchedulerQueueClean"]
+    not_assert_conditions = []
+    
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_synthetic_service_NO_outage_deployment_IS_outage():
     "Deployment (partial) outage must be registered in case where Deployment exists"
@@ -718,16 +694,25 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     d.podList.add(pod_running_1)
     d.podList.add(pod_running_2)
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s,d])
+
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-    # print_objects(k.state_objects)
-    class Task_Check_deployments(Check_deployments):
-        goal = lambda self: globalVar.goal_achieved == True
-    p = Task_Check_deployments(k2.state_objects)
-    p.run(timeout=200)
-    assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    class NewGoal_k1(Check_deployments):
+        goal = lambda self: globalVar_k1.goal_achieved == True
+    p = NewGoal_k1(k.state_objects)
+
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+    class NewGoal_k2(Check_deployments):
+        goal = lambda self: globalVar_k2.goal_achieved == True
+    p2 = NewGoal_k2(k2.state_objects)
+
+    assert_conditions = ["MarkDeploymentOutageEvent"]
+    not_assert_conditions = []
+    
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_5_evict_and_killpod_deployment_without_service():
     # print("5")
@@ -758,15 +743,6 @@ def test_5_evict_and_killpod_deployment_without_service():
     # Service to detecte eviction
     s = Service()
     s.metadata_name = "test-service"
-    s.amountOfActivePods = 2
-    s.status = STATUS_SERV["Started"]
-
-    # our service has multiple pods but we are detecting pods pending issue
-    # remove service as we are detecting service outage by a bug above
-    # pod_running_1.targetService = s
-    # pod_running_1.hasService = True
-    # pod_running_2.targetService = s
-    # pod_running_2.hasService = True
 
     # Pending pod
     pod_pending_1 = build_pending_pod(3,2,2,n)
@@ -776,24 +752,22 @@ def test_5_evict_and_killpod_deployment_without_service():
     scheduler.podQueue.add(pod_pending_1)
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
-
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1, d])
-    if yaml_test_mode == True:
-        yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-        k2 = KubernetesCluster()
-        load_yaml(yamlState,k2)
-        globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-        k=k2
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a) 
+    k2 = reload_cluster_from_yaml(k)
+
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
+
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_6_evict_and_killpod_without_deployment_without_service():
     # print("6")
@@ -823,14 +797,7 @@ def test_6_evict_and_killpod_without_deployment_without_service():
     s = Service()
     s.metadata_name = "test-service"
     s.amountOfActivePods = 2
-    # s.status = STATUS_SERV["Started"]
 
-    # our service has multiple pods but we are detecting pods pending issue
-    # remove service as we are detecting service outage by a bug above
-    # pod_running_1.targetService = s
-    # pod_running_1.hasService = True
-    # pod_running_2.targetService = s
-    # pod_running_2.hasService = True
 
     # Pending pod
     pod_pending_1 = build_pending_pod(3,2,2,n)
@@ -842,17 +809,20 @@ def test_6_evict_and_killpod_without_deployment_without_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-    #     print(a) 
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
+
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
 # @pytest.mark.skip(reason="FIXME")
@@ -904,18 +874,20 @@ def test_7_evict_and_killpod_with_deployment_and_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1, d])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-    #     print(a) 
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
 
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_8_evict_and_killpod_with_daemonset_without_service():
     # print("8")
@@ -965,18 +937,21 @@ def test_8_evict_and_killpod_with_daemonset_without_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1,ds])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a) 
+    k2 = reload_cluster_from_yaml(k)
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
 
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    
 def test_9_evict_and_killpod_with_daemonset_with_service():
     # print("9")
     "Test that killPod works with daemonset and service"
@@ -1024,18 +999,20 @@ def test_9_evict_and_killpod_with_daemonset_with_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1,ds])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-    #     print(a) 
+    k2 = reload_cluster_from_yaml(k)
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
 
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_10_startpod_without_deployment_without_service():
     # print("10")
@@ -1056,11 +1033,7 @@ def test_10_startpod_without_deployment_without_service():
 
     # Service  
     s = Service()
-    # s.metadata_name = "test-service"
-    # s.amountOfActivePods = 2
-    # s.status = STATUS_SERV["Started"]
 
- 
     pod_running_1.targetService = s
     pod_running_1.hasService = True
 
@@ -1074,17 +1047,20 @@ def test_10_startpod_without_deployment_without_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,ds])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
-    assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-        # print(a) 
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
+
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["SelectNode",\
+                        "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_11_startpod_without_deployment_with_service():
     # print("11")
@@ -1120,18 +1096,20 @@ def test_11_startpod_without_deployment_with_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,ds])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
-    assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-        # print(a) 
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
 
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["SelectNode",\
+                        "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_12_startpod_with_deployment_with_service():
     # print("12")
@@ -1170,19 +1148,20 @@ def test_12_startpod_with_deployment_with_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,d])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
-    assert "StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-        # print(a)
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
 
-
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["SelectNode",\
+                        "StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_13_startpod_with_daemonset_without_service():
     # print("13")
@@ -1209,18 +1188,19 @@ def test_13_startpod_with_daemonset_without_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pod_running_1, pod_pending_1,d])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    for a in p.plan:
-        print(a) 
-    # assert "SelectNode" in "\n".join([repr(x) for x in p.plan])
-    assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
 
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_14_startpod_with_daemonset_with_service():
     # print("14")
@@ -1258,16 +1238,19 @@ def test_14_startpod_with_daemonset_with_service():
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,d])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGoal(k.state_objects)
-    # print_objects(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-    #     print(a) 
-    assert "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
+    p = NewGoal_k1(k.state_objects)
+
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_pending_1_2.status == STATUS_POD["Running"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 # @pytest.mark.skip(reason="FIXME")
 def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic():
@@ -1302,11 +1285,6 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
     s.amountOfActivePods = 2
     s.status = STATUS_SERV["Started"]
 
-    # our service has multiple pods but we are detecting pods pending issue
-    # remove service as we are detecting service outage by a bug above
-    # pod_running_1.targetService = s
-    # pod_running_2.targetService = s
-    
     # Create Daemonset for prioritized pod 
     ds = DaemonSet()
 
@@ -1320,24 +1298,28 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1, d,s,ds])
-    # print_objects(k.state_objects)
-    class NewGoal(Check_deployments):
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(Check_deployments):
         pass
-        # goal = lambda self: pod_pending_1.status == STATUS_POD["Running"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
-    # for a in p.plan:
-        # print(a) 
+    p = NewGoal_k1(k.state_objects)
+
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(Check_deployments):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["StartPod",\
+                        "Evict",
+                        "MarkDeploymentOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     # print("16")
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+
     # initial node state
     n = Node()
     n.cpuCapacity = 5
@@ -1352,25 +1334,14 @@ def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic
     n.currentFormalCpuConsumption = 4
     n.currentFormalMemConsumption = 4
 
-    # priority for pod-to-evict
-    # pc = PriorityClass()
-    # pc.priority = 10
-    # pc.metadata_name = "high-prio-test"
-
     # Service to detecte eviction
     s = Service()
     s.metadata_name = "test-service"
     s.amountOfActivePods = 2
     s.status = STATUS_SERV["Started"]
 
-    # our service has multiple pods but we are detecting pods pending issue
-    # remove service as we are detecting service outage by a bug above
-    # pod_running_1.targetService = s
-    # pod_running_2.targetService = s
-
     # Pending pod
     pod_pending_1 = build_pending_pod(3,2,2,n)
-    # pod_pending_1.priorityClass = pc # high prio will evict!
 
     ## Add pod to scheduler queue
     scheduler.podQueue.add(pod_pending_1)
@@ -1390,16 +1361,20 @@ def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic
     dnew.spec_replicas = 1
 
     k.state_objects.extend([n, pod_running_1, pod_running_2, pod_pending_1, d, dnew])
-    # print_objects(k.state_objects)
-    class NewGoal(Check_deployments):
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(Check_deployments):
         pass
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-        # print(a) 
-    assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    p = NewGoal_k1(k.state_objects)
 
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(Check_deployments):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkDeploymentOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    
 
 def test_17_creates_service_and_deployment_insufficient_resource__service_outage():
     # print("17")
@@ -1473,17 +1448,20 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     snew.searchable = True
 
     k.state_objects.extend([n, s, snew, pod_running_1, pod_running_2, pod_pending_1, d, dnew])
-    # print_objects(k.state_objects)
-    class NewGoal(Check_services):
-        # pass
-        goal = lambda self: globalVar.is_service_disrupted == True and \
-                scheduler.status == STATUS_SCHED["Clean"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-        # print(a)
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(Check_services):
+        pass
+    p = NewGoal_k1(k.state_objects)
+
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(Check_services):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkDeploymentOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+
 
 def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_outage():
     # print("17")
@@ -1504,11 +1482,6 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     ## Set consumptoin as expected
     n.currentFormalCpuConsumption = 4
     n.currentFormalMemConsumption = 4
-
-    # priority for pod-to-evict
-    # pc = PriorityClass()
-    # pc.priority = 10
-    # pc.metadata_name = "high-prio-test"
 
     # Service to detecte eviction
     s = Service()
@@ -1567,60 +1540,19 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     snew2.searchable = True
 
     k.state_objects.extend([n, s, snew, snew2, pod_running_1, pod_running_2, pod_pending_1, pod_pending_2, d, dnew])
-    # print_objects(k.state_objects)
-    class NewGoal(Check_services):
-        # pass
-        goal = lambda self: globalVar.is_service_disrupted == True and \
-                scheduler.status == STATUS_SCHED["Clean"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-        # print(a)
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(Check_services):
+        pass
+    p = NewGoal_k1(k.state_objects)
 
-### Seems to be not needed< @AK please check if we may delete this
-# # Simple test for pod 
-# def test_18_synthetic_start_pod_with_scheduler():
-#     # print("18")
-#     k = KubernetesCluster()
-#     pods = []
-#     node = Node()
-#     node.memCapacity = 3
-#     node.cpuCapacity = 3
-#     for i in range(2):
-#         pod = Pod()
-#         pod.metadata_name = "pod_number_" + str(i)
-#         pod.memRequest = 1
-#         pod.cpuRequest = 1
-#         pods.append(pod)
-#     pods[0].status = STATUS_POD["Running"]
-#     pods[0].atNode = node
-
-#     # pods[1].toNode = node
-
-
-#     k.state_objects.extend(pods)
-#     k.state_objects.append(node)
-
-#     # k._build_state() # TODO may be should uncomments
-    
-#     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-#     scheduler.status = STATUS_SCHED["Changed"]
-#     scheduler.podQueue.add(pods[1])
-#     scheduler.queueLength += 1
-#     class TestRun(K8ServiceInterruptSearch):
-#         goal = lambda self: pods[1].status == STATUS_POD["Running"]
-#     p = TestRun(k.state_objects)
-#     p.xrun()
-#     # print_objects(k.state_objects)
-#     # print(p.plan)
-#     for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
-#         # this one test broken
-#         assert pod.status == STATUS_POD["Running"], "All pods should be Running in this case. Some pod is {0}".format(pod.status._get_value())
-#         # use 
-#         assert pod.status._get_value() == "Running", "All pods should be Running in this case. Some pod is {0}".format(pod.status._get_value())
-
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(Check_services):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkDeploymentOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_19_has_deployment_creates_deployment__pods_evicted_pods_pending():
     # print("19")
@@ -1827,22 +1759,20 @@ def test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synt
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n1, n2, pc, pod_running_1, pod_running_2, pod_pending_1, d,ds])
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        # pass
-        goal = lambda self: globalvar.is_daemonset_disrupted == True
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # print("---after calculation ----")
-    # print_objects(k.state_objects)
-    # for a in p.plan:
-    #     print(a) 
-    # assert "StartPod" in "\n".join([repr(x) for x in p.plan])
-    # assert "Evict" in "\n".join([repr(x) for x in p.plan])
-    # assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    k2 = reload_cluster_from_yaml(k)
+    class NewGoal_k1(Check_daemonsets):
+        pass
+    p = NewGoal_k1(k.state_objects)
+
+    class NewGoal_k2(Check_daemonsets):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkDaemonsetOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
-def construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic():
+def prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic():
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
@@ -1897,13 +1827,14 @@ def construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evi
     scheduler.status = STATUS_SCHED["Changed"]
 
     k.state_objects.extend([n1,  pc, pod_running_1, pod_running_2, pod_pending_1, d, ds])
-    return k,pod_running_1
+    k2 = reload_cluster_from_yaml(k)
+    return k, k2
 
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step1():
     # print("22")
     # Initialize scheduler, globalvar
-    k,pod_running_1=construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    k, k2 =prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
     class NewGoal(OptimisticRun):
         # pass
         # goal = lambda self: globalvar.is_daemonset_disrupted == True
@@ -1919,7 +1850,7 @@ def test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonse
 def test_23_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step2():
     # print("23")
     # Initialize scheduler, globalvar
-    k,pod_running_1=construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    k, k2 = prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
     # print_objects(k.state_objects)
     class NewGoal(OptimisticRun):
         # pass
@@ -1937,22 +1868,23 @@ def test_23_has_daemonset_with_service_creates_deployment__pods_evicted_daemonse
 def test_24_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step3():
     # print("24")
     # Initialize scheduler, globalvar
-    k,pod_running_1=construct_space_2119_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
-    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    class NewGoal(Check_daemonsets):
-        # pass
-        goal = lambda self: globalvar.is_daemonset_disrupted == True
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # print_objects(k.state_objects)
-    # for a in p.plan:
-    #     print(a) 
-    assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
-    assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    k, k2 = prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    globalvar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    globalvar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
 
-def construct_space_1322_has_service_only_on_node_that_gets_disrupted():
+    class NewGoal_k1(Check_daemonsets):
+        goal = lambda self: globalvar_k1.is_daemonset_disrupted == True
+    p = NewGoal_k1(k.state_objects)
+
+    class NewGoal_k2(Check_daemonsets):
+        goal = lambda self: globalvar_k1.is_daemonset_disrupted == True
+    p2 = NewGoal_k2(k2.state_objects)
+    
+    assert_conditions = ["MarkDaemonsetOutageEvent"]
+    not_assert_conditions = []
+    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+
+def prepare_test_has_service_only_on_node_that_gets_disrupted():
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))

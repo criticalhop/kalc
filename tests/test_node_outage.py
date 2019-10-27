@@ -1,5 +1,5 @@
 from tests.test_util import print_objects
-from tests.libs_for_tests import convert_space_to_yaml,print_yaml,print_plan,load_yaml, print_objects_compare
+from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare
 from guardctl.model.search import OptimisticRun, Check_deployments, Check_services, Check_daemonsets
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar

@@ -118,8 +118,12 @@ CHANGE_DEPLOYMENT_ZERO = [deployment2_5_100_100_z]
 CHANGE_DEPLOYMENT_ZERO_WITH_SERVICE = [deployment3_5_100_100_z,replicaset_for_deployment3,service3]
 
 def print_plan(p):
-    for a in p.plan:
-        print(a) 
+    print("Plan:")
+    if p.plan:
+        for a in p.plan:
+            print(a)
+    else:
+        print("Empty plan") 
         
 def print_objects_compare(k,k2):
     print("---originaly-generated---")
@@ -157,16 +161,16 @@ def run_wo_cli_step1(DUMP_local,CHANGE_local):
     class NewGoal(OptimisticRun):
         goal = lambda self: pod_running.status == STATUS_POD["Killing"]
     p = NewGoal(k.state_objects)
-    print("---- run_wo_cli:")
-    print("----- print_objects before run: ----------")
+    print("#### run_wo_cli:")
+    print("#### print_objects before run: #### ")
     print(print_objects(k.state_objects))
 
     p.run(timeout=300, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    print("---- Scenario:")
+    print("##### Scenario:")
     print(Scenario(p.plan).asyaml())
-    print("----- print_objects after run: ----------")
+    print("#### print_objects after run: ####")
     print(print_objects(k.state_objects))
 
 def run_wo_cli(DUMP_local,CHANGE_local):
@@ -179,16 +183,16 @@ def run_wo_cli(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     p = OptimisticRun(k.state_objects)
-    print("---- run_wo_cli:")
-    print("----- print_objects before run: ----------")
+    print("#### run_wo_cli:")
+    print("#### print_objects before run: ######")
     print(print_objects(k.state_objects))
 
     p.run(timeout=300, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    print("---- Scenario:")
+    print("#### Scenario:")
     print(Scenario(p.plan).asyaml())
-    print("----- print_objects after run: ----------")
+    print("#### print_objects after run: ######")
     print(print_objects(k.state_objects))
 
 def run_dir_wo_cli(DUMP_local,CHANGE_local):
@@ -201,16 +205,16 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
             k.create_resource(open(change_item).read())
     k._build_state()
     p = OptimisticRun(k.state_objects)
-    print("---- run_wo_cli:")
-    print("----- print_objects before run: ----------")
+    print("#### run_wo_cli:")
+    print("#### print_objects before run: #####")
     print(print_objects(k.state_objects))
 
     p.run(timeout=6600, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    print("---- Scenario:")
+    print("####  Scenario:")
     print(Scenario(p.plan).asyaml())
-    print("----- print_objects after run: ----------")
+    print("#### print_objects after run: ######")
     print(print_objects(k.state_objects))
 
 def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
@@ -218,7 +222,6 @@ def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
     args = []
     args.extend(calculate_variable_dump(DUMP_with_command_local))
     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
-    print(">>args>>", args)
     run(args) # pylint: disable=no-value-for-parameter
 
 def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
@@ -227,7 +230,7 @@ def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     args.extend(calculate_variable_dump(DUMP_with_command_local))
     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
     result = runner.invoke(run,args)
-    print("---- run_cli_invoke:")
+    print("##### run_cli_invoke:")
     print(result.output)
     assert result.exit_code == 0
 
@@ -277,7 +280,7 @@ def convert_space_to_yaml(space, wrap_items=False, load_logic_support=True):
         ret.append(yaml.dump(x))
     return ret
 
-def print_yaml(k2):
+def print_objects_from_yaml(k2):
     for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
         print(y)
         
@@ -532,7 +535,6 @@ def render_object(ob, load_logic_support=True):
         d["value"] = getint(ob.priority)
 
     if str(type(ob).__name__) == "ReplicaSet":
-        print("ReplicaSet")
         d = { 
             "apiVersion": "v1", # not used
             "kind": "ReplicaSet", 
@@ -572,3 +574,50 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
     if ignore_names:
         slist = re.sub(r'name:.+', 'name: XXX', slist)
     return slist
+
+def test_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode):
+    p.run(timeout=200)
+    brake = False
+    if p.plan:
+        for a in assert_conditions:
+            if not a in "\n".join([repr(x) for x in p.plan]):
+                brake = True
+        for a in not_assert_conditions:
+            if a in "\n".join([repr(x) for x in p.plan]):
+                brake = True
+    if not p.plan:
+        brake = True
+    if not brake:
+        # pass
+        print("--- ",test_mode,": Ok")
+    else:
+        print("--- ",test_mode,": Error")
+        # print_objects(k)
+        print_objects_from_yaml(k)
+        print_plan(p)
+    return  brake
+
+def compare_yaml_files(k,k2):
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    yamlState2 = convert_space_to_yaml(k2.state_objects, wrap_items=True)
+    if  prepare_yamllist_for_diff(yamlState, ignore_names=True) != \
+            prepare_yamllist_for_diff(yamlState2, ignore_names=True):
+            print("Yaml file have differences")
+    else:
+        print("yaml files are similar")
+
+def test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions):
+    test_mode = "loading test"
+    test_assert_brake = test_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode)
+    if test_assert_brake == True:
+        compare_yaml_files(k,k2)
+        test_mode = "functional test"
+        test_assert_brake = test_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode)
+        print_objects_compare(k,k2)
+        raise Exception("###  Error loading data   ####")
+
+def reload_cluster_from_yaml(k):
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    return k2
