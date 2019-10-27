@@ -19,6 +19,8 @@ poodle.log.setLevel(logging.ERROR)
 APP_NAME = 'kubectl-val'
 APP_VERSION = '0.1.3'
 
+DEFAULT_PROFILE = "Check_services"
+
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)
 @click.option("--from-dir", "-d",
@@ -44,7 +46,7 @@ APP_VERSION = '0.1.3'
                 required=False, default=KubernetesCluster.CREATE_MODE)
 @click.option("--replicas", help="take pods amount for scale, default 5", \
                 type=int, required=False, default=5)
-@click.option("--profile", help="Search profile", default="default")
+@click.option("--profile", help="Search profile", default=DEFAULT_PROFILE)
 def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
 
     k = KubernetesCluster()
@@ -77,13 +79,8 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
     mark_excluded(k.state_objects, exclude, ignore_nonexistent_exclusions)
 
-
-    if str(profile) == "default":
-        click.echo(f"# Using default profile")
-        p = OptimisticRun(k.state_objects)
-    else:
-        click.echo(f"# Using {0} profile".format(profile))
-        p = globals()[str(profile)](k.state_objects)
+    click.echo(f"# Using {0} profile".format(profile))
+    p = globals()[str(profile)](k.state_objects)
 
     click.echo("# Solving ...")
 

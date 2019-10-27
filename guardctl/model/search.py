@@ -136,7 +136,8 @@ class OptimisticRun(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Processing finished",
-            parameters={"podsNotPlaced": scheduler.queueLength},
+            # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
+            parameters={},
             probability=1.0,
             affected=[]
         )
@@ -219,7 +220,8 @@ class Check_services(OptimisticRun):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Processing finished",
-            parameters={"podsNotPlaced": scheduler.queueLength},
+            # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
+            parameters={},
             probability=1.0,
             affected=[]
         )
