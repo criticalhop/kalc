@@ -103,7 +103,6 @@ class Deployment(Controller, HasLimitsRequests):
                     pod.hasDeployment = True
                     br = True
             if br and pod.status._get_value() == "Running":
-                print("---AmountOfActivePods ->", self.amountOfActivePods ," pod-hash", pod_template_hash , " pod - " , pod.metadata_name)
                 self.amountOfActivePods += 1
                     # self.check_pod(pod, object_space)
 

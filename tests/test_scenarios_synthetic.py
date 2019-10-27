@@ -1607,10 +1607,108 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
                 scheduler.status == STATUS_SCHED["Clean"]
     p = NewGoal(k.state_objects)
     p.run(timeout=200)
-    # for a in p.plan:
-        # print(a)
+    for a in p.plan:
+        print(a)
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+
+def test_17_creates_service_and_deployment_insufficient_resource__service_outage_invtest():
+    # print("17")
+    # Initialize scheduler, globalVar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+    n.amountOfActivePods = 2
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    # priority for pod-to-evict
+    # pc = PriorityClass()
+    # pc.priority = 10
+    # pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+    s.searchable = True
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    # pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.podList.add(pod_running_1)
+    d.podList.add(pod_running_2)
+    d.amountOfActivePods = 2
+    d.spec_replicas = 2
+    pod_running_1.hasDeployment = True
+    pod_running_2.hasDeployment = True
+
+    dnew = Deployment()
+    dnew.metadata_name = "new-deploymt"
+    dnew.podList.add(pod_pending_1)
+    dnew.amountOfActivePods = 0
+    dnew.spec_replicas = 1
+    pod_pending_1.hasDeployment = True
+
+    snew = Service()
+    snew.metadata_name = "test-service-new"
+    snew.amountOfActivePods = 0
+    snew.status = STATUS_SERV["Pending"]
+    pod_pending_1.targetService = snew
+    pod_pending_1.hasService = True
+    snew.searchable = True
+
+    k.state_objects.extend([n, s, pod_running_1, pod_running_2, d])
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    create_objects = [snew, dnew]
+    yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
+    k2 = KubernetesCluster()
+    for y in yamlState:
+        # print(y)
+        k2.load(y)
+    for y in yamlCreate:
+        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
+    k2._build_state()
+    globalVar = k2.state_objects[1]
+    scheduler = k2.state_objects[0]
+    # print_objects(k.state_objects)
+    class NewGoal(Check_services):
+        # pass
+        goal = lambda self: globalVar.is_service_disrupted == True and \
+                scheduler.status == STATUS_SCHED["Clean"]
+    p = NewGoal(k2.state_objects)
+    p.run(timeout=200)
+    for a in p.plan:
+        print(a)
+    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
+
 
 def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_outage():
     # print("17")
