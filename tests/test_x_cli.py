@@ -13,12 +13,7 @@ TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"
 
 # def test_direct():
-    # run(["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml"])  # pylint: disable=no-value-for-parameter
-
-# To debug eviction test, we need:
-# 1. Create the eviction problem with synthetic method, solve
-# 2. Dump the problem, solve from files
-# 3. Solve from real cluster dump
+#     run(["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", "--pipe", "--timeout", "100"]) # pylint: disable=no-value-for-parameter
 
 def test_anyservice_interrupted_fromfiles():
     k = KubernetesCluster()
@@ -41,7 +36,7 @@ RESULT=""
 # @pytest.mark.skip(reason="covered by above")
 def test_load_from_dir():
     runner = CliRunner()
-    result = runner.invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", "--pipe", "--timeout", "100"])
+    result = runner.invoke(run, ["--from-dir", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", "--pipe", "--timeout", "300"])
     assert result.exit_code == 0
     global RESULT
     RESULT=result

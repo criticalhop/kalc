@@ -38,7 +38,6 @@ class DaemonSet(Controller, HasLimitsRequests):
         # TODO throw error if name already exist
         # Error from server (AlreadyExists): error when creating "./tests/daemonset_eviction/daemonset_create.yaml": daemonsets.apps "fluentd-elasticsearch" already exists
         nodes = filter(lambda x: isinstance(x, Node), object_space)
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
         i = 0
         for node in nodes:
             i += 1
@@ -50,14 +49,11 @@ class DaemonSet(Controller, HasLimitsRequests):
             new_pod.cpuLimit = self.cpuLimit
             new_pod.memLimit = self.memLimit
             new_pod.status = STATUS_POD["Pending"]
-            new_pod.hook_after_load(object_space, _ignore_orphan=True) # for service<>pod link
+            new_pod.hook_after_load(object_space, _ignore_orphan=True) # for service<>pod link, add to sched
             new_pod.set_priority(object_space, self)
             new_pod.hasDaemonset = True
             self.podList.add(new_pod)
             object_space.append(new_pod)
-            scheduler.podQueue.add(new_pod)
-            scheduler.queueLength += 1
-            scheduler.status = STATUS_SCHED["Changed"]
             self.amountOfActivePods += 1
 
     def hook_after_load(self, object_space):

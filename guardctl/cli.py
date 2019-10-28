@@ -4,7 +4,7 @@ import os
 import sys
 import re
 from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import OptimisticRun 
+from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets
 from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
