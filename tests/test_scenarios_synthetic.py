@@ -1448,7 +1448,6 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     snew.searchable = True
 
     k.state_objects.extend([n, s, snew, pod_running_1, pod_running_2, pod_pending_1, d, dnew])
-<<<<<<< HEAD
     k2 = reload_cluster_from_yaml(k)
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(Check_services):
@@ -1463,19 +1462,6 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     not_assert_conditions = ["NodeOutageFinished"]
     test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
-=======
-    # print_objects(k.state_objects)
-    class NewGoal(Check_services):
-        # pass
-        goal = lambda self: globalVar.is_service_disrupted == True and \
-                scheduler.status == STATUS_SCHED["Clean"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    for a in p.plan:
-        print(a)
-    assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
-    assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
->>>>>>> dc8f1b3735146393bf649fb32c6b7d1b52c2adf5
 
 def test_17_creates_service_and_deployment_insufficient_resource__service_outage_invtest():
     # print("17")
