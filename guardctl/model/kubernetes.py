@@ -3,7 +3,7 @@ import os, click
 from collections import defaultdict
 from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
-from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object
+from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object, POODLE_MAXLIN, getint
 from guardctl.model.full import kinds_collection
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
@@ -25,7 +25,9 @@ class KubernetesCluster:
 
     def _reset(self):
         "Reset object states and require a rebuild with _bulid_state"
-        self.state_objects = [Scheduler(), GlobalVar()]
+        self.scheduler = Scheduler()
+        self.globalvar = GlobalVar()
+        self.state_objects = [self.scheduler, self.globalvar]
 
     def load_dir(self, dir_path):
         for root, dirs, files in os.walk(dir_path):
@@ -94,6 +96,11 @@ class KubernetesCluster:
         for k,v in collected.items():
             for item in v:
                 self._build_item(item)
+        self._check()
+
+    def _check(self):
+        "Run internal checks"
+        assert getint(self.scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow"
 
     def create_resource(self, res: str):
         self.load(res, mode=self.CREATE_MODE)
