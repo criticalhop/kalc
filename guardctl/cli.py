@@ -23,11 +23,8 @@ DEFAULT_PROFILE = "Check_services"
 
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)
-@click.option("--from-dir", "-d",
-    help="Directory (or directories with space separator) with cluster resources definitions", 
-    type=click.Path(exists=True), default=None, multiple=True)
-@click.option("--dump-file", "-l", \
-    help="Path (or file paths with space separator) with current state manifests dump", 
+@click.option("--load-dump", "-l", \
+    help="Path for file or directory containing current state manifests dump", 
     type=click.Path(exists=True), default=None, multiple=True, required=True)
 @click.option("--output", "-o", help="Select output format", \
     type=click.Choice(["yaml"]), required=False, default="yaml")
@@ -50,19 +47,17 @@ DEFAULT_PROFILE = "Check_services"
 @click.option("--replicas", help="take pods amount for scale, default 5", \
     type=int, required=False, default=5)
 @click.option("--profile", help="Search profile", default=DEFAULT_PROFILE)
-def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
+def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
 
     k = KubernetesCluster()
 
-    if from_dir:
-        for d in from_dir:
-            click.echo(f"# Loading cluster definitions from directory {d} ...")
-            k.load_dir(d)
-
-    if dump_file:
-        for df in dump_file:
+    if load_dump:
+        for df in load_dump:
             click.echo(f"# Loading cluster definitions from file {df} ...")
-            k.load(open(df).read())
+            if os.path.isfile(df):
+                k.load(open(df).read())
+            else:
+                k.load_dir(df)
 
     if mode == KubernetesCluster.CREATE_MODE:
         for f in filename:
@@ -82,7 +77,7 @@ def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexist
 
     mark_excluded(k.state_objects, exclude, ignore_nonexistent_exclusions)
 
-    click.echo(f"# Using {0} profile".format(profile))
+    click.echo(f"# Using profile {profile}")
     p = globals()[str(profile)](k.state_objects)
 
     click.echo("# Solving ...")
