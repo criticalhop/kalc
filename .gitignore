@@ -16,4 +16,5 @@ pyu.log
 tests/NOT_for_Repo/
 log*
 *.swp
-
+venv/
+*.exe.spec
