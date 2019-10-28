@@ -629,8 +629,8 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         print_objects_from_yaml(k)
         print("--k2--")    
         print_objects_from_yaml(k2)
-        print("---yaml diff ---")
-        compare_yaml_files(k,k2)
+        # print("---yaml diff ---")
+        # compare_yaml_files(k,k2)
 
     test_mode = "loading test"
     test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
@@ -640,8 +640,14 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         raise Exception("###  Error loading data   ####")
 
-def reload_cluster_from_yaml(k):
+def create_from_yaml(yamlCreate,k2):
+    for y in yamlCreate:
+        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
+
+def reload_cluster_from_yaml(k, create_objects):
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
+    create_from_yaml(yamlCreate,k2)
     return k2
