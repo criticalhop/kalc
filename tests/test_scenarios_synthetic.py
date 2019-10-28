@@ -17,7 +17,7 @@ from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.model.scenario import Scenario
 from poodle import planned
-from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, test_assert_conditions, reload_cluster_from_yaml
+from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml
 
 global yaml_test_mode
 yaml_test_mode = True
@@ -158,7 +158,7 @@ def test_0_run_pods_no_eviction_invload():
     assert_conditions = ["StartPod"]
     not_assert_conditions = ["Evict"]
     
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def construct_scpace_for_test_1_run_pods_with_eviction():
     # Initialize scheduler, globalvar
@@ -215,7 +215,7 @@ def test_1_run_pods_with_eviction_invload():
     assert_conditions = ["StartPod","Evict"]
     not_assert_conditions = ["NodeOutageFinished"]
     
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
 def construct_scpace_for_test_2_synthetic_service_outage():
@@ -484,7 +484,7 @@ def test_2_synthetic_service_outage_invload():
     assert_conditions = ["StartPod","Evict","MarkServiceOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
     
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def construct_multi_pods_eviction_problem():
     # Initialize scheduler, globalvar
@@ -564,7 +564,7 @@ def test_3_synthetic_service_outage_multi_invload():
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = []
     
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def prepare_test_4_synthetic_service_NO_outage_multi():
     # print("4")
@@ -635,7 +635,7 @@ def test_4_synthetic_service_NO_outage_multi():
     assert_conditions = ["SchedulerQueueClean"]
     not_assert_conditions = []
     
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_synthetic_service_NO_outage_deployment_IS_outage():
     "Deployment (partial) outage must be registered in case where Deployment exists"
@@ -712,7 +712,7 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = []
     
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_5_evict_and_killpod_deployment_without_service():
     # print("5")
@@ -767,7 +767,7 @@ def test_5_evict_and_killpod_deployment_without_service():
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
                         "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_6_evict_and_killpod_without_deployment_without_service():
     # print("6")
@@ -822,7 +822,7 @@ def test_6_evict_and_killpod_without_deployment_without_service():
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
                         "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
 # @pytest.mark.skip(reason="FIXME")
@@ -887,7 +887,7 @@ def test_7_evict_and_killpod_with_deployment_and_service():
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
                         "KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_8_evict_and_killpod_with_daemonset_without_service():
     # print("8")
@@ -950,7 +950,7 @@ def test_8_evict_and_killpod_with_daemonset_without_service():
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
                         "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
     
 def test_9_evict_and_killpod_with_daemonset_with_service():
     # print("9")
@@ -1012,7 +1012,7 @@ def test_9_evict_and_killpod_with_daemonset_with_service():
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
                         "KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_10_startpod_without_deployment_without_service():
     # print("10")
@@ -1060,7 +1060,7 @@ def test_10_startpod_without_deployment_without_service():
     assert_conditions = ["SelectNode",\
                         "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_11_startpod_without_deployment_with_service():
     # print("11")
@@ -1109,7 +1109,7 @@ def test_11_startpod_without_deployment_with_service():
     assert_conditions = ["SelectNode",\
                         "StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_12_startpod_with_deployment_with_service():
     # print("12")
@@ -1161,7 +1161,7 @@ def test_12_startpod_with_deployment_with_service():
     assert_conditions = ["SelectNode",\
                         "StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_13_startpod_with_daemonset_without_service():
     # print("13")
@@ -1200,7 +1200,7 @@ def test_13_startpod_with_daemonset_without_service():
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_14_startpod_with_daemonset_with_service():
     # print("14")
@@ -1250,7 +1250,7 @@ def test_14_startpod_with_daemonset_with_service():
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 # @pytest.mark.skip(reason="FIXME")
 def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_synthetic():
@@ -1317,7 +1317,7 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
                         "Evict",
                         "MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic():
     # print("16")
@@ -1385,7 +1385,7 @@ def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic
     
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
     
 
 def test_17_creates_service_and_deployment_insufficient_resource__service_outage():
@@ -1472,7 +1472,7 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
 def test_17_creates_service_and_deployment_insufficient_resource__service_outage_invtest():
@@ -1662,7 +1662,7 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def test_19_has_deployment_creates_deployment__pods_evicted_pods_pending():
     # print("19")
@@ -1879,7 +1879,7 @@ def test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synt
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["MarkDaemonsetOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 
 def prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic():
@@ -1940,40 +1940,40 @@ def prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_
     k2 = reload_cluster_from_yaml(k)
     return k, k2
 
-@pytest.mark.debug(reason="if debug needed - uncomment me")
-def test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step1():
-    # print("22")
-    # Initialize scheduler, globalvar
-    k, k2 =prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
-    class NewGoal(OptimisticRun):
-        # pass
-        # goal = lambda self: globalvar.is_daemonset_disrupted == True
-        goal = lambda self: pod_running_1.status == STATUS_POD["Killing"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # for a in p.plan:
-    #     print(a) 
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
-    # assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+# @pytest.mark.debug(reason="if debug needed - uncomment me")
+# def test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step1():
+#     # print("22")
+#     # Initialize scheduler, globalvar
+#     k, k2 =prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+#     class NewGoal(OptimisticRun):
+#         # pass
+#         # goal = lambda self: globalvar.is_daemonset_disrupted == True
+#         goal = lambda self: pod_running_1.status == STATUS_POD["Killing"]
+#     p = NewGoal(k.state_objects)
+#     p.run(timeout=200)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
-@pytest.mark.debug(reason="if debug needed - uncomment me")
-def test_23_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step2():
-    # print("23")
-    # Initialize scheduler, globalvar
-    k, k2 = prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
-    # print_objects(k.state_objects)
-    class NewGoal(OptimisticRun):
-        # pass
-        # goal = lambda self: globalvar.is_daemonset_disrupted == True
-        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    # print("---after calculation ----")
-    # print_objects(k.state_objects)
-    # for a in p.plan:
-    #     print(a) 
-    assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
-    assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+# @pytest.mark.debug(reason="if debug needed - uncomment me")
+# def test_23_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step2():
+#     # print("23")
+#     # Initialize scheduler, globalvar
+#     k, k2 = prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+#     # print_objects(k.state_objects)
+#     class NewGoal(OptimisticRun):
+#         # pass
+#         # goal = lambda self: globalvar.is_daemonset_disrupted == True
+#         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
+#     p = NewGoal(k.state_objects)
+#     p.run(timeout=200)
+#     # print("---after calculation ----")
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
   
 def test_24_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step3():
     # print("24")
@@ -1992,7 +1992,7 @@ def test_24_has_daemonset_with_service_creates_deployment__pods_evicted_daemonse
     
     assert_conditions = ["MarkDaemonsetOutageEvent"]
     not_assert_conditions = []
-    test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
 
 def prepare_test_has_service_only_on_node_that_gets_disrupted():
     k = KubernetesCluster()
