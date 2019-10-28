@@ -583,7 +583,7 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
         slist = re.sub(r'name:.+', 'name: XXX', slist)
     return slist
 
-def test_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode):
+def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode):
     p.run(timeout=200)
     brake = False
     if p.plan:
@@ -614,13 +614,13 @@ def compare_yaml_files(k,k2):
     else:
         print("yaml files are similar")
 
-def test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions):
+def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions):
     test_mode = "loading test"
-    test_assert_brake = test_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode)
+    test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode)
     if test_assert_brake == True:
         compare_yaml_files(k,k2)
         test_mode = "functional test"
-        test_assert_brake = test_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode)
+        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode)
         print_objects_compare(k,k2)
         raise Exception("###  Error loading data   ####")
 
