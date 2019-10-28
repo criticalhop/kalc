@@ -561,8 +561,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.targetService == serviceTargetForPod
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -598,8 +598,8 @@ class KubernetesModel(ProblemTemplate):
         assert node.isNull == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
-        assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -637,8 +637,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -677,8 +677,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest < node.cpuCapacity + 1
-        assert node.currentFormalMemConsumption + podStarted.memRequest < node.memCapacity + 1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -715,8 +715,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0 
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -755,8 +755,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0 
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest

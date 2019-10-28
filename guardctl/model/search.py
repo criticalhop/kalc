@@ -136,7 +136,8 @@ class OptimisticRun(K8ServiceInterruptSearch):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Processing finished",
-            parameters={"podsNotPlaced": scheduler.queueLength},
+            # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
+            parameters={},
             probability=1.0,
             affected=[]
         )
@@ -207,7 +208,7 @@ class Check_services(OptimisticRun):
             affected=[describe(service1)]
         )
 
-    @planned(cost=201) # this works for no-outage case
+    @planned(cost=9000) # this works for no-outage case
     def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
@@ -217,7 +218,8 @@ class Check_services(OptimisticRun):
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Processing finished",
-            parameters={"podsNotPlaced": scheduler.queueLength},
+            # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
+            parameters={},
             probability=1.0,
             affected=[]
         )

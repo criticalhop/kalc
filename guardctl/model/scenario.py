@@ -19,9 +19,19 @@ class Scenario:
         probability = 1
         for s in self.steps:
             probability = probability * s.probability
+        jsteps = []
+        for x in self.steps:
+            try:
+                d = asdict(x)
+            except TypeError:
+                raise TypeError("Can't interpret step %s" % repr(x))
+            d = dict_rename(d, "name", "actionName")
+            jsteps.append(d)
+
         return yaml.dump({
                 "probability": probability,
-                "steps": [dict_rename(asdict(x),"name","actionName") for x in self.steps]
+                # "steps": [dict_rename(asdict(x),"name","actionName") for x in self.steps]
+                "steps": jsteps 
                 })
 
 def dict_rename(d, nfrom, nto):
