@@ -15,6 +15,7 @@ import guardctl.misc.util as util
 #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
 class DaemonSet(Controller, HasLimitsRequests):
     metadata_name: str
+    metadata_uid: str
     amountOfActivePods: int
     status: StatusDaemonSet
     podList: Set["mpod.Pod"]
@@ -32,6 +33,7 @@ class DaemonSet(Controller, HasLimitsRequests):
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
         self.status = STATUS_DAEMONSET_PENDING
+        self.metadata_uid = "undefined"
         #TODO make support for DAEMONSET start status while loading
 
     def hook_after_create(self, object_space):
@@ -68,6 +70,7 @@ class DaemonSet(Controller, HasLimitsRequests):
         for pod in pods:
             if pod.metadata_ownerReferences__name == self.metadata_name:
                 self.podList.add(pod)
+                pod.hasDaemonset = True
                 nodes = filter(lambda x: isinstance(x, Node), object_space)
                 for node in nodes:
                     if node.metadata_name._get_value() == pod.spec_nodeName._get_value():
