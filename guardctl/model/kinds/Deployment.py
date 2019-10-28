@@ -29,8 +29,8 @@ class Deployment(Controller, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
-        # self.metadata_name = "modelDeployment"+str(random.randint(100000000, 999999999))
-        self.metadata_name = "model-default-name"
+        self.metadata_name = "modelDeployment"+str(random.randint(100000000, 999999999))
+        # self.metadata_name = "model-default-name"
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
         self.amountOfActivePods = 0
         self.searchable = True

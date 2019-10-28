@@ -394,7 +394,7 @@ def render_object(ob, load_logic_support=True):
                     break
             if found: continue
             dd_lpods.append(podOb)
-        assert dd_lpods, "Please add some pods to Controller to infer pod template"
+        assert dd_lpods, "Please add some pods to DaemonSet to infer pod template: %s" % str(ob.metadata_name)
 
         for podOb in dd_lpods: 
             assert not hasattr(podOb, "asdict")
@@ -416,6 +416,14 @@ def render_object(ob, load_logic_support=True):
                 pass
             # assert not "labels" in d_pod["metadata"]
             d_pod["metadata"]["labels"].update(labels)
+            d_pod["metadata"]["ownerReferences"] = [
+                        {
+                            "apiVersion": "apps/v1",
+                            "controller": True,
+                            "kind": str(type(ob).__name__),
+                            "name": str(ob.metadata_name)
+                        }
+                    ]
             labels.update(d_pod["metadata"]["labels"])
             podOb.asdict = d_pod
         d["spec"]["template"]["spec"] = d_pod["spec"]
@@ -459,7 +467,7 @@ def render_object(ob, load_logic_support=True):
                     break
             if found: continue
             dd_lpods.append(podOb)
-        assert dd_lpods, "Please add some pods to Controller to infer pod template"
+        assert dd_lpods, "Please add some pods to Deployment to infer pod template: %s" % str(ob.metadata_name)
 
         for podOb in dd_lpods: 
             assert not hasattr(podOb, "asdict")

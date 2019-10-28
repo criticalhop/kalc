@@ -26,8 +26,8 @@ class DaemonSet(Controller, HasLimitsRequests):
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
-        # self.metadata_name = "modelDaemonSet"+str(random.randint(100000000, 999999999))
-        self.metadata_name = "model-default-name"
+        self.metadata_name = "modelDaemonSet"+str(random.randint(100000000, 999999999))
+        # self.metadata_name = "model-default-name"
         self.amountOfActivePods = 0
         self.searchable = True
         self.spec_template_spec_priorityClassName = "Normal-zero"
@@ -68,7 +68,7 @@ class DaemonSet(Controller, HasLimitsRequests):
         pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
         
         for pod in pods:
-            if pod.metadata_ownerReferences__name == self.metadata_name:
+            if str(pod.metadata_ownerReferences__name) == str(self.metadata_name):
                 self.podList.add(pod)
                 pod.hasDaemonset = True
                 nodes = filter(lambda x: isinstance(x, Node), object_space)

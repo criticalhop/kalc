@@ -63,8 +63,8 @@ class Pod(HasLabel, HasLimitsRequests):
         self.hasService = False
         self.hasDaemonset = False
         self.hasDeployment = False
-        # self.metadata_name = "modelPriorityClass"+str(random.randint(100000000, 999999999))
-        self.metadata_name = "model-default-name"
+        self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
+        # self.metadata_name = "model-default-name"
 
 
     def set_priority(self, object_space, controller):
@@ -104,7 +104,6 @@ class Pod(HasLabel, HasLimitsRequests):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 self.targetService = service
                 self.hasService = True
-                service.amountOfActivePods += 1
                 service.status._property_value = STATUS_SERV["Started"]
                 if self.status._property_value == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \

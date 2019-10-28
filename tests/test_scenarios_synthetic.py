@@ -1267,7 +1267,6 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
     d = Deployment()
     d.spec_replicas = 2
 
-
     # Create running pods
     pod_running_1 = build_running_pod_with_d(1,2,2,n,d,None)
     pod_running_2 = build_running_pod_with_d(2,2,2,n,d,None)
@@ -1299,6 +1298,12 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
 
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1, d,s,ds])
     k2 = reload_cluster_from_yaml(k)
+    print_objects(k.state_objects)
+
+    print_objects_from_yaml(k)
+    print("----")
+    print_objects(k2.state_objects)
+    print_objects_from_yaml(k2)
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(Check_deployments):
         pass

@@ -22,8 +22,8 @@ class ReplicaSet(Controller, HasLimitsRequests):
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
         #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
-        # self.metadata_name = "modelReplicaSet"+str(random.randint(100000000, 999999999))
-        self.metadata_name = "model-default-name"
+        self.metadata_name = "modelReplicaSet"+str(random.randint(100000000, 999999999))
+        # self.metadata_name = "model-default-name"
         self.hash = "superhash"
         self.spec_replicas = 0
         self.metadata_ownerReferences__kind = "NONE"
