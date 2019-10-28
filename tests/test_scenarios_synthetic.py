@@ -1376,6 +1376,13 @@ def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic
     class NewGoal_k2(Check_deployments):
         pass
     p2 = NewGoal_k2(k2.state_objects)
+    print("--p--")    
+    print_objects(k.state_objects)
+    print_objects_from_yaml(k)
+    print("--p2--")
+    print_objects(k2.state_objects)
+    print_objects_from_yaml(k2)
+    
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
     test_assert = test_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
