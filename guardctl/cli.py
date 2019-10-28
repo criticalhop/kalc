@@ -24,28 +24,31 @@ DEFAULT_PROFILE = "Check_services"
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)
 @click.option("--from-dir", "-d",
-                help="Directory (or directories with space separator) with cluster resources definitions", 
-                type=click.Path(exists=True), default=None, multiple=True)
-@click.option("--dump-file", "-l", help="Path (or file paths with space separator) with dump", 
-                type=click.Path(exists=True), default=None, multiple=True)
+    help="Directory (or directories with space separator) with cluster resources definitions", 
+    type=click.Path(exists=True), default=None, multiple=True)
+@click.option("--dump-file", "-l", \
+    help="Path (or file paths with space separator) with current state manifests dump", 
+    type=click.Path(exists=True), default=None, multiple=True, required=True)
 @click.option("--output", "-o", help="Select output format", \
-                type=click.Choice(["yaml"]), required=False, default="yaml")
+    type=click.Choice(["yaml"]), required=False, default="yaml")
 @click.option("--filename", "-f", 
-                help="Create/Apply new resource from YAML files (or file paths with space separator) (select type by mode)", \
-                type=click.Path(exists=True), required=False, multiple=True)
+    help="Create/Apply new resource from YAML files (or file paths with space separator) (select type by mode)", \
+    type=click.Path(exists=True), required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
-                type=int, required=False, default=150)
-@click.option("--exclude", "-e", help="Exclude from search <Kind1>:<name1>,<Kind2>:<name2>,...", \
-                required=False, default=None)
+    type=int, required=False, default=150)
+@click.option("--exclude", "-e", 
+    help="Exclude from search <Kind1>:<name1>,<Kind2>:<name2>,...", \
+    required=False, default=None)
 @click.option("--ignore-nonexistent-exclusions", \
     help="Ignore mistyped/absent exclusions from --exclude", type=bool, \
-                            is_flag=True, required=False, default=False)
+    is_flag=True, required=False, default=False)
 @click.option("--pipe", help="Terse mode to reduce verbosity for shell piping", \
-                    type=bool, is_flag=True, required=False, default=False)
-@click.option("--mode", "-m", help="Choose the mode scale/apply/replace/remove/create(default)", \
-                required=False, default=KubernetesCluster.CREATE_MODE)
+    type=bool, is_flag=True, required=False, default=False)
+@click.option("--mode", "-m", 
+    help="Choose the mode scale/apply/replace/remove/create(default)", \
+    required=False, default=KubernetesCluster.CREATE_MODE)
 @click.option("--replicas", help="take pods amount for scale, default 5", \
-                type=int, required=False, default=5)
+    type=int, required=False, default=5)
 @click.option("--profile", help="Search profile", default=DEFAULT_PROFILE)
 def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
 

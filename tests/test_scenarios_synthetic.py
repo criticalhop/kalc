@@ -454,7 +454,7 @@ def test_2_synthetic_service_outage_step6():
     p = Task_Check_services(k.state_objects)
     p.run(timeout=200)
     # print_plan(p)
-    assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
+    # assert "StartPod" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
     assert "Evict" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan]) 
@@ -481,7 +481,9 @@ def test_2_synthetic_service_outage_invload():
         goal = lambda self: globalVar_k2.is_service_disrupted == True
     p2 = NewGoal_k2(k2.state_objects)
 
-    assert_conditions = ["StartPod","Evict","MarkServiceOutageEvent"]
+    assert_conditions = [
+        # "StartPod",
+        "Evict","MarkServiceOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
     
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)
@@ -538,12 +540,12 @@ def construct_multi_pods_eviction_problem():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     k2 = reload_cluster_from_yaml(k)
     # print_objects(k.state_objects)
-    return k, k2
+    return k, k2, pod_pending_1
 
 def test_3_synthetic_service_outage_multi_invload():
     # print("3")
     "Multiple pods are evicted from one service to cause outage"
-    k, k2 = construct_multi_pods_eviction_problem()
+    k, k2, pod_pending_1 = construct_multi_pods_eviction_problem()
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
     node_k1 = next(filter(lambda x: isinstance(x, Node), k.state_objects))
@@ -552,16 +554,16 @@ def test_3_synthetic_service_outage_multi_invload():
     node_k2.searchable = False
 
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    class NewGoal_k1(Check_deployments):
+    class NewGoal_k1(Check_services):
         goal = lambda self: globalVar_k1.is_service_disrupted == True
     p = NewGoal_k1(k.state_objects)
 
     globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-    class NewGoal_k2(Check_deployments):
+    class NewGoal_k2(Check_services):
         goal = lambda self: globalVar_k2.is_service_disrupted == True
     p2 = NewGoal_k2(k2.state_objects)
 
-    assert_conditions = ["MarkDeploymentOutageEvent"]
+    assert_conditions = ["MarkServiceOutageEvent"]
     not_assert_conditions = []
     
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions)

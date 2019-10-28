@@ -3,10 +3,9 @@ import click
 from click.testing import CliRunner
 import pytest
 
-def test_zero_invokation():
+def test_zero_invocation():
     runner = CliRunner()
     result = runner.invoke(run, [])
-    assert result.exit_code == 0
     global RESULT
     RESULT=result
     print(RESULT.output)
