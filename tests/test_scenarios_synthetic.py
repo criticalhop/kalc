@@ -555,16 +555,16 @@ def test_3_synthetic_service_outage_multi_invload():
     node_k2.searchable = False
 
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    class NewGoal_k1(Check_deployments):
+    class NewGoal_k1(Check_services):
         goal = lambda self: globalVar_k1.is_service_disrupted == True
     p = NewGoal_k1(k.state_objects)
 
     globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
-    class NewGoal_k2(Check_deployments):
+    class NewGoal_k2(Check_services):
         goal = lambda self: globalVar_k2.is_service_disrupted == True
     p2 = NewGoal_k2(k2.state_objects)
 
-    assert_conditions = ["MarkDeploymentOutageEvent"]
+    assert_conditions = ["MarkServiceOutageEvent"]
     not_assert_conditions = []
     
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)

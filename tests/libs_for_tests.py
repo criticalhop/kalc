@@ -631,7 +631,11 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         print_objects_from_yaml(k2)
         # print("---yaml diff ---")
         # compare_yaml_files(k,k2)
-
+        print("--functional test--")    
+        test_mode = "functional test"
+        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+        if test_assert_brake == False:
+            print("OK")
     test_mode = "loading test"
     test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
     if test_assert_brake == True:
