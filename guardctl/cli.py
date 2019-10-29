@@ -4,6 +4,8 @@ import os
 import sys
 import re
 import time
+import json
+from collections import defaultdict
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets
 from guardctl.model.scenario import Scenario
@@ -57,12 +59,14 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
 
     if load_dump:
         for df in load_dump:
-            click.echo(f"    - Loading cluster definitions from file {df} ...")
             if os.path.isfile(df):
+                click.echo(f"    - Loading cluster definitions from file {df} ...")
                 for ys in split_yamldumps(open(df).read()):
                     k.load(ys)
             else:
+                click.echo(f"    - Loading cluster definitions from folder {df} ...")
                 k.load_dir(df)
+
 
     if mode == KubernetesCluster.CREATE_MODE:
         for f in filename:
@@ -79,6 +83,11 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
 
     click.echo(f"    - Building abstract state ...")
     k._build_state()
+
+    stats = defaultdict(int)
+    for ob in k.state_objects: stats[type(ob).__name__] += 1
+    click.echo(f"    - "+json.dumps(stats))
+
 
     mark_excluded(k.state_objects, exclude, ignore_nonexistent_exclusions)
 
@@ -102,7 +111,10 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
     else:
         p.run(timeout=timeout, sessionName="cli_run")
         click.echo(Scenario(p.plan).asyaml())
-    click.echo("searchSeconds: %s" % int(time.time()-search_start))
+    click.echo("stats:")
+    click.echo("    objects: %s" % len(k.state_objects))
+    click.echo("    kinds: %s" % json.dumps(stats))
+    click.echo("    searchSeconds: %s" % int(time.time()-search_start))
 
 def print_status_info(info):
     total = info.get(u'total')
