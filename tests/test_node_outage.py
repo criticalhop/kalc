@@ -430,6 +430,7 @@ def test_single_node_dies_2pod_killed_service_outage():
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
     assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
+
 def test_single_node_dies_2pod_killed_service_outage_invload():
     k, globalVar = prepare_test_single_node_dies_2pod_killed_service_outage()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
@@ -502,6 +503,7 @@ def test_single_node_dies_2pod_killed_deployment_outage():
     assert "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     assert "Initiate_killing_of_Pod_because_of_node_outage" in "\n".join([repr(x) for x in p.plan])
 
+@pytest.mark.nofast(reason="took time 113.37s")
 def test_single_node_dies_2pod_killed_deployment_outage_invload():
     k, globalVar = prepare_test_single_node_dies_2pod_killed_deployment_outage()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
