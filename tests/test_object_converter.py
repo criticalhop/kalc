@@ -17,7 +17,7 @@ def test_convert_labeldict():
 
 def test_convert_cpu_normal():
     x = cpuConvertToAbstractProblem("1000m")
-    assert x == 1000 / CPU_DIVISOR
+    assert x == int(1000 / CPU_DIVISOR)
 
 def test_convert_cpu_toosmall():
     try:
@@ -34,7 +34,7 @@ def test_convert_cpu_toobig():
 
 def test_convert_mem_normal():
     x = memConvertToAbstractProblem("1000Mi")
-    assert x == 1000 / MEM_DIVISOR
+    assert x == int(1000 / MEM_DIVISOR)
 
 def test_convert_mem_toosmall():
     try:
