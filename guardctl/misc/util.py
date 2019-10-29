@@ -153,3 +153,9 @@ def poodle_bug_dedup(podList):
 
 def getint(poob):
     return int(poob._get_value())
+
+def split_yamldumps(s: str):
+    spl = s.split("\nkind: List\n")
+    if len(spl) > 5:
+        return [x for x in spl if len(x.split("\n")) > 4]
+    return [s]

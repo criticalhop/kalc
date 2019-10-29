@@ -11,6 +11,7 @@ from yaspin.spinners import Spinners
 from sys import stdout
 from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
+from guardctl.misc.util import split_yamldumps
 from pyupdater.client import Client
 from guardctl.misc.client_config import ClientConfig
 import poodle
@@ -55,7 +56,8 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
         for df in load_dump:
             click.echo(f"# Loading cluster definitions from file {df} ...")
             if os.path.isfile(df):
-                k.load(open(df).read())
+                for ys in split_yamldumps(open(df).read()):
+                    k.load(ys)
             else:
                 k.load_dir(df)
 

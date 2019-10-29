@@ -3,7 +3,7 @@ import os, click
 from collections import defaultdict
 from guardctl.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
-from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object, POODLE_MAXLIN, getint
+from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object, POODLE_MAXLIN, getint, split_yamldumps
 from guardctl.model.full import kinds_collection
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
@@ -32,7 +32,8 @@ class KubernetesCluster:
     def load_dir(self, dir_path):
         for root, dirs, files in os.walk(dir_path):
             for fn in files:
-                self.load(open(os.path.join(root, fn)).read(), self.LOAD_MODE)
+                for ys in split_yamldumps(open(os.path.join(root, fn)).read()):
+                    self.load(ys, self.LOAD_MODE)
 
     # load - load from dump , scale/apply/replace/remove/create - are modes from kubernetes
     def load(self, str_, mode=LOAD_MODE):
