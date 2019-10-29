@@ -13,6 +13,8 @@ for n in range(1,10000):
         break
 POODLE_MAXLIN = n-1
 
+PRIO_MAPPING = {i: i for i in range(POODLE_MAXLIN)}
+
 try:
     from six import string_types, iteritems
 except ImportError:
@@ -79,6 +81,28 @@ def k8s_to_domain_object(obj):
         return obj.__str__()
         # raise ValueError("Value type not suported: %s" % repr(obj))
 
+def cpuConvertToNorm(cpuParot):
+    cpu = 0
+    if isinstance(cpuParot, int):
+        cpu = cpuParot*1000
+    else:
+        if cpuParot[len(cpuParot)-1] == 'm':
+            cpu = int(cpuParot[:-1])
+        else:
+            cpu = int(cpuParot)*1000
+    return int(cpu)
+
+def memConvertToNorm(mem):
+    ret = 0
+    if mem[len(mem)-2:] == 'Gi':
+        ret = int(mem[:-2])*1000
+    elif mem[len(mem)-2:] == 'Mi':
+        ret = int(mem[:-2])
+    elif mem[len(mem)-2:] == 'Ki':
+        ret = int(int(mem[:-2])/1000)
+    else:
+        ret = int(int(mem)/1000000)
+    return int(ret)
 
 def cpuConvertToAbstractProblem(cpuParot):
     #log.debug("cpuParot", cpuParot)
@@ -153,3 +177,13 @@ def poodle_bug_dedup(podList):
 
 def getint(poob):
     return int(poob._get_value())
+
+def split_yamldumps(s: str):
+    spl = s.split("\nkind: List\n")
+    return [x for x in spl if len(x.split("\n")) > 4]
+
+def convertPriorityValue(v: int):
+    assert isinstance(v, int)
+    if v == 0: return 0
+    global PRIO_MAPPING
+    return PRIO_MAPPING[v]

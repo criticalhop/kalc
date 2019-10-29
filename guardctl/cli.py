@@ -3,6 +3,9 @@ import logging
 import os
 import sys
 import re
+import time
+import json
+from collections import defaultdict
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets
 from guardctl.model.scenario import Scenario
@@ -11,8 +14,10 @@ from yaspin.spinners import Spinners
 from sys import stdout
 from guardctl.model.search import ExcludeDict, mark_excluded
 from guardctl.model.system.primitives import TypeServ
+from guardctl.misc.util import split_yamldumps
 from pyupdater.client import Client
 from guardctl.misc.client_config import ClientConfig
+import guardctl.misc.util as util
 import poodle
 poodle.log.setLevel(logging.ERROR)
 
@@ -23,80 +28,99 @@ DEFAULT_PROFILE = "Check_services"
 
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)
-@click.option("--from-dir", "-d",
-                help="Directory (or directories with space separator) with cluster resources definitions", 
-                type=click.Path(exists=True), default=None, multiple=True)
-@click.option("--dump-file", "-l", help="Path (or file paths with space separator) with dump", 
-                type=click.Path(exists=True), default=None, multiple=True)
+@click.option("--load-dump", "-l", \
+    help="Path for file or directory containing current state manifests dump", 
+    type=click.Path(exists=True), default=None, multiple=True, required=True)
 @click.option("--output", "-o", help="Select output format", \
-                type=click.Choice(["yaml"]), required=False, default="yaml")
+    type=click.Choice(["yaml"]), required=False, default="yaml")
 @click.option("--filename", "-f", 
-                help="Create/Apply new resource from YAML files (or file paths with space separator) (select type by mode)", \
-                type=click.Path(exists=True), required=False, multiple=True)
+    help="Create/Apply new resource from YAML files (or file paths with space separator) (select type by mode)", \
+    type=click.Path(exists=True), required=False, multiple=True)
 @click.option("--timeout", "-t", help="Set AI planner timeout in seconds", \
-                type=int, required=False, default=150)
-@click.option("--exclude", "-e", help="Exclude from search <Kind1>:<name1>,<Kind2>:<name2>,...", \
-                required=False, default=None)
+    type=int, required=False, default=150)
+@click.option("--exclude", "-e", 
+    help="Exclude from search <Kind1>:<name1>,<Kind2>:<name2>,...", \
+    required=False, default=None)
 @click.option("--ignore-nonexistent-exclusions", \
     help="Ignore mistyped/absent exclusions from --exclude", type=bool, \
-                            is_flag=True, required=False, default=False)
+    is_flag=True, required=False, default=False)
 @click.option("--pipe", help="Terse mode to reduce verbosity for shell piping", \
-                    type=bool, is_flag=True, required=False, default=False)
-@click.option("--mode", "-m", help="Choose the mode scale/apply/replace/remove/create(default)", \
-                required=False, default=KubernetesCluster.CREATE_MODE)
+    type=bool, is_flag=True, required=False, default=False)
+@click.option("--mode", "-m", 
+    help="Choose the mode scale/apply/replace/remove/create(default)", \
+    required=False, default=KubernetesCluster.CREATE_MODE)
 @click.option("--replicas", help="take pods amount for scale, default 5", \
-                type=int, required=False, default=5)
+    type=int, required=False, default=5)
 @click.option("--profile", help="Search profile", default=DEFAULT_PROFILE)
-def run(from_dir, dump_file, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
+def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
 
     k = KubernetesCluster()
 
-    if from_dir:
-        for d in from_dir:
-            click.echo(f"# Loading cluster definitions from directory {d} ...")
-            k.load_dir(d)
+    click.echo("log:")
 
-    if dump_file:
-        for df in dump_file:
-            click.echo(f"# Loading cluster definitions from file {df} ...")
-            k.load(open(df).read())
+    if load_dump:
+        for df in load_dump:
+            if os.path.isfile(df):
+                click.echo(f"    - Loading cluster definitions from file {df} ...")
+                for ys in split_yamldumps(open(df).read()):
+                    k.load(ys)
+            else:
+                click.echo(f"    - Loading cluster definitions from folder {df} ...")
+                k.load_dir(df)
+
 
     if mode == KubernetesCluster.CREATE_MODE:
         for f in filename:
-            click.echo(f"# Creating resource from {f} ...")
+            click.echo(f"    - Creating resource from {f} ...")
             k.create_resource(open(f).read())
 
     if mode == KubernetesCluster.APPLY_MODE:
         for f in filename:
-            click.echo(f"# Apply resource from {f} ...")
+            click.echo(f"    - Apply resource from {f} ...")
             k.apply_resource(open(f).read())
 
     if mode == KubernetesCluster.SCALE_MODE:
         k.scale(replicas, mode)
 
-    click.echo(f"# Building abstract state ...")
+    click.echo(f"    - Building abstract state ...")
     k._build_state()
+
+    stats = defaultdict(int)
+    for ob in k.state_objects: stats[type(ob).__name__] += 1
+    click.echo(f"    - "+json.dumps(stats))
+
 
     mark_excluded(k.state_objects, exclude, ignore_nonexistent_exclusions)
 
-    click.echo(f"# Using {0} profile".format(profile))
+    click.echo(f"    - Using profile {profile}")
     p = globals()[str(profile)](k.state_objects)
 
-    click.echo("# Solving ...")
+    click.echo("    - Solving ...")
+
+    search_start = time.time()
 
     if stdout.isatty() and not pipe:
         with yaspin(Spinners.earth, text="") as sp:
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
                 sp.ok("✅ ")
-                click.echo("# No scenario was found. Cluster clean or search timeout (try increasing).")
+                click.echo("    - No scenario was found. Cluster clean or search timeout (try increasing).")
             else:
                 sp.fail("💥 ")
-                click.echo("# Scenario found.")
+                click.echo("    - Scenario found.")
                 click.echo(Scenario(p.plan).asyaml())
     else:
         p.run(timeout=timeout, sessionName="cli_run")
         click.echo(Scenario(p.plan).asyaml())
+    click.echo("stats:")
+    click.echo("    objects: %s" % len(k.state_objects))
+    click.echo("    kinds: %s" % json.dumps(stats))
+    click.echo("    searchSeconds: %s" % int(time.time()-search_start))
+    click.echo("    normalization:")
+    click.echo("        cpu: %s" % util.CPU_DIVISOR)
+    click.echo("        memory: %s" % util.MEM_DIVISOR)
+    click.echo("        prio: %s" % json.dumps(util.PRIO_MAPPING))
+    click.echo("        maxlin: %s" % util.POODLE_MAXLIN)
 
 def print_status_info(info):
     total = info.get(u'total')

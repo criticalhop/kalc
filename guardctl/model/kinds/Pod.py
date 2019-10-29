@@ -12,7 +12,7 @@ from guardctl.model.system.primitives import Label
 from guardctl.model.system.base import HasLimitsRequests, HasLabel
 from guardctl.model.system.globals import GlobalVar
 from guardctl.misc.const import *
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
 from guardctl.model.scenario import ScenarioStep, describe
 import sys
 import random
@@ -79,6 +79,7 @@ class Pod(HasLabel, HasLimitsRequests):
         if self.status._property_value == STATUS_POD["Pending"]:
             scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
             scheduler.queueLength += 1
+            assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow"
             scheduler.podQueue.add(self)
             scheduler.status = STATUS_SCHED["Changed"]
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
@@ -87,10 +88,13 @@ class Pod(HasLabel, HasLimitsRequests):
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
                 node.amountOfActivePods += 1
+                assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max"
                 if self.cpuRequest > 0:
                     node.currentFormalCpuConsumption += self.cpuRequest
+                    assert getint(node.currentFormalCpuConsumption) < POODLE_MAXLIN, "CPU request exceeded max"
                 if self.memRequest > 0:
                     node.currentFormalMemConsumption += self.memRequest
+                    assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max"
                 found = True
         if not found and self.toNode == Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
@@ -108,6 +112,7 @@ class Pod(HasLabel, HasLimitsRequests):
                 if self.status._property_value == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
                         list(service.metadata_labels._get_value())[0])
+                    assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
 
         if str(self.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             try:
