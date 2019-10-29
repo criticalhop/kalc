@@ -2,6 +2,7 @@ import random
 from poodle import Object
 from guardctl.model.system.primitives import TypePolicy
 from guardctl.misc.const import *
+from guardctl.misc.util import convertPriorityValue
 
 
 class PriorityClass(Object):
@@ -22,8 +23,7 @@ class PriorityClass(Object):
         pass
     @value.setter 
     def value(self, value):
-        if value > 1000: value = 1000
-        self.priority = value
+        self.priority = convertPriorityValue(value)
         
     def __str__(self): return str(self._get_value())
 

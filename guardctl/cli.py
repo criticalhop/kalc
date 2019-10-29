@@ -17,6 +17,7 @@ from guardctl.model.system.primitives import TypeServ
 from guardctl.misc.util import split_yamldumps
 from pyupdater.client import Client
 from guardctl.misc.client_config import ClientConfig
+import guardctl.misc.util as util
 import poodle
 poodle.log.setLevel(logging.ERROR)
 
@@ -115,6 +116,11 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
     click.echo("    objects: %s" % len(k.state_objects))
     click.echo("    kinds: %s" % json.dumps(stats))
     click.echo("    searchSeconds: %s" % int(time.time()-search_start))
+    click.echo("    normalization:")
+    click.echo("        cpu: %s" % util.CPU_DIVISOR)
+    click.echo("        memory: %s" % util.MEM_DIVISOR)
+    click.echo("        prio: %s" % json.dumps(util.PRIO_MAPPING))
+    click.echo("        maxlin: %s" % util.POODLE_MAXLIN)
 
 def print_status_info(info):
     total = info.get(u'total')
