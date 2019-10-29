@@ -126,8 +126,6 @@ def mark_excluded(object_space, excludeStr, skip_check=False):
 class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
     
-    
-class Check_deployments(OptimisticRun):
     @planned(cost=900000) # this works for deployment-outage case
     def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
@@ -143,6 +141,7 @@ class Check_deployments(OptimisticRun):
             probability=1.0,
             affected=[]
         )
+class Check_deployments(OptimisticRun):
     @planned(cost=100)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
                 scheduler: "Scheduler"):
