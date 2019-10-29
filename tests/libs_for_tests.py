@@ -287,7 +287,7 @@ def print_objects_from_yaml(k2):
 def load_yaml(yamlState,k):
     for y in yamlState:
         k.load(y)
-
+    k._build_state()
 
 def getint(poob):
     return int(poob._get_value())
@@ -650,6 +650,7 @@ def reload_cluster_from_yaml(k, create_objects):
     yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
+    k2._build_state()
     for y in yamlCreate:
         k2.load(y, mode=KubernetesCluster.CREATE_MODE)
     return k2
