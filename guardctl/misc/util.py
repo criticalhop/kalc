@@ -4,7 +4,6 @@ import string
 
 CPU_DIVISOR = 65
 MEM_DIVISOR = 200
-PRIO_MAPPING = {}
 
 from poodle.arithmetic import logSparseIntegerFactory
 for n in range(1,10000):
@@ -13,6 +12,8 @@ for n in range(1,10000):
     except KeyError:
         break
 POODLE_MAXLIN = n-1
+
+PRIO_MAPPING = {i: i for i in range(POODLE_MAXLIN)}
 
 try:
     from six import string_types, iteritems
@@ -182,5 +183,7 @@ def split_yamldumps(s: str):
     return [x for x in spl if len(x.split("\n")) > 4]
 
 def convertPriorityValue(v: int):
+    assert isinstance(v, int)
+    if v == 0: return 0
     global PRIO_MAPPING
     return PRIO_MAPPING[v]
