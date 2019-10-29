@@ -16,8 +16,8 @@ def test_convert_labeldict():
     assert isinstance(k8s_to_domain_object({"test":"test2"}), Label)
 
 def test_convert_cpu_normal():
-    x = cpuConvertToAbstractProblem("800m")
-    assert x == int(800 / CPU_DIVISOR)
+    x = cpuConvertToAbstractProblem("500m")
+    assert x == int(500 / CPU_DIVISOR)
 
 def test_convert_cpu_toosmall():
     try:
