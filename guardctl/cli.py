@@ -95,23 +95,26 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
     click.echo(f"    - Using profile {profile}")
     p = globals()[str(profile)](k.state_objects)
 
-    click.echo("    - Solving ...")
-
-    search_start = time.time()
-
-    if stdout.isatty() and not pipe:
-        with yaspin(Spinners.earth, text="") as sp:
-            p.run(timeout=timeout, sessionName="cli_run")
-            if not p.plan:
-                sp.ok("✅ ")
-                click.echo("    - No scenario was found. Cluster clean or search timeout (try increasing).")
-            else:
-                sp.fail("💥 ")
-                click.echo("    - Scenario found.")
-                click.echo(Scenario(p.plan).asyaml())
+    if timeout == 0 :
+        click.echo("Skip scenario searching, timeout is 0")
     else:
-        p.run(timeout=timeout, sessionName="cli_run")
-        click.echo(Scenario(p.plan).asyaml())
+        click.echo("    - Solving ...")
+
+        search_start = time.time()
+
+        if stdout.isatty() and not pipe:
+            with yaspin(Spinners.earth, text="") as sp:
+                p.run(timeout=timeout, sessionName="cli_run")
+                if not p.plan:
+                    sp.ok("✅ ")
+                    click.echo("    - No scenario was found. Cluster clean or search timeout (try increasing).")
+                else:
+                    sp.fail("💥 ")
+                    click.echo("    - Scenario found.")
+                    click.echo(Scenario(p.plan).asyaml())
+        else:
+            p.run(timeout=timeout, sessionName="cli_run")
+            click.echo(Scenario(p.plan).asyaml())
     click.echo("stats:")
     click.echo("    objects: %s" % len(k.state_objects))
     click.echo("    kinds: %s" % json.dumps(stats))
