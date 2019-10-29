@@ -18,9 +18,11 @@ class Scenario:
             return "# Empty scenario"
         probability = 1
         for s in self.steps:
+            if s is None: continue
             probability = probability * s.probability
         jsteps = []
         for x in self.steps:
+            if x is None: continue
             try:
                 d = asdict(x)
             except TypeError:
