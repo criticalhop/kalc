@@ -287,7 +287,7 @@ def print_objects_from_yaml(k2):
 def load_yaml(yamlState,k):
     for y in yamlState:
         k.load(y)
-    k._build_state()
+
 
 def getint(poob):
     return int(poob._get_value())
@@ -644,14 +644,12 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         raise Exception("###  Error loading data   ####")
 
-def create_from_yaml(yamlCreate,k2):
-    for y in yamlCreate:
-        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
 
 def reload_cluster_from_yaml(k, create_objects):
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-    create_from_yaml(yamlCreate,k2)
+    for y in yamlCreate:
+        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
     return k2

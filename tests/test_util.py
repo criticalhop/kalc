@@ -50,7 +50,8 @@ def print_objects(objectList):
         ", PodAmount: "  + str(nodeitem.podAmount._get_value()) + \
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
-        ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()))
+        ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
+        ", Searchable: " + str(nodeitem.searchable._get_value()))
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:

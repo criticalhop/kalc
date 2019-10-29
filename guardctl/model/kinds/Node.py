@@ -68,4 +68,5 @@ class Node(HasLabel):
 Node.NODE_NULL = Node("NULL")
 Node.NODE_NULL.isNull = True
 Node.NODE_NULL.metadata_name = "Null-Node"
+Node.NODE_NULL.searchable = False
 

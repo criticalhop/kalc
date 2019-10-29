@@ -126,6 +126,8 @@ def mark_excluded(object_space, excludeStr, skip_check=False):
 class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
     
+    
+class Check_deployments(OptimisticRun):
     @planned(cost=900000) # this works for deployment-outage case
     def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
@@ -141,7 +143,6 @@ class OptimisticRun(K8ServiceInterruptSearch):
             probability=1.0,
             affected=[]
         )
-class Check_deployments(OptimisticRun):
     @planned(cost=100)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
                 scheduler: "Scheduler"):
@@ -190,6 +191,34 @@ class Check_services(OptimisticRun):
             ):
             
         assert scheduler.status == STATUS_SCHED["Clean"] 
+        assert service1.amountOfActivePods == 0
+        # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
+        assert service1.searchable == True  
+        assert pod1.targetService == service1
+        assert service1.isNull == False
+
+        service1.status = STATUS_SERV["Interrupted"]
+        global_.is_service_disrupted = True #TODO:  Optimistic search 
+        
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Detected service outage event",
+            parameters={"service.amountOfActivePods": 0, "service": describe(service1)},
+            probability=1.0,
+            affected=[describe(service1)]
+        )
+
+class Check_services_restart(OptimisticRun):
+    @planned(cost=100)
+    def MarkServiceOutageEvent(self,
+                service1: Service,
+                pod1: Pod,
+                global_: "GlobalVar",
+                scheduler: "Scheduler"
+            ):
+            
+        # assert scheduler.status == STATUS_SCHED["Clean"] # Removed this assert  to make profile that check if service outage may happed temporary ( restart of service on the other node will help)
         assert service1.amountOfActivePods == 0
         # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
         assert service1.searchable == True  

@@ -1321,17 +1321,26 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
     print("----")
     print_objects(k2.state_objects)
     print_objects_from_yaml(k2)
-    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects))
+    # class NewGoal_step1_k1(Check_deployments):
+    #     goal = lambda self: globalVar_k1.goal_achieved == True and\
+    #          pod_pending_1_1.status == STATUS_POD["Running"]
+
     class NewGoal_k1(Check_deployments):
         pass
-    p = NewGoal_k1(k.state_objects)
 
+    p = NewGoal_k1(k.state_objects)
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
     pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
     class NewGoal_k2(Check_deployments):
         pass
+    # class NewGoal_step1_k2(Check_deployments):
+    #     goal = lambda self: globalVar_k2.goal_achieved == True  and\
+    #          pod_pending_1_2.status == STATUS_POD["Running"]
+
     p2 = NewGoal_k2(k2.state_objects)
-    assert_conditions = ["StartPod",\
-                        "Evict",
+    assert_conditions = ["Evict",
                         "MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
@@ -1382,18 +1391,18 @@ def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic
     dnew.amountOfActivePods = 0
     dnew.spec_replicas = 1
 
-    k.state_objects.extend([n, pod_running_1, pod_running_2, pod_pending_1, d])
+    k.state_objects.extend([n, pod_running_1, pod_running_2, d])
     create_objects = [dnew]
-    create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
-    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    # pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    
     class NewGoal_k1(Check_deployments):
         pass
-    p = NewGoal_k1(k.state_objects)
 
-    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    p = NewGoal_k1(k.state_objects)
     class NewGoal_k2(Check_deployments):
         pass
+
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["MarkDeploymentOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
@@ -1411,6 +1420,7 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     n = Node()
     n.cpuCapacity = 5
     n.memCapacity = 5
+    n.searchable = False
 
     # Create running pods
     pod_running_1 = build_running_pod(1,2,2,n)
@@ -1472,22 +1482,26 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     pod_pending_1.hasService = True
     snew.searchable = True
 
-    k.state_objects.extend([n, s, snew, pod_running_1, pod_running_2, pod_pending_1, d, dnew])
-    create_objects = []
+    k.state_objects.extend([n, s, pod_running_1, pod_running_2, d])
+    create_objects = [snew,dnew]
     k2 = reload_cluster_from_yaml(k,create_objects)
-    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    k.state_objects.extend(create_objects)
+    k.state_objects.extend([pod_pending_1])
+
+    k._build_state()
+    k2._build_state()
+    n_k2 = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
+    n_k2.searchable = False
+
     class NewGoal_k1(Check_services):
         pass
     p = NewGoal_k1(k.state_objects)
 
-    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
     class NewGoal_k2(Check_services):
         pass
     p2 = NewGoal_k2(k2.state_objects)
-    assert_conditions = ["MarkDeploymentOutageEvent"]
+    assert_conditions = ["MarkServiceOutageEvent"]
     not_assert_conditions = ["NodeOutageFinished"]
-    create_objects = [snew, dnew]
-    yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
 
 
