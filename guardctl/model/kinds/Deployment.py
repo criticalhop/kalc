@@ -86,7 +86,7 @@ class Deployment(Controller, HasLimitsRequests):
         #look for ReplicaSet with corresonding owner reference
         for replicaset in replicasets:
             br=False
-            if replicaset.metadata_ownerReferences__name == self.metadata_name:
+            if str(replicaset.metadata_ownerReferences__name) == str(self.metadata_name):
                 for pod_template_hash in list(replicaset.metadata_labels._get_value()):
                     if str(pod_template_hash).split(":")[0] == "pod-template-hash":
                         self.hash = str(pod_template_hash).split(":")[1]
