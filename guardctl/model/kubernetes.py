@@ -119,9 +119,9 @@ class KubernetesCluster:
                 if k == "PriorityClass":
                     priorities.append(int(item["value"]))
         if max_cpu > 0:
-            guardctl.misc.util.CPU_DIVISOR = int(max_cpu / guardctl.misc.util.POODLE_MAXLIN) + 1
+            guardctl.misc.util.CPU_DIVISOR = int(max_cpu / (guardctl.misc.util.POODLE_MAXLIN / 2))
         if max_ram > 0:
-            guardctl.misc.util.MEM_DIVISOR = int(max_ram / guardctl.misc.util.POODLE_MAXLIN) + 1
+            guardctl.misc.util.MEM_DIVISOR = int(max_ram / (guardctl.misc.util.POODLE_MAXLIN / 2))
         if len(priorities):
             pri_map = {}
             i = 1

@@ -11,7 +11,7 @@ for n in range(1,10000):
         i = logSparseIntegerFactory.numbers[n]
     except KeyError:
         break
-POODLE_MAXLIN = n-1
+POODLE_MAXLIN = n - 1
 
 PRIO_MAPPING = {i: i for i in range(POODLE_MAXLIN)}
 
