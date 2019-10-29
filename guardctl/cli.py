@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import re
+import time
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets
 from guardctl.model.scenario import Scenario
@@ -52,9 +53,11 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
 
     k = KubernetesCluster()
 
+    click.echo("log:")
+
     if load_dump:
         for df in load_dump:
-            click.echo(f"# Loading cluster definitions from file {df} ...")
+            click.echo(f"    - Loading cluster definitions from file {df} ...")
             if os.path.isfile(df):
                 for ys in split_yamldumps(open(df).read()):
                     k.load(ys)
@@ -63,40 +66,43 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
 
     if mode == KubernetesCluster.CREATE_MODE:
         for f in filename:
-            click.echo(f"# Creating resource from {f} ...")
+            click.echo(f"    - Creating resource from {f} ...")
             k.create_resource(open(f).read())
 
     if mode == KubernetesCluster.APPLY_MODE:
         for f in filename:
-            click.echo(f"# Apply resource from {f} ...")
+            click.echo(f"    - Apply resource from {f} ...")
             k.apply_resource(open(f).read())
 
     if mode == KubernetesCluster.SCALE_MODE:
         k.scale(replicas, mode)
 
-    click.echo(f"# Building abstract state ...")
+    click.echo(f"    - Building abstract state ...")
     k._build_state()
 
     mark_excluded(k.state_objects, exclude, ignore_nonexistent_exclusions)
 
-    click.echo(f"# Using profile {profile}")
+    click.echo(f"    - Using profile {profile}")
     p = globals()[str(profile)](k.state_objects)
 
-    click.echo("# Solving ...")
+    click.echo("    - Solving ...")
+
+    search_start = time.time()
 
     if stdout.isatty() and not pipe:
         with yaspin(Spinners.earth, text="") as sp:
             p.run(timeout=timeout, sessionName="cli_run")
             if not p.plan:
                 sp.ok("✅ ")
-                click.echo("# No scenario was found. Cluster clean or search timeout (try increasing).")
+                click.echo("    - No scenario was found. Cluster clean or search timeout (try increasing).")
             else:
                 sp.fail("💥 ")
-                click.echo("# Scenario found.")
+                click.echo("    - Scenario found.")
                 click.echo(Scenario(p.plan).asyaml())
     else:
         p.run(timeout=timeout, sessionName="cli_run")
         click.echo(Scenario(p.plan).asyaml())
+    click.echo("searchSeconds: %s" % int(time.time()-search_start))
 
 def print_status_info(info):
     total = info.get(u'total')
