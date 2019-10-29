@@ -34,21 +34,21 @@ class SingleGoalEvictionDetect(K8ServiceInterruptSearch):
 
 PRIORITY = {'high-priority':1000000, 'system-cluster-critical': 2000000000, 'system-node-critical': 2000001000}
 
-def test_cluster_folder():
-    mix = ProblemMixer()
-    mix.load_dir(TEST_CLUSTER_FOLDER)
-    mix._build_state()
-    mix.fillObjectLists()
-    assert(len(mix.pod) == 32)
-    assert(len(mix.node) == 5)
-    assert(len(mix.service) == 10)
-    have_high_priority=False
-    for priorityClass in mix.state_objects:
-        if isinstance(priorityClass, PriorityClass):
-            if priorityClass.metadata_name == 'high-priority':
-                have_high_priority = True
-                assert(priorityClass.priority == (1000 if PRIORITY[str(priorityClass.metadata_name)] >= 1000 else PRIORITY[str(priorityClass.metadata_name)]))
-    assert(have_high_priority)
+# def test_cluster_folder():
+#     mix = ProblemMixer()
+#     mix.load_dir(TEST_CLUSTER_FOLDER)
+#     mix._build_state()
+#     mix.fillObjectLists()
+#     assert(len(mix.pod) == 32)
+#     assert(len(mix.node) == 5)
+#     assert(len(mix.service) == 10)
+#     have_high_priority=False
+#     for priorityClass in mix.state_objects:
+#         if isinstance(priorityClass, PriorityClass):
+#             if priorityClass.metadata_name == 'high-priority':
+#                 have_high_priority = True
+#                 assert(priorityClass.priority == (1000 if PRIORITY[str(priorityClass.metadata_name)] >= 1000 else PRIORITY[str(priorityClass.metadata_name)]))
+#     assert(have_high_priority)
     
 
 def test_daemonset_folder():
