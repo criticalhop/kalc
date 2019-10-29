@@ -34,13 +34,15 @@ def test_anyservice_interrupted_fromfiles():
 
 RESULT=""
 
+#TODO this test is only check loading it is should run with timeout == 0
+@pytest.mark.slow(reason="took time 327.41s")
 def test_load_from_dir():
     runner = CliRunner()
     result = runner.invoke(run, ["-l", TEST_CLUSTER_FOLDER, "-f", TEST_DAEMONET, "-o", "yaml", "--pipe", "--timeout", "300"])
     assert result.exit_code == 0
     global RESULT
     RESULT=result
-    print(RESULT.output)
+    # print(RESULT.output)
 
 #@pytest.mark.skip(reason="specific scenario is not selected")
 def test_result_any_scenario():

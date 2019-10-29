@@ -33,7 +33,7 @@ REPLICASETS = "./tests/test-scenario/deployment/dump/replicasets.yaml"
 PRIORITYCLASSES = "./tests/test-scenario/deployment/dump/priorityclass.yaml"
 DEPLOYMENT = "./tests/test-scenario/deployment/dump/deployments.yaml"
 
-# @pytest.mark.skip(reason="specific scenario is not selected")
+@pytest.mark.nofast(reason="took time 124.63s")
 def test_start_pod():
     k = KubernetesCluster()
     k.load(open(NODE1).read())

@@ -70,9 +70,6 @@ class Deployment(Controller, HasLimitsRequests):
             self.podList.add(new_pod)
             # self.check_pod(new_pod, object_space)
             object_space.append(new_pod)
-            scheduler.podQueue.add(new_pod)
-            scheduler.queueLength += 1
-            scheduler.status = STATUS_SCHED["Changed"]
 
     def hook_after_load(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)

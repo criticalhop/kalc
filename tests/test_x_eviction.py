@@ -222,7 +222,7 @@ def test_eviction_fromfiles_strictgoal():
     assert "StartPod" in p.plan.__str__()
 
 
-
+@pytest.mark.slow(reason="took time 297.41s")
 def test_anyservice_interrupted_fromfiles():
     k = KubernetesCluster()
     k.load_dir(TEST_CLUSTER_FOLDER)
