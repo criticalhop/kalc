@@ -79,7 +79,7 @@ class Pod(HasLabel, HasLimitsRequests):
         if self.status._property_value == STATUS_POD["Pending"]:
             scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
             scheduler.queueLength += 1
-            assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow"
+            assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(scheduler.queueLength), POODLE_MAXLIN)
             scheduler.podQueue.add(self)
             scheduler.status = STATUS_SCHED["Changed"]
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
