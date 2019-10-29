@@ -23,7 +23,9 @@ class PriorityClass(Object):
         pass
     @value.setter 
     def value(self, value):
-        self.priority = convertPriorityValue(value)
+        norm_pri = convertPriorityValue(value)
+        if norm_pri > 1000: norm_pri = 1000
+        self.priority = norm_pri
         
     def __str__(self): return str(self._get_value())
 

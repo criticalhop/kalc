@@ -91,10 +91,10 @@ class Pod(HasLabel, HasLimitsRequests):
                 assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max"
                 if self.cpuRequest > 0:
                     node.currentFormalCpuConsumption += self.cpuRequest
-                    assert getint(node.currentFormalCpuConsumption) < POODLE_MAXLIN, "CPU request exceeded max"
+                    assert getint(node.currentFormalCpuConsumption) < POODLE_MAXLIN, "CPU request exceeded max: %s" % getint(node.currentFormalCpuConsumption)
                 if self.memRequest > 0:
                     node.currentFormalMemConsumption += self.memRequest
-                    assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max"
+                    assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
                 found = True
         if not found and self.toNode == Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
