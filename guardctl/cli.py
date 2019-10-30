@@ -55,9 +55,10 @@ ALL_PROFILES = [x for x in globals() if x.startswith("Check")]
     type=int, required=False, default=5)
 @click.option("--profile", help="Search profile", default=DEFAULT_PROFILE, type=click.Choice(ALL_PROFILES))
 def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
+    run_start = time.time()
 
     k = KubernetesCluster()
-
+    
     click.echo("log:")
 
     if load_dump:
@@ -121,6 +122,7 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
     click.echo("    objects: %s" % len(k.state_objects))
     click.echo("    kinds: %s" % json.dumps(stats))
     click.echo("    searchSeconds: %s" % int(time.time()-search_start))
+    click.echo("    runSeconds: %s" % int(time.time()-run_start))
     click.echo("    normalization:")
     click.echo("        cpu: %s" % util.CPU_DIVISOR)
     click.echo("        memory: %s" % util.MEM_DIVISOR)
