@@ -583,7 +583,7 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
         slist = re.sub(r'name:.+', 'name: XXX', slist)
     return slist
 
-def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode):
+def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode):
     p.run(timeout=200)
     brake = False
     if p.plan:
@@ -596,13 +596,14 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
     if not p.plan:
         brake = True
     if not brake:
-        # pass
-        print("--- ",test_mode,": Ok")
+        if debug_mode:
+            print("--- ",test_mode,": Ok")
+        else:
+            pass
     else:
-        print("--- ",test_mode,": Error")
-        # print_objects(k)
-        print_objects_from_yaml(k)
-        print_plan(p)
+        if debug_mode:
+            print("--- ",test_mode,": Error")
+            print_plan(p)
     return  brake
 
 def compare_yaml_files(k,k2):
@@ -611,21 +612,45 @@ def compare_yaml_files(k,k2):
     if  prepare_yamllist_for_diff(yamlState, ignore_names=True) != \
             prepare_yamllist_for_diff(yamlState2, ignore_names=True):
             print("Yaml file have differences")
+            assert prepare_yamllist_for_diff(yamlState, ignore_names=True) == \
+                    prepare_yamllist_for_diff(yamlState2, ignore_names=True)
     else:
         print("yaml files are similar")
 
-def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions):
-    test_mode = "loading test"
-    test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode)
-    if test_assert_brake == True:
-        compare_yaml_files(k,k2)
+def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,debug_mode):
+    if debug_mode:
+        print("--print_objects--")    
+        print("--k1--")    
+        print_objects(k.state_objects)
+        print("--k2--")
+        print_objects(k2.state_objects)
+        print("--print_yamls--")    
+        print("--k1--")    
+        print_objects_from_yaml(k)
+        print("--k2--")    
+        print_objects_from_yaml(k2)
+        # print("---yaml diff ---")
+        # compare_yaml_files(k,k2)
+        print("--functional test--")    
         test_mode = "functional test"
-        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode)
-        print_objects_compare(k,k2)
+        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+        if test_assert_brake == False:
+            print("OK")
+    test_mode = "loading test"
+    test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+    if test_assert_brake == True:
+
+        test_mode = "functional test"
+        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         raise Exception("###  Error loading data   ####")
 
-def reload_cluster_from_yaml(k):
+
+def reload_cluster_from_yaml(k, create_objects):
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
+    k2._build_state()
+    for y in yamlCreate:
+        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
     return k2

@@ -8,6 +8,7 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.kinds.Deployment import Deployment
 from guardctl.model.kinds.DaemonSet import DaemonSet
+from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.globals import GlobalVar
 
 # def test_dget_ok():
@@ -50,7 +51,8 @@ def print_objects(objectList):
         ", PodAmount: "  + str(nodeitem.podAmount._get_value()) + \
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
-        ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()))
+        ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
+        ", Searchable: " + str(nodeitem.searchable._get_value()))
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:
@@ -95,15 +97,16 @@ def print_objects(objectList):
         " PriorityClassName: " + str(daemonset.spec_template_spec_priorityClassName._property_value) + \
         " Searchable:" + str(daemonset.searchable))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
+
+    replicasets_loaded_list = filter(lambda x: isinstance(x, ReplicaSet), objectList)
     print("----------ReplicaSets------------")
-    daemonsets_loaded_list = filter(lambda x: isinstance(x, ReplicaSet), objectList)
-    for daemonset in daemonsets_loaded_list:
-        print("## ReplicaSet: "+str(daemonset.metadata_name._get_value()) +\
-        " ownerReferences_name:" + str(daemonset.metadata_ownerReferences__name) +\
-        " Spec_replicas: "+ str(daemonset.spec_replicas._get_value()) 
-        )
-        # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
-    
+    for replicaset in replicasets_loaded_list:
+        print("## Replicaset: "+str(replicaset.metadata_name._get_value()) +\
+        " hash: " + str(replicaset.hash)+\
+        " spec_replicas: " + str(replicaset.spec_replicas._get_value())+\
+        " metadata_ownerReferences__kind: " + str(replicaset.metadata_ownerReferences__name._property_value)+\
+        " metadata_ownerReferences__name: " + str(replicaset.metadata_ownerReferences__name._property_value))
+
     globalvar_loaded_list = filter(lambda x: isinstance(x, GlobalVar), objectList)
     print("----------GlobalVar------------")
     list_of_objects_output =['']
