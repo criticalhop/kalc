@@ -89,7 +89,7 @@ class Pod(HasLabel, HasLimitsRequests):
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
                 node.amountOfActivePods += 1
-                assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max"
+                assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max %s > %s" % (getint(node.amountOfActivePods), POODLE_MAXLIN) 
                 if self.cpuRequest > 0:
                     node.currentFormalCpuConsumption += self.cpuRequest
                     assert getint(node.currentFormalCpuConsumption) < POODLE_MAXLIN, "CPU request exceeded max: %s" % getint(node.currentFormalCpuConsumption)
