@@ -23,7 +23,7 @@ import poodle
 poodle.log.setLevel(logging.ERROR)
 
 APP_NAME = 'kubectl-val'
-APP_VERSION = '0.1.3'
+APP_VERSION = '0.1.4'
 
 DEFAULT_PROFILE = "Check_services"
 ALL_PROFILES = [x for x in globals() if x.startswith("Check")]
