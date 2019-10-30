@@ -14,6 +14,7 @@ from guardctl.model.system.globals import GlobalVar
 from guardctl.misc.const import *
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
 from guardctl.model.scenario import ScenarioStep, describe
+# import guardctl.cli as cli
 import sys
 import random
 
@@ -108,10 +109,14 @@ class Pod(HasLabel, HasLimitsRequests):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 self.targetService = service
                 self.hasService = True
-                if self.status._property_value == STATUS_POD["Running"]:
-                    self.connect_pod_service_labels(self, service, \
-                        list(service.metadata_labels._get_value())[0])
-                    assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
+                if list(service.metadata_labels._get_value()):
+                    if self.status._property_value == STATUS_POD["Running"]:
+                        self.connect_pod_service_labels(self, service, \
+                            list(service.metadata_labels._get_value())[0])
+                        assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
+                else:
+                    pass
+                    # cli.click.echo("    - WRN: no label for service %s" % str(service.metadata_name))
 
         if str(self.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             try:
