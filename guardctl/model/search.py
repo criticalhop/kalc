@@ -258,14 +258,6 @@ class Check_services_restart(OptimisticRun):
         assert scheduler.status == STATUS_SCHED["Clean"]
         globalVar.goal_achieved = True 
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Some service is interrupted",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
 class Check_daemonsets(OptimisticRun):        
     @planned(cost=100)
     def MarkDaemonsetOutageEvent(self,
@@ -290,6 +282,10 @@ class Check_daemonsets(OptimisticRun):
             probability=1.0,
             affected=[describe(daemonset_current)]
         )
+
+class CheckNodeOutage(Check_services):
+    goal = lambda self: self.globalVar.goal_achieved == True and \
+                                self.globalVar.is_node_disrupted == True
 
 class Check_services_and_deployments(Check_services,Check_deployments):
     pass

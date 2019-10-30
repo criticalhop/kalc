@@ -1,6 +1,7 @@
 # from guardctl.misc.util import dget
 import yaml
 from guardctl.model.kinds.Pod import Pod
+from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass

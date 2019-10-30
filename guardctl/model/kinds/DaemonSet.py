@@ -66,12 +66,13 @@ class DaemonSet(Controller, HasLimitsRequests):
                 logger.error(message)
                 raise AssertionError(message)
         pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
-        
+        nodes = filter(lambda x: isinstance(x, Node), object_space)
+
         for pod in pods:
             if str(pod.metadata_ownerReferences__name) == str(self.metadata_name):
                 self.podList.add(pod)
+                self.amountOfActivePods += 1
                 pod.hasDaemonset = True
-                nodes = filter(lambda x: isinstance(x, Node), object_space)
                 for node in nodes:
                     if node.metadata_name._get_value() == pod.spec_nodeName._get_value():
                         pod.toNode = node

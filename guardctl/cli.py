@@ -7,7 +7,8 @@ import time
 import json
 from collections import defaultdict
 from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets
+from guardctl.model.search import \
+            Check_services, Check_deployments, Check_daemonsets, CheckNodeOutage
 from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -25,6 +26,7 @@ APP_NAME = 'kubectl-val'
 APP_VERSION = '0.1.3'
 
 DEFAULT_PROFILE = "Check_services"
+ALL_PROFILES = [x for x in globals() if x.startswith("Check")]
 
 @click.group(invoke_without_command=True)
 @click.version_option(version=APP_VERSION)
@@ -51,7 +53,7 @@ DEFAULT_PROFILE = "Check_services"
     required=False, default=KubernetesCluster.CREATE_MODE)
 @click.option("--replicas", help="take pods amount for scale, default 5", \
     type=int, required=False, default=5)
-@click.option("--profile", help="Search profile", default=DEFAULT_PROFILE)
+@click.option("--profile", help="Search profile", default=DEFAULT_PROFILE, type=click.Choice(ALL_PROFILES))
 def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
 
     k = KubernetesCluster()

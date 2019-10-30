@@ -175,39 +175,9 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    # @planned(cost=100)
-    # def Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined(self,
-    #             podPending: "Pod",
-    #             podToBeReplaced: "Pod",
-    #             node: "Node" , # unused
-    #             scheduler: "Scheduler",
-    #             priorityClassOfPendingPod: PriorityClass,
-    #             priorityClassOfPodToBeReplaced: PriorityClass
-    #             ):
-    #     assert podPending in scheduler.podQueue
-    #     assert podPending.toNode == Node.NODE_NULL
-    #     assert podPending.status == STATUS_POD["Pending"]
-    #     assert priorityClassOfPendingPod == podPending.priorityClass
-    #     assert priorityClassOfPodToBeReplaced == podToBeReplaced.priorityClass
-    #     # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
-    #     # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
-    #     # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
-    #     assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
-    #     assert podPending.memRequest > node.memCapacity - node.currentFormalCpuConsumption
-    #     assert podToBeReplaced.status == STATUS_POD["Running"]
-    #     podToBeReplaced.status = STATUS_POD["Killing"]
-
-    #     return ScenarioStep(
-    #         name=sys._getframe().f_code.co_name,
-    #         subsystem=self.__class__.__name__,
-    #         description="Because pod has lower priority, it is getting evicted to make room for new pod",
-    #         parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
-    #         probability=1.0,
-    #         affected=[describe(podPending), describe(podToBeReplaced)]
-    #     )
 
     @planned(cost=100)
-    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
+    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined_byMEM(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
                 nodeForPodPending: "Node" ,
@@ -227,6 +197,39 @@ class KubernetesModel(ProblemTemplate):
         # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
         assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
         assert podPending.memRequest > nodeForPodPending.memCapacity - nodeForPodPending.currentFormalCpuConsumption
+        assert podToBeReplaced.status == STATUS_POD["Running"]
+        podToBeReplaced.status = STATUS_POD["Killing"]
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Because pod has lower priority, it is getting evicted to make room for new pod",
+            parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
+            probability=1.0,
+            affected=[describe(podPending), describe(podToBeReplaced)]
+        )
+
+    @planned(cost=100)
+    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined_byCPU(self,
+                podPending: "Pod",
+                podToBeReplaced: "Pod",
+                nodeForPodPending: "Node" ,
+                scheduler: "Scheduler",
+                priorityClassOfPendingPod: PriorityClass,
+                priorityClassOfPodToBeReplaced: PriorityClass
+                ):
+        assert podPending in scheduler.podQueue
+        assert podPending.toNode == nodeForPodPending
+        assert nodeForPodPending.isNull == False
+        assert podToBeReplaced.atNode == nodeForPodPending
+        assert podPending.status == STATUS_POD["Pending"]
+        assert priorityClassOfPendingPod == podPending.priorityClass
+        assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass
+        # assert preemptionPolicyOfPendingPod == priorityClassOfPendingPod.preemptionPolicy
+        # assert preemptionPolicyOfPodToBeReplaced == priorityClassOfPodToBeReplaced.preemptionPolicy
+        # assert priorityClassOfPendingPod.preemptionPolicy == self.constSymbol["PreemptLowerPriority"]
+        assert priorityClassOfPendingPod.priority > priorityClassOfPodToBeReplaced.priority
+        assert podPending.cpuRequest > nodeForPodPending.cpuCapacity - nodeForPodPending.currentFormalMemConsumption
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
 

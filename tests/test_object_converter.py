@@ -1,4 +1,5 @@
 from guardctl.misc.util import k8s_to_domain_object, cpuConvertToAbstractProblem, memConvertToAbstractProblem, MEM_DIVISOR, CPU_DIVISOR
+import guardctl.misc.util as util
 from guardctl.model.system.primitives import Label
 
 def test_convert_string():
@@ -16,8 +17,8 @@ def test_convert_labeldict():
     assert isinstance(k8s_to_domain_object({"test":"test2"}), Label)
 
 def test_convert_cpu_normal():
-    x = cpuConvertToAbstractProblem("1000m")
-    assert x == int(1000 / CPU_DIVISOR)
+    x = cpuConvertToAbstractProblem("500m")
+    assert x == int(500 / util.CPU_DIVISOR)
 
 def test_convert_cpu_toosmall():
     try:

@@ -108,7 +108,6 @@ class Pod(HasLabel, HasLimitsRequests):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 self.targetService = service
                 self.hasService = True
-                service.status._property_value = STATUS_SERV["Started"]
                 if self.status._property_value == STATUS_POD["Running"]:
                     self.connect_pod_service_labels(self, service, \
                         list(service.metadata_labels._get_value())[0])
