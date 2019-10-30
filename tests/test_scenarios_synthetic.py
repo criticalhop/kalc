@@ -427,9 +427,9 @@ def test_2_synthetic_service_outage_step6_noNodeSelected():
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
     # print_objects(k.state_objects)
-    class Task_Check_services(Check_services):
+    class test_2_synthetic_service_outage_step6_noNodeSelected_Task_Check_services(Check_services):
         goal = lambda self: globalVar.is_service_disrupted == True
-    p = Task_Check_services(k.state_objects)
+    p = test_2_synthetic_service_outage_step6_noNodeSelected_Task_Check_services(k.state_objects)
     p.run(timeout=200)
     # print_plan(p)
     assert "SelectNode" in "\n".join([repr(x) for x in p.plan]) # StartPod not necessarily happens
