@@ -255,6 +255,10 @@ class Check_daemonsets(OptimisticRun):
             affected=[describe(daemonset_current)]
         )
 
+class CheckNodeOutage(Check_services):
+    goal = lambda self: self.globalVar.goal_achieved == True and \
+                                self.globalVar.is_node_disrupted == True
+
 class Check_services_and_deployments(Check_services,Check_deployments):
     pass
 
