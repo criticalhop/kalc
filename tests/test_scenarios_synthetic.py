@@ -374,6 +374,7 @@ def test_2_synthetic_service_outage_step5():
     assert not "NodeOutageFinished" in "\n".join([repr(x) for x in p.plan])
     # assert "MarkServiceOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
+#TODO PASS wioth Scheduler_cant_place_pod cost=30000
 @pytest.mark.debug(reason="if debug needed - uncomment me")
 def test_2_synthetic_service_outage_step6_noNodeSelected():
     # Initialize scheduler, globalvar
