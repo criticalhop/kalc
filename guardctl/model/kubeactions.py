@@ -177,7 +177,7 @@ class KubernetesModel(ProblemTemplate):
 
 
     @planned(cost=100)
-    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
+    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined_byMEM(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
                 nodeForPodPending: "Node" ,
@@ -210,7 +210,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=100)
-    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined(self,
+    def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined_byCPU(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
                 nodeForPodPending: "Node" ,
