@@ -1,6 +1,7 @@
 # from guardctl.misc.util import dget
 import yaml
 from guardctl.model.kinds.Pod import Pod
+from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.Service import Service
 from guardctl.model.kinds.PriorityClass import PriorityClass
@@ -94,7 +95,15 @@ def print_objects(objectList):
         " PriorityClassName: " + str(daemonset.spec_template_spec_priorityClassName._property_value) + \
         " Searchable:" + str(daemonset.searchable))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
-
+    print("----------ReplicaSets------------")
+    daemonsets_loaded_list = filter(lambda x: isinstance(x, ReplicaSet), objectList)
+    for daemonset in daemonsets_loaded_list:
+        print("## ReplicaSet: "+str(daemonset.metadata_name._get_value()) +\
+        " ownerReferences_name:" + str(daemonset.metadata_ownerReferences__name) +\
+        " Spec_replicas: "+ str(daemonset.spec_replicas._get_value()) 
+        )
+        # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
+    
     globalvar_loaded_list = filter(lambda x: isinstance(x, GlobalVar), objectList)
     print("----------GlobalVar------------")
     list_of_objects_output =['']
