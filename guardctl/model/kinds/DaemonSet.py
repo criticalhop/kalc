@@ -62,7 +62,7 @@ class DaemonSet(Controller, HasLimitsRequests):
         daemonSets = filter(lambda x: isinstance(x, DaemonSet), object_space)
         for daemonSetController in daemonSets:
             if daemonSetController != self and str(daemonSetController.metadata_name) == str(self.metadata_name):
-                message = "Error from server (AlreadyExists): daemonSetController.{0} \"{1}\" already exists".format(str(self.apiVersion).split("/")[0], self.metadata_name)
+                message = "Error from server (AlreadyExists): DaemonSet with name {0}".format(self.metadata_name)
                 logger.error(message)
                 raise AssertionError(message)
         pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
