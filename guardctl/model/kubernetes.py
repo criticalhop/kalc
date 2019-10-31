@@ -9,6 +9,7 @@ from guardctl.model.full import kinds_collection
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.system.Scheduler import Scheduler
+from guardctl.model.kinds.ReplicaSet import ReplicaSet
 import guardctl.misc.util
 
 KINDS_LOAD_ORDER = ["PriorityClass", "Service", "Node", "Pod", "ReplicaSet"]
@@ -143,6 +144,7 @@ class KubernetesCluster:
             for item in v:
                 self._build_item(item)
         self._check()
+        self.state_objects = [x for x in self.state_objects if not isinstance(x, ReplicaSet)]
 
     def _check(self):
         "Run internal checks"
