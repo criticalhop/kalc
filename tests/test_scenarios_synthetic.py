@@ -547,6 +547,7 @@ def construct_multi_pods_eviction_problem():
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
     # print_objects(k.state_objects)
+    k._build_state()
     return k, k2, pod_pending_1
 
 def test_3_synthetic_service_outage_multi_invload():
@@ -627,6 +628,7 @@ def prepare_test_4_synthetic_service_NO_outage_multi():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     return k,k2
 
 def test_4_synthetic_service_NO_outage_multi():
@@ -708,7 +710,7 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)
-
+    k._build_state()
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class NewGoal_k1(Check_deployments):
         goal = lambda self: globalVar_k1.goal_achieved == True
@@ -765,7 +767,7 @@ def test_5_evict_and_killpod_deployment_without_service():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1, d])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
-
+    k._build_state()
     pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
@@ -822,6 +824,7 @@ def test_6_evict_and_killpod_without_deployment_without_service():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
@@ -888,6 +891,7 @@ def test_7_evict_and_killpod_with_deployment_and_service():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1, d])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
@@ -952,6 +956,7 @@ def test_8_evict_and_killpod_with_daemonset_without_service():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1,ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
@@ -1015,6 +1020,7 @@ def test_9_evict_and_killpod_with_daemonset_with_service():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1,ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
@@ -1064,6 +1070,7 @@ def test_10_startpod_without_deployment_without_service():
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
@@ -1114,6 +1121,7 @@ def test_11_startpod_without_deployment_with_service():
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
@@ -1167,6 +1175,7 @@ def test_12_startpod_with_deployment_with_service():
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,d])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
@@ -1208,6 +1217,7 @@ def test_13_startpod_with_daemonset_without_service():
     k.state_objects.extend([n, pod_running_1, pod_pending_1,d])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
@@ -1259,6 +1269,7 @@ def test_14_startpod_with_daemonset_with_service():
     k.state_objects.extend([n, pod_running_1, s, pod_pending_1,d])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(OptimisticRun):
         goal = lambda self: pod_pending_1_1.status == STATUS_POD["Running"]
@@ -1319,6 +1330,7 @@ def test_15_has_deployment_creates_daemonset__pods_evicted_pods_pending_syntheti
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1, d,s,ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     print_objects(k.state_objects)
 
     print_objects_from_yaml(k)
@@ -1398,6 +1410,7 @@ def test_16_creates_deployment_but_insufficient_resource__pods_pending_synthetic
     k.state_objects.extend([n, pod_running_1, pod_running_2, d])
     create_objects = [dnew]
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     # pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     
     class NewGoal_k1(Check_deployments):
@@ -1496,7 +1509,7 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     k2._build_state()
     n_k2 = next(filter(lambda x: isinstance(x, Node), k2.state_objects))
     n_k2.searchable = False
-
+    k._build_state()
     class NewGoal_k1(Check_services):
         pass
     p = NewGoal_k1(k.state_objects)
@@ -1592,6 +1605,7 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     for y in yamlCreate:
         k2.load(y, mode=KubernetesCluster.CREATE_MODE)
     k2._build_state()
+    k._build_state()
     globalVar = k2.state_objects[1]
     scheduler = k2.state_objects[0]
     # print_objects(k.state_objects)
@@ -1686,6 +1700,7 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     k.state_objects.extend([n, s, snew, snew2, pod_running_1, pod_running_2, pod_pending_1, pod_pending_2, d, dnew])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
     class NewGoal_k1(Check_services):
         pass
@@ -1905,6 +1920,7 @@ def test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synt
     k.state_objects.extend([n1, n2, pc, pod_running_1, pod_running_2, pod_pending_1, d,ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     class NewGoal_k1(Check_daemonsets):
         pass
     p = NewGoal_k1(k.state_objects)
@@ -1974,6 +1990,7 @@ def prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_
     k.state_objects.extend([n1,  pc, pod_running_1, pod_running_2, pod_pending_1, d, ds])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     return k, k2
 
 # @pytest.mark.debug(reason="if debug needed - uncomment me")
