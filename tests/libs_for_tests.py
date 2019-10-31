@@ -508,18 +508,18 @@ def render_object(ob, load_logic_support=True):
                             "kind": str(type(ob).__name__),
                             "name": str(ob.metadata_name)
                         }
-                    ],
-                    "spec": {
-                        "replicas": getint(ob.spec_replicas),
-                        "selector": {
-                            "matchLabels": labels
+                    ]
+                },
+                "spec": {
+                    "replicas": getint(ob.spec_replicas),
+                    "selector": {
+                        "matchLabels": labels
+                    },
+                    "template": {
+                        "metadata": {
+                            "labels": labels
                         },
-                        "template": {
-                            "metadata": {
-                                "labels": labels
-                            },
-                            "spec": d_pod["spec"]
-                        }
+                        "spec": d_pod["spec"]
                     }
                 }
             }
@@ -649,8 +649,9 @@ def reload_cluster_from_yaml(k, create_objects):
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
     k2 = KubernetesCluster()
-    load_yaml(yamlState,k2)
-    k2._build_state()
+    for y in yamlState:
+        k2.load(y)
     for y in yamlCreate:
         k2.load(y, mode=KubernetesCluster.CREATE_MODE)
+    k2._build_state()
     return k2

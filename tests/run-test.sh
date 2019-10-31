@@ -20,3 +20,5 @@ PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10018 tox -e poodledev -- ./tests
 PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10019 tox -e poodledev -- ./tests/test_scenarios_synthetic.py::test_17_2_creates_service_and_deployment_insufficient_resource__two_service_outage > log-synt-17-2
 PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10020 tox -e poodledev -- ./tests/test_scenarios_synthetic.py::test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synthetic > log-synt-21
 PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10021 tox -e poodledev -- ./tests/test_scenarios_synthetic.py::test_24_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step3 > log-synt-24
+
+

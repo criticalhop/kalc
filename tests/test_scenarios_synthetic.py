@@ -118,9 +118,11 @@ def prepare_test_0_run_pods_no_eviction():
     ds.podList.add(pod_pending_1)
     ds.amountOfActivePods = 0
     pod_pending_1.hasDaemonset = True
-    k.state_objects.extend([n, pc, pod_pending_1, ds])
-    create_objects = []
+    k.state_objects.extend([n, pc, ds])
+    create_objects = [pod_pending_1]
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k.state_objects.extend(create_objects)
+    k._build_state()
     return k, k2
 
 @pytest.mark.debug(reason="this test is for debug perspective")
@@ -193,6 +195,7 @@ def construct_scpace_for_test_1_run_pods_with_eviction():
     scheduler.queueLength += 1
     scheduler.status = STATUS_SCHED["Changed"]
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1])
+    k._build_state()
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
     return k, k2
@@ -267,6 +270,7 @@ def construct_scpace_for_test_2_synthetic_service_outage():
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
     return k, k2
 
 @pytest.mark.debug(reason="if debug needed - uncomment me")
@@ -1695,7 +1699,7 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     not_assert_conditions = ["NodeOutageFinished"]
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
 
-def test_19_has_deployment_creates_deployment__pods_evicted_pods_pending():
+def test_19_has_deployment_creates_deployment__pods_evicted_pods_pending_test_snackable_branch():
     # print("19")
     k = KubernetesCluster()
     prios = {}
@@ -1769,7 +1773,6 @@ def test_19_has_deployment_creates_deployment__pods_evicted_pods_pending():
     p.xrun()
     # print("---after calculation ----")
     # print_objects(k.state_objects)
-
     assert d_new.amountOfActivePods == 2
     assert d_was.amountOfActivePods == 1
     assert node.amountOfActivePods == 3
