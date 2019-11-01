@@ -636,14 +636,16 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         if test_assert_brake == False:
             print("OK")
+        print_plan(p)
+
     test_mode = "loading test"
     test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+    if debug_mode:
+        print_plan(p2)
     if test_assert_brake == True:
-
         test_mode = "functional test"
         test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         raise Exception("###  Error loading data   ####")
-
 
 def reload_cluster_from_yaml(k, create_objects):
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)

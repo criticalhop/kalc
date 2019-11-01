@@ -292,3 +292,6 @@ class Check_services_and_deployments(Check_services,Check_deployments):
 
 class Check_services_deployments_daemonsets(Check_daemonsets,Check_services,Check_deployments):
     pass
+class Check_node_outage_and_service_restart(Check_services_restart):
+    goal = lambda self: self.globalVar.goal_achieved == True and \
+                                self.globalVar.is_node_disrupted == True

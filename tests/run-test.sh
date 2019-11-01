@@ -21,4 +21,5 @@ PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10019 tox -e poodledev -- ./tests
 PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10020 tox -e poodledev -- ./tests/test_scenarios_synthetic.py::test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synthetic > log-synt-21
 PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10021 tox -e poodledev -- ./tests/test_scenarios_synthetic.py::test_24_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step3 > log-synt-24
 
+PYTHON=pypy POODLE_SOLVER_URL=http://localhost:10028 tox -e poodledev -- ./tests/test_scenarios_synthetic.py::test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_mem_request > log-synt-28
 

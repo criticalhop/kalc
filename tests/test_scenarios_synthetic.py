@@ -221,7 +221,6 @@ def test_1_run_pods_with_eviction_invload():
     
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
 
-
 def construct_scpace_for_test_2_synthetic_service_outage():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -2177,3 +2176,62 @@ def prepare_test_has_service_only_on_node_that_gets_disrupted():
 #     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
 #     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
 #     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+
+def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_mem_request():
+    # print("28")
+    "Test that killPod works for deployment"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,d,None)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n,d,None)
+    n.amountOfActivePods = 2
+    pod_running_1.memRequest = 0
+    pod_running_2.memRequest = 0
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1, d])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
+
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)

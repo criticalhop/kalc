@@ -337,6 +337,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
         assert schedulerqueuelengthPrev == scheduler.queueLength
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
@@ -368,6 +371,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasService == False 
         assert podBeingKilled.hasDeployment == True 
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
@@ -401,6 +407,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasService == False  
         assert podBeingKilled.hasDeployment == False 
         assert podBeingKilled.hasDaemonset == False
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
@@ -437,6 +446,9 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == True 
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
@@ -513,7 +525,10 @@ class KubernetesModel(ProblemTemplate):
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert podBeingKilled.hasService == False 
         assert podBeingKilled.hasDeployment == False  
-        assert podBeingKilled.hasDaemonset == True 
+        assert podBeingKilled.hasDaemonset == True
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
@@ -862,7 +877,33 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
-
+    @planned(cost=100)
+    def ReplaceNullCpuRequestsWithZero(self,
+        pod: "Pod"):
+        # assert pod.status == STATUS_POD["Running"]
+        assert pod.cpuRequest == -1
+        pod.cpuRequest = 0
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="CPU request for Pod is not defined, further it is threated as Zero",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
+    @planned(cost=100)
+    def ReplaceNullMemRequestsWithZero(self,
+        pod: "Pod"):
+        # assert pod.status == STATUS_POD["Running"]
+        assert pod.memRequest == -1
+        pod.memRequest = 0
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="CPU request for Pod is not defined, further it is threated as Zero",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 class Random_events(ProblemTemplate):
     pass
