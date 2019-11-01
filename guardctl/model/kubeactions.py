@@ -473,8 +473,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
             pods_daemonset: DaemonSet,
-            scheduler: "Scheduler",
-            amountOfActivePodsPrev: int
+            scheduler: "Scheduler"
 
          ):
         assert podBeingKilled.atNode == nodeWithPod
@@ -482,7 +481,6 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
         assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
         assert podBeingKilled.hasDaemonset == True #TODO add this for branching
@@ -510,9 +508,7 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             pods_daemonset: DaemonSet,
-            scheduler: "Scheduler",
-            amountOfActivePodsPrev: int
-
+            scheduler: "Scheduler"
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
