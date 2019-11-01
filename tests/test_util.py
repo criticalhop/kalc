@@ -33,7 +33,6 @@ def print_objects(objectList):
         ", MemRequest: " + str(poditem.memRequest._get_value()) + \
         ", CpuLimit: " + str(poditem.cpuLimit._get_value()) + \
         ", MemLimit: " + str(poditem.memLimit._get_value()) + \
-        ", TargetService: "+ str(poditem.targetService._property_value) +\
         ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]) + \
         ", hasService: " + str(poditem.hasService._get_value()) + \
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
@@ -59,7 +58,8 @@ def print_objects(objectList):
         print("## Service: "+str(service.metadata_name)+\
         ", AmountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
         ", Status: " + str(service.status._get_value()) +
-        ", Spec_selector: "+str([str(x) for x in service.spec_selector._property_value]))
+        ", Spec_selector: "+str([str(x) for x in service.spec_selector._property_value])+\
+        ", Pod_List: "+str([str(x) for x in service.podList._get_value()]))
 
 
     prios = filter(lambda x: isinstance(x, PriorityClass), objectList)

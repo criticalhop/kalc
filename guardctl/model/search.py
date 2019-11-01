@@ -193,7 +193,7 @@ class Check_services(OptimisticRun):
         assert service1.amountOfActivePods == 0
         # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
         assert service1.searchable == True  
-        assert pod1.targetService == service1
+        assert pod1 in service1.podList
         assert service1.isNull == False
 
         service1.status = STATUS_SERV["Interrupted"]
@@ -221,7 +221,7 @@ class Check_services_restart(OptimisticRun):
         assert service1.amountOfActivePods == 0
         # assert service1.status == STATUS_SERV["Started"] # TODO: Activate  this condition -  if service has to be started before eviction  
         assert service1.searchable == True  
-        assert pod1.targetService == service1
+        assert pod1 in service1.podList
         assert service1.isNull == False
 
         service1.status = STATUS_SERV["Interrupted"]

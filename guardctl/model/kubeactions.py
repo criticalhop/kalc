@@ -326,7 +326,7 @@ class KubernetesModel(ProblemTemplate):
             scheduler: "Scheduler"
          ):
         assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.targetService == serviceOfPod
+        assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert podBeingKilled.hasService == True 
@@ -437,7 +437,7 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
-        assert podBeingKilled.targetService == serviceOfPod
+        assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == True 
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
@@ -477,7 +477,7 @@ class KubernetesModel(ProblemTemplate):
 
          ):
         assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.targetService == serviceOfPod
+        assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.status ==  STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
@@ -567,7 +567,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
-        assert podStarted.targetService == serviceTargetForPod
+        assert podStarted in serviceTargetForPod.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
@@ -642,7 +642,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
-        assert podStarted.targetService == serviceTargetForPod
+        assert podStarted in serviceTargetForPod.podList
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1

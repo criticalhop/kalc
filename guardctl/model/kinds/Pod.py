@@ -27,8 +27,8 @@ class Pod(HasLabel, HasLimitsRequests):
 
     # internal model attributes
     ownerReferences: Controller
-    TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
-    targetService: "mservice.Service"
+    # TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
+    # targetService: "mservice.Service"
     atNode: "mnode.Node"
     toNode: "mnode.Node"
     realInitialMemConsumption: int
@@ -50,7 +50,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.priority = 0
         self.spec_priorityClassName = "KUBECTL-VAL-NONE"
         self.priorityClass = zeroPriorityClass
-        self.targetService = mservice.Service.SERVICE_NULL
+        # self.targetService = mservice.Service.SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
         self.cpuRequest = 1
@@ -108,7 +108,7 @@ class Pod(HasLabel, HasLimitsRequests):
                     set(service.spec_selector._get_value())\
                         .issubset(set(self.metadata_labels._get_value())):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
-                self.targetService = service
+                service.podList.add(self)
                 self.hasService = True
                 if list(service.metadata_labels._get_value()):
                     if self.status._property_value == STATUS_POD["Running"]:
@@ -165,11 +165,10 @@ class Pod(HasLabel, HasLimitsRequests):
             label: Label):
         # TODO: full selector support
         # TODO: only if pod is running, service is started
-        assert pod.targetService == pod.TARGET_SERVICE_NULL
         assert label in pod.metadata_labels
         assert label in service.spec_selector
         assert pod.status == STATUS_POD["Running"]
-        pod.targetService = service
+        service.podList.add(pod)
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
 
