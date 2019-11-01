@@ -323,20 +323,15 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
-            # globalVar1: "GlobalVar",
-            scheduler: "Scheduler",
-            amountOfActivePodsPrev: int,
-            schedulerqueuelengthPrev: int
+            scheduler: "Scheduler"
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.targetService == serviceOfPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-        assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
         assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
         assert podBeingKilled.hasDaemonset == False #TODO add this for branching
-        assert schedulerqueuelengthPrev == scheduler.queueLength
         assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         #TODO: make sure that calculation excude situations that lead to negative number in the result
@@ -900,7 +895,7 @@ class KubernetesModel(ProblemTemplate):
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="CPU request for Pod is not defined, further it is threated as Zero",
+            description="MEM request for Pod is not defined, further it is threated as Zero",
             parameters={},
             probability=1.0,
             affected=[]
