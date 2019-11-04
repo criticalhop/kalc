@@ -1,6 +1,6 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import prepare_yamllist_for_diff
-from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun
+from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun, Check_node_outage_and_service_restart
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -2178,9 +2178,97 @@ def prepare_test_has_service_only_on_node_that_gets_disrupted():
 #     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
 
-def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_mem_request():
+def test_29_many_pods():
     # print("28")
     "Test that killPod works for deployment"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    i = 0
+    for i in range(3): 
+        n[i] = Node("node"+str(i))
+        n[i].cpuCapacity = 5
+        n[i].memCapacity = 5
+        n[i].isNull = False
+
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2
+
+    # Create running pods with requests
+    pod_running=[],[]
+    node_num = 0
+    for i in range(2):
+        pod_running[node_num,i] = build_running_pod_with_d(i,2,2,n[node_num],d,None)
+        n.amountOfActivePods += 1
+
+    # Create running pods with 0 requests
+    for i in range(2):
+        pod_running[node_num,i] = build_running_pod_with_d(i,0,0,n[node_num],d,None)
+        n.amountOfActivePods += 1
+    # Create running pods with requests
+    node_num = 1
+    for i in range(2):
+        pod_running[node_num,i] = build_running_pod_with_d(i,2,2,n[node_num],d,None)
+        n.amountOfActivePods += 1
+
+    # Create running pods with 0 requests
+    for i in range(2):
+        pod_running[node_num,i] = build_running_pod_with_d(i,0,0,n[node_num],d,None)
+        n.amountOfActivePods += 1
+
+    # Create running pods with requests
+    node_num = 2
+    for i in range(2):
+        pod_running[node_num,i] = build_running_pod_with_d(i,2,2,n[node_num],d,None)
+        n.amountOfActivePods += 1
+
+    # Create running pods with 0 requests
+    for i in range(2):
+        pod_running[node_num,i] = build_running_pod_with_d(i,0,0,n[node_num],d,None)
+        n.amountOfActivePods += 1
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+    
+    k.state_objects.extend([n[0],n[1],n[2],pc, s, pod_pending_1, d])
+    for n in node_num:
+        for i in range(2):
+            k.state_objects.extend([pod_running[n,i]])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    class NewGoal_k1(Check_node_outage_and_service_restart):
+        pass
+    p = NewGoal_k1(k.state_objects)
+    class NewGoal_k2(Check_node_outage_and_service_restart):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+
+
+def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_mem_request():
+    # print("28")
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
