@@ -10,6 +10,7 @@ class GlobalVar(Object):
     is_service_disruption_searchable: bool
     is_node_disrupted: bool
     amountOfNodesDisrupted: int
+    limitOfAmountOfNodesDisrupted: int
     is_node_disruption_searchable: bool
     is_daemonset_disrupted: bool
     is_daemonset_distuption_searchable: bool
@@ -28,5 +29,6 @@ class GlobalVar(Object):
         self.is_node_disruption_searchable = True
         self.is_daemonset_distuption_searchable = True
         self.amountOfNodesDisrupted = 0
+        self.limitOfAmountOfNodesDisrupted = 10
         self.block_node_outage_in_progress = False
         

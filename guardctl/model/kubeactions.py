@@ -817,7 +817,7 @@ class KubernetesModel(ProblemTemplate):
         node_with_outage: "Node",
         globalVar: GlobalVar
         ):
-        assert globalVar.amountOfNodesDisrupted == 0
+        assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
         assert node_with_outage.searchable == True
         node_with_outage.status = STATUS_NODE["Killing"]
         globalVar.block_node_outage_in_progress = True
@@ -856,7 +856,7 @@ class KubernetesModel(ProblemTemplate):
         ):
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Killing"]
-        globalVar.amountOfNodesDisrupted = 1
+        globalVar.amountOfNodesDisrupted += 1
         node.status = STATUS_NODE["Inactive"]
         globalVar.block_node_outage_in_progress = False
         # TODO make ability to calculate multiple nodes outage
