@@ -641,11 +641,14 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         print(e)
         test_assert_brake = True
     if debug_mode:
-        print_plan(p)
+        print("plan from yaml :")
         print_plan(p2)
     if test_assert_brake :
         test_mode = "functional test"
         test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+        if debug_mode:
+            print("plan orig :")
+            print_plan(p)
         raise Exception("###  Error loading data   ####")
 
 def reload_cluster_from_yaml(k, create_objects):
