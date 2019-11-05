@@ -302,6 +302,8 @@ def render_object(ob, load_logic_support=True):
         }
     }
     # Pod
+    services = [x for x in ob if type(x).__name__ == "Service"]
+    
     if str(type(ob).__name__) == "Pod":
         # TODO: add hasDeployment to annotations
         labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(100000000, 999999999))}
@@ -320,8 +322,11 @@ def render_object(ob, load_logic_support=True):
             if not "spec" in d: d["spec"] = {}
             node = ob.atNode._property_value
             d["spec"] = {"nodeName": str(node.metadata_name)}
-        if ob.targetService._property_value != mservice.Service.SERVICE_NULL:
-            serv = ob.targetService._property_value
+        for s in services:
+            if ob in s.podList:
+                target_service = s
+        if target_service:
+            serv = target_service._property_value
             if not hasattr(serv, "asdict"):
                 labels = {"service": str(serv.metadata_name)+str(random.randint(100000000, 999999999))}
                 d_serv = render_object(serv, load_logic_support=load_logic_support)[0]

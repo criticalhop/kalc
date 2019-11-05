@@ -254,7 +254,7 @@ def construct_scpace_for_test_2_synthetic_service_outage():
 
     # our service has only one pod so it can detect outage
     #  (we can't evict all pods here with one)
-    pod_running_1.targetService = s
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
 
     # Pending pod
@@ -412,7 +412,7 @@ def test_2_synthetic_service_outage_step6_noNodeSelected():
 
     # our service has only one pod so it can detect outage
     #  (we can't evict all pods here with one)
-    pod_running_1.targetService = s
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
 
     # Pending pod
@@ -528,8 +528,8 @@ def construct_multi_pods_eviction_problem():
     # our service has only one pod so it can detect outage
     #  (we can't evict all pods here with one)
     # TODO: no outage detected if res is not 4
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
 
     pod_running_1.hasService = True
     pod_running_2.hasService = True
@@ -612,8 +612,8 @@ def prepare_test_4_synthetic_service_NO_outage_multi():
     # our service has only one pod so it can detect outage
     #  (we can't evict all pods here with one)
     # TODO: no outage detected if res is not 4
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
 
     pod_running_1.hasService = True
     pod_running_2.hasService = True
@@ -684,8 +684,8 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     # our service has only one pod so it can detect outage
     #  (we can't evict all pods here with one)
     # TODO: no outage detected if res is not 4
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
 
     pod_running_1.hasService = True
     pod_running_2.hasService = True
@@ -874,9 +874,9 @@ def test_7_evict_and_killpod_with_deployment_and_service():
 
     # our service has multiple pods but we are detecting pods pending issue
     # remove service as we are detecting service outage by a bug above
-    pod_running_1.targetService = s
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_2)
     pod_running_2.hasService = True
 
     # Pending pod
@@ -937,12 +937,7 @@ def test_8_evict_and_killpod_with_daemonset_without_service():
     # s.amountOfActivePods = 2
     # s.status = STATUS_SERV["Started"]
 
-    # our service has multiple pods but we are detecting pods pending issue
-    # remove service as we are detecting service outage by a bug above
-    # pod_running_1.targetService = s
-    # pod_running_1.hasService = True
-    # pod_running_2.targetService = s
-    # pod_running_2.hasService = True
+
 
     # Pending pod
     pod_pending_1 = build_pending_pod(3,2,2,n)
@@ -1003,9 +998,9 @@ def test_9_evict_and_killpod_with_daemonset_with_service():
 
     # our service has multiple pods but we are detecting pods pending issue
     # remove service as we are detecting service outage by a bug above
-    pod_running_1.targetService = s
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_2)
     pod_running_2.hasService = True
 
     # Pending pod
@@ -1055,7 +1050,7 @@ def test_10_startpod_without_deployment_without_service():
     # Service  
     s = Service()
 
-    pod_running_1.targetService = s
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
 
 
@@ -1110,7 +1105,7 @@ def test_11_startpod_without_deployment_with_service():
     s.amountOfActivePods = 0
     s.status = STATUS_SERV["Pending"]
  
-    pod_pending_1.targetService = s
+    s.podList.add(pod_pending_1)
     pod_pending_1.hasService = True
 
     ## Add pod to scheduler queue
@@ -1162,9 +1157,9 @@ def test_12_startpod_with_deployment_with_service():
     s.amountOfActivePods = 0
     s.status = STATUS_SERV["Pending"]
  
-    pod_running_1.targetService = s
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
-    pod_pending_1.targetService = s
+    s.podList.add(pod_pending_1)
     pod_pending_1.hasService = True
 
     ## Add pod to scheduler queue
@@ -1256,9 +1251,9 @@ def test_14_startpod_with_daemonset_with_service():
     s.amountOfActivePods = 0
     s.status = STATUS_SERV["Pending"]
  
-    pod_running_1.targetService = s
+    s.podList.add(pod_pending_1)
     pod_running_1.hasService = True
-    pod_pending_1.targetService = s
+    s.podList.add(pod_pending_1)
     pod_pending_1.hasService = True
 
     ## Add pod to scheduler queue
@@ -1462,8 +1457,8 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
 
     # our service has multiple pods but we are detecting pods pending issue
     # remove service as we are detecting service outage by a bug above
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_1)
     pod_running_1.hasService = True
     pod_running_2.hasService = True
 
@@ -1495,7 +1490,7 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     snew.metadata_name = "test-service-new"
     snew.amountOfActivePods = 0
     snew.status = STATUS_SERV["Pending"]
-    pod_pending_1.targetService = snew
+    snew.podList.add(pod_pending_1)
     pod_pending_1.hasService = True
     snew.searchable = True
 
@@ -1556,8 +1551,8 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
 
     # our service has multiple pods but we are detecting pods pending issue
     # remove service as we are detecting service outage by a bug above
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
     pod_running_1.hasService = True
     pod_running_2.hasService = True
 
@@ -1590,7 +1585,7 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
     snew.metadata_name = "test-service-new"
     snew.amountOfActivePods = 0
     snew.status = STATUS_SERV["Pending"]
-    pod_pending_1.targetService = snew
+    snew.podList.add(pod_pending_1)
     pod_pending_1.hasService = True
     snew.searchable = True
 
@@ -1650,8 +1645,8 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
 
     # our service has multiple pods but we are detecting pods pending issue
     # remove service as we are detecting service outage by a bug above
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
     pod_running_1.hasService = True
     pod_running_2.hasService = True
 
@@ -1685,7 +1680,7 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     snew.metadata_name = "test-service-new"
     snew.amountOfActivePods = 0
     snew.status = STATUS_SERV["Pending"]
-    pod_pending_1.targetService = snew
+    snew.podList.add(pod_pending_1)
     pod_pending_1.hasService = True
     snew.searchable = True
 
@@ -1693,7 +1688,7 @@ def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_
     snew2.metadata_name = "test-service-new"
     snew2.amountOfActivePods = 0
     snew2.status = STATUS_SERV["Pending"]
-    pod_pending_2.targetService = snew2
+    snew2.podList.add(pod_pending_2)
     pod_pending_2.hasService = True
     snew2.searchable = True
 
@@ -1899,10 +1894,7 @@ def test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synt
     # # Service to detecte eviction
     s = Service()
     s.metadata_name = "test-service"
-    # s.amountOfActivePods = 2
-    # s.status = STATUS_SERV["Started"]
-    # pod_running_1.targetService = s
-    # pod_running_2.targetService = s
+ 
 
     # Pending pod with deployment
     d = Deployment()
@@ -1971,8 +1963,8 @@ def prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_
     s.metadata_name = "test-service"
     s.amountOfActivePods = 2
     s.status = STATUS_SERV["Started"]
-    pod_running_1.targetService = s
-    pod_running_2.targetService = s
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
 
     # Pending pod with deployment
     d = Deployment()
@@ -2085,13 +2077,14 @@ def prepare_test_has_service_only_on_node_that_gets_disrupted():
     s2.amountOfActivePods = 4
     s2.status = STATUS_SERV["Started"]
 
-    pod_running_1.targetService = s1
-    pod_running_2.targetService = s1
-    pod_running_3.targetService = s2
-    pod_running_4.targetService = s2
-    pod_running_5.targetService = s2
-    pod_running_6.targetService = s2
-
+    s1.podList.add(pod_running_1)
+    s1.podList.add(pod_running_2)
+    s2.podList.add(pod_running_3)
+    s2.podList.add(pod_running_4)
+    s2.podList.add(pod_running_5)
+    s2.podList.add(pod_running_6)
+    s2.podList.add(pod_running_7)
+    
     pod_running_1.hasService = True
     pod_running_2.hasService = True
     pod_running_3.hasService = True
@@ -2177,96 +2170,6 @@ def prepare_test_has_service_only_on_node_that_gets_disrupted():
 #     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
 #     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
 
-
-def test_29_many_pods():
-    # print("28")
-    "Test that killPod works for deployment"
-    # Initialize scheduler, globalvar
-    k = KubernetesCluster()
-    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    # initial node state
-    i = 0
-    for i in range(3): 
-        n[i] = Node("node"+str(i))
-        n[i].cpuCapacity = 5
-        n[i].memCapacity = 5
-        n[i].isNull = False
-
-    # create Deploymnent that we're going to detect failure of...
-    d = Deployment()
-    d.spec_replicas = 2
-
-    # Create running pods with requests
-    pod_running=[],[]
-    node_num = 0
-    for i in range(2):
-        pod_running[node_num,i] = build_running_pod_with_d(i,2,2,n[node_num],d,None)
-        n.amountOfActivePods += 1
-
-    # Create running pods with 0 requests
-    for i in range(2):
-        pod_running[node_num,i] = build_running_pod_with_d(i,0,0,n[node_num],d,None)
-        n.amountOfActivePods += 1
-    # Create running pods with requests
-    node_num = 1
-    for i in range(2):
-        pod_running[node_num,i] = build_running_pod_with_d(i,2,2,n[node_num],d,None)
-        n.amountOfActivePods += 1
-
-    # Create running pods with 0 requests
-    for i in range(2):
-        pod_running[node_num,i] = build_running_pod_with_d(i,0,0,n[node_num],d,None)
-        n.amountOfActivePods += 1
-
-    # Create running pods with requests
-    node_num = 2
-    for i in range(2):
-        pod_running[node_num,i] = build_running_pod_with_d(i,2,2,n[node_num],d,None)
-        n.amountOfActivePods += 1
-
-    # Create running pods with 0 requests
-    for i in range(2):
-        pod_running[node_num,i] = build_running_pod_with_d(i,0,0,n[node_num],d,None)
-        n.amountOfActivePods += 1
-
-    # priority for pod-to-evict
-    pc = PriorityClass()
-    pc.priority = 10
-    pc.metadata_name = "high-prio-test"
-
-    # Service to detecte eviction
-    s = Service()
-    s.metadata_name = "test-service"
-
-    # Pending pod
-    pod_pending_1 = build_pending_pod(3,2,2,n)
-    pod_pending_1.priorityClass = pc # high prio will evict!
-
-    ## Add pod to scheduler queue
-    scheduler.podQueue.add(pod_pending_1)
-    scheduler.queueLength += 1
-    scheduler.status = STATUS_SCHED["Changed"]
-    
-    k.state_objects.extend([n[0],n[1],n[2],pc, s, pod_pending_1, d])
-    for n in node_num:
-        for i in range(2):
-            k.state_objects.extend([pod_running[n,i]])
-    create_objects = []
-    k2 = reload_cluster_from_yaml(k,create_objects)
-    k._build_state()
-    class NewGoal_k1(Check_node_outage_and_service_restart):
-        pass
-    p = NewGoal_k1(k.state_objects)
-    class NewGoal_k2(Check_node_outage_and_service_restart):
-        pass
-    p2 = NewGoal_k2(k2.state_objects)
-    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
-                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
-    not_assert_conditions = ["NodeOutageFinished"]
-    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
-
-
-
 def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_mem_request():
     # print("28")
     # Initialize scheduler, globalvar
@@ -2318,6 +2221,63 @@ def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_m
     pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
     class NewGoal_k2(OptimisticRun):
         goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+    
+def test_29_many_pods():
+    # print("29")
+    "Test that killPod works for deployment"
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    i = 0
+    j = 0
+    nodes = []
+    pods = []
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2    
+    for i in range(2): 
+        node_item = Node("node"+str(i))
+        node_item.cpuCapacity = 15
+        node_item.memCapacity = 15
+        node_item.isNull = False
+        nodes.append(node_item)
+        for j in range(5):
+            pod_running_2 = build_running_pod_with_d((i+1)*j,2,2,node_item,d,None)
+            pods.append(pod_running_2)
+            node_item.amountOfActivePods += 1
+        for j in range(5):
+            pod_running_0 = build_running_pod_with_d((i+1)*j,0,0,node_item,d,None)
+            pods.append(pod_running_0)
+            node_item.amountOfActivePods += 1
+
+    
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    
+    k.state_objects.extend(nodes)
+    k.state_objects.extend(pods)
+    k.state_objects.extend([pc, s, d])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    class NewGoal_k1(Check_node_outage_and_service_restart):
+        pass
+    p = NewGoal_k1(k.state_objects)
+    class NewGoal_k2(Check_node_outage_and_service_restart):
+        pass
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
                         "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]

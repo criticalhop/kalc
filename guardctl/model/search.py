@@ -15,7 +15,7 @@ from guardctl.model.kinds.Node import Node
 from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from guardctl.model.scenario import ScenarioStep, describe
 from guardctl.misc.const import *
-from guardctl.model.kubeactions import KubernetesModel,Random_events
+from guardctl.model.kubeactions import KubernetesModel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 import re
 
