@@ -633,16 +633,17 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         # compare_yaml_files(k,k2)
         print("--functional test--")    
         test_mode = "functional test"
-        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
-        if test_assert_brake == False:
-            print("OK")
-        print_plan(p)
 
     test_mode = "loading test"
-    test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+    try:
+        test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+    except Exception as e:
+        print(e)
+        test_assert_brake = True
     if debug_mode:
+        print_plan(p)
         print_plan(p2)
-    if test_assert_brake == True:
+    if test_assert_brake :
         test_mode = "functional test"
         test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         raise Exception("###  Error loading data   ####")
