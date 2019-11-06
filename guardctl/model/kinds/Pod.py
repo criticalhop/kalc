@@ -53,8 +53,8 @@ class Pod(HasLabel, HasLimitsRequests):
         # self.targetService = mservice.Service.SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
         self.atNode = mnode.Node.NODE_NULL
-        self.cpuRequest = 1
-        self.memRequest = 1
+        self.cpuRequest = -1
+        self.memRequest = -1
         self.status = STATUS_POD["Pending"]
         self.isNull = False
         self.realInitialMemConsumption = 0
