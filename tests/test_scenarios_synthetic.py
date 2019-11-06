@@ -1,6 +1,6 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import prepare_yamllist_for_diff
-from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun, Check_node_outage_and_service_restart
+from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun, CheckNodeOutage, Check_node_outage_and_service_restart
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -19,7 +19,7 @@ from guardctl.model.scenario import Scenario
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml
 
-DEBUG_MODE = True
+DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
 
 def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1 = Pod()
@@ -2239,6 +2239,11 @@ def test_29_many_pods():
     j = 0
     nodes = []
     pods = []
+    
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+
     # create Deploymnent that we're going to detect failure of...
     d = Deployment()
     d.spec_replicas = 2    
@@ -2252,6 +2257,7 @@ def test_29_many_pods():
             pod_running_2 = build_running_pod_with_d((i+1)*j,2,2,node_item,d,None)
             pods.append(pod_running_2)
             node_item.amountOfActivePods += 1
+            s.podList.add(pod_running_2)
         for j in range(5):
             pod_running_0 = build_running_pod_with_d((i+1)*j,0,0,node_item,d,None)
             pods.append(pod_running_0)
@@ -2263,9 +2269,6 @@ def test_29_many_pods():
     pc.priority = 10
     pc.metadata_name = "high-prio-test"
 
-    # Service to detecte eviction
-    s = Service()
-    s.metadata_name = "test-service"
     
     k.state_objects.extend(nodes)
     k.state_objects.extend(pods)
@@ -2273,10 +2276,10 @@ def test_29_many_pods():
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
     k._build_state()
-    class NewGoal_k1(Check_node_outage_and_service_restart):
+    class NewGoal_k1(CheckNodeOutage):
         pass
     p = NewGoal_k1(k.state_objects)
-    class NewGoal_k2(Check_node_outage_and_service_restart):
+    class NewGoal_k2(CheckNodeOutage):
         pass
     p2 = NewGoal_k2(k2.state_objects)
     assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\

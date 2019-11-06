@@ -302,7 +302,7 @@ def render_object(ob, load_logic_support=True):
         }
     }
     # Pod
-    services = [x for x in ob if type(x).__name__ == "Service"]
+    # services = []
     
     if str(type(ob).__name__) == "Pod":
         # TODO: add hasDeployment to annotations
@@ -322,21 +322,21 @@ def render_object(ob, load_logic_support=True):
             if not "spec" in d: d["spec"] = {}
             node = ob.atNode._property_value
             d["spec"] = {"nodeName": str(node.metadata_name)}
-        for s in services:
-            if ob in s.podList:
-                target_service = s
-        if target_service:
-            serv = target_service._property_value
-            if not hasattr(serv, "asdict"):
-                labels = {"service": str(serv.metadata_name)+str(random.randint(100000000, 999999999))}
-                d_serv = render_object(serv, load_logic_support=load_logic_support)[0]
-                if "labels" in d_serv["metadata"]:
-                    labels = d_serv["metadata"]["labels"]
-                d_serv["metadata"]["labels"] = labels
-                serv.asdict = d_serv
-            else:
-                labels = serv.asdict["metadata"]["labels"]
-                # print("skip service")
+        # for s in services:
+        #     if ob in s.podList:
+        #         target_service = s
+        # if target_service:
+        #     serv = target_service._property_value
+        #     if not hasattr(serv, "asdict"):
+        #         labels = {"service": str(serv.metadata_name)+str(random.randint(100000000, 999999999))}
+        #         d_serv = render_object(serv, load_logic_support=load_logic_support)[0]
+        #         if "labels" in d_serv["metadata"]:
+        #             labels = d_serv["metadata"]["labels"]
+        #         d_serv["metadata"]["labels"] = labels
+        #         serv.asdict = d_serv
+        #     else:
+        #         labels = serv.asdict["metadata"]["labels"]
+        #         # print("skip service")
         if getint(ob.cpuRequest) > -1:
             if not "spec" in d: d["spec"] = {}
             if not "containers" in d["spec"]: 
@@ -601,12 +601,12 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
     if not p.plan:
         brake = True
     if not brake:
-        if debug_mode:
+        if debug_mode > 0:
             print("--- ",test_mode,": Ok")
         else:
             pass
     else:
-        if debug_mode:
+        if debug_mode > 0:
             print("--- ",test_mode,": Error")
             print_plan(p)
     return  brake
@@ -623,7 +623,8 @@ def compare_yaml_files(k,k2):
         print("yaml files are similar")
 
 def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,debug_mode):
-    if debug_mode:
+    test_assert_brake = False
+    if debug_mode > 0:
         print("--print_objects--")    
         print("--k1--")    
         print_objects(k.state_objects)
@@ -639,30 +640,45 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
         print("--functional test--")    
         test_mode = "functional test"
 
-    test_mode = "loading test"
-    try:
-        test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
-    except Exception as e:
-        print(e)
-        test_assert_brake = True
-    if debug_mode:
+    if debug_mode == 1:
+        test_mode = "loading test"
+        try:
+            test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+        except Exception as e:
+            print(e)
+            test_assert_brake = True
         print("plan from yaml :")
         print_plan(p2)
-    if test_assert_brake :
+    
+    if test_assert_brake or debug_mode == 2 :
         test_mode = "functional test"
-        test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
-        if debug_mode:
-            print("plan orig :")
-            print_plan(p)
+        try:
+            test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+        except Exception as e:
+            print(e)
+        print("plan orig :")
+        print_plan(p)
         raise Exception("###  Error loading data   ####")
 
 def reload_cluster_from_yaml(k, create_objects):
-    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-    yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
+    perform_yaml_test = True
+
+    try:
+        yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    except Exception as e:
+        print("yaml conertion error",e)
+        perform_yaml_test = False
+    try:
+        yamlCreate = convert_space_to_yaml(create_objects, wrap_items=False, load_logic_support=False)
+    except Exception as e:
+        print("yaml 2 conertion error",e)
+        perform_yaml_test = False
     k2 = KubernetesCluster()
-    for y in yamlState:
-        k2.load(y)
-    for y in yamlCreate:
-        k2.load(y, mode=KubernetesCluster.CREATE_MODE)
+    if perform_yaml_test:
+        for y in yamlState:
+            k2.load(y)
+    if perform_yaml_test:
+        for y in yamlCreate:
+            k2.load(y, mode=KubernetesCluster.CREATE_MODE)
     k2._build_state()
     return k2
