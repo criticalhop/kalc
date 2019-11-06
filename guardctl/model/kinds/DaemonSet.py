@@ -56,7 +56,6 @@ class DaemonSet(Controller, HasLimitsRequests):
             new_pod.hasDaemonset = True
             self.podList.add(new_pod)
             object_space.append(new_pod)
-            self.amountOfActivePods += 1
 
     def hook_after_load(self, object_space):
         daemonSets = filter(lambda x: isinstance(x, DaemonSet), object_space)
@@ -71,7 +70,8 @@ class DaemonSet(Controller, HasLimitsRequests):
         for pod in pods:
             if str(pod.metadata_ownerReferences__name) == str(self.metadata_name):
                 self.podList.add(pod)
-                self.amountOfActivePods += 1
+                if pod.status._get_value() == STATUS_POD["Running"]._get_value():
+                    self.amountOfActivePods += 1
                 pod.hasDaemonset = True
                 for node in nodes:
                     if node.metadata_name._get_value() == pod.spec_nodeName._get_value():
