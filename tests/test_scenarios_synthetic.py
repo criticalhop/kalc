@@ -718,7 +718,7 @@ def test_synthetic_service_NO_outage_deployment_IS_outage_step_1():
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
  
     class test_synthetic_service_NO_outage_deployment_IS_outage_k1(Check_deployments):
-        goal = lambda self: pod_running_1.status == STATUS_POD["Killing"]
+        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
     p = test_synthetic_service_NO_outage_deployment_IS_outage_k1(k.state_objects)
 
     globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
@@ -727,7 +727,7 @@ def test_synthetic_service_NO_outage_deployment_IS_outage_step_1():
     pod_k2 = next(filter(lambda x: x.metadata_name._get_value() == "pod1", pods))
 
     class test_synthetic_service_NO_outage_deployment_IS_outage_k2(Check_deployments):
-        goal = lambda self: pod_k2.status == STATUS_POD["Killing"]
+        goal = lambda self: pod_k2.status == STATUS_POD["Pending"]
 
     p2 = test_synthetic_service_NO_outage_deployment_IS_outage_k2(k2.state_objects)
 
@@ -800,12 +800,12 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     k._build_state()
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class NewGoal_k1(Check_deployments):
-        goal = lambda self: globalVar_k1.goal_achieved == True
+        goal = lambda self: globalVar_k1.is_deployment_disrupted == True
     p = NewGoal_k1(k.state_objects)
 
     globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
     class NewGoal_k2(Check_deployments):
-        goal = lambda self: globalVar_k2.goal_achieved == True
+        goal = lambda self: globalVar_k2.is_deployment_disrupted == True
     p2 = NewGoal_k2(k2.state_objects)
 
     assert_conditions = ["MarkDeploymentOutageEvent"]
