@@ -649,6 +649,93 @@ def test_4_synthetic_service_NO_outage_multi():
     
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
 
+@pytest.mark.debug()
+def test_synthetic_service_NO_outage_deployment_IS_outage_step_1():
+    "Deployment (partial) outage must be registered in case where Deployment exists"
+    # Initialize scheduler, globalvar
+    # guardctl.misc.util.CPU_DIVISOR=40
+    # guardctl.misc.util.MEM_DIVISOR=125
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+    n.amountOfActivePods = 2
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+
+    # our service has only one pod so it can detect outage
+    #  (we can't evict all pods here with one)
+    # TODO: no outage detected if res is not 4
+    pod_running_1.targetService = s
+    pod_running_2.targetService = s
+
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    d = Deployment()
+    d.spec_replicas = 2
+    d.amountOfActivePods = 2
+    pod_running_1.hasDeployment = True
+    pod_running_2.hasDeployment = True
+    d.podList.add(pod_running_1)
+    d.podList.add(pod_running_2)
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s,d])
+    # guardctl.misc.util.CPU_DIVISOR=40
+    # guardctl.misc.util.MEM_DIVISOR=125
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    k2 = KubernetesCluster()
+    load_yaml(yamlState,k2)
+    k._build_state()
+    globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+ 
+    class test_synthetic_service_NO_outage_deployment_IS_outage_k1(Check_deployments):
+        goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
+    p = test_synthetic_service_NO_outage_deployment_IS_outage_k1(k.state_objects)
+
+    globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+
+    pods = filter(lambda x: isinstance(x, Pod), k2.state_objects)
+    pod_k2 = next(filter(lambda x: x.metadata_name._get_value() == "pod1", pods))
+
+    class test_synthetic_service_NO_outage_deployment_IS_outage_k2(Check_deployments):
+        goal = lambda self: pod_k2.status == STATUS_POD["Pending"]
+
+    p2 = test_synthetic_service_NO_outage_deployment_IS_outage_k2(k2.state_objects)
+
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined"]
+    not_assert_conditions = []
+    
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+    
 def test_synthetic_service_NO_outage_deployment_IS_outage():
     "Deployment (partial) outage must be registered in case where Deployment exists"
     # Initialize scheduler, globalvar
@@ -713,12 +800,12 @@ def test_synthetic_service_NO_outage_deployment_IS_outage():
     k._build_state()
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     class NewGoal_k1(Check_deployments):
-        goal = lambda self: globalVar_k1.goal_achieved == True
+        goal = lambda self: globalVar_k1.is_deployment_disrupted == True
     p = NewGoal_k1(k.state_objects)
 
     globalVar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
     class NewGoal_k2(Check_deployments):
-        goal = lambda self: globalVar_k2.goal_achieved == True
+        goal = lambda self: globalVar_k2.is_deployment_disrupted == True
     p2 = NewGoal_k2(k2.state_objects)
 
     assert_conditions = ["MarkDeploymentOutageEvent"]
