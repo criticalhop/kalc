@@ -134,7 +134,7 @@ class Pod(HasLabel, HasLimitsRequests):
     @spec_containers__resources_requests_cpu.setter
     def spec_containers__resources_requests_cpu(self, res):
         if self.cpuRequest == -1: self.cpuRequest = 0
-        self.cpuRequest = cpuConvertToAbstractProblem(res)
+        self.cpuRequest += cpuConvertToAbstractProblem(res)
 
     @property
     def spec_containers__resources_requests_memory(self):
@@ -142,7 +142,7 @@ class Pod(HasLabel, HasLimitsRequests):
     @spec_containers__resources_requests_memory.setter
     def spec_containers__resources_requests_memory(self, res):
         if self.memRequest == -1: self.memRequest = 0
-        self.memRequest = memConvertToAbstractProblem(res)
+        self.memRequest += memConvertToAbstractProblem(res)
 
     @property
     def status_phase(self):
