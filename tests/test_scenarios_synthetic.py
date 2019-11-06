@@ -120,8 +120,8 @@ def prepare_test_0_run_pods_no_eviction():
     pod_pending_1.hasDaemonset = True
     k.state_objects.extend([n, pc, ds])
     create_objects = [pod_pending_1]
-    k2 = reload_cluster_from_yaml(k,create_objects)
     k.state_objects.extend(create_objects)
+    k2 = reload_cluster_from_yaml(k,create_objects)
     k._build_state()
     return k, k2
 
