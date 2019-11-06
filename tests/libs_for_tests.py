@@ -302,8 +302,6 @@ def render_object(ob, load_logic_support=True):
         }
     }
     # Pod
-    # services = []
-    
     if str(type(ob).__name__) == "Pod":
         # TODO: add hasDeployment to annotations
         labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(100000000, 999999999))}
@@ -322,21 +320,6 @@ def render_object(ob, load_logic_support=True):
             if not "spec" in d: d["spec"] = {}
             node = ob.atNode._property_value
             d["spec"] = {"nodeName": str(node.metadata_name)}
-        # for s in services:
-        #     if ob in s.podList:
-        #         target_service = s
-        # if target_service:
-        #     serv = target_service._property_value
-        #     if not hasattr(serv, "asdict"):
-        #         labels = {"service": str(serv.metadata_name)+str(random.randint(100000000, 999999999))}
-        #         d_serv = render_object(serv, load_logic_support=load_logic_support)[0]
-        #         if "labels" in d_serv["metadata"]:
-        #             labels = d_serv["metadata"]["labels"]
-        #         d_serv["metadata"]["labels"] = labels
-        #         serv.asdict = d_serv
-        #     else:
-        #         labels = serv.asdict["metadata"]["labels"]
-        #         # print("skip service")
         if getint(ob.cpuRequest) > -1:
             if not "spec" in d: d["spec"] = {}
             if not "containers" in d["spec"]: 
@@ -534,6 +517,15 @@ def render_object(ob, load_logic_support=True):
     if str(type(ob).__name__) == "Service":
         labels = {"service": str(ob.metadata_name)+'-'+str(random.randint(100000000, 999999999))}
         d["spec"] = { "selector": labels }
+        d["metadata"]["labels"] = labels
+        lpods = ob.podList._get_value()
+        for podOb in lpods:
+            if not hasattr(pod, "asdict"):
+                d_pod = render_object(podOb, load_logic_support=load_logic_support)[0]
+                podOb.asdict = d_pod
+            else:
+                d_pod = podOb.asdict
+            labels = d_pod["metadata"]["labels"]
         d["metadata"]["labels"] = labels
     # Node
     if str(type(ob).__name__) == "Node":

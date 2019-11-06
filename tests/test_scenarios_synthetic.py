@@ -2083,7 +2083,7 @@ def prepare_test_has_service_only_on_node_that_gets_disrupted():
     s2.podList.add(pod_running_4)
     s2.podList.add(pod_running_5)
     s2.podList.add(pod_running_6)
-    s2.podList.add(pod_running_7)
+    # s2.podList.add(pod_running_7)
     
     pod_running_1.hasService = True
     pod_running_2.hasService = True
