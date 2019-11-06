@@ -520,7 +520,7 @@ def render_object(ob, load_logic_support=True):
         d["metadata"]["labels"] = labels
         lpods = ob.podList._get_value()
         for podOb in lpods:
-            if not hasattr(pod, "asdict"):
+            if not hasattr(podOb, "asdict"):
                 d_pod = render_object(podOb, load_logic_support=load_logic_support)[0]
                 podOb.asdict = d_pod
             else:
@@ -616,19 +616,22 @@ def compare_yaml_files(k,k2):
 
 def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,debug_mode):
     test_assert_brake = False
+    print_yamls = False
     if debug_mode > 0:
         print("--print_objects--")    
         print("--k1--")    
         print_objects(k.state_objects)
         print("--k2--")
         print_objects(k2.state_objects)
-        print("--print_yamls--")    
-        print("--k1--")    
-        print_objects_from_yaml(k)
-        print("--k2--")    
-        print_objects_from_yaml(k2)
-        # print("---yaml diff ---")
-        # compare_yaml_files(k,k2)
+        if print_yamls:
+            print("--print_yamls--")    
+            print("--k1--")    
+            print_objects_from_yaml(k)
+            print("--k2--")    
+            print_objects_from_yaml(k2)
+            print("---yaml diff ---")
+            compare_yaml_files(k,k2)
+        
         print("--functional test--")    
         test_mode = "functional test"
 
@@ -648,9 +651,10 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
             test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
         except Exception as e:
             print(e)
-        print("plan orig :")
-        print_plan(p)
-        raise Exception("###  Error loading data   ####")
+            print("plan orig :")
+            print_plan(p)
+            raise Exception("###  Error loading data   ####")
+    return test_assert_brake
 
 def reload_cluster_from_yaml(k, create_objects):
     perform_yaml_test = True

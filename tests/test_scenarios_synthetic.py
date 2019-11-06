@@ -2314,10 +2314,7 @@ def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_m
     not_assert_conditions = ["NodeOutageFinished"]
     checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
 
-    
-def test_29_many_pods():
-    # print("29")
-    "Test that killPod works for deployment"
+def prepare_test_29_many_pods_not_enough_capacity_for_service(nodes_amount,node_capacity,pod2_amount,pod0_amount,pod2_2_amount,pod3_amount):
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -2330,26 +2327,54 @@ def test_29_many_pods():
     # Service to detecte eviction
     s = Service()
     s.metadata_name = "test-service"
+    s.amountOfActivePods = 0
 
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 0
     # create Deploymnent that we're going to detect failure of...
     d = Deployment()
     d.spec_replicas = 2    
-    for i in range(2): 
+    pod_id = 1
+    for i in range(nodes_amount):
         node_item = Node("node"+str(i))
-        node_item.cpuCapacity = 15
-        node_item.memCapacity = 15
+        node_item.cpuCapacity = node_capacity
+        node_item.memCapacity = node_capacity
         node_item.isNull = False
+        node_item.status = STATUS_NODE["Active"]
         nodes.append(node_item)
-        for j in range(5):
-            pod_running_2 = build_running_pod_with_d((i+1)*j,2,2,node_item,d,None)
+        
+        for j in range(pod2_amount):
+            pod_running_2 = build_running_pod_with_d(pod_id,2,2,node_item,None,None)
+            pod_id += 1
+            pod_running_2.hasService = True
             pods.append(pod_running_2)
             node_item.amountOfActivePods += 1
             s.podList.add(pod_running_2)
-        for j in range(5):
-            pod_running_0 = build_running_pod_with_d((i+1)*j,0,0,node_item,d,None)
+            s.amountOfActivePods +=1
+
+        for j in range(pod0_amount):
+            pod_running_0 = build_running_pod_with_d(pod_id,0,0,node_item,None,None)
+            pod_id += 1
             pods.append(pod_running_0)
             node_item.amountOfActivePods += 1
+        for j in range(pod2_2_amount):
+            pod_running_2 = build_running_pod_with_d(pod_id,2,2,node_item,None,None)
+            pod_id += 1
+            pod_running_2.hasService = True
+            pods.append(pod_running_2)
+            node_item.amountOfActivePods += 1
+            s.podList.add(pod_running_2)
+            s.amountOfActivePods +=1
 
+    for j in range(pod3_amount):
+        pod_running_2 = build_running_pod_with_d(pod_id,2,2,nodes[1],None,None)
+        pod_id += 1
+        pod_running_2.hasService = True
+        pods.append(pod_running_2)
+        node_item.amountOfActivePods += 1
+        s2.podList.add(pod_running_2)
+        s2.amountOfActivePods +=1
     
     # priority for pod-to-evict
     pc = PriorityClass()
@@ -2359,7 +2384,7 @@ def test_29_many_pods():
     
     k.state_objects.extend(nodes)
     k.state_objects.extend(pods)
-    k.state_objects.extend([pc, s, d])
+    k.state_objects.extend([pc, s, s2 ])
     create_objects = []
     k2 = reload_cluster_from_yaml(k,create_objects)
     k._build_state()
@@ -2369,7 +2394,78 @@ def test_29_many_pods():
     class NewGoal_k2(CheckNodeOutage):
         pass
     p2 = NewGoal_k2(k2.state_objects)
-    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
-                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
-    not_assert_conditions = ["NodeOutageFinished"]
-    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    return k, k2, p , p2
+
+
+def test_29():
+    k, k2, p, p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,15,1,1,1,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+    if not assert_brake:
+        k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,19,2,2,1,1)
+        assert_conditions = ["MarkServiceOutageEvent",\
+                            "Mark_node_outage_event"]
+        not_assert_conditions = []
+        assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+        if not assert_brake:
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,23,3,3,1,1)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+            if not assert_brake:
+                k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,26,3,3,2,2)
+                assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+                not_assert_conditions = []
+                assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+                if not assert_brake:
+                    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,32,4,4,4,4)
+                    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+                    not_assert_conditions = []
+                    assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+                    if not assert_brake:
+                            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,40,5,5,5,5)
+                            assert_conditions = ["MarkServiceOutageEvent",\
+                                            "Mark_node_outage_event"]
+                            not_assert_conditions = []
+                            checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+
+def test_30():
+        k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,19,2,2,1,1)
+        assert_conditions = ["MarkServiceOutageEvent",\
+                            "Mark_node_outage_event"]
+        not_assert_conditions = []
+        assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+def test_31():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,23,3,3,1,1)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_32():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,26,3,3,2,2)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                    "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_33():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,32,4,4,4,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_34():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,40,5,5,5,5)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                            "Mark_node_outage_event"]
+            not_assert_conditions = []
+            checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
