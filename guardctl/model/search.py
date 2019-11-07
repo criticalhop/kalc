@@ -131,6 +131,7 @@ class OptimisticRun(K8ServiceInterruptSearch):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
         global_.goal_achieved = True
+        global_.is_service_disrupted = True 
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -241,6 +242,7 @@ class Check_services_restart(OptimisticRun):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
         global_.goal_achieved = True
+        global_.is_service_disrupted = True 
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
