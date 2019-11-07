@@ -581,7 +581,8 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
     return slist
 
 def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode):
-    p.run(timeout=200)
+    p.run(timeout=20000)
+    return_brake = True
     brake = False
     if p.plan:
         for a in assert_conditions:
@@ -601,7 +602,8 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
         if debug_mode > 0:
             print("--- ",test_mode,": Error")
             print_plan(p)
-    return  brake
+    return_brake = brake
+    return  return_brake
 
 def compare_yaml_files(k,k2):
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
