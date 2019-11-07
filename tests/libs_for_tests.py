@@ -317,10 +317,10 @@ def render_object(ob, load_logic_support=True):
             if not hasattr(pc, "asdict"):
                 r = render_object(pc, load_logic_support=load_logic_support)
                 ret_obj.append(r[0])
-        if ob.atNode._property_value != mnode.Node.NODE_NULL:
-            if not "spec" in d: d["spec"] = {}
-            node = ob.atNode._property_value
-            d["spec"] = {"nodeName": str(node.metadata_name)}
+        # if ob.atNode._property_value != mnode.Node.NODE_NULL:
+        #     if not "spec" in d: d["spec"] = {}
+        #     node = ob.atNode._property_value
+        #     d["spec"] = {"nodeName": str(node.metadata_name)}
         if getint(ob.cpuRequest) > -1:
             if not "spec" in d: d["spec"] = {}
             if not "containers" in d["spec"]: 
