@@ -109,7 +109,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar):
             # assert globalVar.block_node_outage_in_progress == False
             assert pod1.memLimit == -1
-            assert node == pod1.atNode
+            assert pod1 in node.podList
             assert memCapacity == node.memCapacity
             pod1.memLimit = memCapacity
 
@@ -130,7 +130,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar):
             # assert globalVar.block_node_outage_in_progress == False
             assert pod1.cpuLimit == -1
-            assert node == pod1.atNode
+            assert pod1 in node.podList
             assert cpuCapacity == node.cpuCapacity
 
             pod1.cpuLimit = cpuCapacity
@@ -153,7 +153,8 @@ class KubernetesModel(ProblemTemplate):
             # assert globalVar.block_node_outage_in_progress == False
             assert pod1.memLimit == -1
             assert memCapacity == node.memCapacity
-            pod1.toNode = node
+            node.toNodeList.add(pod1)
+            pod1.toNode = True
             pod1.memLimit = memCapacity
 
             return ScenarioStep(
@@ -174,7 +175,8 @@ class KubernetesModel(ProblemTemplate):
             # assert globalVar.block_node_outage_in_progress == False
             assert pod1.cpuLimit == -1
             assert cpuCapacity == node.cpuCapacity
-            pod1.toNode = node
+            node.toNodeList.add(pod1)
+            pod1.toNode = True
             pod1.cpuLimit = cpuCapacity
 
             return ScenarioStep(
@@ -198,9 +200,10 @@ class KubernetesModel(ProblemTemplate):
                 globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
         assert podPending in scheduler.podQueue
-        assert podPending.toNode == nodeForPodPending
+        assert podPending.toNode == True
+        assert podPending in nodeForPodPending.toNodeList
         assert nodeForPodPending.isNull == False
-        assert podToBeReplaced.atNode == nodeForPodPending
+        assert podToBeReplaced in nodeForPodPending.podList 
         assert podPending.status == STATUS_POD["Pending"]
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass
@@ -233,9 +236,10 @@ class KubernetesModel(ProblemTemplate):
         
         # assert globalVar.block_node_outage_in_progress == False
         assert podPending in scheduler.podQueue
-        assert podPending.toNode == nodeForPodPending
+        assert podPending.toNode == True
+        assert podPending in nodeForPodPending.toNodeList
         assert nodeForPodPending.isNull == False
-        assert podToBeReplaced.atNode == nodeForPodPending
+        assert podToBeReplaced in nodeForPodPending.podList 
         assert podPending.status == STATUS_POD["Pending"]
         assert priorityClassOfPendingPod == podPending.priorityClass
         assert priorityClassOfPodToBeReplaced ==  podToBeReplaced.priorityClass
@@ -261,7 +265,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
-        assert nodeOfPod == podTobeKilled.atNode
+        assert podTobeKilled in nodeOfPod.podList
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
         podTobeKilled.memLimitsStatus = STATUS_LIM["Limit Exceeded"]
@@ -279,10 +283,9 @@ class KubernetesModel(ProblemTemplate):
     def Mark_Pod_As_Not_Exceeding_Mem_Limits(self, podTobeReanimated: "Pod",
         nodeOfPod: "Node",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
-        assert nodeOfPod == podTobeReanimated.atNode
+        assert globalVar.block_node_outage_in_progress == False
+        assert podTobeReanimated in  nodeOfPod.podList
         assert podTobeReanimated.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
-        assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
         podTobeReanimated.memLimitsStatus = STATUS_LIM["Limit Met"]
@@ -299,13 +302,12 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=1)
     def MemoryErrorKillPodExceedingLimits(self,
         nodeOfPod: "Node" ,
-        pod1TobeKilled: "Pod",
+        podTobeKilled: "Pod",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
-        assert pod1TobeKilled.atNode == nodeOfPod
+        assert podTobeKilled in nodeOfPod.podList
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
-        assert pod1TobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
-        pod1TobeKilled.status = STATUS_POD["Killing"]
+        assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
+        podTobeKilled.status = STATUS_POD["Killing"]
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -321,8 +323,8 @@ class KubernetesModel(ProblemTemplate):
         nodeOfPod: "Node" ,
         podTobeKilled: "Pod",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
-        assert podTobeKilled.atNode == nodeOfPod
+        assert globalVar.block_node_outage_in_progress == False
+        assert podTobeKilled in nodeOfPod.podList
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
 
@@ -344,7 +346,7 @@ class KubernetesModel(ProblemTemplate):
             serviceOfPod: "Service",
             scheduler: "Scheduler"
          ):
-        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in nodeWithPod.podList
         assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
@@ -361,8 +363,10 @@ class KubernetesModel(ProblemTemplate):
         serviceOfPod.amountOfPodsInQueue += 1
         nodeWithPod.amountOfActivePods -= 1 
         podBeingKilled.status = STATUS_POD["Pending"]
-        podBeingKilled.toNode = Node.NODE_NULL
-        podBeingKilled.atNode = Node.NODE_NULL
+        podBeingKilled.toNode = False
+        podBeingKilled.atNode = False
+        nodeWithPod.podList.remove(podBeingKilled)
+        nodeWithPod.toNodeList.remove(podBeingKilled)
         scheduler.podQueue.add(podBeingKilled)
 
         scheduler.status = STATUS_SCHED["Changed"]
@@ -384,7 +388,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             scheduler: "Scheduler"
          ):
-        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in nodeWithPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
         assert podBeingKilled.hasService == False 
@@ -396,7 +400,10 @@ class KubernetesModel(ProblemTemplate):
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-
+        podBeingKilled.toNode = False
+        podBeingKilled.atNode = False
+        nodeWithPod.podList.remove(podBeingKilled)
+        nodeWithPod.toNodeList.remove(podBeingKilled)
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         nodeWithPod.amountOfActivePods -= 1 
@@ -423,7 +430,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             scheduler: "Scheduler"
          ):
-        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in nodeWithPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled.hasService == False  
         assert podBeingKilled.hasDeployment == False 
@@ -434,7 +441,10 @@ class KubernetesModel(ProblemTemplate):
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-
+        podBeingKilled.toNode = False
+        podBeingKilled.atNode = False
+        nodeWithPod.podList.remove(podBeingKilled)
+        nodeWithPod.toNodeList.remove(podBeingKilled)
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         nodeWithPod.amountOfActivePods -= 1
@@ -462,7 +472,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             scheduler: "Scheduler"
          ):
-        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in nodeWithPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
         assert podBeingKilled in serviceOfPod.podList
@@ -475,7 +485,10 @@ class KubernetesModel(ProblemTemplate):
 
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-
+        podBeingKilled.toNode = False
+        podBeingKilled.atNode = False
+        nodeWithPod.podList.remove(podBeingKilled)
+        nodeWithPod.toNodeList.remove(podBeingKilled)
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         nodeWithPod.amountOfActivePods -= 1 
@@ -507,7 +520,7 @@ class KubernetesModel(ProblemTemplate):
             scheduler: "Scheduler"
 
          ):
-        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in nodeWithPod.podList
         assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
@@ -515,7 +528,10 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasService == True 
         assert podBeingKilled.hasDeployment == False #TODO add this for branching
         assert podBeingKilled.hasDaemonset == True #TODO add this for branching
-
+        podBeingKilled.toNode = False
+        podBeingKilled.atNode = False
+        nodeWithPod.podList.remove(podBeingKilled)
+        nodeWithPod.toNodeList.remove(podBeingKilled)
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
@@ -544,8 +560,8 @@ class KubernetesModel(ProblemTemplate):
             pods_daemonset: DaemonSet,
             scheduler: "Scheduler"
          ):
-        assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled in nodeWithPod.podList
+        assert podBeingKilled.status ==  STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert podBeingKilled.hasService == False 
@@ -553,8 +569,10 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasDaemonset == True
         assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
-        #TODO: make sure that calculation excude situations that lead to negative number in the result
-
+        podBeingKilled.toNode = False
+        podBeingKilled.atNode = False
+        nodeWithPod.podList.remove(podBeingKilled)
+        nodeWithPod.toNodeList.remove(podBeingKilled)
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         nodeWithPod.amountOfActivePods -= 1 
@@ -579,9 +597,12 @@ class KubernetesModel(ProblemTemplate):
         pod1: "Pod",
         SelectedNode: "Node",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
-        assert pod1.toNode == Node.NODE_NULL
-        pod1.toNode = SelectedNode
+
+        assert globalVar.block_node_outage_in_progress == False
+        assert pod1.toNode == False
+        SelectedNode.toNodeList.add(pod1)
+        pod1.toNode = True
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -604,7 +625,9 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDaemonset == False  #TODO add this for branching
 
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
+        assert podStarted.toNode == True 
+        assert podStarted in node.toNodeList
+
         assert node.isNull == False
         assert podStarted in serviceTargetForPod.podList
         assert podStarted.cpuRequest > -1
@@ -615,7 +638,8 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node       
+        node.podList.add(podStarted)
+        podStarted.atNode =True
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         serviceTargetForPod.amountOfPodsInQueue -= 1
@@ -644,7 +668,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
+        assert podStarted.toNode == True 
+        assert podStarted in node.toNodeList
         assert node.isNull == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -654,7 +679,8 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node        
+        node.podList.add(podStarted)
+        podStarted.atNode =True      
         scheduler.queueLength -= 1
         node.amountOfActivePods += 1 
         scheduler.podQueue.remove(podStarted)
@@ -682,7 +708,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
+        assert podStarted.toNode == True 
+        assert podStarted in node.toNodeList
         assert node.isNull == False
         assert podStarted in serviceTargetForPod.podList
         assert podStarted in pods_deployment.podList
@@ -694,7 +721,8 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node       
+        node.podList.add(podStarted)
+        podStarted.atNode =True      
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
@@ -725,7 +753,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDaemonset == False #TODO add this for branching
 
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
+        assert podStarted.toNode == True 
+        assert podStarted in node.toNodeList
         assert node.isNull == False
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
@@ -736,7 +765,8 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node       
+        node.podList.add(podStarted)
+        podStarted.atNode =True  
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
@@ -764,7 +794,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDaemonset == True #TODO add this for branching
 
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
+        assert podStarted.toNode == True 
+        assert podStarted in node.toNodeList
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
@@ -775,7 +806,8 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node       
+        node.podList.add(podStarted)
+        podStarted.atNode =True   
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
@@ -805,7 +837,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDaemonset == True
 
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
+        assert podStarted.toNode == True 
+        assert podStarted in node.toNodeList
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
@@ -816,7 +849,8 @@ class KubernetesModel(ProblemTemplate):
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
-        podStarted.atNode = node       
+        node.podList.add(podStarted)
+        podStarted.atNode =True  
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
@@ -900,7 +934,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == True
         assert pod_killed.status == STATUS_POD["Running"]
-        assert pod_killed.atNode == node_with_outage
+        assert pod_killed in node_with_outage.podList
         assert node_with_outage.status == STATUS_NODE["Killing"]
         pod_killed.status = STATUS_POD["Killing"]
         return ScenarioStep(

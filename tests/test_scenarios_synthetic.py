@@ -26,7 +26,8 @@ def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1.metadata_name = "pod"+str(podName)
     pod_running_1.cpuRequest = cpuRequest
     pod_running_1.memRequest = memRequest
-    pod_running_1.atNode = atNode
+    pod_running_1.atNode = True
+    atNode.podList.add(pod_running_1)
     pod_running_1.status = STATUS_POD["Running"]
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
@@ -38,7 +39,8 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
     pod_running_1.metadata_name = "pod"+str(podName)
     pod_running_1.cpuRequest = cpuRequest
     pod_running_1.memRequest = memRequest
-    pod_running_1.atNode = atNode
+    pod_running_1.atNode = True
+    atNode.podList.add(pod_running_1)
     pod_running_1.status = STATUS_POD["Running"]
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
@@ -61,7 +63,8 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
 def build_pending_pod(podName, cpuRequest, memRequest, toNode):
     p = build_running_pod(podName, cpuRequest, memRequest, Node.NODE_NULL)
     p.status = STATUS_POD["Pending"]
-    p.toNode = toNode
+    p.toNode = True
+    toNode.toNodeList.add(p)
     p.hasDeployment = False
     p.hasService = False
     p.hasDaemonset = False
@@ -82,7 +85,8 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
     if ds is not None:
         ds.podList.add(p)
         p.hasDaemonset = True
-        p.toNode = toNode
+        p.toNode = True
+        toNode.toNodeList.add(p)
     return p
 
 def prepare_test_0_run_pods_no_eviction():

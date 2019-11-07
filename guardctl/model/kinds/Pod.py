@@ -28,8 +28,8 @@ class Pod(HasLabel, HasLimitsRequests):
     ownerReferences: Controller
     # TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
     # targetService: "mservice.Service"
-    atNode: "mnode.Node"
-    toNode: "mnode.Node"
+    atNode: bool
+    toNode: bool
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int
@@ -50,8 +50,8 @@ class Pod(HasLabel, HasLimitsRequests):
         self.spec_priorityClassName = "KUBECTL-VAL-NONE"
         self.priorityClass = zeroPriorityClass
         # self.targetService = mservice.Service.SERVICE_NULL
-        self.toNode = mnode.Node.NODE_NULL
-        self.atNode = mnode.Node.NODE_NULL
+        self.toNode = False
+        self.atNode = False
         self.cpuRequest = -1
         self.memRequest = -1
         self.status = STATUS_POD["Pending"]
@@ -81,7 +81,8 @@ class Pod(HasLabel, HasLimitsRequests):
         found = False
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
-                self.atNode = node
+                self.atNode = True
+                node.podList.add(self)
                 node.amountOfActivePods += 1
                 assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max %s > %s" % (getint(node.amountOfActivePods), POODLE_MAXLIN) 
                 if self.cpuRequest > 0:
@@ -91,7 +92,7 @@ class Pod(HasLabel, HasLimitsRequests):
                     node.currentFormalMemConsumption += self.memRequest
                     assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
                 found = True
-        if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
+        if not found and self.toNode == False and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
         # link service <> pod
