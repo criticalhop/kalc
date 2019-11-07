@@ -27,8 +27,8 @@ def print_objects(objectList):
         print("## Pod:"+ str(poditem.metadata_name._get_value()) + \
         ", Status: " + str(poditem.status._get_value()) + \
         ", Priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
-        ", ToNode: " + str(poditem.toNode._property_value) + \
-        ", AtNode: " + str(poditem.atNode._property_value) + \
+        ", ToNode: " + str(poditem.toNode._get_value) + \
+        ", AtNode: " + str(poditem.atNode._get_value) + \
         ", CpuRequest: " + str(poditem.cpuRequest._get_value()) + \
         ", MemRequest: " + str(poditem.memRequest._get_value()) + \
         ", CpuLimit: " + str(poditem.cpuLimit._get_value()) + \
@@ -51,7 +51,9 @@ def print_objects(objectList):
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
         ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
-        ", Searchable: " + str(nodeitem.searchable._get_value()))
+        ", Searchable: " + str(nodeitem.searchable._get_value()) +\
+        ", Pod_List: "+str([str(x) for x in nodeitem.podList._get_value()])+\
+        ", ToNode_List: "+str([str(x) for x in nodeitem.toNodeList._get_value()]))
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:
