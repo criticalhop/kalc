@@ -27,10 +27,6 @@ class Pod(HasLabel, HasLimitsRequests):
 
     # internal model attributes
     ownerReferences: Controller
-    # TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
-    # targetService: "mservice.Service"
-    atNode: "mnode.Node"
-    toNode: "mnode.Node"
     realInitialMemConsumption: int
     realInitialCpuConsumption: int
     currentRealCpuConsumption: int

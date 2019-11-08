@@ -18,7 +18,6 @@ class Deployment(Controller, HasLimitsRequests):
     metadata_name: str
     metadata_namespace: str
     apiVersion: str
-    lastPod: "mpod.Pod"
     amountOfActivePods: int
     status: StatusDeployment
     podList: Set["mpod.Pod"]

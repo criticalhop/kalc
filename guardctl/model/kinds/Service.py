@@ -11,7 +11,6 @@ from guardctl.misc.const import *
 
 class Service(HasLabel):
     spec_selector: Set[Label]
-    lastPod: "mpod.Pod"
     atNode: Node
     amountOfActivePods: int
     status: StatusServ
