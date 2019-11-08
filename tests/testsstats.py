@@ -2,6 +2,13 @@ from random import randrange
 import os
 import re
 
+f_report = open("./log_test_stats.txt","a+")
+command_to_get_git_commit = "git rev-parse --short HEAD > ./log-current-commit"
+os.system(command_to_get_git_commit)
+with open('./log-current-commit') as f_commit:
+    commit_item = f_commit.read()
+f_report.write('testet commit: '+ commit_item)
+print(commit_item)
 test_cases=[["test_36","100","100"],\
                 ["test_36","100","20"],\
                 ["test_37","100","100"],\
@@ -23,19 +30,24 @@ test_cases=[["test_36","100","100"],\
                 ["test_34","100","100"],\
                 ["test_34","100","20"],\
                 ["test_40","100","100"],\
-                ["test_40","100","20"]]#test_name,log_name,lin_count,weight,
+                ["test_40","100","20"]]#test_name,lin_count,weight,
 for i in test_cases:
     test_name = i[0]
-    log_name = "log-"+i[0]+"-"+i[1]+"-"+i[2]
+    comment = "branch-makarty-29"
+    log_name = "log-"+i[0]+"-"+i[1]+"-"+i[2]+"-"+comment
     lin_count = i[1] 
     weight = i[2]
     port = randrange(10000, 10101, 1) 
+
     template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/test_scenarios_synthetic.py::{} > {}"
     bashCommand = template.format(lin_count,weight,port, test_name,log_name)
+    print('test_name, '+ test_name +', lin_count, '+ lin_count + ', weight ,'+ weight)
     os.system(bashCommand)
     with open('./'+ log_name) as f:
         lines = f.read().splitlines()
     for a in lines:    
         if "s call     tests/test_scenarios_synthetic.py::"+test_name in a:
             duration2 = re.findall(r'(\d*)\.', a)
-            print('test_name', test_name,'lin_count', lin_count,'weight',weight, 'duration', duration2[0])
+            stats_item = 'test_name, '+ test_name +', lin_count, '+ lin_count + ', weight ,'+ weight+', duration, '+ duration2[0]
+            f_report.write(stats_item +"\r\n")
+            print(stats_item)
