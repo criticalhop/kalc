@@ -1,7 +1,6 @@
 import random
 from typing import Set
 from guardctl.model.system.primitives import Label, StatusServ
-from guardctl.model.kinds.Node import Node
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.base import HasLabel
 import guardctl.model.kinds.Pod as mpod

@@ -1,7 +1,5 @@
 from poodle import Object
 from guardctl.model.system.primitives import Type, Status
-from guardctl.model.kinds.Node import Node
-
 
 class GlobalVar(Object):
     is_deployment_disrupted: bool

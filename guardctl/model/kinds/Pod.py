@@ -1,7 +1,6 @@
 from poodle import planned
 from logzero import logger
 from guardctl.misc.const import *
-from guardctl.model.kinds.Node import Node
 import guardctl.model.kinds.Service as mservice
 import guardctl.model.system.Scheduler as mscheduler
 import guardctl.model.kinds.Node as mnode
