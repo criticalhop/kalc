@@ -27,8 +27,6 @@ def print_objects(objectList):
         print("## Pod:"+ str(poditem.metadata_name._get_value()) + \
         ", Status: " + str(poditem.status._get_value()) + \
         ", Priority_class: " + str(poditem.priorityClass._property_value.metadata_name) + \
-        ", ToNode: " + str(poditem.toNode._property_value) + \
-        ", AtNode: " + str(poditem.atNode._property_value) + \
         ", CpuRequest: " + str(poditem.cpuRequest._get_value()) + \
         ", MemRequest: " + str(poditem.memRequest._get_value()) + \
         ", CpuLimit: " + str(poditem.cpuLimit._get_value()) + \
