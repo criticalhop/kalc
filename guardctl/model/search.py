@@ -32,7 +32,7 @@ class ExcludeDict:
 class K8ServiceInterruptSearch(KubernetesModel):
 
 
-    @planned(cost=100)
+    @planned(cost=1)
     def NodeNServiceInterupted(self,globalVar:GlobalVar, scheduler: Scheduler):
         assert globalVar.is_node_disrupted == True
         assert globalVar.is_service_disrupted == True
@@ -47,7 +47,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[]
         )
     
-    @planned(cost=100)
+    @planned(cost=1)
     def Mark_node_outage_event(self,
         node:"Node",
         globalvar:GlobalVar):
@@ -126,7 +126,7 @@ def mark_excluded(object_space, excludeStr, skip_check=False):
 class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
     
-    @planned(cost=900000) # this works for deployment-outage case
+    @planned(cost=9000) # this works for deployment-outage case
     def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
@@ -142,7 +142,7 @@ class OptimisticRun(K8ServiceInterruptSearch):
             affected=[]
         )
 class Check_deployments(OptimisticRun):
-    @planned(cost=100)
+    @planned(cost=1)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
                 scheduler: "Scheduler"):
         assert globalVar.is_deployment_disrupted == True
@@ -156,7 +156,7 @@ class Check_deployments(OptimisticRun):
             probability=1.0,
             affected=[]
         )
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkDeploymentOutageEvent(self,
                 deployment_current: Deployment,
                 pod_current: Pod,
@@ -181,7 +181,7 @@ class Check_deployments(OptimisticRun):
             affected=[describe(deployment_current)]
         )
 class Check_services(OptimisticRun):
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
@@ -209,7 +209,7 @@ class Check_services(OptimisticRun):
         )
 
 class Check_services_restart(OptimisticRun):
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
@@ -236,7 +236,7 @@ class Check_services_restart(OptimisticRun):
             affected=[describe(service1)]
         )
 
-    @planned(cost=9000) # this works for no-outage case
+    @planned(cost=900) # this works for no-outage case
     def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
@@ -252,14 +252,14 @@ class Check_services_restart(OptimisticRun):
             affected=[]
         )
     
-    @planned(cost=100)
+    @planned(cost=1)
     def AnyServiceInterrupted(self,globalVar:GlobalVar, scheduler: Scheduler):
         assert globalVar.is_service_disrupted == True
         assert scheduler.status == STATUS_SCHED["Clean"]
         globalVar.goal_achieved = True 
 
 class Check_daemonsets(OptimisticRun):        
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkDaemonsetOutageEvent(self,
                 daemonset_current: DaemonSet,
                 pod_current: Pod,
