@@ -28,8 +28,9 @@ test_cases=[["test_36","100","100"],\
                 ["test_40","100","100"],\
                 ["test_40","100","20"]]#test_name,lin_count,weight,
 
-command_to_get_git_commit = "git rev-parse --short HEAD > " + file_for_commit
+command_to_get_git_commit = "git rev-parse --short HEAD; git branch | grep \* | cut -d ' ' -f2 > " + file_for_commit
 os.system(command_to_get_git_commit)
+
 with open(file_for_commit) as f_commit:
     commit_item = f_commit.read()
 
