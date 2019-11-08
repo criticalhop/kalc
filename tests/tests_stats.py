@@ -2,31 +2,12 @@ from random import randrange
 import os
 import re
 
-file_for_commit = "./log-current-commit"
-file_for_report = "./log_test_stats.txt"
-comment = ""
-test_cases=[["test_36","100","100"],\
-                ["test_36","100","20"],\
-                ["test_37","100","100"],\
-                ["test_37","100","20"],\
-                ["test_38","100","100"],\
-                ["test_38","100","20"],\
-                ["test_39","100","100"],\
-                ["test_39","100","20"],\
-                ["test_29","100","100"],\
-                ["test_29","100","20"],\
-                ["test_30","100","100"],\
-                ["test_30","100","20"],\
-                ["test_31","100","100"],\
-                ["test_31","100","20"],\
-                ["test_32","100","100"],\
-                ["test_32","100","20"],\
-                ["test_33","100","100"],\
-                ["test_33","100","20"],\
-                ["test_34","100","100"],\
-                ["test_34","100","20"],\
-                ["test_40","100","100"],\
-                ["test_40","100","20"]]#test_name,lin_count,weight,
+comment = "w5"
+file_for_commit = "./log-current-commit" + "-" + comment
+file_for_report = "./log_test_stats" + "-" + comment
+test_cases=["test_36","test_37","test_38","test_39","test_29","test_30","test_31","test_32","test_33","test_34","test_40"]
+lin_count = "100"
+weight = "5"
 
 command_to_get_git_commit = "git rev-parse --short HEAD >"+ file_for_commit + "; git branch | grep \* | cut -d ' ' -f2 >> " + file_for_commit
 os.system(command_to_get_git_commit)
@@ -43,12 +24,9 @@ f_report.write('tested commit: '+ commit_item_inline +"\r\n")
 print(commit_item_inline)
 
 for i in test_cases:
-    test_name = i[0]
-    log_name = "log-" + comment + "-" + i[0] + "-" + i[1] + "-" + i[2]
-    lin_count = i[1] 
-    weight = i[2]
+    test_name = i
+    log_name = "log-" + comment + "-" + i + "-" + lin_count + "-" + weight
     port = randrange(10000, 10101, 1) 
-
     template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/test_scenarios_synthetic.py::{} > {}"
     bashCommand = template.format(lin_count,weight,port, test_name,log_name)
     os.system(bashCommand)
