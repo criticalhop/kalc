@@ -32,10 +32,10 @@ command_to_get_git_commit = "git rev-parse --short HEAD; git branch | grep \* | 
 os.system(command_to_get_git_commit)
 
 with open(file_for_commit) as f_commit:
-    commit_item = f_commit.read()
+    commit_item = f_commit.read().replace('\n', '')
 
 f_report = open(file_for_report,"a+")
-f_report.write('testet commit: '+ commit_item)
+f_report.write('tested commit: '+ commit_item)
 print(commit_item)
 
 for i in test_cases:
@@ -55,5 +55,5 @@ for i in test_cases:
         if "s call     tests/test_scenarios_synthetic.py::"+test_name in a:
             duration2 = re.findall(r'(\d*)\.', a)
             stats_item = 'test_name, '+ test_name +', lin_count, '+ lin_count + ', weight ,'+ weight+', duration, '+ duration2[0]
-            f_report.write(stats_item +"\r\n")
+            f_report.write("" + stats_item + "\r\n")
             print(stats_item)
