@@ -2,13 +2,9 @@ from random import randrange
 import os
 import re
 
-f_report = open("./log_test_stats.txt","a+")
-command_to_get_git_commit = "git rev-parse --short HEAD > ./log-current-commit"
-os.system(command_to_get_git_commit)
-with open('./log-current-commit') as f_commit:
-    commit_item = f_commit.read()
-f_report.write('testet commit: '+ commit_item)
-print(commit_item)
+file_for_commit = "./log-current-commit"
+file_for_report = "./log_test_stats.txt"
+comment = "branch-makarty-29"
 test_cases=[["test_36","100","100"],\
                 ["test_36","100","20"],\
                 ["test_37","100","100"],\
@@ -31,9 +27,18 @@ test_cases=[["test_36","100","100"],\
                 ["test_34","100","20"],\
                 ["test_40","100","100"],\
                 ["test_40","100","20"]]#test_name,lin_count,weight,
+
+command_to_get_git_commit = "git rev-parse --short HEAD > " + file_for_commit
+os.system(command_to_get_git_commit)
+with open(file_for_commit) as f_commit:
+    commit_item = f_commit.read()
+
+f_report = open(file_for_report,"a+")
+f_report.write('testet commit: '+ commit_item)
+print(commit_item)
+
 for i in test_cases:
     test_name = i[0]
-    comment = "branch-makarty-29"
     log_name = "log-"+i[0]+"-"+i[1]+"-"+i[2]+"-"+comment
     lin_count = i[1] 
     weight = i[2]
