@@ -4,7 +4,7 @@ import re
 
 file_for_commit = "./log-current-commit"
 file_for_report = "./log_test_stats.txt"
-comment = "branch-makarty-29"
+comment = ""
 test_cases=[["test_36","100","100"],\
                 ["test_36","100","20"],\
                 ["test_37","100","100"],\
@@ -44,14 +44,14 @@ print(commit_item_inline)
 
 for i in test_cases:
     test_name = i[0]
-    log_name = "log-"+i[0]+"-"+i[1]+"-"+i[2]+"-"+comment
+    log_name = "log-" + comment + "-" + i[0] + "-" + i[1] + "-" + i[2]
     lin_count = i[1] 
     weight = i[2]
     port = randrange(10000, 10101, 1) 
 
     template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/test_scenarios_synthetic.py::{} > {}"
     bashCommand = template.format(lin_count,weight,port, test_name,log_name)
-    # os.system(bashCommand)
+    os.system(bashCommand)
     duration2 = ['0']
     status = "FAILED"
     with open('./'+ log_name) as f:
