@@ -5,8 +5,9 @@ import re
 comment = "w100-dropped-costs"
 file_for_commit = "./log-current-commit" + "-" + comment
 file_for_report = "./log_test_stats" #+ "-" + comment
-test_cases=["test_36","test_37","test_38","test_39","test_29","test_30","test_31","test_32","test_33","test_34","test_40"]
-lin_count = "100"
+test_cases=["test_34","test_40"]
+# test_cases=["test_36","test_37","test_38","test_39","test_29","test_30","test_31","test_32","test_33","test_34","test_40"]
+lin_count = "200"
 weight = "100"
 
 command_to_get_git_commit = "git rev-parse --short HEAD >"+ file_for_commit + "; git branch | grep \* | cut -d ' ' -f2 >> " + file_for_commit
@@ -17,7 +18,7 @@ with open(file_for_commit) as f_commit:
 
 commit_item_inline= ''
 for line in commit_item:
-     commit_item_inline = commit_item_inline + line + ' '
+     commit_item_inline = commit_item_inline + line + '-'
 
 f_report = open(file_for_report,"a+")
 # f_report.write('tested commit: '+ commit_item_inline +"\r\n")
@@ -28,11 +29,11 @@ print(comment)
 
 for i in test_cases:
     test_name = i
-    log_name = "log-" + comment + "-" + i + "-" + lin_count + "-" + weight
+    log_name = "log-" + comment + "-" + commit_item_inline + "-" + i + "-" + lin_count + "-" + weight
     port = randrange(10000, 10101, 1) 
     template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/test_scenarios_synthetic.py::{} > {}"
     bashCommand = template.format(lin_count,weight,port, test_name,log_name)
-    # os.system(bashCommand)
+    os.system(bashCommand)
     duration2 = ['0']
     status = "FAILED"
     with open('./'+ log_name) as f:
