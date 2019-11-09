@@ -10,7 +10,6 @@ from guardctl.misc.const import *
 
 class Service(HasLabel):
     spec_selector: Set[Label]
-    atNode: Node
     amountOfActivePods: int
     status: StatusServ
     metadata_name: str
