@@ -2478,3 +2478,81 @@ def test_40():
             not_assert_conditions = []
             checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
   
+def test_41():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,11,5,4,4,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_42():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,5,5,4,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_43():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,5,5,5,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_44():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,5,5,5,5)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_45():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_46():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,16,5,4,4,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_47():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,20,5,5,4,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+def test_48():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,24,5,5,5,4)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_49():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,25,5,5,5,5)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_50():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_51():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_52():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_53():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)

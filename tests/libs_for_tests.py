@@ -165,7 +165,7 @@ def run_wo_cli_step1(DUMP_local,CHANGE_local):
     print("#### print_objects before run: #### ")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=300, sessionName="test_OptimisticRun")
+    p.run(timeout=400, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("##### Scenario:")
@@ -187,7 +187,7 @@ def run_wo_cli(DUMP_local,CHANGE_local):
     print("#### print_objects before run: ######")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=300, sessionName="test_OptimisticRun")
+    p.run(timeout=500, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("#### Scenario:")
@@ -209,7 +209,7 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
     print("#### print_objects before run: #####")
     print(print_objects(k.state_objects))
 
-    p.run(timeout=6600, sessionName="test_OptimisticRun")
+    p.run(timeout=500, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
     print("####  Scenario:")
@@ -581,7 +581,7 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
     return slist
 
 def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode):
-    p.run(timeout=800)
+    p.run(timeout=500)
     return_brake = True
     brake = False
     if p.plan:
