@@ -2,7 +2,7 @@ from random import randrange
 import os
 import re
 
-comment = ""
+comment = "cost-500"
 file_for_commit = "./log-current-commit" + "-" + comment
 file_for_report = "./log_test_stats" #+ "-" + comment
 test_cases=["test_38","test_41","test_42","test_43","test_44","test_45","test_46","test_47","test_48"]
