@@ -22,7 +22,7 @@ from tests.test_scenarios_synthetic import build_running_pod_with_d
 
 DEBUG_MODE = 1
 
-def prepare_test(nodes_amount,node_capacity,pod_amount,pod_w_service_amount):
+def prepare_test(nodes_amount, node_capacity,pod_amount,pod_w_service_amount):
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -80,7 +80,7 @@ def prepare_test(nodes_amount,node_capacity,pod_amount,pod_w_service_amount):
     k.state_objects.extend([pc, s, s2 ])
     create_objects = []
     k._build_state()
-    genClass = type("gen_test_{0}_{1}".format(node_capacity, pod_amount),(CheckNodeOutage))
+    genClass = type("gen_test_{0}_{1}".format(node_capacity, pod_amount),(CheckNodeOutage,),{})
     p = genClass(k.state_objects)
     return k, p
 
