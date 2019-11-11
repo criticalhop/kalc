@@ -635,19 +635,21 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
             compare_yaml_files(k,k2)
         
         print("--functional test--")    
-        test_mode = "functional test"
+    
+    test_mode = "functional test"
+    try:
+        test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
+    except Exception as e:
+        print(e)
+        test_assert_brake = True
 
     if debug_mode == 1:
         test_mode = "loading test"
-        try:
-            test_assert_brake = checks_assert_conditions_in_one_mode(k2,p2,assert_conditions,not_assert_conditions,test_mode,debug_mode)
-        except Exception as e:
-            print(e)
-            test_assert_brake = True
+
         print("plan from yaml :")
         print_plan(p2)
     
-    if test_assert_brake or debug_mode == 2 :
+    if test_assert_brake and debug_mode == 2 :
         test_mode = "functional test"
         try:
             test_assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode)
@@ -656,7 +658,7 @@ def checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,d
             print("plan orig :")
             print_plan(p)
             raise Exception("###  Error loading data   ####")
-    return test_assert_brake
+    assert test_assert_brake
 
 def reload_cluster_from_yaml(k, create_objects):
     perform_yaml_test = True

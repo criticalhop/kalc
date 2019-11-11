@@ -19,7 +19,7 @@ from guardctl.model.scenario import Scenario
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml
 
-DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
+DEBUG_MODE = 0 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
 
 def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1 = Pod()
@@ -2366,9 +2366,8 @@ def prepare_test_29_many_pods_not_enough_capacity_for_service(nodes_amount,node_
             node_item.amountOfActivePods += 1
             s.podList.add(pod_running_2)
             s.amountOfActivePods +=1
-
     for j in range(pod3_amount):
-        pod_running_2 = build_running_pod_with_d(pod_id,2,2,nodes[1],None,None)
+        pod_running_2 = build_running_pod_with_d(pod_id,2,2,nodes[0],None,None)
         pod_id += 1
         pod_running_2.hasService = True
         pods.append(pod_running_2)
@@ -2515,11 +2514,14 @@ def test_47():
             not_assert_conditions = []
             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
 def test_48():
-            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,24,5,5,5,4)
-            assert_conditions = ["MarkServiceOutageEvent",\
-                "Mark_node_outage_event"]
-            not_assert_conditions = []
-            assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+    node = 24
+    for cap in range(10,20):
+        print("test node ", node, " cap " ,cap)
+        k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(1,node,cap,0,0,1)
+        assert_conditions = ["MarkServiceOutageEvent", "Mark_node_outage_event"]
+        not_assert_conditions = []
+        assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
 # def test_49():
 #             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,25,5,5,5,5)
 #             assert_conditions = ["MarkServiceOutageEvent",\
