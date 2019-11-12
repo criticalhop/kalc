@@ -126,21 +126,21 @@ def mark_excluded(object_space, excludeStr, skip_check=False):
 class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
     
-    @planned(cost=500) # this works for deployment-outage case
-    def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        assert global_.block_node_outage_in_progress == False
-        global_.goal_achieved = True
+    # @planned(cost=500) # this works for deployment-outage case
+    # def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
+    #     assert scheduler.status == STATUS_SCHED["Clean"]
+    #     assert global_.block_node_outage_in_progress == False
+    #     global_.goal_achieved = True
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Processing finished",
-            # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+    #     return ScenarioStep(
+    #         name=sys._getframe().f_code.co_name,
+    #         subsystem=self.__class__.__name__,
+    #         description="Processing finished",
+    #         # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
+    #         parameters={},
+    #         probability=1.0,
+    #         affected=[]
+    #     )
 class Check_deployments(OptimisticRun):
     @planned(cost=1)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
