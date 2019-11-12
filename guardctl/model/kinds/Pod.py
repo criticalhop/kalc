@@ -97,7 +97,7 @@ class Pod(HasLabel, HasLimitsRequests):
                     node.currentFormalMemConsumption += self.memRequest
                     assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
                 found = True
-        if not found and self.toNode == Node.NODE_NULL and not _ignore_orphan:
+        if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
         # link service <> pod
