@@ -148,7 +148,7 @@ class KubernetesCluster:
 
     def _check(self):
         "Run internal checks"
-        assert getint(self.scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow"
+        assert getint(self.scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(self.scheduler.queueLength), POODLE_MAXLIN)
 
     def create_resource(self, res: str):
         self.load(res, mode=self.CREATE_MODE)

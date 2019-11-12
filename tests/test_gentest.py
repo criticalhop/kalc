@@ -19,179 +19,292 @@ from guardctl.model.scenario import Scenario
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 from tests.test_scenarios_synthetic import build_running_pod_with_d, build_running_pod, build_pending_pod
-
-DEBUG_MODE = 1
-
-def prepare_test(nodes_amount, node_capacity,pod_amount,pod_w_service_amount):
-    # Initialize scheduler, globalvar
-    k = KubernetesCluster()
-    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    # initial node state
-    i = 0
-    j = 0
-    nodes = []
-    pods = []
-    
-    # Service to detecte eviction
-    s = Service()
-    s.metadata_name = "test-service"
-    s.amountOfActivePods = 0
-
-    s2 = Service()
-    s2.metadata_name = "test-service2"
-    s2.amountOfActivePods = 0
-    # create Deploymnent that we're going to detect failure of...
-    d = Deployment()
-    d.spec_replicas = 2    
-    pod_id = 0
-    for i in range(nodes_amount):
-        node_item = Node("node"+str(i))
-        node_item.cpuCapacity = node_capacity
-        node_item.memCapacity = node_capacity
-        node_item.isNull = False
-        node_item.status = STATUS_NODE["Active"]
-        nodes.append(node_item)
-        
-        for j in range(pod_amount):
-            pod_running_2 = build_running_pod_with_d(pod_id,1,1,node_item,None,None)
-            pod_id += 1
-            pod_running_2.hasService = True
-            pods.append(pod_running_2)
-            node_item.amountOfActivePods += 1
-            s.podList.add(pod_running_2)
-            s.amountOfActivePods +=1
-
-    for j in range(pod_w_service_amount):
-        pod_running_2 = build_running_pod_with_d(pod_id,1,1,nodes[0],None,None)
-        pod_id += 1
-        pod_running_2.hasService = True
-        pods.append(pod_running_2)
-        node_item.amountOfActivePods += 1
-        s2.podList.add(pod_running_2)
-        s2.amountOfActivePods +=1
-    
-    # priority for pod-to-evict
-    pc = PriorityClass()
-    pc.priority = 10
-    pc.metadata_name = "high-prio-test"
-    
-    k.state_objects.extend(nodes)
-    k.state_objects.extend(pods)
-    k.state_objects.extend([pc, s, s2 ])
-    create_objects = []
-    k._build_state()
-    genClass = type("gen_test_{0}_{1}".format(node_capacity, pod_amount),(CheckNodeOutage,),{})
-    p = genClass(k.state_objects)
-    return k, p
-
-def prepare_test_pop_replace_with_pod(nodes_amount, node_capacity, pod_amount):
-    # Initialize scheduler, globalvar
-    k = KubernetesCluster()
-    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    # initial node state
-    i = 0
-    j = 0
-    nodes = []
-    pods_running = []
-    pods_pending = []
-
-    pod_id=0
-        # priority for pod-to-evict
-    pc0 = PriorityClass()
-    pc0.priority = 0
-    pc0.metadata_name = "low-prio-test"
-    for i in range(nodes_amount):
-        node_item = Node("node"+str(i))
-        node_item.cpuCapacity = node_capacity
-        node_item.memCapacity = node_capacity
-        node_item.isNull = False
-        node_item.status = STATUS_NODE["Active"]
-        nodes.append(node_item)
-        
-        for j in range(pod_amount):
-            pod_running = build_running_pod("pod_{0}_{1}".format(i,j),1,1,node_item)
-            pod_running.priorityClass = pc0
-            pod_id += 1
-            pod_running.hasService = True
-            pods_running.append(pod_running)
-            node_item.amountOfActivePods += 1
-    
-    # priority for pod-to-evict
-    pc = PriorityClass()
-    pc.priority = 10
-    pc.metadata_name = "high-prio-test"
-    for j in range(pod_amount):
-        pod_pending = build_pending_pod("pod_pending_{0}".format(j),1,1,node_item)
-        pod_id += 1
-        pod_pending.hasService = False
-        pod_pending.priorityClass = pc
-        pods_pending.append(pod_pending)
-        node_item.amountOfActivePods += 1
-        scheduler.podQueue.add(pod_pending)
-        scheduler.queueLength += 1
-    scheduler.status = STATUS_SCHED["Changed"]
-
-    
-    k.state_objects.extend(nodes)
-    k.state_objects.extend(pods_pending)
-    k.state_objects.extend(pods_running)
-    k.state_objects.extend([pc])
-    create_objects = []
-    k._build_state()
-    class goalClass(K8ServiceInterruptSearch):
-        # goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
-        goal = lambda self: self.running_check()
-        def running_check(self):
-            for i in pods_pending :
-                if i.status != STATUS_POD["Running"]:
-                    return False
-            return True
-
-    genClass = type("gen_simple_running_n_kill_test_{0}_{1}".format(node_capacity, pod_amount),(goalClass,),{})
-    p = genClass(k.state_objects)
-    return k, p
-
-def test_gen_1():
-    assert_brake = False
-    for node_capacity in range(24,50):
-        for pod_amount in range(10,50):
-            try:
-                k, p = prepare_test(1,node_capacity,pod_amount,1)
-            except Exception as e:
-                print("prepare break node cap ", node_capacity, " pod amount " ,pod_amount, "exception is \n",e)
-                break
-            assert_conditions = ["MarkServiceOutageEvent", "Mark_node_outage_event"]
-            not_assert_conditions = []
-            try:
-                assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions, "test_{0}_{1}".format(node_capacity, pod_amount), 1)
-            except Exception as e:
-                print("check break node ", node_capacity, " cap " ,pod_amount, "exception is \n",e)
-                break
-            if assert_brake:
-                print("cond break node ", node_capacity, " cap " ,pod_amount)
-                # break
-    assert False
+import inspect
 
 # Some pods on node running priority=0 some pods in pending priority=1 they should swap position
-def test_gen_2():
+def test_2_pod_swapper():
+    nodes_amount = 1
     assert_brake = False
-    for node_capacity in range(1,5):
-        for pod_amount in range(1,7):
+    for node_capacity in range(4,31,3):
+        for pod_amount in range(2,15,3):
+            # Initialize scheduler, globalvar
+            k = KubernetesCluster()
+            scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+            # initial node state
+            i = 0
+            j = 0
+            nodes = []
+            pods_running = []
+            pods_pending = []
+            high = PriorityClass()
+            high.priority = 10
+            high.metadata_name = "high"
+            low = PriorityClass()
+            low.priority = 0
+            low.metadata_name = "low"
+            pod_id=0
+            for i in range(nodes_amount):
+                node_item = Node("node"+str(i))
+                node_item.cpuCapacity = node_capacity
+                node_item.memCapacity = node_capacity
+                node_item.isNull = False
+                node_item.status = STATUS_NODE["Active"]
+                nodes.append(node_item)
+                
+                for j in range(pod_amount):
+                    if node_item.currentFormalCpuConsumption == node_capacity:
+                        break
+                    pod_running = Pod()
+                    pod_running.metadata_name = "pod_prio_0_{0}_{1}".format(i,j)
+                    pod_running.cpuRequest = 1
+                    pod_running.memRequest = 1
+                    pod_running.atNode = node_item
+                    pod_running.status = STATUS_POD["Running"]
+                    pod_running.hasDeployment = False
+                    pod_running.hasService = False
+                    pod_running.hasDaemonset = False
+                    pod_running.priorityClass = low
+                    pod_running.hasService = False
+                    pods_running.append(pod_running)
+                    node_item.currentFormalCpuConsumption += 1
+                    node_item.currentFormalMemConsumption += 1
+                    node_item.amountOfActivePods += 1
+                    
+            
+            for j in range(pod_amount):
+                pod_pending = Pod()
+                pod_pending.metadata_name = "pod_prio_1_{0}_{1}".format(i,j)
+                pod_pending.cpuRequest = 1
+                pod_pending.memRequest = 1
+                pod_pending.status = STATUS_POD["Pending"]
+                pod_pending.hasDeployment = False
+                pod_pending.hasService = False
+                pod_pending.hasDaemonset = False
+                pod_pending.priorityClass = high
+                pod_pending.hasService = False
+                pods_pending.append(pod_pending)
+
+                scheduler.podQueue.add(pod_pending)
+                scheduler.queueLength += 1
+            scheduler.status = STATUS_SCHED["Changed"]
+
+            k.state_objects.extend(nodes)
+            k.state_objects.extend(pods_pending)
+            k.state_objects.extend(pods_running)
+            k.state_objects.extend([low,high])
+            k._build_state()
+
+            class GoalClass(K8ServiceInterruptSearch):
+                #goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
+                goal = lambda self: self.running_check()
+                def running_check(self):
+                    for pp in pods_pending :
+                        assert pp.status == STATUS_POD["Running"]
+                    for pr in pods_running :
+                        assert pr.status == STATUS_POD["Killing"]
+
+
+            GenClass = type("{0}_{1}_{2}".format(inspect.stack()[1].function, node_capacity, pod_amount),(GoalClass,),{})
+            p = GenClass(k.state_objects)
+            print("-------------------")
+            print("check node_capacity ", node_capacity, " pod amount ", pod_amount)
+            print("-------------------")
+            # print_objects(k.state_objects)
+            # print("-------------------")
             try:
-                k, p = prepare_test_pop_replace_with_pod(1,node_capacity,pod_amount)
+                p.run(timeout=100)
             except Exception as e:
-                print("prepare break node cap ", node_capacity, " pod amount " ,pod_amount, "exception is \n",e)
+                print("fail")
+                # print("run break node_capacity ", node_capacity, " pod_amount " ,pod_amount, "exception is \n",e)
+                continue
+            # print_plan(p)
+            print("ok")
+            continue
+            try:
+                p.xrun(timeout=100)
+            except Exception as e:
+                print("xrun break node_capacity ", node_capacity, " pod_amount " ,pod_amount, "exception is \n",e)
                 break
+
+            print_objects(k.state_objects)
+            print("-------------------")
+
             # assert_conditions = ["StartPod", "Evict_and_replace"]
-            assert_conditions = []
-            not_assert_conditions = []
-            try:
-                assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions, "test_{0}_{1}".format(node_capacity, pod_amount), 1)
-            except Exception as e:
-                print("check break node ", node_capacity, " cap " ,pod_amount, "exception is \n",e)
-                break
-            if assert_brake:
-                print("cond break node ", node_capacity, " cap " ,pod_amount)
-                # break
+
             
     assert False
+
+
+# the same as test_2 but only one pod Running and one Pod Pending
+def test_3_one_pod_swapper():
+    for node_capacity in range(2):
+        # Initialize scheduler, globalvar
+        k = KubernetesCluster()
+        scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+        # initial node state
+        i = 0
+        j = 0
+        nodes = []
+        pods_running = []
+        pods_pending = []
+        high = PriorityClass()
+        high.priority = 10
+        high.metadata_name = "high"
+        low = PriorityClass()
+        low.priority = 0
+        low.metadata_name = "low"
+        pod_id=0
+
+        node_item = Node("node"+str(i))
+        node_item.cpuCapacity = node_capacity
+        node_item.memCapacity = node_capacity
+        node_item.isNull = False
+        node_item.status = STATUS_NODE["Active"]
+        nodes.append(node_item)
+            
+        pod_running = Pod()
+        pod_running.metadata_name = "pod_prio_0_{0}_{1}".format(i,j)
+        pod_running.cpuRequest = 1
+        pod_running.memRequest = 1
+        pod_running.atNode = node_item
+        pod_running.status = STATUS_POD["Running"]
+        pod_running.hasDeployment = False
+        pod_running.hasService = False
+        pod_running.hasDaemonset = False
+        pod_running.priorityClass = low
+        pod_running.hasService = False
+        pods_running.append(pod_running)
+        node_item.currentFormalCpuConsumption += 1
+        node_item.currentFormalMemConsumption += 1
+        node_item.amountOfActivePods += 1
+        
+        pod_pending = Pod()
+        pod_pending.metadata_name = "pod_prio_1_{0}_{1}".format(i,j)
+        pod_pending.cpuRequest = 1
+        pod_pending.memRequest = 1
+        pod_pending.status = STATUS_POD["Pending"]
+        pod_pending.hasDeployment = False
+        pod_pending.hasService = False
+        pod_pending.hasDaemonset = False
+        pod_pending.priorityClass = high
+        pod_pending.hasService = False
+        pods_pending.append(pod_pending)
+
+        scheduler.podQueue.add(pod_pending)
+        scheduler.queueLength += 1
+        scheduler.status = STATUS_SCHED["Changed"]
+
+        k.state_objects.extend([pod_running,pod_pending,node_item,low,high])
+        k._build_state()
+
+        class GoalClass(K8ServiceInterruptSearch):
+            # goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"]
+            goal = lambda self: pod_pending.status == STATUS_POD["Running"] #and pod_running == STATUS_POD["Killing"]
+
+        GenClass = type("{0}".format(inspect.stack()[1].function),(GoalClass,),{})
+        p = GenClass(k.state_objects)
+        print("check break node_capacity ")
+        print("-------------------")
+        print_objects(k.state_objects)
+        print("-------------------")
+        try:
+            p.run(timeout=100)
+        except Exception as e:
+            print("run break node_capacity ", node_capacity, "exception is \n",e)
+            continue
+        print_plan(p)
+        
+        try:
+            p.xrun(timeout=100)
+        except Exception as e:
+            print("xrun break node_capacity ", node_capacity, "exception is \n",e)
+            continue
+            
+        print_objects(k.state_objects)
+        print("-------------------")
+
+           
+    assert False
+    
+
+def test_4_node_killer():
+    nodes_amount = 1
+    assert_brake = False
+    for node_capacity in range(34,35,2):
+        for pod_amount in range(11,21,3):
+            # Initialize scheduler, globalvar
+            k = KubernetesCluster()
+            scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+            # initial node state
+            i = 0
+            j = 0
+            nodes = []
+            pods_running = []
+            pods_pending = []
+            high = PriorityClass()
+            high.priority = 10
+            high.metadata_name = "high"
+            low = PriorityClass()
+            low.priority = 0
+            low.metadata_name = "low"
+            pod_id=0
+            for i in range(nodes_amount):
+                node_item = Node("node"+str(i))
+                node_item.cpuCapacity = node_capacity
+                node_item.memCapacity = node_capacity
+                node_item.isNull = False
+                node_item.status = STATUS_NODE["Active"]
+                nodes.append(node_item)
+                
+                for j in range(pod_amount):
+                    if node_item.currentFormalCpuConsumption == node_capacity:
+                        break
+                    pod_running = Pod()
+                    pod_running.metadata_name = "pod_prio_0_{0}_{1}".format(i,j)
+                    pod_running.cpuRequest = 1
+                    pod_running.memRequest = 1
+                    pod_running.atNode = node_item
+                    pod_running.status = STATUS_POD["Running"]
+                    pod_running.hasDeployment = False
+                    pod_running.hasService = False
+                    pod_running.hasDaemonset = False
+                    pod_running.priorityClass = low
+                    pod_running.hasService = False
+                    pods_running.append(pod_running)
+                    node_item.currentFormalCpuConsumption += 1
+                    node_item.currentFormalMemConsumption += 1
+                    node_item.amountOfActivePods += 1
+                    
+            scheduler.status = STATUS_SCHED["Changed"]
+
+            k.state_objects.extend(nodes)
+            k.state_objects.extend(pods_pending)
+            k.state_objects.extend(pods_running)
+            k.state_objects.extend([low,high])
+            k._build_state()
+
+            class GoalClass(K8ServiceInterruptSearch):
+                goal = lambda self: self.globalVar.is_node_disrupted == True and self.scheduler.status == STATUS_SCHED["Clean"]
+
+            GenClass = type("{0}_{1}_{2}".format(inspect.stack()[1].function, node_capacity, pod_amount),(GoalClass,),{})
+            p = GenClass(k.state_objects)
+            print("check break node_capacity ", node_capacity, " pod amount " ,pod_amount)
+            print("-------------------")
+            print_objects(k.state_objects)
+            print("-------------------")
+            try:
+                p.run(timeout=100)
+            except Exception as e:
+                print("run break node_capacity ", node_capacity, " pod_amount " ,pod_amount, "exception is \n",e)
+                assert False
+            print_plan(p)
+            
+            # try:
+            #     p.xrun(timeout=100)
+            # except Exception as e:
+            #     print("xrun break node_capacity ", node_capacity, " pod_amount " ,pod_amount, "exception is \n",e)
+            #     assert False
+
+            # print_objects(k.state_objects)
+            # print("-------------------")
+    
