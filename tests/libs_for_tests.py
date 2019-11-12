@@ -582,6 +582,9 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
 
 def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode):
     p.run(timeout=500)
+    print(test_mode)
+    print_objects(k.state_objects)
+    print_plan(p)
     return_brake = True
     brake = False
     if p.plan:
