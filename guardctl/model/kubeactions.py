@@ -31,7 +31,7 @@ class KubernetesModel(ProblemTemplate):
             ):
         assert service1.amountOfActivePods > 0
         assert service1.isNull == False
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         service1.status = STATUS_SERV["Started"]
 
         return ScenarioStep(
@@ -47,7 +47,7 @@ class KubernetesModel(ProblemTemplate):
             pod: "Pod",
             pclass: PriorityClass,
             globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert pod.spec_priorityClassName == pclass.metadata_name
         pod.priorityClass = pclass
 
@@ -64,7 +64,7 @@ class KubernetesModel(ProblemTemplate):
         pod1: "Pod",
         memLimit: int,
         globalVar: GlobalVar):
-            assert globalVar.block_node_outage_in_progress == False
+            # assert globalVar.block_node_outage_in_progress == False
             assert pod1.memRequest == -1
             assert pod1.memLimit > -1
             assert memLimit == pod1.memLimit
@@ -85,7 +85,7 @@ class KubernetesModel(ProblemTemplate):
         pod1: "Pod",
         cpuLimit: int,
         globalVar: GlobalVar):
-            assert globalVar.block_node_outage_in_progress == False
+            # assert globalVar.block_node_outage_in_progress == False
             assert pod1.cpuLimit > -1
             assert pod1.cpuRequest == -1
             assert cpuLimit == pod1.cpuLimit
@@ -107,7 +107,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         memCapacity: int,
         globalVar: GlobalVar):
-            assert globalVar.block_node_outage_in_progress == False
+            # assert globalVar.block_node_outage_in_progress == False
             assert pod1.memLimit == -1
             assert node == pod1.atNode
             assert memCapacity == node.memCapacity
@@ -128,7 +128,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         cpuCapacity: int,
         globalVar: GlobalVar):
-            assert globalVar.block_node_outage_in_progress == False
+            # assert globalVar.block_node_outage_in_progress == False
             assert pod1.cpuLimit == -1
             assert node == pod1.atNode
             assert cpuCapacity == node.cpuCapacity
@@ -150,7 +150,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         memCapacity: int,
         globalVar: GlobalVar):
-            assert globalVar.block_node_outage_in_progress == False
+            # assert globalVar.block_node_outage_in_progress == False
             assert pod1.memLimit == -1
             assert memCapacity == node.memCapacity
             pod1.toNode = node
@@ -171,7 +171,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         cpuCapacity: int,
         globalVar: GlobalVar):
-            assert globalVar.block_node_outage_in_progress == False
+            # assert globalVar.block_node_outage_in_progress == False
             assert pod1.cpuLimit == -1
             assert cpuCapacity == node.cpuCapacity
             pod1.toNode = node
@@ -196,7 +196,7 @@ class KubernetesModel(ProblemTemplate):
                 priorityClassOfPendingPod: PriorityClass,
                 priorityClassOfPodToBeReplaced: PriorityClass,
                 globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podPending in scheduler.podQueue
         assert podPending.toNode == nodeForPodPending
         assert nodeForPodPending.isNull == False
@@ -231,7 +231,7 @@ class KubernetesModel(ProblemTemplate):
                 priorityClassOfPodToBeReplaced: PriorityClass,
                 globalVar: GlobalVar):
         
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podPending in scheduler.podQueue
         assert podPending.toNode == nodeForPodPending
         assert nodeForPodPending.isNull == False
@@ -259,7 +259,7 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=1)
     def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "Node",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
         assert nodeOfPod == podTobeKilled.atNode
         assert podTobeKilled.memLimit <  podTobeKilled.currentRealMemConsumption
@@ -279,7 +279,7 @@ class KubernetesModel(ProblemTemplate):
     def Mark_Pod_As_Not_Exceeding_Mem_Limits(self, podTobeReanimated: "Pod",
         nodeOfPod: "Node",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert nodeOfPod == podTobeReanimated.atNode
         assert podTobeReanimated.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
         assert nodeOfPod == podTobeReanimated.atNode
@@ -301,7 +301,7 @@ class KubernetesModel(ProblemTemplate):
         nodeOfPod: "Node" ,
         pod1TobeKilled: "Pod",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert pod1TobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert pod1TobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
@@ -321,7 +321,7 @@ class KubernetesModel(ProblemTemplate):
         nodeOfPod: "Node" ,
         podTobeKilled: "Pod",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podTobeKilled.atNode == nodeOfPod
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
@@ -497,7 +497,7 @@ class KubernetesModel(ProblemTemplate):
          ):
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled in serviceOfPod.podList
-        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert podBeingKilled.hasService == True 
@@ -530,7 +530,7 @@ class KubernetesModel(ProblemTemplate):
             scheduler: "Scheduler"
          ):
         assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.status ==  STATUS_POD["Killing"]
+        assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
         # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         assert podBeingKilled.hasService == False 
@@ -562,7 +562,7 @@ class KubernetesModel(ProblemTemplate):
         pod1: "Pod",
         SelectedNode: "Node",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert pod1.toNode == Node.NODE_NULL
         pod1.toNode = SelectedNode
         return ScenarioStep(
@@ -581,7 +581,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         serviceTargetForPod: "mservice.Service",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == True 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -620,7 +620,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         scheduler: "Scheduler",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -658,7 +658,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_deployment: Deployment,
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == True 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -700,7 +700,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         pods_deployment: Deployment,
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -739,7 +739,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         pods_daemonset: DaemonSet,
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == True #TODO add this for branching
@@ -780,7 +780,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_daemonset: DaemonSet,
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == True
         assert podStarted.hasDeployment == False
         assert podStarted.hasDaemonset == True
@@ -815,7 +815,7 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=1)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         scheduler.queueLength -= 1
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -831,7 +831,7 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=1)
     def ScheduleQueueProcessed(self, scheduler: "Scheduler",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         assert  scheduler.queueLength == 0
         scheduler.status = STATUS_SCHED["Clean"]
         return ScenarioStep(
@@ -847,7 +847,7 @@ class KubernetesModel(ProblemTemplate):
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.block_node_outage_in_progress == False
         # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
         assert node_with_outage.searchable == True
         assert node_with_outage.status == STATUS_NODE["Active"]
@@ -867,7 +867,7 @@ class KubernetesModel(ProblemTemplate):
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == True
+        # assert globalVar.block_node_outage_in_progress == True
         assert pod_killed.status == STATUS_POD["Running"]
         assert pod_killed.atNode == node_with_outage
         assert node_with_outage.status == STATUS_NODE["Killing"]
@@ -885,7 +885,7 @@ class KubernetesModel(ProblemTemplate):
     def NodeOutageFinished(self,
         node: "Node",
         globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == True
+        # assert globalVar.block_node_outage_in_progress == True
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Killing"]
         globalVar.amountOfNodesDisrupted += 1
