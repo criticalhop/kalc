@@ -126,12 +126,12 @@ def mark_excluded(object_space, excludeStr, skip_check=False):
 class OptimisticRun(K8ServiceInterruptSearch):
     goal = lambda self: self.globalVar.goal_achieved == True 
     
-    # @planned(cost=500) # this works for deployment-outage case
+    # @planned(cost=9000) # this works for deployment-outage case
     # def SchedulerQueueCleanHighCost(self, scheduler: Scheduler, global_: GlobalVar):
     #     assert scheduler.status == STATUS_SCHED["Clean"]
     #     assert global_.block_node_outage_in_progress == False
     #     global_.goal_achieved = True
-
+    
     #     return ScenarioStep(
     #         name=sys._getframe().f_code.co_name,
     #         subsystem=self.__class__.__name__,
