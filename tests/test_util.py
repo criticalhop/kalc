@@ -31,6 +31,8 @@ def print_objects(objectList):
         ", MemRequest: " + str(poditem.memRequest._get_value()) + \
         ", CpuLimit: " + str(poditem.cpuLimit._get_value()) + \
         ", MemLimit: " + str(poditem.memLimit._get_value()) + \
+        ", AtNode: " + str(poditem.atNode._get_value()) + \
+        ", ToNode:" + str(poditem.toNode._get_value()) + \
         ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]) + \
         ", hasService: " + str(poditem.hasService._get_value()) + \
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
