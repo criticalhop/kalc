@@ -2,16 +2,60 @@ from random import randrange
 import os
 import re
 
-comment = "costs-500"
+comment = "without-blocks"
 file_for_commit = "./log-current-commit" + "-" + comment
 file_for_report = "./log_test_stats" #+ "-" + comment
 # test_cases=["test_38","test_41","test_42","test_43","test_44","test_45","test_46","test_47","test_48"]
 # test_cases=["test_36","test_37","test_38","test_39","test_29","test_30","test_31","test_32","test_33","test_34","test_40"]
-test_cases = [  "test_54_25pods",\
+# test_cases = [  "test_50_7pods",\
+#                 "test_51_11pods",\
+#                 "test_52_14pods",\
+#                 "test_53_17pods",\
+#                 "test_54_25pods",\
+#                 "test_55_31pods",\
+#                 "test_56_7pods",\
+#                 "test_57_11pods",\
+#                 "test_58_15pods",\
+#                 "test_59_25pods",\
+#                 "test_60_31pods",\
+#                 "test_61_28pods",\
+#                 "test_62_32pods",\
+#                 "test_63_34pods",\
+#                 "test_64_35pods",\
+#                 "test_65_28pods",\
+#                 "test_66_30pods",\
+#                 "test_67_32pods",\
+#                 "test_68_34pods",\
+#                 "test_69_7pods_1node",\
+#                 "test_70_11pods_1node",\
+#                 "test_71_15pods_1node",\
+#                 "test_72_25pods_1node",\
+#                 "test_73_31pods_1node"
+#                 ]
+test_cases = [  "test_53_17pods",\
+                "test_54_25pods",\
                 "test_55_31pods",\
+                "test_56_7pods",\
+                "test_57_11pods",\
+                "test_58_15pods",\
+                "test_59_25pods",\
+                "test_60_31pods",\
+                "test_61_28pods",\
+                "test_62_32pods",\
+                "test_63_34pods",\
+                "test_64_35pods",\
+                "test_65_28pods",\
+                "test_66_30pods",\
+                "test_67_32pods",\
+                "test_68_34pods",\
+                "test_69_7pods_1node",\
+                "test_70_11pods_1node",\
+                "test_71_15pods_1node",\
+                "test_72_25pods_1node",\
+                "test_73_31pods_1node"
                 ]
-lin_count = "200"
-weight = "20"
+lin_count = "70"
+weight = "1"
 
 command_to_get_git_commit = "git rev-parse --short HEAD >"+ file_for_commit + "; git branch | grep \* | cut -d ' ' -f2 >> " + file_for_commit
 os.system(command_to_get_git_commit)
