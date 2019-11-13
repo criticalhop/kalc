@@ -19,6 +19,7 @@ from guardctl.model.scenario import Scenario
 from poodle import planned
 import inspect
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
+from tests.debugging import DebuggingCheckNodeOutage
 
 DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
 
@@ -162,7 +163,7 @@ def prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loadi
     k.state_objects.extend([pc, s, s2 ])
     create_objects = []
     k._build_state()
-    class NewGoal_k1(CheckNodeOutage):
+    class NewGoal_k1(DebuggingCheckNodeOutage):
         pass
     p = NewGoal_k1(k.state_objects)
     print_objects(k.state_objects)
@@ -175,9 +176,9 @@ def test_12pods_1node():
     not_assert_conditions = []
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
-    class NewGoal_k1(CheckNodeOutage):
+    class NewGoal_k1(DebuggingCheckNodeOutage):
         goal = lambda self: globalVar_k1.is_node_disrupted == True
-    NewGoal_k1.__name__ = "test_15pods_1node" #inspect.stack()[1].function
+    NewGoal_k1.__name__ = "test_12pods_1node" #inspect.stack()[1].function
     p = NewGoal_k1(k.state_objects)
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
@@ -188,9 +189,9 @@ def test_13pods_1node():
     not_assert_conditions = []
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
-    class NewGoal_k1(CheckNodeOutage):
+    class NewGoal_k1(DebuggingCheckNodeOutage):
         goal = lambda self: globalVar_k1.is_node_disrupted == True
-    NewGoal_k1.__name__ = "test_12pods_1node" #inspect.stack()[1].function
+    NewGoal_k1.__name__ = "test_13pods_1node" #inspect.stack()[1].function
     p = NewGoal_k1(k.state_objects)
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
@@ -201,9 +202,9 @@ def test_14pods_1node():
     not_assert_conditions = []
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
-    class NewGoal_k1(CheckNodeOutage):
+    class NewGoal_k1(DebuggingCheckNodeOutage):
         goal = lambda self: globalVar_k1.is_node_disrupted == True
-    NewGoal_k1.__name__ = "test_12pods_1node" #inspect.stack()[1].function
+    NewGoal_k1.__name__ = "test_14pods_1node" #inspect.stack()[1].function
     p = NewGoal_k1(k.state_objects)
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
@@ -214,6 +215,12 @@ def test_15pods_1node():
     not_assert_conditions = []
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
+    class NewGoal_k1(DebuggingCheckNodeOutage):
+        goal = lambda self: globalVar_k1.is_node_disrupted == True
+    NewGoal_k1.__name__ = "test_15pods_1node" #inspect.stack()[1].function
+    p = NewGoal_k1(k.state_objects)
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
 def test_16pods_1node():
     k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,17,12,0,3,1)
     assert_conditions = ["MarkServiceOutageEvent",\
@@ -221,9 +228,9 @@ def test_16pods_1node():
     not_assert_conditions = []
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
-    class NewGoal_k1(CheckNodeOutage):
+    class NewGoal_k1(DebuggingCheckNodeOutage):
         goal = lambda self: globalVar_k1.is_node_disrupted == True
-    NewGoal_k1.__name__ = "test_12pods_1node" #inspect.stack()[1].function
+    NewGoal_k1.__name__ = "test_16pods_1node" #inspect.stack()[1].function
     p = NewGoal_k1(k.state_objects)
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
@@ -234,7 +241,7 @@ def test_25pods_1node():
     not_assert_conditions = []
     globalVar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
-    class NewGoal_k1(CheckNodeOutage):
+    class NewGoal_k1(DebuggingCheckNodeOutage):
         goal = lambda self: globalVar_k1.is_node_disrupted == True
     NewGoal_k1.__name__ = "test_12pods_1node" #inspect.stack()[1].function
     p = NewGoal_k1(k.state_objects)
