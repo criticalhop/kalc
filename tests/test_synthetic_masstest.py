@@ -421,82 +421,82 @@ def test_55_31pods():
     checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
     
 def test_56_7pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,8,3,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,20,3,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
 def test_57_11pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,8,5,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,25,5,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
 def test_58_15pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,8,7,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,30,7,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                 "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_59_25pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,12,12,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,30,12,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_60_31pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,25,15,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,35,15,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                     "Mark_node_outage_event"]
     not_assert_conditions = []
-    checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,DEBUG_MODE)
+    checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test",DEBUG_MODE)
   
 def test_61_28pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,11,12,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,40,12,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_62_32pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,12,14,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,40,14,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_63_34pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,12,15,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,40,15,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_64_35pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,12,15,0,0,5)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,40,15,0,0,5)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_65_28pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,12,12,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,35,12,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_66_30pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,16,13,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,30,13,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_67_32pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,20,14,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,40,14,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_68_34pods():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,24,15,0,0,4)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(2,40,15,0,0,4)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
@@ -505,33 +505,33 @@ def test_68_34pods():
 
 
 def test_69_7pods_1node():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,8,3,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,15,6,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
 def test_70_11pods_1node():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,8,5,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,25,10,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
 def test_71_15pods_1node():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,8,7,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,32,14,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                 "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_72_25pods_1node():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,12,12,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,50,24,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
         "Mark_node_outage_event"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_73_31pods_1node():
-    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,25,15,0,0,1)
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(1,65,30,0,0,1)
     assert_conditions = ["MarkServiceOutageEvent",\
                     "Mark_node_outage_event"]
     not_assert_conditions = []
