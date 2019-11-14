@@ -12,6 +12,7 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.misc.const import *
 import pytest
+import inspect
 from guardctl.model.search import K8ServiceInterruptSearch
 from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
@@ -249,7 +250,7 @@ def prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loadi
     class NewGoal_k1(CheckNodeOutage):
         pass
     p = NewGoal_k1(k.state_objects)
-
+    NewGoal_k1.__name__ = inspect.stack()[0].function
     assert_conditions = ["MarkServiceOutageEvent",\
                         "Mark_node_outage_event"]
     not_assert_conditions = []
@@ -536,4 +537,28 @@ def test_73_31pods_1node():
                     "Mark_node_outage_event"]
     not_assert_conditions = []
     checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,DEBUG_MODE)
-  
+def test_71_15pods_7nodes():
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(7,32,14,0,0,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_74_99pods_7nodes():
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(7,32,14,0,0,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_74_60pods_4nodes():
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(4,32,14,0,0,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
+def test_75_75pods_5nodes():
+    k, p = prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(5,32,14,0,0,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
