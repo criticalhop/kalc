@@ -81,7 +81,19 @@ class K8ServiceInterruptSearch(KubernetesModel):
         #     probability=1.0,
         #     affected=[]
         # )
-
+    @planned(cost=10)
+    def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
+        globalVar: GlobalVar):
+        # assert globalVar.block_node_outage_in_progress == False
+        scheduler.queueLength -= 1
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Can't place a pod",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 
 
 def mark_excluded(object_space, excludeStr, skip_check=False):

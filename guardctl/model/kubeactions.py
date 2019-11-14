@@ -812,19 +812,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podStarted), describe(node)]
         )
-    @planned(cost=1)
-    def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
-        globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
-        scheduler.queueLength -= 1
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Can't place a pod",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
 
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
