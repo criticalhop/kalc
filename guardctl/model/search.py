@@ -81,19 +81,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         #     probability=1.0,
         #     affected=[]
         # )
-    @planned(cost=10)
-    def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
-        globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
-        scheduler.queueLength -= 1
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Can't place a pod",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+
 
 
 def mark_excluded(object_space, excludeStr, skip_check=False):
@@ -153,6 +141,20 @@ class OptimisticRun(K8ServiceInterruptSearch):
     #         probability=1.0,
     #         affected=[]
     #     )
+
+    @planned(cost=10)
+    def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
+        globalVar: GlobalVar):
+        # assert globalVar.block_node_outage_in_progress == False
+        scheduler.queueLength -= 1
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Can't place a pod",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
 class Check_deployments(OptimisticRun):
     @planned(cost=1)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
@@ -307,3 +309,61 @@ class Check_services_deployments_daemonsets(Check_daemonsets,Check_services,Chec
 class Check_node_outage_and_service_restart(Check_services_restart):
     goal = lambda self: self.globalVar.is_service_disrupted == True and \
                                 self.globalVar.is_node_disrupted == True
+
+
+class HypothesisysSearchServiceAndNode(K8ServiceInterruptSearch):
+    goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
+                           self.globalVar.is_node_disrupted == True 
+
+    @planned(cost=1000)
+    def Service_outage_hypothesis(self,
+                service: Service,
+                globalVar: GlobalVar
+            ):
+        # This action implements hyptohesis that service may be outaged 
+        # It has high cost to make  this action implemented only if it is required to achieve the goal      
+        
+        #this action requires all service pods to be in pending status  
+        assert service.amountOfActivePods == 0
+        #starts with setting special status for service that will make pods be able to go to the "Outaged" status
+        # "Outaged" status for pods is status when pod is killed but not added to the quieue  
+        # for this special additional action is implemented once pod is killed  "RemovePodFromTheQueue"
+        service.status = STATUS_SERV["Interrupted"]
+        globalVar.goal_achieved = True
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Service outage Hypothesis implementated",
+            parameters={"service.amountOfActivePods": 0, "service": describe(service)},
+            probability=1.0,
+            affected=[describe(service)]
+        )
+
+    @planned(cost=1)
+    def Remove_pod_from_the_queue(self,
+                service : Service,
+                pod : Pod,
+                scheduler : Scheduler
+
+            ):
+        # This action helps to remove pods from queue once  hyptohesis that service may be outaged implemented
+        
+        #this action requires service of pod to be in "Interrupting" status and in the scheduller queue  
+        assert pod.status == STATUS_POD["Pending"]
+        assert service.status == STATUS_SERV["Interrupted"]
+        assert pod in service.podList
+        assert pod in scheduler.podQueue
+        
+        pod.status = STATUS_POD["Outaged"]
+        scheduler.podQueue.remove(pod)
+        scheduler.queueLength -= 1        
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Pod removed from the queue due to service outage Hypothesis implementation",
+            parameters={"service.amountOfActivePods": 0, "service": describe(service)},
+            probability=1.0,
+            affected=[describe(service)]
+        )

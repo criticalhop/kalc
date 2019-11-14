@@ -7,7 +7,8 @@ STATUS_POD = {
     "Pending" : StatusPod("Pending"),
     "Killing" : StatusPod("Killing"),
     "Failed" : StatusPod("Failed"),
-    "Succeeded" : StatusPod("Succeeded")
+    "Succeeded" : StatusPod("Succeeded"),
+    "Outaged" : StatusPod("Outaged")
 }
 
 STATUS_LIM = {
