@@ -85,7 +85,7 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
         p.hasDaemonset = True
         p.toNode = toNode
     return p
-
+# @pytest.mark.skip(reason="working. testing another case")  
 def test_1_1pod_2nodes_Service_outage():
        # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -135,12 +135,90 @@ def test_1_1pod_2nodes_Service_outage():
     HypothesisysSearchServiceAndNode_k1.__name__ = inspect.stack()[0].function
     not_assert_conditions = []
     print_objects(k.state_objects)
-    p.Initiate_node_outage(node_1,globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(node_1,pod_running_1,globalVar)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_1,s,scheduler)
-    p.NodeOutageFinished(node_1,globalVar)
-    p.Mark_node_outage_event(node_1,globalVar)
-    p.SelectNode(pod_running_1,node_2,globalVar)
+    # p.Initiate_node_outage(node_1,globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(node_1,pod_running_1,globalVar)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_1,s,scheduler)
+    # p.NodeOutageFinished(node_1,globalVar)
+    # p.Mark_node_outage_event(node_1,globalVar)
+    # p.SelectNode(pod_running_1,node_2,globalVar)
+    # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_2,scheduler,s,globalVar)
+    # p.ScheduleQueueProcessed(scheduler,globalVar)
+    print("                       >> changed state <<  ")
+    print_objects(k.state_objects)
+
+    p.run()
+    print ("                      >> after <<         ")
+    print_objects(k.state_objects)
+    print_plan(p)
+
+
+def test_2_3pods_2nodes_Service_outage():
+       # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    i = 0
+    j = 0
+    nodes = []
+    pods = []
+    
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 0
+
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 0
+    # create Deploymnent that we're going to detect failure of...
+    pod_id = 1
+    node_1 = Node("node 1")
+    node_1.cpuCapacity = 7
+    node_1.memCapacity = 7
+    node_1.isNull = False
+    node_1.status = STATUS_NODE["Active"]
+
+    node_2 = Node("node 2")
+    node_2.cpuCapacity = 7
+    node_2.memCapacity = 7
+    node_2.isNull = False
+    node_2.status = STATUS_NODE["Active"]
+
+    pod_running_1 = build_running_pod_with_d(1,2,2,node_1,None,None)
+    pod_running_1.hasService = True
+    node_1.amountOfActivePods += 1
+    s.podList.add(pod_running_1)
+    s.amountOfActivePods += 1
+
+    pod_running_2 = build_running_pod_with_d(2,2,2,node_2,None,None)
+    pod_running_2.hasService = True
+    node_2.amountOfActivePods += 1
+    s.podList.add(pod_running_2)
+    s.amountOfActivePods += 1
+
+    pod_running_3 = build_running_pod_with_d(3,2,2,node_1,None,None)
+    pod_running_3.hasService = True
+    node_1.amountOfActivePods += 1
+    s2.podList.add(pod_running_3)
+    s2.amountOfActivePods += 1
+   
+    k.state_objects += [node_1,node_2,pod_running_1,pod_running_2,pod_running_3, s,s2]
+    create_objects = []
+    k._build_state()
+
+    class test_2_3pods_2nodes_Service_outage(HypothesisysSearchServiceAndNode):
+        pass
+
+    p = test_2_3pods_2nodes_Service_outage(k.state_objects)
+    not_assert_conditions = []
+    print_objects(k.state_objects)
+    # p.Initiate_node_outage(node_2,globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(node_2,pod_running_2,globalVar)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_2,node_2,s,scheduler)
+    # p.NodeOutageFinished(node_2,globalVar)
+    # p.Mark_node_outage_event(node_1,globalVar)
+    # p.SelectNode(pod_running_1,node_2,globalVar)
     # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_2,scheduler,s,globalVar)
     # p.ScheduleQueueProcessed(scheduler,globalVar)
     print("                       >> changed state <<  ")
