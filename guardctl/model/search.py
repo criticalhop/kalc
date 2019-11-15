@@ -315,7 +315,7 @@ class HypothesisysSearchServiceAndNode(K8ServiceInterruptSearch):
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
                            self.globalVar.is_node_disrupted == True 
 
-    @planned(cost=500000)
+    @planned(cost=900000)
     def Service_outage_hypothesis(self,
                 service: Service,
                 globalVar: GlobalVar
