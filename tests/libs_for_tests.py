@@ -123,7 +123,7 @@ def print_plan(p):
         for a in p.plan:
             print(a)
     else:
-        print("Empty plan") 
+        print("Search stopped without finding a solution.") 
         
 def print_objects_compare(k,k2):
     print("---originaly-generated---")
