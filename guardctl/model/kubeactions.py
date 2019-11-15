@@ -643,8 +643,8 @@ class KubernetesModel(ProblemTemplate):
         assert node.isNull == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -683,8 +683,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -724,8 +724,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -763,8 +763,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0 
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -804,8 +804,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity + 0 
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity + 0
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert node.status == STATUS_NODE["Active"]
 
         node.currentFormalCpuConsumption += podStarted.cpuRequest
@@ -847,8 +847,9 @@ class KubernetesModel(ProblemTemplate):
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
+        assert globalVar.is_node_disrupted == False # TODO: checking ONE node outage! Need fixing
         assert node_with_outage.searchable == True
         assert node_with_outage.status == STATUS_NODE["Active"]
         node_with_outage.status = STATUS_NODE["Killing"]
@@ -891,6 +892,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar.amountOfNodesDisrupted += 1
         node.status = STATUS_NODE["Inactive"]
         globalVar.block_node_outage_in_progress = False
+        globalVar.is_node_disrupted = True # TODO: checking ONE node outage! Need fixing
         # TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,

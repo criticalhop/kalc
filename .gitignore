@@ -19,3 +19,5 @@ log*
 venv/
 *.exe.spec
 tests/NOTforRepo/
+*.pddl
+*.out
