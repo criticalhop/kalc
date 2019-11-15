@@ -847,8 +847,9 @@ class KubernetesModel(ProblemTemplate):
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
+        assert globalVar.is_node_disrupted == False # TODO: checking ONE node outage! Need fixing
         assert node_with_outage.searchable == True
         assert node_with_outage.status == STATUS_NODE["Active"]
         node_with_outage.status = STATUS_NODE["Killing"]
@@ -891,6 +892,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar.amountOfNodesDisrupted += 1
         node.status = STATUS_NODE["Inactive"]
         globalVar.block_node_outage_in_progress = False
+        globalVar.is_node_disrupted = True # TODO: checking ONE node outage! Need fixing
         # TODO make ability to calculate multiple nodes outage
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
