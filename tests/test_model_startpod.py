@@ -144,7 +144,7 @@ def test_1_1pod_2nodes_Service_outage():
     # p.Mark_node_outage_event(node_1,globalVar)
     # p.SelectNode(pod_running_1,node_2,globalVar)
     # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_2,scheduler,s,globalVar)
-    # p.ScheduleQueueProcessed(scheduler,globalVar)
+    # p.SchedulerCleaneduler,globalVar)
     print("                       >> changed state <<  ")
     print_objects(k.state_objects)
 
@@ -222,7 +222,7 @@ def test_2_3pods_2nodes_Service_outage():
     # p.Mark_node_outage_event(node_1,globalVar)
     # p.SelectNode(pod_running_1,node_2,globalVar)
     # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_2,scheduler,s,globalVar)
-    # p.ScheduleQueueProcessed(scheduler,globalVar)
+    # p.SchedulerCleaneduler,globalVar)
     print("                       >> changed state <<  ")
     print_objects(k.state_objects)
 

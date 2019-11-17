@@ -205,7 +205,7 @@ def test_1_3pods_Service_outage():
 def test_2_3pods_NO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,6,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
-                "ScheduleQueueProcessed"]
+                "SchedulerCleaned
     not_assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
@@ -214,7 +214,7 @@ def test_2_3pods_NO_Service_outage():
 def test_3_3pods_NO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,7,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
-                "ScheduleQueueProcessed"]
+                "SchedulerCleaned
     not_assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
@@ -222,7 +222,7 @@ def test_3_3pods_NO_Service_outage():
 def test_4_3pods_NONO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,20,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
-                "ScheduleQueueProcessed"]
+                "SchedulerCleaned
     not_assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)

@@ -829,7 +829,7 @@ class KubernetesModel(ProblemTemplate):
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
     @planned(cost=100)
-    def ScheduleQueueProcessed(self, scheduler: "Scheduler",
+    def SchedulerCleaned scheduler: "Scheduler",
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
         assert  scheduler.queueLength == 0
