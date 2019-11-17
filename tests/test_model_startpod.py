@@ -85,7 +85,7 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
         p.hasDaemonset = True
         p.toNode = toNode
     return p
-# @pytest.mark.skip(reason="working. testing another case")  
+
 def test_1_1pod_2nodes_Service_outage():
        # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -123,8 +123,10 @@ def test_1_1pod_2nodes_Service_outage():
     node_1.amountOfActivePods += 1
     s.podList.add(pod_running_1)
     s.amountOfActivePods += 1
-   
-    k.state_objects += [node_1,node_2,pod_running_1, s]
+    s.status = STATUS_SERV["Started"]
+
+    # k.state_objects += [node_1,node_2,pod_running_1, s]
+    k.state_objects += [node_1,node_2,pod_running_1, s, STATUS_POD["Pending"], STATUS_POD["Killing"], STATUS_POD["Running"]]
     create_objects = []
     k._build_state()
 
@@ -135,7 +137,7 @@ def test_1_1pod_2nodes_Service_outage():
     HypothesisysSearchServiceAndNode_k1.__name__ = inspect.stack()[0].function
     not_assert_conditions = []
     print_objects(k.state_objects)
-    # p.Initiate_node_outage(node_1,globalVar)
+    p.Initiate_node_outage(node_1,globalVar)
     # p.Initiate_killing_of_Pod_because_of_node_outage(node_1,pod_running_1,globalVar)
     # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_1,node_1,s,scheduler)
     # p.NodeOutageFinished(node_1,globalVar)
@@ -151,7 +153,7 @@ def test_1_1pod_2nodes_Service_outage():
     print_objects(k.state_objects)
     print_plan(p)
 
-
+# @pytest.mark.skip(reason="too early to test")  
 def test_2_3pods_2nodes_Service_outage():
        # Initialize scheduler, globalvar
     k = KubernetesCluster()
@@ -203,7 +205,7 @@ def test_2_3pods_2nodes_Service_outage():
     s2.podList.add(pod_running_3)
     s2.amountOfActivePods += 1
    
-    k.state_objects += [node_1,node_2,pod_running_1,pod_running_2,pod_running_3, s,s2]
+    k.state_objects += [node_1,node_2,pod_running_1, s, STATUS_POD["Pending"], STATUS_POD["Killing"], STATUS_POD["Running"], Node.NODE_NULL]
     create_objects = []
     k._build_state()
 
@@ -213,8 +215,8 @@ def test_2_3pods_2nodes_Service_outage():
     p = test_2_3pods_2nodes_Service_outage(k.state_objects)
     not_assert_conditions = []
     print_objects(k.state_objects)
-    # p.Initiate_node_outage(node_2,globalVar)
-    # p.Initiate_killing_of_Pod_because_of_node_outage(node_2,pod_running_2,globalVar)
+    p.Initiate_node_outage(node_2,globalVar)
+    p.Initiate_killing_of_Pod_because_of_node_outage(node_2,pod_running_2,globalVar)
     # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(pod_running_2,node_2,s,scheduler)
     # p.NodeOutageFinished(node_2,globalVar)
     # p.Mark_node_outage_event(node_1,globalVar)
