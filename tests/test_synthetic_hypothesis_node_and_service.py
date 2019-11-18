@@ -1,6 +1,6 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import prepare_yamllist_for_diff
-from guardctl.model.search import HypothesisysNode, OptimisticRun
+from guardctl.model.search import HypothesisysNode, OptimisticRun, HypothesisysNodeAndService
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -177,13 +177,10 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
     k._build_state()
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    class HypothesisysNode_k1(HypothesisysNode):
+    class HypothesisysNodeAndService_k1(HypothesisysNodeAndService):
         pass
-    p = HypothesisysNode_k1(k.state_objects)
-    HypothesisysNode_k1.__name__ = inspect.stack()[0].function
-    assert_conditions = ["MarkServiceOutageEvent",\
-                        "Mark_node_outage_event"]
-    not_assert_conditions = []
+    p = HypothesisysNodeAndService_k1(k.state_objects)
+    HypothesisysNodeAndService_k1.__name__ = inspect.stack()[0].function
     print_objects(k.state_objects)
     test_case = StateSet()
     test_case.scheduler = scheduler
@@ -195,23 +192,23 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
     return k, p, test_case
 
 
-@pytest.mark.skip(reason="working. testing another case")    
+# @pytest.mark.skip(reason="working. testing another case")    
 def test_1_3pods_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,4,1,0,0,1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service",\
+                        "SchedulerCleaned"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
-@pytest.mark.skip(reason="working. testing another case")    
+# @pytest.mark.skip(reason="working. testing another case")    
 def test_2_3pods_NO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,6,1,0,0,1)
-    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+    assert_conditions = ["Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service",\
                 "SchedulerCleaned"]
     not_assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
     print_objects(k.state_objects)
-@pytest.mark.skip(reason="working. testing another case")    
+
 def test_3_3pods_NO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,7,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
@@ -219,7 +216,7 @@ def test_3_3pods_NO_Service_outage():
     not_assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
-@pytest.mark.skip(reason="working. testing another case")    
+
 def test_4_3pods_NONO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,20,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
@@ -227,20 +224,20 @@ def test_4_3pods_NONO_Service_outage():
     not_assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
-@pytest.mark.skip(reason="working. testing another case")    
+
 def test_5_11pods():
     nodes_amount=2
     nodes_capacity=14
     pods_running_on_2_nodes_with_req_2_mem_2_cpu_s1 = 5
     pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
     pods_running_on_2_nodes_with_req_2_mem_2_cpu_s2 = 0
-    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+    pods_running_on_node0_with_req_2_mem_2_cpu_s2 = 1
 
     k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
                                         nodes_capacity,pods_running_on_2_nodes_with_req_2_mem_2_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_2_mem_2_cpu_s2,\
-                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s2)
     assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     not_assert_conditions = []
@@ -269,31 +266,45 @@ def test_5_11pods():
     # ---- model test end ----- 
 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
-    print_objects(k.state_objects)
-# @pytest.mark.skip(reason="working. testing another case")   
+
 def test_6_11pods():
     nodes_amount=2
-    nodes_capacity=17
+    nodes_capacity=14
     pods_running_on_2_nodes_with_req_2_mem_2_cpu_s1 = 5
     pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
     pods_running_on_2_nodes_with_req_2_mem_2_cpu_s2 = 0
-    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+    pods_running_on_node0_with_req_2_mem_2_cpu_s2 = 1
 
     k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
                                         nodes_capacity,pods_running_on_2_nodes_with_req_2_mem_2_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_2_mem_2_cpu_s2,\
-                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s2)
     assert_conditions = ["Service_outage_hypothesis",\
                         "Remove_pod_from_the_queue"]
     not_assert_conditions = []
 
-    for node_item in test_case.nodes:
-        for service_item in test_case.services:
-            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
-            node_item.isSearched = True
-            service_item.isSearched = True
-            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
-            print_objects(k.state_objects)
-            node_item.isSearched = False
-            service_item.isSearched = False
+    # ----  model test start ---- 
+    # p.Initiate_node_outage(test_case.nodes[0], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0],test_case.pods[0],test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0],test_case.pods[1],test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0],test_case.pods[2],test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0],test_case.pods[3],test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[4], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[10], test_case.globalVar)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[0], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[1], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[2], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[3], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[4], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[10], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.NodeOutageFinished(test_case.nodes[0], test_case.globalVar)
+    # p.SelectNode(test_case.pods[0], test_case.nodes[1], test_case.globalVar)
+    # p.SelectNode(test_case.pods[1], test_case.nodes[1], test_case.globalVar)
+    # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.nodes[1], test_case.pods[0], test_case.scheduler, test_case.services[0])
+    # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.nodes[1], test_case.pods[1], test_case.scheduler, test_case.services[0])
+
+
+    # ---- model test end ----- 
+
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)

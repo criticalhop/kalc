@@ -27,6 +27,7 @@ class Node(HasLabel):
     status: StatusNode
     amountOfActivePods: int
     searchable: bool
+    isSearched: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,6 +44,7 @@ class Node(HasLabel):
         self.status = STATUS_NODE["Active"]
         self.amountOfActivePods = 0
         self.searchable = True
+        self.isSearched = True
     
     @property
     def status_allocatable_memory(self):

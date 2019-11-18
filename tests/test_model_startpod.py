@@ -1,6 +1,6 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import prepare_yamllist_for_diff
-from guardctl.model.search import HypothesisysSearchServiceAndNode, OptimisticRun
+from guardctl.model.search import HypothesisysNode, OptimisticRun
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.kinds.Service import Service
@@ -130,11 +130,11 @@ def test_1_1pod_2nodes_Service_outage():
     create_objects = []
     k._build_state()
 
-    class HypothesisysSearchServiceAndNode_k1(HypothesisysSearchServiceAndNode):
+    class HypothesisysNode_k1(HypothesisysNode):
         pass
 
-    p = HypothesisysSearchServiceAndNode_k1(k.state_objects)
-    HypothesisysSearchServiceAndNode_k1.__name__ = inspect.stack()[0].function
+    p = HypothesisysNode_k1(k.state_objects)
+    HypothesisysNode_k1.__name__ = inspect.stack()[0].function
     not_assert_conditions = []
     print_objects(k.state_objects)
     p.Initiate_node_outage(node_1,globalVar)
@@ -209,7 +209,7 @@ def test_2_3pods_2nodes_Service_outage():
     create_objects = []
     k._build_state()
 
-    class test_2_3pods_2nodes_Service_outage(HypothesisysSearchServiceAndNode):
+    class test_2_3pods_2nodes_Service_outage(HypothesisysNode):
         pass
 
     p = test_2_3pods_2nodes_Service_outage(k.state_objects)

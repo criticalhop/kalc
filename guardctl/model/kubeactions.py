@@ -23,7 +23,7 @@ class KubernetesModel(ProblemTemplate):
         self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
         self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
 
-    @planned(cost=100)
+    @planned(cost=1)
     def Mark_service_as_started(self,
                 service1: Service,
                 scheduler: "Scheduler",
@@ -42,7 +42,7 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(service1)]
         )
-    @planned(cost=100)
+    @planned(cost=1)
     def Fill_priority_class_object(self,
             pod: "Pod",
             pclass: PriorityClass,
@@ -59,7 +59,7 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(pod)]
         )
-    @planned(cost=100)
+    @planned(cost=1)
     def SetDefaultMemRequestForPod(self,
         pod1: "Pod",
         memLimit: int,
@@ -80,7 +80,7 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def SetDefaultCpuRequestForPod(self,
         pod1: "Pod",
         cpuLimit: int,
@@ -101,7 +101,7 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def SetDefaultMemLimitForPod(self,
         pod1: "Pod",
         node: "Node" ,
@@ -122,7 +122,7 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def SetDefaultCpuLimitForPod(self,
         pod1: "Pod",
         node: "Node" ,
@@ -144,7 +144,7 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
         node: "Node" ,
@@ -165,7 +165,7 @@ class KubernetesModel(ProblemTemplate):
                 affected=[describe(pod1)]
             )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
         node: "Node" ,
@@ -187,7 +187,7 @@ class KubernetesModel(ProblemTemplate):
             )
 
 
-    @planned(cost=100)
+    @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined_byMEM(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
@@ -221,7 +221,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podPending), describe(podToBeReplaced)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_when_target_node_is_defined_byCPU(self,
                 podPending: "Pod",
                 podToBeReplaced: "Pod",
@@ -256,7 +256,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podPending), describe(podToBeReplaced)]
         )
         
-    @planned(cost=100)
+    @planned(cost=1)
     def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "Node",
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
@@ -275,7 +275,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def Mark_Pod_As_Not_Exceeding_Mem_Limits(self, podTobeReanimated: "Pod",
         nodeOfPod: "Node",
         globalVar: GlobalVar):
@@ -296,7 +296,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def MemoryErrorKillPodExceedingLimits(self,
         nodeOfPod: "Node" ,
         pod1TobeKilled: "Pod",
@@ -316,7 +316,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def MemoryErrorKillPodNotExceedingLimits(self,
         nodeOfPod: "Node" ,
         podTobeKilled: "Pod",
@@ -337,7 +337,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
@@ -358,11 +358,13 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
+        serviceOfPod.amountOfPodsInQueue += 1
         nodeWithPod.amountOfActivePods -= 1 
         podBeingKilled.status = STATUS_POD["Pending"]
         podBeingKilled.toNode = Node.NODE_NULL
         podBeingKilled.atNode = Node.NODE_NULL
         scheduler.podQueue.add(podBeingKilled)
+
         scheduler.status = STATUS_SCHED["Changed"]
         scheduler.queueLength += 1
 
@@ -375,7 +377,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             pods_deployment: Deployment,
@@ -415,7 +417,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
@@ -452,7 +454,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             serviceOfPod: "Service",
@@ -479,6 +481,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.amountOfActivePods -= 1 
         pods_deployment.amountOfActivePods -= 1
         serviceOfPod.amountOfActivePods -= 1
+        serviceOfPod.amountOfPodsInQueue += 1
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
@@ -495,7 +498,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
@@ -516,6 +519,7 @@ class KubernetesModel(ProblemTemplate):
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
         serviceOfPod.amountOfActivePods -= 1
+        serviceOfPod.amountOfPodsInQueue += 1
         nodeWithPod.amountOfActivePods -= 1 
         pods_daemonset.amountOfActivePods -= 1
         podBeingKilled.status =  STATUS_POD["Pending"]
@@ -533,7 +537,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
@@ -570,7 +574,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podBeingKilled)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def SelectNode(self, 
         pod1: "Pod",
         SelectedNode: "Node",
@@ -587,7 +591,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(pod1), describe(SelectedNode)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -614,6 +618,7 @@ class KubernetesModel(ProblemTemplate):
         podStarted.atNode = node       
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
+        serviceTargetForPod.amountOfPodsInQueue -= 1
         node.amountOfActivePods += 1
         serviceTargetForPod.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"] 
@@ -627,7 +632,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podStarted), describe(node)]
         )
     
-    @planned(cost=100)
+    @planned(cost=1)
     def StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -663,7 +668,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podStarted), describe(node)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -694,6 +699,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
         serviceTargetForPod.amountOfActivePods += 1
+        serviceTargetForPod.amountOfPodsInQueue -= 1
         pods_deployment.amountOfActivePods += 1 
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
@@ -706,7 +712,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podStarted), describe(node)]
         )
     
-    @planned(cost=100)
+    @planned(cost=1)
     def StartPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -745,7 +751,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[describe(podStarted), describe(node)]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -785,7 +791,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
 
-    @planned(cost=100)
+    @planned(cost=1)
     def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull(self, 
         podStarted: "Pod",
         node: "Node" ,
@@ -815,7 +821,9 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
         pods_daemonset.amountOfActivePods += 1
-        podStarted.status = STATUS_POD["Running"] 
+        podStarted.status = STATUS_POD["Running"]
+        serviceTargetForPod.amountOfActivePods += 1
+        serviceTargetForPod.amountOfPodsInQueue -= 1
         serviceTargetForPod.status = STATUS_SERV["Started"]
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -828,8 +836,9 @@ class KubernetesModel(ProblemTemplate):
 
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     
-    @planned(cost=100)
-    def SchedulerCleaned scheduler: "Scheduler",
+    @planned(cost=1)
+    def SchedulerCleaned(self, 
+        scheduler: "Scheduler",
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
         assert  scheduler.queueLength == 0
@@ -843,7 +852,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=90)
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar):
@@ -862,8 +871,29 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-        
-    @planned(cost=100)
+
+    @planned(cost=1)
+    def Initiate_node_outage_searched(self,
+        node_with_outage: "Node",
+        globalVar: GlobalVar):
+        assert globalVar.block_node_outage_in_progress == False
+        # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
+        assert globalVar.is_node_disrupted == False # TODO: checking ONE node outage! Need fixing
+        assert node_with_outage.searchable == True
+        assert node_with_outage.status == STATUS_NODE["Active"]
+        assert node_with_outage.isSearched == True
+        node_with_outage.status = STATUS_NODE["Killing"]
+        globalVar.block_node_outage_in_progress = True
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Outage of Node initiated ",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
+
+    @planned(cost=1)
     def Initiate_killing_of_Pod_because_of_node_outage(self,
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
@@ -882,7 +912,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def NodeOutageFinished(self,
         node: "Node",
         globalVar: GlobalVar):
@@ -903,7 +933,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def ReplaceNullCpuRequestsWithZero(self,
         pod: "Pod"):
         # assert pod.status == STATUS_POD["Running"]
@@ -918,7 +948,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=100)
+    @planned(cost=1)
     def ReplaceNullMemRequestsWithZero(self,
         pod: "Pod"):
         # assert pod.status == STATUS_POD["Running"]

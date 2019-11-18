@@ -32,7 +32,7 @@ class ExcludeDict:
 class K8ServiceInterruptSearch(KubernetesModel):
 
 
-    @planned(cost=100)
+    @planned(cost=1)
     def NodeNServiceInterupted(self,globalVar:GlobalVar, scheduler: Scheduler):
         assert globalVar.is_node_disrupted == True
         assert globalVar.is_service_disrupted == True
@@ -47,7 +47,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
             affected=[]
         )
     
-    @planned(cost=100)
+    @planned(cost=1)
     def Mark_node_outage_event(self,
         node:"Node",
         globalvar:GlobalVar):
@@ -142,7 +142,7 @@ class OptimisticRun(K8ServiceInterruptSearch):
     #         affected=[]
     #     )
 
-    @planned(cost=10)
+    @planned(cost=1)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
@@ -156,7 +156,7 @@ class OptimisticRun(K8ServiceInterruptSearch):
             affected=[]
         )
 class Check_deployments(OptimisticRun):
-    @planned(cost=100)
+    @planned(cost=1)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
                 scheduler: "Scheduler"):
         assert globalVar.is_deployment_disrupted == True
@@ -170,7 +170,7 @@ class Check_deployments(OptimisticRun):
             probability=1.0,
             affected=[]
         )
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkDeploymentOutageEvent(self,
                 deployment_current: Deployment,
                 pod_current: Pod,
@@ -195,7 +195,7 @@ class Check_deployments(OptimisticRun):
             affected=[describe(deployment_current)]
         )
 class Check_services(OptimisticRun):
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
@@ -223,7 +223,7 @@ class Check_services(OptimisticRun):
         )
 
 class Check_services_restart(OptimisticRun):
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkServiceOutageEvent(self,
                 service1: Service,
                 pod1: Pod,
@@ -250,7 +250,7 @@ class Check_services_restart(OptimisticRun):
             affected=[describe(service1)]
         )
 
-    @planned(cost=100) # this works for no-outage case
+    @planned(cost=1) # this works for no-outage case
     def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
@@ -266,14 +266,14 @@ class Check_services_restart(OptimisticRun):
             affected=[]
         )
     
-    @planned(cost=100)
+    @planned(cost=1)
     def AnyServiceInterrupted(self,globalVar:GlobalVar, scheduler: Scheduler):
         assert globalVar.is_service_disrupted == True
         assert scheduler.status == STATUS_SCHED["Clean"]
         globalVar.goal_achieved = True 
 
 class Check_daemonsets(OptimisticRun):        
-    @planned(cost=100)
+    @planned(cost=1)
     def MarkDaemonsetOutageEvent(self,
                 daemonset_current: DaemonSet,
                 pod_current: Pod,
@@ -311,11 +311,9 @@ class Check_node_outage_and_service_restart(Check_services_restart):
                                 self.globalVar.is_node_disrupted == True
 
 
-class HypothesisysSearchServiceAndNode(K8ServiceInterruptSearch):
-    goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
-                           self.globalVar.is_node_disrupted == True 
 
-    @planned(cost=1000)
+class HypothesisysClean(K8ServiceInterruptSearch):
+    @planned(cost=100)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service(self,
                 service : Service,
                 pod : Pod,
@@ -326,7 +324,9 @@ class HypothesisysSearchServiceAndNode(K8ServiceInterruptSearch):
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
         assert pod in scheduler.podQueue
-        assert service.amountOfActivePods > 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
@@ -342,23 +342,28 @@ class HypothesisysSearchServiceAndNode(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
     
-    @planned(cost=1000)
+    @planned(cost=100)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service(self,
                 service : Service,
                 pod : Pod,
-                scheduler : Scheduler
+                scheduler : Scheduler,
+                globalVar: GlobalVar
             ):
         # This action helps to remove pods from queue 
 
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
         assert pod in scheduler.podQueue
-        assert service.amountOfActivePods == 1
-        
+        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
-        scheduler.queueLength -= 1
+        scheduler.queueLength -= 1 
         service.status = STATUS_SERV["Interrupted"]
+        globalVar.is_service_disrupted = True
+
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -368,3 +373,76 @@ class HypothesisysSearchServiceAndNode(K8ServiceInterruptSearch):
             probability=1.0,
             affected=[describe(service)]
         )
+
+    @planned(cost=50)
+    def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service_searched(self,
+                service : Service,
+                pod : Pod,
+                scheduler : Scheduler
+            ):
+        # This action helps to remove pods from queue 
+
+        assert pod.status == STATUS_POD["Pending"]
+        assert pod in service.podList
+        assert pod in scheduler.podQueue
+        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        assert service.isSearched == True
+        
+        pod.status = STATUS_POD["Outaged"]
+        scheduler.podQueue.remove(pod)
+        scheduler.queueLength -= 1
+
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Pod removed from the queue due to being nable to start pod",
+            parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
+            probability=1.0,
+            affected=[describe(service)]
+        )
+    
+    @planned(cost=50)
+    def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service_searched(self,
+                service : Service,
+                pod : Pod,
+                scheduler : Scheduler,
+                globalVar: GlobalVar
+            ):
+        # This action helps to remove pods from queue 
+
+        assert pod.status == STATUS_POD["Pending"]
+        assert pod in service.podList
+        assert pod in scheduler.podQueue
+        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+
+        assert service.isSearched == True
+        
+        pod.status = STATUS_POD["Outaged"]
+        scheduler.podQueue.remove(pod)
+        scheduler.queueLength -= 1
+        service.status = STATUS_SERV["Interrupted"]
+        globalVar.is_service_disrupted = True
+
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Service outage notified once last pod was removed from the queue due to being nable to start pod.",
+            parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
+            probability=1.0,
+            affected=[describe(service)]
+        )
+class HypothesisysNodeAndService(HypothesisysClean):
+    goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
+                        self.globalVar.is_node_disrupted == True and \
+                        self.globalVar.is_service_disrupted == True
+
+
+class HypothesisysNode(HypothesisysClean):
+    goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
+                           self.globalVar.is_node_disrupted == True 

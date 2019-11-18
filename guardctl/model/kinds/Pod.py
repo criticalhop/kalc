@@ -77,12 +77,6 @@ class Pod(HasLabel, HasLimitsRequests):
                 logger.warning("Could not reference priority class %s %s" % (str(controller.spec_template_spec_priorityClassName), str(self.metadata_name)))
 
     def hook_after_load(self, object_space, _ignore_orphan=False):
-        if self.status._property_value == STATUS_POD["Pending"]:
-            scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
-            scheduler.queueLength += 1
-            assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(scheduler.queueLength), POODLE_MAXLIN)
-            scheduler.podQueue.add(self)
-            scheduler.status = STATUS_SCHED["Changed"]
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
         for node in nodes:
@@ -101,6 +95,7 @@ class Pod(HasLabel, HasLimitsRequests):
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
         # link service <> pod
+        
         services = filter(lambda x: isinstance(x, mservice.Service), object_space)
         for service in services:
             if len(service.spec_selector._get_value()) and \
@@ -108,15 +103,24 @@ class Pod(HasLabel, HasLimitsRequests):
                         .issubset(set(self.metadata_labels._get_value())):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 service.podList.add(self)
+                target_service_of_pod_localVar = service
                 self.hasService = True
                 if list(service.metadata_labels._get_value()):
                     if self.status._property_value == STATUS_POD["Running"]:
-                        self.connect_pod_service_labels(self, service, \
-                            list(service.metadata_labels._get_value())[0])
+                        service.amountOfActivePods += 1
+                        service.status = STATUS_SERV["Started"]
                         assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
                 else:
                     pass
                     # cli.click.echo("    - WRN: no label for service %s" % str(service.metadata_name))
+        if self.status._property_value == STATUS_POD["Pending"]:
+            scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
+            scheduler.queueLength += 1
+            assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(scheduler.queueLength), POODLE_MAXLIN)
+            scheduler.podQueue.add(self)
+            scheduler.status = STATUS_SCHED["Changed"]
+            target_service_of_pod_localVar.amountOfPodsInQueue += 1
+
 
         if str(self.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             try:
@@ -167,7 +171,7 @@ class Pod(HasLabel, HasLimitsRequests):
         assert label in pod.metadata_labels
         assert label in service.spec_selector
         assert pod.status == STATUS_POD["Running"]
-        service.podList.add(pod)
+        # service.podList.add(pod)
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
 
