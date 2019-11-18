@@ -323,11 +323,13 @@ class HypothesisysClean(K8ServiceInterruptSearch):
 
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
+        assert pod.hasService == True
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        
+
+
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
         scheduler.queueLength -= 1
@@ -336,7 +338,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="Pod removed from the queue due to being nable to start pod",
+            description="Pod removed from the queue due to being unable to start pod",
             parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
             probability=1.0,
             affected=[describe(service)]
@@ -353,6 +355,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
 
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
+        assert pod.hasService == True
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
@@ -368,7 +371,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="Service outage notified once last pod was removed from the queue due to being nable to start pod.",
+            description="Service outage notified once last pod was removed from the queue due to being unable to start pod.",
             parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
             probability=1.0,
             affected=[describe(service)]
@@ -384,6 +387,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
 
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
+        assert pod.hasService == True
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
@@ -398,7 +402,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="Pod removed from the queue due to being nable to start pod",
+            description="Pod removed from the queue due to being unable to start pod",
             parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
             probability=1.0,
             affected=[describe(service)]
@@ -415,11 +419,11 @@ class HypothesisysClean(K8ServiceInterruptSearch):
 
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
+        assert pod.hasService == True
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-
         assert service.isSearched == True
         
         pod.status = STATUS_POD["Outaged"]
@@ -432,11 +436,40 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
-            description="Service outage notified once last pod was removed from the queue due to being nable to start pod.",
+            description="Service outage notified once last pod was removed from the queue due to being unable to start pod.",
             parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
             probability=1.0,
             affected=[describe(service)]
         )
+
+
+    @planned(cost=100)
+    def Remove_pod_from_the_cluster_IF_service_isnull(self,
+                pod : Pod,
+                scheduler : Scheduler
+            ):
+        # This action helps to remove pods from queue 
+
+        assert pod.status == STATUS_POD["Pending"]
+        assert pod.hasService == False
+        assert pod in scheduler.podQueue
+
+        pod.status = STATUS_POD["Outaged"]
+        scheduler.podQueue.remove(pod)
+        scheduler.queueLength -= 1
+        scheduler.queueLength -= 0
+        scheduler.queueLength -= 0
+
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Pod removed from the queue due to being unable to start pod",
+            parameters={"Pod: ": describe(pod)},
+            probability=1.0,
+            affected=[describe(pod)]
+        )
+    
 class HypothesisysNodeAndService(HypothesisysClean):
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
                         self.globalVar.is_node_disrupted == True and \
