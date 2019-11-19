@@ -314,24 +314,24 @@ def test_7_11pods():
     not_assert_conditions = []
 
     # ----  model test start ---- 
-    p.Initiate_node_outage(test_case.nodes[0], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[0], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[1], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[2], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[3], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[4], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[5], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[6], test_case.globalVar)
-    p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[14], test_case.globalVar)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[0], test_case.nodes[0], test_case.services[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[1], test_case.nodes[0], test_case.services[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[2], test_case.nodes[0], test_case.services[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[3], test_case.nodes[0], test_case.services[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[4], test_case.nodes[0], test_case.services[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(test_case.pods[5], test_case.nodes[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(test_case.pods[6], test_case.nodes[0], test_case.scheduler)
-    p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[14], test_case.nodes[0], test_case.services[0], test_case.scheduler)
-    p.NodeOutageFinished(test_case.nodes[0], test_case.globalVar)
+    # p.Initiate_node_outage_searched(test_case.nodes[0], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[0], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[1], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[2], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[3], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[4], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[5], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[6], test_case.globalVar)
+    # p.Initiate_killing_of_Pod_because_of_node_outage(test_case.nodes[0], test_case.pods[14], test_case.globalVar)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[0], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[1], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[2], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[3], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[4], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(test_case.pods[5], test_case.nodes[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(test_case.pods[6], test_case.nodes[0], test_case.scheduler)
+    # p.KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.pods[14], test_case.nodes[0], test_case.services[0], test_case.scheduler)
+    # p.NodeOutageFinished(test_case.nodes[0], test_case.globalVar)
     # p.SelectNode(test_case.pods[0], test_case.nodes[1], test_case.globalVar)
     # p.SelectNode(test_case.pods[5], test_case.nodes[1], test_case.globalVar)
     # p.StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(test_case.nodes[1], test_case.pods[0], test_case.scheduler, test_case.services[0], test_case.globalVar)
@@ -341,12 +341,66 @@ def test_7_11pods():
     # ---- model test end ----- 
 
 
-    # for node_item in test_case.nodes:
-    #     for service_item in test_case.services:
-    #         print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
-    #         node_item.isSearched = True
-    #         service_item.isSearched = True
-    #         assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
-    #         print_objects(k.state_objects)
-    #         node_item.isSearched = False
-    #         service_item.isSearched = False
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_8_52pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 2
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_9_121pods():
+    nodes_amount=7
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 2
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
