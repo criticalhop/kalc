@@ -44,7 +44,7 @@ class Node(HasLabel):
         self.status = STATUS_NODE["Active"]
         self.amountOfActivePods = 0
         self.searchable = True
-        self.isSearched = True
+        self.isSearched = False
     
     @property
     def status_allocatable_memory(self):
