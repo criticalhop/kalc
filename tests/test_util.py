@@ -51,7 +51,8 @@ def print_objects(objectList):
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
         ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
-        ", Searchable: " + str(nodeitem.searchable._get_value()))
+        ", Searchable: " + str(nodeitem.searchable._get_value())+\
+        ", IsSearched: ", str(nodeitem.isSearched._get_value()))
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:
@@ -59,7 +60,8 @@ def print_objects(objectList):
         ", AmountOfActivePods: "+str(service.amountOfActivePods._get_value())+\
         ", Status: " + str(service.status._get_value()) +
         ", Spec_selector: "+str([str(x) for x in service.spec_selector._property_value])+\
-        ", Pod_List: "+str([str(x) for x in service.podList._get_value()]))
+        ", Pod_List: "+str([str(x) for x in service.podList._get_value()])+\
+        ", IsSearched: ", str(service.isSearched._get_value()))
 
 
     prios = filter(lambda x: isinstance(x, PriorityClass), objectList)
