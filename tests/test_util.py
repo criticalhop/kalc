@@ -51,14 +51,11 @@ def print_objects(objectList):
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
         ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
-<<<<<<< HEAD
         ", Searchable: " + str(nodeitem.searchable._get_value())+\
-        ", IsSearched: ", str(nodeitem.isSearched._get_value()))
-=======
+        ", IsSearched: ", str(nodeitem.isSearched._get_value())+\
         ", Searchable: " + str(nodeitem.searchable._get_value()) +\
         ", Pod_List: "+str([str(x) for x in nodeitem.podList._get_value()])+\
         ", ToNode_List: "+str([str(x) for x in nodeitem.toNodeList._get_value()]))
->>>>>>> ac18c5e... replace atnode and tonode with podlists and tests
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:
