@@ -267,7 +267,7 @@ def test_5_11pods():
 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
     print_objects(k.state_objects)
-@pytest.mark.skip(reason="working. testing another case")   
+# @pytest.mark.skip(reason="working. testing another case")   
 def test_6_11pods():
     nodes_amount=2
     nodes_capacity=17
@@ -380,7 +380,170 @@ def test_8_52pods():
             node_item.isSearched = False
             service_item.isSearched = False
 
-def test_9_121pods():
+def test_9_61pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 5
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+
+def test_10_70pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 8
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_10_79pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 11
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_11_88pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 14
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+            
+def test_12_97pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 17
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+       
+def test_13_106pods():
+    nodes_amount=3
+    nodes_capacity=40
+    pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv = 20
+    pods_running_on_node0_with_req_2_mem_2_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_2_mem_2_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_2_mem_2_cpu_s1)
+    assert_conditions = ["Service_outage_hypothesis",\
+                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_14_121pods():
     nodes_amount=7
     nodes_capacity=40
     pods_running_on_each_node_with_req_2_mem_2_cpu_s1 = 15
