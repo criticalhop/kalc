@@ -2,7 +2,7 @@ from random import randrange
 import os
 import re
 
-comment = "without-blocks"
+comment = ""
 file_for_commit = "./log-current-commit" + "-" + comment
 file_for_report = "./log_test_stats" #+ "-" + comment
 # test_cases=["test_38","test_41","test_42","test_43","test_44","test_45","test_46","test_47","test_48"]
@@ -54,6 +54,37 @@ test_cases = [  "test_53_17pods",\
                 "test_72_25pods_1node",\
                 "test_73_31pods_1node"
                 ]
+
+test_cases = [  
+    "test_6_11pods",\
+    "test_8_52pods",\
+    "test_9_61pods",\
+    "test_10_70pods",\
+    "test_10_79pods",\
+    "test_11_88pods",\
+    "test_12_97pods",\
+    "test_13_106pods",\
+    "test_14_121pods"    
+]
+
+test_cases = [  
+    "test_6_11pods",\
+    "test_8_52pods",\
+    "test_9_61pods"
+]
+
+test_cases = [  
+    "test_10_70pods",\
+    "test_10_79pods",\
+    "test_11_88pods"
+]
+
+test_cases = [  
+    "test_12_97pods",\
+    "test_13_106pods",\
+    "test_14_121pods"    
+]
+
 lin_count = "70"
 weight = "1"
 
@@ -79,7 +110,7 @@ for i in test_cases:
     test_name = i
     log_name = "log-" + comment + "-" + commit_item_inline + "-" + i + "-" + lin_count + "-" + weight
     port = randrange(10000, 10101, 1) 
-    template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/test_synthetic_masstest.py::{} > {}"
+    template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/test_synthetic_hypothesis_run.py::{} > {}"
     bashCommand = template.format(lin_count,weight,port, test_name,log_name)
     os.system(bashCommand)
     duration2 = ['0']

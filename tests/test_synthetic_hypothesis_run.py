@@ -195,8 +195,8 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
 @pytest.mark.skip(reason="working. testing another case")    
 def test_1_3pods_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,4,1,0,0,1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 @pytest.mark.skip(reason="working. testing another case")    
@@ -204,8 +204,7 @@ def test_2_3pods_NO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,6,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
                 "SchedulerCleaned"]
-    not_assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
     print_objects(k.state_objects)
 @pytest.mark.skip(reason="working. testing another case")    
@@ -213,16 +212,15 @@ def test_3_3pods_NO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,7,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
                 "SchedulerCleaned"]
-    not_assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 @pytest.mark.skip(reason="working. testing another case")    
 def test_4_3pods_NONO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,20,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
                 "SchedulerCleaned"]
-    not_assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 @pytest.mark.skip(reason="working. testing another case")    
 def test_5_11pods():
@@ -238,8 +236,8 @@ def test_5_11pods():
                                         pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
 
     # ----  model test start ---- 
@@ -281,8 +279,8 @@ def test_6_11pods():
                                         pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
 
     for node_item in test_case.nodes:
@@ -311,8 +309,8 @@ def test_7_11pods():
                                         pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_2_nodes_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
 
     # ----  model test start ---- 
@@ -366,8 +364,8 @@ def test_8_52pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -393,8 +391,8 @@ def test_9_61pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -421,8 +419,8 @@ def test_10_70pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -448,8 +446,8 @@ def test_10_79pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -475,8 +473,8 @@ def test_11_88pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -502,8 +500,8 @@ def test_12_97pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -529,8 +527,8 @@ def test_13_106pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
   
     for node_item in test_case.nodes:
@@ -556,8 +554,8 @@ def test_14_121pods():
                                         pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
                                         pods_running_on_each_node_with_req_2_mem_2_cpu_no_serv,\
                                         pods_running_on_node0_with_req_2_mem_2_cpu_s1)
-    assert_conditions = ["Service_outage_hypothesis",\
-                        "Remove_pod_from_the_queue"]
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
     not_assert_conditions = []
 
     for node_item in test_case.nodes:
