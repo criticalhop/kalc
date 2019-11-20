@@ -73,17 +73,17 @@ test_cases = [
     "test_9_61pods"
 ]
 
-test_cases = [  
-    "test_10_70pods",\
-    "test_10_79pods",\
-    "test_11_88pods"
-]
+# test_cases = [  
+#     "test_10_70pods",\
+#     "test_10_79pods",\
+#     "test_11_88pods"
+# ]
 
-test_cases = [  
-    "test_12_97pods",\
-    "test_13_106pods",\
-    "test_14_121pods"    
-]
+# test_cases = [  
+#     "test_12_97pods",\
+#     "test_13_106pods",\
+#     "test_14_121pods"    
+# ]
 
 lin_count = "70"
 weight = "1"
