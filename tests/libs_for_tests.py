@@ -606,6 +606,7 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
             print("--- ",test_mode,": Error")
             print_plan(p)
     return_brake = brake
+    print_plan(p)
     return  return_brake
 
 def compare_yaml_files(k,k2):
