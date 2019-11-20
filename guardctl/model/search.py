@@ -325,8 +325,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
@@ -355,8 +355,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
 
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
@@ -386,8 +386,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.isSearched == True
         
         pod.status = STATUS_POD["Outaged"]
@@ -417,8 +417,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+        # assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
 
         assert service.isSearched == True
         
