@@ -404,3 +404,5 @@ def test_9_121pods():
             print_objects(k.state_objects)
             node_item.isSearched = False
             service_item.isSearched = False
+            break
+        break
