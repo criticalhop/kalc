@@ -313,7 +313,7 @@ class Check_node_outage_and_service_restart(Check_services_restart):
 
 
 class HypothesisysClean(K8ServiceInterruptSearch):
-    @planned(cost=100)
+    @planned(cost=500)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service(self,
                 service : Service,
                 pod : Pod,
@@ -325,8 +325,6 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod.hasService == True
         assert pod in scheduler.podQueue
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         
         pod.status = STATUS_POD["Outaged"]
@@ -343,7 +341,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
     
-    @planned(cost=100)
+    @planned(cost=500)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service(self,
                 service : Service,
                 pod : Pod,
@@ -357,8 +355,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod.hasService == True
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
+
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
         scheduler.queueLength -= 1 
@@ -375,7 +372,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
 
-    @planned(cost=50)
+    @planned(cost=250)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service_searched(self,
                 service : Service,
                 pod : Pod,
@@ -387,8 +384,6 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod.hasService == True
         assert pod in scheduler.podQueue
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.isSearched == True
         
@@ -406,7 +401,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
     
-    @planned(cost=50)
+    @planned(cost=250)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service_searched(self,
                 service : Service,
                 pod : Pod,
@@ -419,8 +414,6 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in service.podList
         assert pod.hasService == True
         assert pod in scheduler.podQueue
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
-        assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue == 1
         assert service.isSearched == True
         
@@ -441,7 +434,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         )
 
 
-    @planned(cost=100)
+    @planned(cost=500)
     def Remove_pod_from_the_cluster_IF_service_isnull(self,
                 pod : Pod,
                 scheduler : Scheduler
@@ -455,12 +448,6 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
         scheduler.queueLength -= 1
-        scheduler.queueLength -= 0
-        scheduler.queueLength -= 0
-        scheduler.queueLength -= 0
-        scheduler.queueLength -= 0
-
-
 
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
