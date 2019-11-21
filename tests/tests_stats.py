@@ -2,7 +2,8 @@ from random import randrange
 import os
 import re
 
-comment = "costs-250-500"
+
+comment = "algo3"
 file_for_commit = "./log-current-commit" + "-" + comment
 file_for_report = "./log_test_stats" #+ "-" + comment
 # test_cases=["test_38","test_41","test_42","test_43","test_44","test_45","test_46","test_47","test_48"]
@@ -56,7 +57,15 @@ test_cases = [  "test_53_17pods",\
                 ]
 
 test_cases = [  
+    "test_1_3pods_Service_outage",\
+    "test_2_3pods_NO_Service_outage",\
+    "test_3_3pods_NO_Service_outage",\
+    "test_4_3pods_NONO_Service_outage",\
+    "test_5_11pods",\
     "test_6_11pods",\
+    "test_20pods",\
+    "test_30pods",\
+    "test_40pods",\
     "test_8_52pods",\
     "test_9_61pods",\
     "test_10_70pods",\
@@ -67,17 +76,17 @@ test_cases = [
     "test_14_121pods"    
 ]
 
-test_cases = [  
-    "test_6_11pods",\
-    "test_8_52pods",\
-    "test_9_61pods"
-]
+# test_cases = [  
+#     "test_6_11pods",\
+#     "test_8_52pods",\
+#     "test_9_61pods"
+# ]
 
-test_cases = [  
-    "test_10_70pods",\
-    "test_10_79pods",\
-    "test_11_88pods"
-]
+# test_cases = [  
+#     "test_10_70pods",\
+#     "test_10_79pods",\
+#     "test_11_88pods"
+# ]
 
 # test_cases = [  
 #     "test_12_97pods",\
@@ -85,7 +94,7 @@ test_cases = [
 #     "test_14_121pods"    
 # ]
 
-lin_count = "70"
+lin_count = "50"
 weight = "1"
 test_file = "test_synthetic_hypothesis_run.py"
 
@@ -111,8 +120,8 @@ for i in test_cases:
     test_name = i
     log_name = "log-" + comment + "-" + commit_item_inline + "-" + i + "-" + lin_count + "-" + weight
     port = randrange(10000, 10101, 1) 
-    template = "POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/{}::{} > {}"
-    bashCommand = template.format(lin_count,weight,port,test_file, test_name,log_name)
+    template = "OUT_FILE={} POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/{}::{} > {}"
+    bashCommand = template.format(log_name, lin_count, weight, port, test_file, test_name, log_name)
     os.system(bashCommand)
     duration2 = ['0']
     status = "FAILED"
