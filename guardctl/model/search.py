@@ -313,7 +313,7 @@ class Check_node_outage_and_service_restart(Check_services_restart):
 
 
 class HypothesisysClean(K8ServiceInterruptSearch):
-    @planned(cost=500)
+    @planned(cost=200)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service(self,
                 service : Service,
                 pod : Pod,
@@ -341,7 +341,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
     
-    @planned(cost=500)
+    @planned(cost=200)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service(self,
                 service : Service,
                 pod : Pod,
@@ -372,7 +372,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
 
-    @planned(cost=250)
+    @planned(cost=200)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service_searched(self,
                 service : Service,
                 pod : Pod,
@@ -401,7 +401,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
     
-    @planned(cost=250)
+    @planned(cost=200)
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_is_last_for_service_searched(self,
                 service : Service,
                 pod : Pod,
@@ -434,7 +434,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         )
 
 
-    @planned(cost=500)
+    @planned(cost=200)
     def Remove_pod_from_the_cluster_IF_service_isnull(self,
                 pod : Pod,
                 scheduler : Scheduler
