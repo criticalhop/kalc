@@ -3,7 +3,7 @@ import os
 import re
 
 
-comment = "cost250-500-poodle29e0e61"
+comment = "cost250-500-poodle29e0e61-inparallelway"
 file_for_commit = "./log-current-commit" + "-" + comment
 file_for_list_of_reports = "./log_list_of_reports"
 
@@ -91,10 +91,19 @@ test_cases = [
 #     "test_13_106pods",\
 #     "test_14_121pods"    
 # ]
+test_cases =[]
+test_file = "test_synthetic_hypothesis_run.py"
+with open("./tests/"+test_file) as f_test:
+    test_file_lines = f_test.read().splitlines()
+
+for test_line_item in test_file_lines:
+    if "def" in test_line_item and "test_" in test_line_item:
+        test_cases.extend([test_line_item.replace("def","").replace("():","").strip()])
+
 
 lin_count = "50"
 weight = "1"
-test_file = "test_synthetic_hypothesis_run.py"
+
 domain_high_cost = 500
 domain_middle_cost = 250
 
@@ -124,5 +133,6 @@ for i in test_cases:
     log_name = "log-" + log_id
     port = randrange(10000, 10101, 1) 
     template = "DOMAIN_HIGH_COST={} DOMAIN_MIDDLE_COST={} OUT_NAME={} POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/{}::{} > {}"
+    print(template.format(domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name))
     bashCommand = template.format(domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name)
     os.system(bashCommand)
