@@ -588,14 +588,16 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
     return_brake = True
     brake = False
     if p.plan:
+        print("Plan found")
         for a in assert_conditions:
             if not a in "\n".join([repr(x) for x in p.plan]):
                 brake = True
         for a in not_assert_conditions:
             if a in "\n".join([repr(x) for x in p.plan]):
                 brake = True
-    if not p.plan:
-        brake = True
+        else:
+            brake = True
+
     if not brake:
         if debug_mode > 0:
             print("--- ",test_mode,": Ok")
@@ -604,7 +606,6 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
     else:
         if debug_mode > 0:
             print("--- ",test_mode,": Error")
-            print_plan(p)
     return_brake = brake
     print_plan(p)
     return  return_brake

@@ -178,7 +178,7 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
     class HypothesisysNode_k1(HypothesisysNode):
         pass
     p = HypothesisysNode_k1(k.state_objects)
-    HypothesisysNode_k1.__name__ = os.getenv("OUT_NAME","test")
+    HypothesisysNode_k1.__name__ = os.getenv('OUT_NAME',"test")
     assert_conditions = ["MarkServiceOutageEvent",\
                         "Mark_node_outage_event"]
     not_assert_conditions = []
