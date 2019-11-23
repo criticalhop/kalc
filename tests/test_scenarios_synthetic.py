@@ -1710,4 +1710,931 @@ def test_17_creates_service_and_deployment_insufficient_resource__service_outage
 def test_17_2_creates_service_and_deployment_insufficient_resource__two_service_outage():
     # print("17")
     # Initialize scheduler, globalVar
-    k = Kubern
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+
+    # Create running pods
+    pod_running_1 = build_running_pod(1,2,2,n)
+    pod_running_2 = build_running_pod(2,2,2,n)
+    n.amountOfActivePods = 2
+
+    ## Set consumptoin as expected
+    n.currentFormalCpuConsumption = 4
+    n.currentFormalMemConsumption = 4
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+    s.searchable = True
+
+    # our service has multiple pods but we are detecting pods pending issue
+    # remove service as we are detecting service outage by a bug above
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_2 = build_pending_pod(4,2,2,n)
+    # pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.podQueue.add(pod_pending_2)
+    scheduler.queueLength += 2
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.podList.add(pod_running_1)
+    d.podList.add(pod_running_2)
+    d.amountOfActivePods = 2
+    d.spec_replicas = 2
+    pod_running_1.hasDeployment = True
+    pod_running_2.hasDeployment = True
+
+    dnew = Deployment()
+    dnew.podList.add(pod_pending_1)
+    dnew.amountOfActivePods = 0
+    dnew.spec_replicas = 1
+    pod_pending_1.hasDeployment = True
+
+    snew = Service()
+    snew.metadata_name = "test-service-new"
+    snew.amountOfActivePods = 0
+    snew.status = STATUS_SERV["Pending"]
+    snew.podList.add(pod_pending_1)
+    pod_pending_1.hasService = True
+    snew.searchable = True
+
+    snew2 = Service()
+    snew2.metadata_name = "test-service-new"
+    snew2.amountOfActivePods = 0
+    snew2.status = STATUS_SERV["Pending"]
+    snew2.podList.add(pod_pending_2)
+    pod_pending_2.hasService = True
+    snew2.searchable = True
+
+    k.state_objects.extend([n, s, snew, snew2, pod_running_1, pod_running_2, pod_pending_1, pod_pending_2, d, dnew])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    pod_pending_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k.state_objects)) 
+    class NewGoal_k1(Check_services):
+        pass
+    p = NewGoal_k1(k.state_objects)
+
+    pod_pending_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Pending"], k2.state_objects))
+    class NewGoal_k2(Check_services):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkDeploymentOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+def test_19_has_deployment_creates_deployment__pods_evicted_pods_pending_test_snackable_branch():
+    # print("19")
+    k = KubernetesCluster()
+    prios = {}
+    pch = PriorityClass()
+    k.state_objects.append(pch)
+    pch.priority = 10
+    pch.metadata_name = "high-prio-test"
+    prios["high"] = pch
+    pcl = PriorityClass()
+    k.state_objects.append(pcl)
+    pcl.priority = 1
+    pcl.metadata_name = "low-prio-test"
+    prios["low"] = pcl
+
+    pods = []
+    node = Node()
+    k.state_objects.append(node)
+    node.memCapacity = 3
+    node.cpuCapacity = 3
+    d_was = Deployment()
+    k.state_objects.append(d_was)
+    d_was.metadata_name = "d_was"
+    d_was.priorityClass = prios["low"]
+    d_was.spec_template_spec_priorityClassName = prios["low"].metadata_name
+    d_was.amountOfActivePods = 2
+    d_was.spec_replicas = 2
+    for i in range(2):
+        pod = Pod()
+        k.state_objects.append(pod)
+        pod.metadata_name = "pod_number_" + str(i)
+        pod.memRequest = 1
+        pod.cpuRequest = 1
+        pod.status = STATUS_POD["Running"]
+        pod.priorityClass = prios["low"]
+        pod.spec_priorityClassName = prios["low"].metadata_name
+        pod.hasDeployment = True
+        pods.append(pod)
+        node.amountOfActivePods += 1
+        node.currentFormalMemConsumption += pod.memRequest
+        node.currentFormalCpuConsumption += pod.cpuRequest
+        d_was.podList.add(pod)
+
+    d_new = Deployment()
+    d_new.metadata_name = "d_new"
+    d_new.spec_replicas = 2
+    d_new.priorityClass = prios["high"]
+    d_new.spec_template_spec_priorityClassName = prios["high"].metadata_name
+    d_new.memRequest = 1
+    d_new.cpuRequest = 1
+    d_new.hook_after_create(k.state_objects)
+    k.state_objects.append(d_new)
+
+
+    pod_pending_count = 0
+    pPod = []
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if "pod_number_" in pod.metadata_name._get_value():
+            assert pod.status._get_value() == "Running", "pod_number_X pods should be Running before planning but have {0} status".format(pod.status._get_value())
+        if pod.status._get_value() == "Pending":
+            pod_pending_count += 1
+            pPod.append(pod)
+    assert pod_pending_count == 2, "should be 2 pod in pending have only {0}".format(pod_pending_count)
+
+    class TestRun(K8ServiceInterruptSearch):
+        goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and pPod[0].status == STATUS_POD["Running"]and pPod[1].status == STATUS_POD["Running"]
+
+    p = TestRun(k.state_objects)
+    # print_objects(k.state_objects)
+    # p.run()
+    # print("scenario \n{0}".format(p.plan))
+    p.xrun()
+    # print("---after calculation ----")
+    # print_objects(k.state_objects)
+    assert d_new.amountOfActivePods == 2
+    assert d_was.amountOfActivePods == 1
+    assert node.amountOfActivePods == 3
+
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if "d_new" in pod.metadata_name._get_value():
+            assert pod.status._get_value() == "Running", "{1} pods should be Running after planning but have {0} status".format(pod.status._get_value(),pod.metadata_name._get_value() )
+
+@pytest.mark.skip(reason="This test case is broken see #109")
+def test_20_scheduller_counter_bug():
+    # print("20")
+    k = KubernetesCluster()
+    prios = {}
+    pch = PriorityClass()
+    k.state_objects.append(pch)
+    pch.priority = 10
+    pch.metadata_name = "high-prio-test"
+    prios["high"] = pch
+    pcl = PriorityClass()
+    k.state_objects.append(pcl)
+    pcl.priority = 1
+    pcl.metadata_name = "low-prio-test"
+    prios["low"] = pcl
+
+    pods = []
+    node = Node()
+    k.state_objects.append(node)
+    node.memCapacity = 3
+    node.cpuCapacity = 3
+    d_was = Deployment()
+    k.state_objects.append(d_was)
+    d_was.metadata_name = "d_was"
+    d_was.priorityClass = prios["low"]
+    d_was.spec_template_spec_priorityClassName = prios["low"].metadata_name
+    d_was.amountOfActivePods = 2
+    d_was.spec_replicas = 2
+    for i in range(2):
+        pod = Pod()
+        k.state_objects.append(pod)
+        pod.metadata_name = "pod_number_" + str(i)
+        pod.memRequest = 1
+        pod.cpuRequest = 1
+        pod.status = STATUS_POD["Running"]
+        pod.priorityClass = prios["low"]
+        pod.spec_priorityClassName = prios["low"].metadata_name
+        pod.hasDeployment = True
+        pods.append(pod)
+        node.amountOfActivePods += 1
+        node.currentFormalMemConsumption += pod.memRequest
+        node.currentFormalCpuConsumption += pod.cpuRequest
+        d_was.podList.add(pod)
+
+    d_new = Deployment()
+    d_new.metadata_name = "d_new"
+    d_new.spec_replicas = 2
+    d_new.priorityClass = prios["high"]
+    d_new.spec_template_spec_priorityClassName = prios["high"].metadata_name
+    d_new.memRequest = 1
+    d_new.cpuRequest = 1
+    d_new.hook_after_create(k.state_objects)
+    k.state_objects.append(d_new)
+
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    pPod = []
+
+    for pod in filter(lambda x: isinstance(x, Pod), k.state_objects):
+        if pod.status._get_value() == "Pending":
+            pPod.append(pod)
+
+    class TestRun(K8ServiceInterruptSearch):
+        goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and pPod[0].status == STATUS_POD["Running"]and pPod[1].status == STATUS_POD["Running"]
+
+    p = TestRun(k.state_objects)
+    p.xrun()
+    assert scheduler.queueLength._get_value() == 0
+    assert len(scheduler.podQueue._get_value()) == 0
+
+def test_21_has_daemonset_creates_deployment__pods_evicted_daemonset_outage_synthetic():
+    # print("21")
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n1 = Node("node 1")
+    n1.cpuCapacity = 3
+    n1.memCapacity = 3
+
+    n2 = Node("node 2")
+    n2.cpuCapacity = 3
+    n2.memCapacity = 3
+
+
+    #Create Daemonset
+    ds = DaemonSet()
+    ds.searchable = True
+
+    # Create running pods as Daemonset
+    pod_running_1 = build_running_pod_with_d(1,2,2,n1,None,ds)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n2,None,ds)
+    n1.amountOfActivePods = 1
+    n2.amountOfActivePods = 1
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+ 
+
+    # Pending pod with deployment
+    d = Deployment()
+    d.spec_replicas = 1
+    d.priorityClass = pc
+
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n1,d,None)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n1, n2, pc, pod_running_1, pod_running_2, pod_pending_1, d,ds])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    class NewGoal_k1(Check_daemonsets):
+        pass
+    p = NewGoal_k1(k.state_objects)
+
+    class NewGoal_k2(Check_daemonsets):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkDaemonsetOutageEvent"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+
+def prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic():
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n1 = Node()
+    n1.metadata_name = "node 1"
+    n1.cpuCapacity = 3
+    n1.memCapacity = 3
+    n1.isNull == False
+
+    n2 = Node("node 2")
+    n2.metadata_name = "node 2"
+    n2.cpuCapacity = 3
+    n2.memCapacity = 3
+    n2.isNull == False
+
+
+    #Create Daemonset
+    ds = DaemonSet()
+    ds.searchable = True
+
+    # Create running pods as Daemonset
+    pod_running_1 = build_running_pod_with_d(1,2,2,n1,None,ds)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n2,None,ds)
+    n1.amountOfActivePods = 1
+    n2.amountOfActivePods = 1
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 2
+    s.status = STATUS_SERV["Started"]
+    s.podList.add(pod_running_1)
+    s.podList.add(pod_running_2)
+
+    # Pending pod with deployment
+    d = Deployment()
+    d.spec_replicas = 1
+    d.priorityClass = pc
+
+    pod_pending_1 = build_pending_pod_with_d(3,2,2,n1,None,None)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+
+    k.state_objects.extend([n1,  pc, pod_running_1, pod_running_2, pod_pending_1, d, ds])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    return k, k2
+
+# @pytest.mark.debug(reason="if debug needed - uncomment me")
+# def test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step1():
+#     # print("22")
+#     # Initialize scheduler, globalvar
+#     k, k2 =prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+#     class NewGoal(OptimisticRun):
+#         # pass
+#         # goal = lambda self: globalvar.is_daemonset_disrupted == True
+#         goal = lambda self: pod_running_1.status == STATUS_POD["Killing"]
+#     p = NewGoal(k.state_objects)
+#     p.run(timeout=200)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDeploymentOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+# @pytest.mark.debug(reason="if debug needed - uncomment me")
+# def test_23_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step2():
+#     # print("23")
+#     # Initialize scheduler, globalvar
+#     k, k2 = prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+#     # print_objects(k.state_objects)
+#     class NewGoal(OptimisticRun):
+#         # pass
+#         # goal = lambda self: globalvar.is_daemonset_disrupted == True
+#         goal = lambda self: pod_running_1.status == STATUS_POD["Pending"]
+#     p = NewGoal(k.state_objects)
+#     p.run(timeout=200)
+#     # print("---after calculation ----")
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+  
+def test_24_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic_step3():
+    # print("24")
+    # Initialize scheduler, globalvar
+    k, k2 = prepare_test_22_has_daemonset_with_service_creates_deployment__pods_evicted_daemonset_outage_synthetic()
+    globalvar_k1 = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    globalvar_k2 = next(filter(lambda x: isinstance(x, GlobalVar), k2.state_objects))
+
+    class NewGoal_k1(Check_daemonsets):
+        goal = lambda self: globalvar_k1.is_daemonset_disrupted == True
+    p = NewGoal_k1(k.state_objects)
+
+    class NewGoal_k2(Check_daemonsets):
+        goal = lambda self: globalvar_k1.is_daemonset_disrupted == True
+    p2 = NewGoal_k2(k2.state_objects)
+    
+    assert_conditions = ["MarkDaemonsetOutageEvent"]
+    not_assert_conditions = []
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+def prepare_test_has_service_only_on_node_that_gets_disrupted():
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    # initial node state
+    n1 = Node()
+    n1.metadata_name = "node 1"
+    n1.cpuCapacity = 6
+    n1.memCapacity = 6
+    n1.isNull == False
+
+    n2 = Node("node 2")
+    n2.metadata_name = "node 2"
+    n2.cpuCapacity = 6
+    n2.memCapacity = 6
+    n2.isNull == False
+
+    # Create running pods as Daemonset
+    pod_running_1 = build_running_pod_with_d(1,2,2,n1,None,None)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n1,None,None)
+    pod_running_3 = build_running_pod_with_d(3,2,2,n1,None,None)
+    pod_running_4 = build_running_pod_with_d(4,2,2,n2,None,None)
+    pod_running_5 = build_running_pod_with_d(5,2,2,n2,None,None)
+    pod_running_6 = build_running_pod_with_d(6,2,2,n2,None,None)
+    n1.amountOfActivePods = 3
+    n2.amountOfActivePods = 3
+
+    # # Service to detecte eviction
+    s1 = Service()
+    s1.metadata_name = "test-service1"
+    s1.amountOfActivePods = 2
+    s1.status = STATUS_SERV["Started"]
+    
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 4
+    s2.status = STATUS_SERV["Started"]
+
+    s1.podList.add(pod_running_1)
+    s1.podList.add(pod_running_2)
+    s2.podList.add(pod_running_3)
+    s2.podList.add(pod_running_4)
+    s2.podList.add(pod_running_5)
+    s2.podList.add(pod_running_6)
+    # s2.podList.add(pod_running_7)
+    
+    pod_running_1.hasService = True
+    pod_running_2.hasService = True
+    pod_running_3.hasService = True
+    pod_running_4.hasService = True
+    pod_running_5.hasService = True
+    pod_running_6.hasService = True
+
+    ## We have clean scheduler queue
+    scheduler.status = STATUS_SCHED["Clean"]
+
+    k.state_objects.extend([n1,  n2, s1, s2, pod_running_1, pod_running_2, pod_running_3, pod_running_4, pod_running_5, pod_running_6])
+    return k,n1,pod_running_1
+
+# @pytest.mark.skip(reason="if debug needed - uncomment me")
+# def test_25_node_outage_with_service_eviction_step0():
+#     # print("25")
+#     # Initialize scheduler, globalvar
+#     k,n1,pod_running_1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class test_25_node_outage_with_service_eviction_step1(Check_services):
+#         goal = lambda self: self.pod_running_1.status == STATUS_POD["Killing"]
+#     p = test_25_node_outage_with_service_eviction_step1(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Initiate_node_outage" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+# # @pytest.mark.skip(reason="if debug needed - uncomment me")
+# def test_25_node_outage_with_service_eviction_step1():
+#     # print("25")
+#     # Initialize scheduler, globalvar
+#     k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class test_25_node_outage_with_service_eviction_step1(Check_services):
+#         goal = lambda self: n1.status == STATUS_NODE["Inactive"]
+#     p = test_25_node_outage_with_service_eviction_step1(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     assert "Initiate_node_outage" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+    
+# @pytest.mark.skip(reason="if debug needed - uncomment me")
+# def test_26_node_outage_with_service_eviction_step2():
+#     # print("26")
+#     # Initialize scheduler, globalvar
+#     k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class Check_services(Check_services):
+#         goal = lambda self: globalvar.is_node_disrupted == True
+#     p = Check_services(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+# @pytest.mark.debug(reason="if debug needed - uncomment me")
+# def test_27_node_outage_with_service_eviction_step3():
+#     # print("27")
+#     # Initialize scheduler, globalvar
+#     k,n1=construct_space_1322_has_service_only_on_node_that_gets_disrupted()
+#     globalvar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     class Check_services_with_node_eviction(Check_services):
+#         goal = lambda self: globalvar.is_node_disrupted == True and globalvar.is_service_disrupted == True
+#     p = Check_services_with_node_eviction(k.state_objects)
+#     p.run(timeout=200)
+#     # print_objects(k.state_objects)
+#     # for a in p.plan:
+#     #     print(a) 
+#     # assert "StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "Evict_and_replace_less_prioritized_pod_when_target_node_is_not_defined" in "\n".join([repr(x) for x in p.plan])
+#     # assert "KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull" in "\n".join([repr(x) for x in p.plan])
+#     # assert "MarkDaemonsetOutageEvent" in "\n".join([repr(x) for x in p.plan])
+
+def test_28_from_test_5_evict_and_killpod_deployment_without_service_with_null_mem_request():
+    # print("28")
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    n = Node()
+    n.cpuCapacity = 5
+    n.memCapacity = 5
+    n.isNull = False
+
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2
+
+    # Create running pods
+    pod_running_1 = build_running_pod_with_d(1,2,2,n,d,None)
+    pod_running_2 = build_running_pod_with_d(2,2,2,n,d,None)
+    n.amountOfActivePods = 2
+    pod_running_1.memRequest = 0
+    pod_running_2.memRequest = 0
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+
+    # Pending pod
+    pod_pending_1 = build_pending_pod(3,2,2,n)
+    pod_pending_1.priorityClass = pc # high prio will evict!
+
+    ## Add pod to scheduler queue
+    scheduler.podQueue.add(pod_pending_1)
+    scheduler.queueLength += 1
+    scheduler.status = STATUS_SCHED["Changed"]
+    k.state_objects.extend([n, pc, pod_running_1, pod_running_2, s, pod_pending_1, d])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    pod_running_1_1 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k.state_objects)) 
+    class NewGoal_k1(OptimisticRun):
+        goal = lambda self: pod_running_1_1.status == STATUS_POD["Pending"]
+    p = NewGoal_k1(k.state_objects)
+
+    pod_running_1_2 = next(filter(lambda x: isinstance(x, Pod) and x.status._property_value == STATUS_POD["Running"], k2.state_objects))
+    class NewGoal_k2(OptimisticRun):
+        goal = lambda self: pod_running_1_2.status == STATUS_POD["Pending"]
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["Evict_and_replace_less_prioritized_pod_when_target_node_is_defined",\
+                        "KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull"]
+    not_assert_conditions = ["NodeOutageFinished"]
+    checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+def prepare_test_29_many_pods_not_enough_capacity_for_service(nodes_amount,node_capacity,pod2_amount,pod0_amount,pod2_2_amount,pod3_amount):
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    i = 0
+    j = 0
+    nodes = []
+    pods = []
+    
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 0
+
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 0
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2    
+    pod_id = 1
+    for i in range(nodes_amount):
+        node_item = Node("node"+str(i))
+        node_item.cpuCapacity = node_capacity
+        node_item.memCapacity = node_capacity
+        node_item.isNull = False
+        node_item.status = STATUS_NODE["Active"]
+        nodes.append(node_item)
+        
+        for j in range(pod2_amount):
+            pod_running_2 = build_running_pod_with_d(pod_id,2,2,node_item,None,None)
+            pod_id += 1
+            pod_running_2.hasService = True
+            pods.append(pod_running_2)
+            node_item.amountOfActivePods += 1
+            s.podList.add(pod_running_2)
+            s.amountOfActivePods +=1
+
+        for j in range(pod0_amount):
+            pod_running_0 = build_running_pod_with_d(pod_id,0,0,node_item,None,None)
+            pod_id += 1
+            pods.append(pod_running_0)
+            node_item.amountOfActivePods += 1
+
+        for j in range(pod2_2_amount):
+            pod_running_2 = build_running_pod_with_d(pod_id,2,2,node_item,None,None)
+            pod_id += 1
+            pod_running_2.hasService = True
+            pods.append(pod_running_2)
+            node_item.amountOfActivePods += 1
+            s.podList.add(pod_running_2)
+            s.amountOfActivePods +=1
+    for j in range(pod3_amount):
+        pod_running_2 = build_running_pod_with_d(pod_id,2,2,nodes[0],None,None)
+        pod_id += 1
+        pod_running_2.hasService = True
+        pods.append(pod_running_2)
+        node_item.amountOfActivePods += 1
+        s2.podList.add(pod_running_2)
+        s2.amountOfActivePods +=1
+    
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    
+    k.state_objects.extend(nodes)
+    k.state_objects.extend(pods)
+    k.state_objects.extend([pc, s, s2 ])
+    create_objects = []
+    k2 = reload_cluster_from_yaml(k,create_objects)
+    k._build_state()
+    class NewGoal_k1(CheckNodeOutage):
+        pass
+    p = NewGoal_k1(k.state_objects)
+    class NewGoal_k2(CheckNodeOutage):
+        pass
+    p2 = NewGoal_k2(k2.state_objects)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    return k, k2, p , p2
+
+def prepare_test_29_many_pods_not_enough_capacity_for_service_without_yaml_loading(nodes_amount,node_capacity,pod2_amount,pod0_amount,pod2_2_amount,pod3_amount):
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    i = 0
+    j = 0
+    nodes = []
+    pods = []
+    
+    # Service to detecte eviction
+    s = Service()
+    s.metadata_name = "test-service"
+    s.amountOfActivePods = 0
+
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 0
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2    
+    pod_id = 1
+    for i in range(nodes_amount):
+        node_item = Node("node"+str(i))
+        node_item.cpuCapacity = node_capacity
+        node_item.memCapacity = node_capacity
+        node_item.isNull = False
+        node_item.status = STATUS_NODE["Active"]
+        nodes.append(node_item)
+        
+        for j in range(pod2_amount):
+            pod_running_2 = build_running_pod_with_d(pod_id,2,2,node_item,None,None)
+            pod_id += 1
+            pod_running_2.hasService = True
+            pods.append(pod_running_2)
+            node_item.amountOfActivePods += 1
+            s.podList.add(pod_running_2)
+            s.amountOfActivePods +=1
+
+        for j in range(pod0_amount):
+            pod_running_0 = build_running_pod_with_d(pod_id,0,0,node_item,None,None)
+            pod_id += 1
+            pods.append(pod_running_0)
+            node_item.amountOfActivePods += 1
+
+        for j in range(pod2_2_amount):
+            pod_running_2 = build_running_pod_with_d(pod_id,2,2,node_item,None,None)
+            pod_id += 1
+            pod_running_2.hasService = True
+            pods.append(pod_running_2)
+            node_item.amountOfActivePods += 1
+            s.podList.add(pod_running_2)
+            s.amountOfActivePods +=1
+
+    for j in range(pod3_amount):
+        pod_running_2 = build_running_pod_with_d(pod_id,2,2,nodes[1],None,None)
+        pod_id += 1
+        pod_running_2.hasService = True
+        pods.append(pod_running_2)
+        node_item.amountOfActivePods += 1
+        s2.podList.add(pod_running_2)
+        s2.amountOfActivePods +=1
+    
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    
+    k.state_objects.extend(nodes)
+    k.state_objects.extend(pods)
+    k.state_objects.extend([pc, s, s2 ])
+    create_objects = []
+    k._build_state()
+    class NewGoal_k1(CheckNodeOutage):
+        pass
+    p = NewGoal_k1(k.state_objects)
+
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    return k, p
+def test_29():
+    k, k2, p, p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,15,1,1,1,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
+def test_30():
+        k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,19,2,2,1,1)
+        assert_conditions = ["SchedulerQueueCleanHighCost",\
+                            "Mark_node_outage_event"]
+        not_assert_conditions = []
+        assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
+def test_31():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,23,3,3,1,1)
+            assert_conditions = ["SchedulerQueueCleanHighCost",\
+                        "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_32():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,26,3,3,2,2)
+            assert_conditions = ["MarkServiceOutageEvent",\
+                    "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_33():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,32,4,4,4,4)
+            assert_conditions = ["SchedulerQueueCleanHighCost",\
+                "Mark_node_outage_event"]
+            not_assert_conditions = []
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_34():
+            k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,40,5,5,5,5)
+            assert_conditions = ["SchedulerQueueCleanHighCost",\
+                            "Mark_node_outage_event"]
+            not_assert_conditions = []
+            checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+    
+def test_36():
+    k, k2, p, p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,8,1,1,1,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
+def test_37():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,8,2,2,1,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
+def test_38():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,8,3,3,1,1)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_39():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_40():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,25,5,5,5,5)
+    assert_conditions = ["MarkServiceOutageEvent",\
+                    "Mark_node_outage_event"]
+    not_assert_conditions = []
+    checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,DEBUG_MODE)
+  
+def test_41():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,11,4,4,4,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_42():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,5,5,4,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_43():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,5,5,5,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_44():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,5,5,5,5)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_45():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_46():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,16,5,4,4,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_47():
+    k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,20,5,5,4,4)
+    assert_conditions = ["MarkServiceOutageEvent",\
+        "Mark_node_outage_event"]
+    not_assert_conditions = []
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+def test_48():
+    node = 24
+    for cap in range(10,20):
+        print("test node ", node, " cap " ,cap)
+        k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(1,node,cap,0,0,1)
+        assert_conditions = ["MarkServiceOutageEvent", "Mark_node_outage_event"]
+        not_assert_conditions = []
+        assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+# def test_49():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,25,5,5,5,5)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_50():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_51():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_52():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+# def test_53():
+#             k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(2,12,4,4,4,4)
+#             assert_conditions = ["MarkServiceOutageEvent",\
+#                 "Mark_node_outage_event"]
+#             not_assert_conditions = []
+#             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
