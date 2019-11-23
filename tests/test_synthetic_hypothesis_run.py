@@ -591,3 +591,226 @@ def test_7nodes_121pods():
             service_item.isSearched = False
             break
         break
+
+
+def test_3nodes_16pods():
+    nodes_amount=3
+    nodes_capacity=17
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1 = 5
+    pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv = 0
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+            break
+        break
+
+
+def test_3nodes_25pods():
+    nodes_amount=3
+    nodes_capacity=17
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1 = 8
+    pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv = 0
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+            break
+        break
+
+def test_3nodes_38pods():
+    nodes_amount=3
+    nodes_capacity=17
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1 = 5
+    pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv = 7
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_3nodes_45pods():
+    nodes_amount=3
+    nodes_capacity=17
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1 = 10
+    pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv = 4
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_3nodes_55pods():
+    nodes_amount=2
+    nodes_capacity=17
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1 = 13
+    pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv = 4
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 1
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_2_nodes_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_2_nodes_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_3nodes_66pods():
+    nodes_amount=3
+    nodes_capacity=20
+    pods_running_on_each_node_with_req_1_mem_1_cpu_s1 = 12
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_1_mem_1_cpu_no_serv = 8
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 6
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+def test_2nodes_61pods():
+    nodes_amount=2
+    nodes_capacity=35
+    pods_running_on_each_node_with_req_1_mem_1_cpu_s1 = 20
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_1_mem_1_cpu_no_serv = 8
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 6
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
+
+
+def test_2nodes_70pods():
+    nodes_amount=2
+    nodes_capacity=45
+    pods_running_on_each_node_with_req_1_mem_1_cpu_s1 = 20
+    pods_running_on_each_node_with_req_0_mem_0_cpu_s1 = 0
+    pods_running_on_each_node_with_req_1_mem_1_cpu_no_serv = 12
+    pods_running_on_node0_with_req_1_mem_1_cpu_s1 = 6
+
+    k, p, test_case = prepare_many_pods_without_yaml(nodes_amount,\
+                                        nodes_capacity,pods_running_on_each_node_with_req_1_mem_1_cpu_s1,\
+                                        pods_running_on_each_node_with_req_0_mem_0_cpu_s1,\
+                                        pods_running_on_each_node_with_req_1_mem_1_cpu_no_serv,\
+                                        pods_running_on_node0_with_req_1_mem_1_cpu_s1)
+    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
+                        "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
+  
+    for node_item in test_case.nodes:
+        for service_item in test_case.services:
+            print(" -------------->>>> test for " + str(node_item) + "  " + str(service_item) + "  <<<<-------------")
+            node_item.isSearched = True
+            service_item.isSearched = True
+            assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+            print_objects(k.state_objects)
+            node_item.isSearched = False
+            service_item.isSearched = False
