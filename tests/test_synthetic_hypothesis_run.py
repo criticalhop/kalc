@@ -29,7 +29,8 @@ def build_running_pod(podName, cpuRequest, memRequest, atNode):
     pod_running_1.metadata_name = "pod"+str(podName)
     pod_running_1.cpuRequest = cpuRequest
     pod_running_1.memRequest = memRequest
-    pod_running_1.atNode = atNode
+    pod_running_1.atNode = True
+    atNode.podList.add(pod_running_1)
     pod_running_1.status = STATUS_POD["Running"]
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
@@ -41,7 +42,8 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
     pod_running_1.metadata_name = "pod"+str(podName)
     pod_running_1.cpuRequest = cpuRequest
     pod_running_1.memRequest = memRequest
-    pod_running_1.atNode = atNode
+    pod_running_1.atNode = True
+    atNode.podList.add(pod_running_1)
     pod_running_1.status = STATUS_POD["Running"]
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
@@ -64,7 +66,8 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds):
 def build_pending_pod(podName, cpuRequest, memRequest, toNode):
     p = build_running_pod(podName, cpuRequest, memRequest, Node.NODE_NULL)
     p.status = STATUS_POD["Pending"]
-    p.toNode = toNode
+    p.toNode = True
+    toNode.podList.add(p)
     p.hasDeployment = False
     p.hasService = False
     p.hasDaemonset = False
@@ -85,7 +88,8 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds):
     if ds is not None:
         ds.podList.add(p)
         p.hasDaemonset = True
-        p.toNode = toNode
+        p.toNode = True
+        toNode.podList.add(p)
     return p
 
 class StateSet():
@@ -206,18 +210,11 @@ def test_2nodes_3pods_NO_Service_outage():
     not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
     print_objects(k.state_objects)
-def test_2nodes_3pods_NO_Service_outage():
-    k, p, test_case = prepare_many_pods_without_yaml(2,7,1,0,0,1)
-    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
-                "SchedulerCleaned"]
-    not_assert_conditions = []
-    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_2nodes_pods_NONO_Service_outage():
     k, p, test_case = prepare_many_pods_without_yaml(2,20,1,0,0,1)
     assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
-                "SchedulerCleaned"]
-    assert_conditions = ["StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull",\
                         "Remove_pod_from_the_cluster_IF_service_isnull"]
+    not_assert_conditions = []
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 def test_2nodes_11pods():
     nodes_amount=2

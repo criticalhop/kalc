@@ -587,25 +587,23 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
     print_objects(k.state_objects)
     print_plan(p)
     return_brake = True
-    brake = False
+    brake = True
+    assert_conditions_check = False
+    non_assert_conditions_check = True
     if p.plan:
         print("Plan found")
         for a in assert_conditions:
-            if not a in "\n".join([repr(x) for x in p.plan]):
-                brake = True
+            if a in "\n".join([repr(x) for x in p.plan]):
+                assert_conditions_check = True
+                break
         for a in not_assert_conditions:
             if a in "\n".join([repr(x) for x in p.plan]):
-                brake = True
-        else:
-            brake = True
-
-    if not brake:
-        if debug_mode > 0:
+                non_assert_conditions_check = True
+                break
+        if assert_conditions_check and non_assert_conditions_check:
+            brake = False
             print("--- ",test_mode,": Ok")
         else:
-            pass
-    else:
-        if debug_mode > 0:
             print("--- ",test_mode,": Error")
     return_brake = brake
     print_plan(p)

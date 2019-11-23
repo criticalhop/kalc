@@ -413,8 +413,6 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
         scheduler.queueLength += 1
-        podBeingKilled.toNode = Node.NODE_NULL
-        podBeingKilled.atNode = Node.NODE_NULL
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -453,8 +451,6 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"] # commented, solves
         scheduler.queueLength += 1
-        podBeingKilled.toNode = Node.NODE_NULL
-        podBeingKilled.atNode = Node.NODE_NULL
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -500,8 +496,6 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
         scheduler.queueLength += 1
-        podBeingKilled.toNode = Node.NODE_NULL
-        podBeingKilled.atNode = Node.NODE_NULL
         # scheduler.debug_var = True # TODO DELETEME
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
@@ -543,8 +537,6 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
         scheduler.queueLength += 1
-        podBeingKilled.toNode = Node.NODE_NULL
-        podBeingKilled.atNode = Node.NODE_NULL
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -582,8 +574,6 @@ class KubernetesModel(ProblemTemplate):
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"]
         scheduler.queueLength += 1
-        podBeingKilled.toNode = Node.NODE_NULL
-        podBeingKilled.atNode = Node.NODE_NULL
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
