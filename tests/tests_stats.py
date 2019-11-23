@@ -4,7 +4,8 @@ import re
 
 
 comment = "cost250-500-poodle29e0e61-inparallelway"
-file_for_commit = "./log-current-commit" + "-" + comment
+file_for_commit = "./log-current-commit"
+file_for_poodle_commit = "./log-current-commit_poodle" 
 file_for_list_of_reports = "./log_list_of_reports"
 
 # test_cases=["test_38","test_41","test_42","test_43","test_44","test_45","test_46","test_47","test_48"]
@@ -106,6 +107,9 @@ weight = "1"
 
 domain_high_cost = 500
 domain_middle_cost = 250
+timeout = 1000
+poodle_rel_path = "../poodle/"
+kubectl_rel_path_from_poodle = "../kubectl-val/"
 
 command_to_get_git_commit = "git rev-parse --short HEAD >"+ file_for_commit + "; git branch | grep \* | cut -d ' ' -f2 >> " + file_for_commit
 os.system(command_to_get_git_commit)
@@ -117,8 +121,18 @@ commit_item_inline= ''
 for line in commit_item:
      commit_item_inline = commit_item_inline + line + '-'
 
-print(commit_item_inline)
-print(comment,'lin_count',lin_count,'weight',weight)
+command_to_get_git_commit_poodle = "cd "+ poodle_rel_path + "; git rev-parse --short HEAD > " + kubectl_rel_path_from_poodle + file_for_poodle_commit + "; git branch | grep \* | cut -d ' ' -f2 >> " + file_for_poodle_commit
+os.system(command_to_get_git_commit_poodle)
+commit_poodle_item = ['']
+with open(file_for_poodle_commit) as f_commit_poodle:
+    commit_poodle_item = f_commit_poodle.read().splitlines()
+
+commit_poodle_item_inline= ''
+for line in commit_poodle_item:
+     commit_poodle_item_inline = commit_poodle_item_inline + line + '-'
+
+print(commit_poodle_item_inline)
+
 from datetime import datetime
     
 for i in test_cases:
@@ -126,13 +140,13 @@ for i in test_cases:
     random_number = randrange(100, 900, 1)
     now = datetime.now().strftime('%Y%m%d%H%M%S')
     log_id = str(now) + str(random_number)
-    log_params = [log_id, comment, commit_item_inline, test_file, test_name, lin_count, weight]
+    log_params = [log_id, comment, commit_item_inline, commit_poodle_item_inline, test_file, test_name, lin_count, weight, timeout]
     print(log_params)
     f_report_list = open(file_for_list_of_reports,"a+")
     f_report_list.write(str(log_params) +"\r\n")
     log_name = "log-" + log_id
     port = randrange(10000, 10101, 1) 
-    template = "DOMAIN_HIGH_COST={} DOMAIN_MIDDLE_COST={} OUT_NAME={} POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/{}::{} > {}"
-    print(template.format(domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name))
-    bashCommand = template.format(domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name)
+    template = "TIMEOUT={} DOMAIN_HIGH_COST={} DOMAIN_MIDDLE_COST={} OUT_NAME={} POODLE_LIN_COUNT={} POODLE_ASTAR_WEIGHT={} PYTHON=pypy POODLE_SOLVER_URL=http://localhost:{} tox -e poodledev -- -s ./tests/{}::{} > {}"
+    print(template.format(timeout, domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name))
+    bashCommand = template.format(timeout, domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name)
     os.system(bashCommand)

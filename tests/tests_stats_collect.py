@@ -5,7 +5,7 @@ import glob
 
 file_for_list_of_reports = "./log_list_of_reports"
 file_for_report = "./log_test_stats_all.csv" 
-report_field_names=['log_id','comment','commit', 'file_name','test_name','lin_count','weight' ,'status','log_name','duration']
+report_field_names=['log_id','comment','commit',"poodle_commit" ,'file_name','test_name','lin_count','weight' ,'timeout','status','duration']
 
 with open(file_for_list_of_reports) as f_report_list:
     log_items_in_db = f_report_list.read().splitlines()
@@ -13,7 +13,7 @@ with open(file_for_list_of_reports) as f_report_list:
 f_report = open(file_for_report,"w")
 f_report.write("" + ','.join(map(repr, report_field_names)) + "\r\n")
 
-log_items_in_db_pattern = re.compile(r"\['(.*)', '(.*), '(.*), '(.*)', '(.*)', '(.*)', '(.*)'\]")
+log_items_in_db_pattern = re.compile(r"\['(.*)', '(.*), '(.*), '(.*)', '(.*)', '(.*)', '(.*), '(.*), (.*)\]")
  
 for log_item_in_db in log_items_in_db:
     m = log_items_in_db_pattern.match(log_item_in_db)
@@ -21,11 +21,13 @@ for log_item_in_db in log_items_in_db:
         log_id = m.group(1)
         comment = m.group(2)
         commit_item_inline = m.group(3)
-        test_file = m.group(4)
-        test_name = m.group(5)
-        lin_count = m.group(6)
-        weight = m.group(7)
-        item=[log_id,comment,commit_item_inline, test_file, test_name, lin_count ,weight]
+        commit_poodle_item_inline = m.group(4)
+        test_file = m.group(5)
+        test_name = m.group(6)
+        lin_count = m.group(7)
+        weight = m.group(8)
+        timeout = m.group(9)
+        item=[log_id,comment,commit_item_inline, commit_poodle_item_inline, test_file, test_name, lin_count ,weight, timeout]
         duration2 = ['0']
         status = "FAILED"
         log_name = "log-" + log_id
