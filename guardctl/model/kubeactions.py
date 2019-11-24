@@ -912,7 +912,7 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=90)
+    @planned(cost=1)
     def Initiate_node_outage(self,
         node_with_outage: "Node",
         globalVar: GlobalVar):
