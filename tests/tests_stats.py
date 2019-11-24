@@ -12,7 +12,7 @@ weight = "1"
 
  
 # list_of_domain_high_cost = [200,300,400,500,1000,1500,3000]
-list_of_domain_high_cost = [2]
+list_of_domain_high_cost = [1]
 
 list_of_evaluators = ['--evaluator "hff=ff()" --evaluator "hlm=lmcount(lm_rhw(reasonable_orders=true))"',\
                             '--evaluator "hlm=lmcount(lm_rhw(reasonable_orders=true),transform=adapt_costs(normal))" --evaluator "hff=ff(transform=adapt_costs(normal))"']
@@ -61,6 +61,8 @@ for line in commit_poodle_item:
 print(commit_poodle_item_inline)
 for domain_high_cost in list_of_domain_high_cost:
     domain_middle_cost = domain_high_cost/2
+    if domain_middle_cost < 1:
+        domain_middle_cost = 1
     search_evaluator_id=0
     search_engine_id=0
     for search_evaluator in list_of_evaluators:
