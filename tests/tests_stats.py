@@ -3,7 +3,7 @@ import os
 import re
 from datetime import datetime
 
-comment = ""
+comment = "defcost1"
 file_for_commit = "./log-current-commit"
 file_for_poodle_commit = "./log-current-commit_poodle" 
 file_for_list_of_reports = "./log_list_of_reports"
@@ -11,7 +11,9 @@ lin_count = "50"
 weight = "1"
 
  
-list_of_domain_high_cost = [200,300,400,500,1000,1500,3000]
+# list_of_domain_high_cost = [200,300,400,500,1000,1500,3000]
+list_of_domain_high_cost = [2]
+
 list_of_evaluators = ['--evaluator "hff=ff()" --evaluator "hlm=lmcount(lm_rhw(reasonable_orders=true))"',\
                             '--evaluator "hlm=lmcount(lm_rhw(reasonable_orders=true),transform=adapt_costs(normal))" --evaluator "hff=ff(transform=adapt_costs(normal))"']
 list_of_search_engines = ['lazy_wastar(list(hff, hlm), preferred = list(hff, hlm)',\

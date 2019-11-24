@@ -42,6 +42,7 @@ class Pod(HasLabel, HasLimitsRequests):
     hasDeployment: bool
     hasService: bool
     hasDaemonset: bool
+    amountOfNodesRefusedStart: int
 
 
     def __init__(self, *args, **kwargs):
@@ -60,6 +61,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.realInitialCpuConsumption = 0
         self.currentFormalMemConsumption = 0
         self.currentFormalCpuConsumption = 0
+        self.amountOfNodesRefusedStart = 0
         # self.amountOfActiveRequests = 0 # For Requests
         self.hasService = False
         self.hasDaemonset = False

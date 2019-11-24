@@ -107,12 +107,13 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     # initial node state
     i = 0
     j = 0
     nodes = []
     pods = []
-    
+    globalVar.amountOfNodes = nodes_amount
     # Service to detecte eviction
     s = Service()
     s.metadata_name = "test-service"

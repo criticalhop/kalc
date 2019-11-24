@@ -8,6 +8,7 @@ import guardctl.model.kinds.Pod as mpod
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from guardctl.misc.const import STATUS_NODE
 from guardctl.model.scenario import ScenarioStep, describe
+from guardctl.model.system.globals import GlobalVar
 
 
 class Node(HasLabel):
@@ -70,6 +71,14 @@ class Node(HasLabel):
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
 
+    def hook_after_load(self, object_space, _ignore_orphan=False):
+        globalVar = next(filter(lambda x: isinstance(x, GlobalVar) , object_space))
+        globalVar.amountOfNodes += 1
+
+    def hook_after_create(self, object_space):
+        globalVar = next(filter(lambda x: isinstance(x, GlobalVar) , object_space))
+        globalVar.amountOfNodes += 1
+        
 Node.NODE_NULL = Node("NULL")
 Node.NODE_NULL.isNull = True
 Node.NODE_NULL.metadata_name = "Null-Node"
