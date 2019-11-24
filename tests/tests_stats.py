@@ -91,6 +91,7 @@ for domain_high_cost in list_of_domain_high_cost:
                             status = "PASSED"
                 if status == "Failed":
                     counter_of_failed_test_per_round += 1
+                print("status= "+status + ", counter_of_failed_test_per_round =" + counter_of_failed_test_per_round)
                 if counter_of_failed_test_per_round == limit_of_failed_test_per_round:
                     break
             search_engine_id += 1

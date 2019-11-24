@@ -144,18 +144,21 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
             s.podList.add(pod_running_2)
             s.amountOfActivePods += 1
             s.status = STATUS_SERV["Started"]
+            pod_running_2.amountOfNodesRefusedStart = 0
 
         for j in range(pod0_amount):
             pod_running_0 = build_running_pod_with_d(pod_id,0,0,node_item,None,None)
             pod_id += 1
             pods.append(pod_running_0)
             node_item.amountOfActivePods += 1
+            pod_running_0.amountOfNodesRefusedStart = 0
 
         for j in range(pod2_2_amount):
             pod_running_2 = build_running_pod_with_d(pod_id,1,1,node_item,None,None)
             pod_id += 1
             pods.append(pod_running_2)
             node_item.amountOfActivePods += 1
+            pod_running_2.amountOfNodesRefusedStart = 0
 
 
     for j in range(pod3_amount):
@@ -166,6 +169,7 @@ def prepare_many_pods_without_yaml(nodes_amount,node_capacity,pod2_amount,pod0_a
         nodes[0].amountOfActivePods += 1
         s2.podList.add(pod_running_2)
         s2.amountOfActivePods +=1
+        pod_running_2.amountOfNodesRefusedStart = 0
     
     # priority for pod-to-evict
     pc = PriorityClass()
