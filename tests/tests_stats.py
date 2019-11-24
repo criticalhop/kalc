@@ -26,6 +26,7 @@ timeout = 1000
 test_cases =[]
 poodle_rel_path = "../poodle/"
 kubectl_rel_path_from_poodle = "../kubectl-val/"
+limit_of_failed_test_per_round = 2
 
 test_file = "test_synthetic_hypothesis_run.py"
 with open("./tests/"+test_file) as f_test:
@@ -62,6 +63,7 @@ for domain_high_cost in list_of_domain_high_cost:
     search_engine_id=0
     for search_evaluator in list_of_evaluators:
         for search_engine in list_of_search_engines:
+            counter_of_failed_test_per_round = 0
             for i in test_cases:
                 test_name = i
                 random_number = randrange(10, 90, 1)
@@ -77,5 +79,15 @@ for domain_high_cost in list_of_domain_high_cost:
                 print(template.format(search_evaluator, search_engine, timeout, domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name))
                 bashCommand = template.format(search_evaluator, search_engine, timeout, domain_high_cost, domain_middle_cost, log_name, lin_count, weight, port, test_file, test_name, log_name)
                 os.system(bashCommand)
+                status="Failed"
+                with open('./'+ log_name) as f:
+                    lines = f.read().splitlines()
+                    for a in lines:
+                        if "Plan found" in a:
+                            status = "PASSED"
+                if status == "Failed":
+                    counter_of_failed_test_per_round += 1
+                if counter_of_failed_test_per_round == limit_of_failed_test_per_round:
+                    break
             search_engine_id += 1
         search_evaluator_id += 1
