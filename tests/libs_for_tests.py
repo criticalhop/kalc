@@ -26,6 +26,7 @@ from guardctl.model.system.globals import GlobalVar
 import logging
 import logzero
 from logzero import logger
+import os
 
 # This log message goes to the console
 logger.debug("hello")
@@ -123,7 +124,7 @@ def print_plan(p):
         for a in p.plan:
             print(a)
     else:
-        print("Empty plan") 
+        print("Search stopped without finding a solution.") 
         
 def print_objects_compare(k,k2):
     print("---originaly-generated---")
@@ -316,10 +317,10 @@ def render_object(ob, load_logic_support=True):
             if not hasattr(pc, "asdict"):
                 r = render_object(pc, load_logic_support=load_logic_support)
                 ret_obj.append(r[0])
-        if ob.atNode._property_value != mnode.Node.NODE_NULL:
-            if not "spec" in d: d["spec"] = {}
-            node = ob.atNode._property_value
-            d["spec"] = {"nodeName": str(node.metadata_name)}
+        # if ob.atNode._property_value != mnode.Node.NODE_NULL:
+        #     if not "spec" in d: d["spec"] = {}
+        #     node = ob.atNode._property_value
+        #     d["spec"] = {"nodeName": str(node.metadata_name)}
         if getint(ob.cpuRequest) > -1:
             if not "spec" in d: d["spec"] = {}
             if not "containers" in d["spec"]: 
@@ -581,28 +582,31 @@ def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_
     return slist
 
 def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode):
-    p.run(timeout=500)
+    p.run(timeout=int(os.getenv("TIMEOUT",1000)))
+    print(test_mode)
+    print_objects(k.state_objects)
+    print_plan(p)
     return_brake = True
-    brake = False
+    brake = True
+    assert_conditions_check = False
+    non_assert_conditions_check = True
     if p.plan:
+        print("Plan found")
         for a in assert_conditions:
-            if not a in "\n".join([repr(x) for x in p.plan]):
-                brake = True
+            if a in "\n".join([repr(x) for x in p.plan]):
+                assert_conditions_check = True
+                break
         for a in not_assert_conditions:
             if a in "\n".join([repr(x) for x in p.plan]):
-                brake = True
-    if not p.plan:
-        brake = True
-    if not brake:
-        if debug_mode > 0:
+                non_assert_conditions_check = True
+                break
+        if assert_conditions_check and non_assert_conditions_check:
+            brake = False
             print("--- ",test_mode,": Ok")
         else:
-            pass
-    else:
-        if debug_mode > 0:
             print("--- ",test_mode,": Error")
-            print_plan(p)
     return_brake = brake
+    print_plan(p)
     return  return_brake
 
 def compare_yaml_files(k,k2):

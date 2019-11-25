@@ -45,7 +45,8 @@ class DaemonSet(Controller, HasLimitsRequests):
             i += 1
             new_pod = mpod.Pod()
             new_pod.metadata_name = str(self.metadata_name) + '-DaemonSet_CR-' + str(i)
-            new_pod.toNode = node
+            node.toNodeList.add(new_pod)
+            new_pod.toNode = True
             new_pod.cpuRequest = self.cpuRequest
             new_pod.memRequest = self.memRequest
             new_pod.cpuLimit = self.cpuLimit
@@ -75,7 +76,8 @@ class DaemonSet(Controller, HasLimitsRequests):
                 pod.hasDaemonset = True
                 for node in nodes:
                     if node.metadata_name._get_value() == pod.spec_nodeName._get_value():
-                        pod.toNode = node
+                        node.toNodeList.add(pod)
+                        pod.toNode = True 
                 # self.check_pod(pod, object_space)
 
     def hook_after_apply(self, object_space):

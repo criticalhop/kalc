@@ -10,11 +10,14 @@ from guardctl.misc.const import *
 
 class Service(HasLabel):
     spec_selector: Set[Label]
+    lastPod: "mpod.Pod"
     amountOfActivePods: int
+    amountOfPodsInQueue: int
     status: StatusServ
     metadata_name: str
     searchable: bool
     isNull: bool
+    isSearched: bool
     podList: Set["mpod.Pod"]
     
     def __init__(self, *args, **kwargs):
@@ -25,6 +28,8 @@ class Service(HasLabel):
         self.status = STATUS_SERV["Pending"]
         self.searchable = True
         self.isNull = False
+        self.isSearched = False
+        self.amountOfPodsInQueue = 0
     
     def __str__(self): return str(self.metadata_name)
 

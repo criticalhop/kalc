@@ -4,6 +4,7 @@ from guardctl.model.scenario import ScenarioStep, describe
 from typing import Set
 from guardctl.model.system.primitives import Label, StatusNode
 from guardctl.model.system.base import HasLabel
+import guardctl.model.kinds.Pod as mpod
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from guardctl.misc.const import STATUS_NODE
 from guardctl.model.scenario import ScenarioStep, describe
@@ -27,6 +28,9 @@ class Node(HasLabel):
     status: StatusNode
     amountOfActivePods: int
     searchable: bool
+    isSearched: bool
+    podList: Set["mpod.Pod"]
+    toNodeList: Set["mpod.Pod"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,6 +47,7 @@ class Node(HasLabel):
         self.status = STATUS_NODE["Active"]
         self.amountOfActivePods = 0
         self.searchable = True
+        self.isSearched = False
     
     @property
     def status_allocatable_memory(self):
