@@ -12,7 +12,7 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.misc.const import *
 import pytest
-from guardctl.model.search import K8ServiceInterruptSearch, HypothesisysNode
+from guardctl.model.search import K8ServiceInterruptSearch, HypothesisysNodeAndService
 from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.model.scenario import Scenario
@@ -28,8 +28,8 @@ import os
 
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
-    node_amount_range =       range(2,     10,     2)
-    pod_amount_range =        range(10,    15,     3)
+    node_amount_range =       range(2,     3,     2)
+    pod_amount_range =        range(2,    10,     3)
     per_node_capacity_range = range(30,    31,     2)
 
     search = True
@@ -104,24 +104,36 @@ def test_node_killer_pod_with_service():
                     task_type = "NodeOutageFinished"
 
     
-            print("check break node_amount ", node_amount, " pod amount " ,pod_amount)
-            print("-------------------")
-            print_objects(k.state_objects)
+                print("check break node_amount {0} with capacity {1} pod amount {2}".format( node_amount, node_capacity,pod_amount))
+                print("-------------------")
+                print_objects(k.state_objects)
 
-            sha = git.Repo(search_parent_directories=True).head.object.hexsha
+                sha = git.Repo(search_parent_directories=True).head.object.hexsha
 
-            GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNode,),{})
+                GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNodeAndService,),{})
 
-            p = GenClass(k.state_objects)
+                p = GenClass(k.state_objects)
+                
+
+                print("-------------------")
+                try:
+                    p.run(timeout=100)
+                except Exception as e:
+                    print("run break exception is \n",e)
+                    assert False
+                print_plan(p)
+                if p.plan:
+                    if task_type == "NodeOutageFinished":
+                        raise_assert = True
+                        if task_type in p.plan:
+                            raise_assert = False
+                    else:
+                        if task_type in p.plan:
+                            raise_assert = True
+                if raise_assert:
+                    print("ERROR, NodeOutageFinished ")
             
-
-            print("-------------------")
-            try:
-                p.run(timeout=100)
-            except Exception as e:
-                print("run break exception is \n",e)
-                assert False
-            print_plan(p)
+# TODO Сделать табличку о том как время зависит от параметров решения
 
 # def test_pickler_load():
 #     pickles = glob.glob('*.pickle')
