@@ -20,11 +20,10 @@ from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 from tests.test_scenarios_synthetic import build_running_pod_with_d, build_running_pod, build_pending_pod
 import inspect
-import cloudpickle as pickle
 import glob
 import git
 import os
-os.environ["RUN_ALGO"] = ""
+
 
 
 def test_node_killer_pod_with_service():
@@ -57,6 +56,7 @@ def test_node_killer_pod_with_service():
                 s = Service()
                 s.metadata_name = "test-service"
                 s.amountOfActivePods = 0
+                s.status = STATUS_SERV["Started"]
                 pod_id=0
                 for i in range(node_amount):
                     node_item = Node("node"+str(i))
@@ -95,13 +95,13 @@ def test_node_killer_pod_with_service():
                 k.state_objects.extend(nodes)
                 k.state_objects.extend(pods_pending)
                 k.state_objects.extend(pods_running)
-                k.state_objects.extend([low,high])
+                k.state_objects.extend([low,high, s])
                 k._build_state()
                 
                 if (node_capacity * (node_amount - 1)) < pod_amount:
                     task_type = "no-outage"
                 else:
-                    task_type = "node-outage"
+                    task_type = "NodeOutageFinished"
 
     
             print("check break node_amount ", node_amount, " pod amount " ,pod_amount)
