@@ -12,7 +12,7 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.misc.const import *
 import pytest
-from guardctl.model.search import K8ServiceInterruptSearch, HypothesisysNodeAndService
+from guardctl.model.search import K8ServiceInterruptSearch, HypothesisysNodeAndService, HypothesisysNode
 from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.model.scenario import Scenario
@@ -22,23 +22,29 @@ from tests.test_scenarios_synthetic import build_running_pod_with_d, build_runni
 import inspect
 import glob
 import git
-import os
+import os,time,csv
 
+sha = git.Repo(search_parent_directories=True).head.object.hexsha
 
 
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
     node_amount_range =       range(2,     3,     2)
-    pod_amount_range =        range(2,    10,     3)
-    per_node_capacity_range = range(30,    31,     2)
+    pod_amount_range =        range(4,    10,     3)
+    per_node_capacity_range = range(2,    31,     2)
 
     search = True
 
     assert_brake = False
+
+    csvfile = open("{0}_{1}.csv".format(inspect.stack()[1].function, sha[:7]), 'w')
+    csvwriter = csv.writer(csvfile, delimiter=';')
+
     for node_capacity in per_node_capacity_range:
         for node_amount in node_amount_range:
             for pod_amount in pod_amount_range:
                 # Initialize scheduler, globalvar
+                start = time.time()
                 k = KubernetesCluster()
                 scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
                 # initial node state
@@ -46,17 +52,17 @@ def test_node_killer_pod_with_service():
                 j = 0
                 nodes = []
                 pods_running = []
-                pods_pending = []
                 high = PriorityClass()
                 high.priority = 10
                 high.metadata_name = "high"
-                low = PriorityClass()
-                low.priority = 0
-                low.metadata_name = "low"
+                # low = PriorityClass()
+                # low.priority = 0
+                # low.metadata_name = "low"
                 s = Service()
                 s.metadata_name = "test-service"
                 s.amountOfActivePods = 0
                 s.status = STATUS_SERV["Started"]
+                s.isSearched = True
                 pod_id=0
                 for i in range(node_amount):
                     node_item = Node("node"+str(i))
@@ -64,6 +70,7 @@ def test_node_killer_pod_with_service():
                     node_item.memCapacity = node_capacity
                     node_item.isNull = False
                     node_item.status = STATUS_NODE["Active"]
+                    node_item.isSearched = True
                     nodes.append(node_item)
                 node_counter = 0
                 for j in range(pod_amount):
@@ -79,7 +86,7 @@ def test_node_killer_pod_with_service():
                     pod_running.hasDeployment = False
                     pod_running.hasService = False
                     pod_running.hasDaemonset = False
-                    pod_running.priorityClass = low
+                    pod_running.priorityClass = high
                     pod_running.hasService = True
                     pods_running.append(pod_running)
                     node_item.podList.add(pod_running)
@@ -93,11 +100,14 @@ def test_node_killer_pod_with_service():
                         node_counter=0
 
                 k.state_objects.extend(nodes)
-                k.state_objects.extend(pods_pending)
                 k.state_objects.extend(pods_running)
-                k.state_objects.extend([low,high, s])
+                # k.state_objects.extend([low])
+                k.state_objects.append(high)
+                k.state_objects.append(s)
                 k._build_state()
                 
+                print("(node_capacity * (node_amount - 1))(",(node_capacity * (node_amount - 1)), ")<(", pod_amount,")pod_amount")
+
                 if (node_capacity * (node_amount - 1)) < pod_amount:
                     task_type = "no-outage"
                 else:
@@ -106,34 +116,29 @@ def test_node_killer_pod_with_service():
     
                 print("check break node_amount {0} with capacity {1} pod amount {2}".format( node_amount, node_capacity,pod_amount))
                 print("-------------------")
-                print_objects(k.state_objects)
+                # print_objects(k.state_objects)
 
-                sha = git.Repo(search_parent_directories=True).head.object.hexsha
 
-                GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNodeAndService,),{})
+                GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNode,),{})
 
                 p = GenClass(k.state_objects)
                 
 
-                print("-------------------")
                 try:
-                    p.run(timeout=100)
+                    p.run(timeout=500)
                 except Exception as e:
                     print("run break exception is \n",e)
                     assert False
                 print_plan(p)
-                if p.plan:
-                    if task_type == "NodeOutageFinished":
-                        raise_assert = True
-                        if task_type in p.plan:
-                            raise_assert = False
-                    else:
-                        if task_type in p.plan:
-                            raise_assert = True
-                if raise_assert:
-                    print("ERROR, NodeOutageFinished ")
-            
-# TODO Сделать табличку о том как время зависит от параметров решения
+                end = time.time()
+                print("-------------------")
+                print("timer :", int(end - start))
+                if "NodeOutageFinished" in p.plan:
+                    csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "ok"])
+                else:
+                    csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "empty_plan"])
+                print("-------------------")
+
 
 # def test_pickler_load():
 #     pickles = glob.glob('*.pickle')

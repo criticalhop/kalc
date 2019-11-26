@@ -373,7 +373,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             affected=[describe(service)]
         )
 
-    @planned(cost=int(os.getenv("DOMAIN_MIDDLE_COST",250)))
+    @planned(cost=int(os.getenv("DOMAIN_MIDDLE_COST",500)))
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service_searched(self,
                 service : Service,
                 pod : Pod,
