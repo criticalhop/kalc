@@ -12,100 +12,130 @@ from guardctl.model.kinds.PriorityClass import PriorityClass
 from guardctl.model.kubernetes import KubernetesCluster
 from guardctl.misc.const import *
 import pytest
-from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.model.search import K8ServiceInterruptSearch, HypothesisysNodeAndService, HypothesisysNode
 from guardctl.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from guardctl.model.scenario import Scenario
 from poodle import planned
-from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml
-from tests.test_scenarios_synthetic import prepare_test_29_many_pods_not_enough_capacity_for_service, build_running_pod_with_d
+from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
+from tests.test_scenarios_synthetic import build_running_pod_with_d, build_running_pod, build_pending_pod
+import inspect
+import glob
+import git
+import os,time,csv
 
-DEBUG_MODE = 1
+sha = git.Repo(search_parent_directories=True).head.object.hexsha
 
-def prepare_test(nodes_amount,node_capacity,pod_amount,pod_w_service_amount):
-    # Initialize scheduler, globalvar
-    k = KubernetesCluster()
-    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    # initial node state
-    i = 0
-    j = 0
-    nodes = []
-    pods = []
+
+def test_node_killer_pod_with_service():
+#   value                         start   stop    step
+    node_amount_range =       range(2,     5,     2)
+    pod_amount_range =        range(6,    61,     2)
+    per_node_capacity_range = range(30,    31,     10)
+
+    search = True
+
+    assert_brake = False
+
+    csvfile = open("{0}_{1}.csv".format(inspect.stack()[1].function, sha[:7]), 'w')
+    csvwriter = csv.writer(csvfile, delimiter=';')
+
+    for node_capacity in per_node_capacity_range:
+        for node_amount in node_amount_range:
+            for pod_amount in pod_amount_range:
+                if pod_amount > (node_amount * node_capacity) : continue
+                # Initialize scheduler, globalvar
+                start = time.time()
+                k = KubernetesCluster()
+                scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+                # initial node state
+                i = 0
+                j = 0
+                nodes = []
+                pods_running = []
+                high = PriorityClass()
+                high.priority = 10
+                high.metadata_name = "high"
+                # low = PriorityClass()
+                # low.priority = 0
+                # low.metadata_name = "low"
+                s = Service()
+                s.metadata_name = "test-service"
+                s.amountOfActivePods = 0
+                s.status = STATUS_SERV["Started"]
+                s.isSearched = True
+                pod_id=0
+                for i in range(node_amount):
+                    node_item = Node("node"+str(i))
+                    node_item.cpuCapacity = node_capacity
+                    node_item.memCapacity = node_capacity
+                    node_item.isNull = False
+                    node_item.status = STATUS_NODE["Active"]
+                    node_item.isSearched = True
+                    nodes.append(node_item)
+                node_counter = 0
+                for j in range(pod_amount):
+                    node_item = nodes[node_counter]
+                    if node_item.currentFormalCpuConsumption == node_capacity:
+                        break
+                    pod_running = Pod()
+                    pod_running.metadata_name = "pod_prio_0_{0}_{1}".format(i,j)
+                    pod_running.cpuRequest = 1
+                    pod_running.memRequest = 1
+                    pod_running.atNode = node_item
+                    pod_running.status = STATUS_POD["Running"]
+                    pod_running.hasDeployment = False
+                    pod_running.hasService = False
+                    pod_running.hasDaemonset = False
+                    pod_running.priorityClass = high
+                    pod_running.hasService = True
+                    pods_running.append(pod_running)
+                    # node_item.podList.add(pod_running)
+                    node_item.currentFormalCpuConsumption += 1
+                    node_item.currentFormalMemConsumption += 1
+                    node_item.amountOfActivePods += 1
+                    s.podList.add(pod_running)
+                    s.amountOfActivePods += 1
+                    node_counter += 1
+                    if node_counter == len(nodes):
+                        node_counter=0
+
+                k.state_objects.extend(nodes)
+                k.state_objects.extend(pods_running)
+                # k.state_objects.extend([low])
+                k.state_objects.append(high)
+                k.state_objects.append(s)
+                k._build_state()
+                
+                print("(node_capacity * (node_amount - 1))(",(node_capacity * (node_amount - 1)), ")<(", pod_amount,")pod_amount")
+
+                if (node_capacity * (node_amount - 1)) < pod_amount:
+                    task_type = "no-outage"
+                else:
+                    task_type = "NodeOutageFinished"
+
     
-    # Service to detecte eviction
-    s = Service()
-    s.metadata_name = "test-service"
-    s.amountOfActivePods = 0
+                print("check break node_amount {0} with capacity {1} pod amount {2}".format( node_amount, node_capacity,pod_amount))
+                print("-------------------")
+                print_objects(k.state_objects)
 
-    s2 = Service()
-    s2.metadata_name = "test-service2"
-    s2.amountOfActivePods = 0
-    # create Deploymnent that we're going to detect failure of...
-    d = Deployment()
-    d.spec_replicas = 2    
-    pod_id = 1
-    for i in range(nodes_amount):
-        node_item = Node("node"+str(i))
-        node_item.cpuCapacity = node_capacity
-        node_item.memCapacity = node_capacity
-        node_item.isNull = False
-        node_item.status = STATUS_NODE["Active"]
-        nodes.append(node_item)
-        
-        for j in range(pod_amount):
-            pod_running_2 = build_running_pod_with_d(pod_id,1,1,node_item,None,None)
-            pod_id += 1
-            pod_running_2.hasService = True
-            pods.append(pod_running_2)
-            node_item.amountOfActivePods += 1
-            s.podList.add(pod_running_2)
-            s.amountOfActivePods +=1
 
-    for j in range(pod_w_service_amount):
-        pod_running_2 = build_running_pod_with_d(pod_id,1,1,nodes[0],None,None)
-        pod_id += 1
-        pod_running_2.hasService = True
-        pods.append(pod_running_2)
-        node_item.amountOfActivePods += 1
-        s2.podList.add(pod_running_2)
-        s2.amountOfActivePods +=1
-    
-    # priority for pod-to-evict
-    pc = PriorityClass()
-    pc.priority = 10
-    pc.metadata_name = "high-prio-test"
+                GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNode,),{})
 
-    
-    k.state_objects.extend(nodes)
-    k.state_objects.extend(pods)
-    k.state_objects.extend([pc, s, s2 ])
-    create_objects = []
-    k2 = reload_cluster_from_yaml(k,create_objects)
-    k._build_state()
-    class NewGoal_k1(CheckNodeOutage):
-        pass
-    p = NewGoal_k1(k.state_objects)
-    class NewGoal_k2(CheckNodeOutage):
-        pass
-    p2 = NewGoal_k2(k2.state_objects)
-    assert_conditions = ["MarkServiceOutageEvent",\
-                        "Mark_node_outage_event"]
-    not_assert_conditions = []
-    return k, k2, p , p2
+                p = GenClass(k.state_objects)
 
-def test_gen_1():
-    for node in range(24,24):
-        for cap in range(10,20):
-            try:
-                k, k2,p ,p2 = prepare_test_29_many_pods_not_enough_capacity_for_service(1,node,cap,0,0,1)
-            except Exception as e:
-                print("prepare break node ", node, " cap " ,cap, "exception is \n",e)
-                break
-            assert_conditions = ["MarkServiceOutageEvent", "Mark_node_outage_event"]
-            not_assert_conditions = []
-            try:
-                assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
-            except Exception as e:
-                print("check break node ", node, " cap " ,cap, "exception is \n",e)
-                break
-    assert True
+                try:
+                    p.run(timeout=1000, sessionName=f"gen_test_{node_capacity}_{node_amount}_{pod_amount}")
+                except Exception as e:
+                    print("run break exception is \n",e)
+                    assert False
+                # print_plan(p)
+                end = time.time()
+                print("-------------------")
+                print("timer :", int(end - start))
+                if p.plan != None:
+                    csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "ok"])
+                else:
+                    csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "empty_plan"])
+                csvfile.flush()
+                print("-------------------")
