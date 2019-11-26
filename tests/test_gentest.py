@@ -29,9 +29,9 @@ sha = git.Repo(search_parent_directories=True).head.object.hexsha
 
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
-    node_amount_range =       range(2,     3,     2)
-    pod_amount_range =        range(4,    10,     3)
-    per_node_capacity_range = range(2,    31,     2)
+    node_amount_range =       range(2,     5,     2)
+    pod_amount_range =        range(20,    61,     5)
+    per_node_capacity_range = range(30,    31,     10)
 
     search = True
 
@@ -43,6 +43,7 @@ def test_node_killer_pod_with_service():
     for node_capacity in per_node_capacity_range:
         for node_amount in node_amount_range:
             for pod_amount in pod_amount_range:
+                if pod_amount > (node_amount * node_capacity) : continue
                 # Initialize scheduler, globalvar
                 start = time.time()
                 k = KubernetesCluster()
@@ -116,27 +117,27 @@ def test_node_killer_pod_with_service():
     
                 print("check break node_amount {0} with capacity {1} pod amount {2}".format( node_amount, node_capacity,pod_amount))
                 print("-------------------")
-                # print_objects(k.state_objects)
+                print_objects(k.state_objects)
 
 
                 GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNode,),{})
 
                 p = GenClass(k.state_objects)
-                
 
                 try:
-                    p.run(timeout=500)
+                    p.run(timeout=1000)
                 except Exception as e:
                     print("run break exception is \n",e)
                     assert False
-                print_plan(p)
+                # print_plan(p)
                 end = time.time()
                 print("-------------------")
                 print("timer :", int(end - start))
-                if "NodeOutageFinished" in p.plan:
+                if p.plan != None:
                     csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "ok"])
                 else:
                     csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "empty_plan"])
+                csvfile.flush()
                 print("-------------------")
 
 
