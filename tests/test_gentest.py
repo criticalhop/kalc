@@ -25,13 +25,13 @@ import git
 import os,time,csv
 
 sha = git.Repo(search_parent_directories=True).head.object.hexsha
-
+LIN_COUNT = int(os.getenv("POODLE_LIN_COUNT", "99"))
 
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
     node_amount_range =       range(2,     5,     2)
-    pod_amount_range =        range(6,    61,     2)
-    per_node_capacity_range = range(30,    31,     10)
+    pod_amount_range =        range(4,    61,     1)
+    per_node_capacity_range = range(20,    41,     10)
 
     search = True
 
@@ -125,7 +125,7 @@ def test_node_killer_pod_with_service():
                 p = GenClass(k.state_objects)
 
                 try:
-                    p.run(timeout=1000, sessionName=f"gen_test_{node_capacity}_{node_amount}_{pod_amount}")
+                    p.run(timeout=1000, sessionName=f"gen_test_{node_capacity}_{node_amount}_{pod_amount}_L{LIN_COUNT}")
                 except Exception as e:
                     print("run break exception is \n",e)
                     assert False
