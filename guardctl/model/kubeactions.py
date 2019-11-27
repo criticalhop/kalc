@@ -840,7 +840,7 @@ class KubernetesModel(ProblemTemplate):
     def SchedulerCleaned(self, 
         scheduler: "Scheduler",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert  scheduler.queueLength == 0
         scheduler.status = STATUS_SCHED["Clean"]
         return ScenarioStep(
@@ -898,7 +898,7 @@ class KubernetesModel(ProblemTemplate):
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == True
+        assert globalVar.block_node_outage_in_progress == True
         assert pod_killed.status == STATUS_POD["Running"]
         assert pod_killed.atNode == node_with_outage
         assert node_with_outage.status == STATUS_NODE["Killing"]
@@ -916,7 +916,7 @@ class KubernetesModel(ProblemTemplate):
     def NodeOutageFinished(self,
         node: "Node",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == True
+        assert globalVar.block_node_outage_in_progress == True
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Killing"]
         globalVar.amountOfNodesDisrupted += 1
