@@ -852,25 +852,25 @@ class KubernetesModel(ProblemTemplate):
             affected=[]
         )
 
-    @planned(cost=90)
-    def Initiate_node_outage(self,
-        node_with_outage: "Node",
-        globalVar: GlobalVar):
-        assert globalVar.block_node_outage_in_progress == False
-        # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
-        assert globalVar.is_node_disrupted == False # TODO: checking ONE node outage! Need fixing
-        assert node_with_outage.searchable == True
-        assert node_with_outage.status == STATUS_NODE["Active"]
-        node_with_outage.status = STATUS_NODE["Killing"]
-        globalVar.block_node_outage_in_progress = True
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Outage of Node initiated ",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+    # @planned(cost=90)
+    # def Initiate_node_outage(self,
+    #     node_with_outage: "Node",
+    #     globalVar: GlobalVar):
+    #     assert globalVar.block_node_outage_in_progress == False
+    #     # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
+    #     assert globalVar.is_node_disrupted == False # TODO: checking ONE node outage! Need fixing
+    #     assert node_with_outage.searchable == True
+    #     assert node_with_outage.status == STATUS_NODE["Active"]
+    #     node_with_outage.status = STATUS_NODE["Killing"]
+    #     globalVar.block_node_outage_in_progress = True
+    #     return ScenarioStep(
+    #         name=sys._getframe().f_code.co_name,
+    #         subsystem=self.__class__.__name__,
+    #         description="Outage of Node initiated ",
+    #         parameters={},
+    #         probability=1.0,
+    #         affected=[]
+    #     )
 
     @planned(cost=1)
     def Initiate_node_outage_searched(self,
