@@ -317,7 +317,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service(self,
                 service : Service,
                 pod : Pod,
-                scheduler : Scheduler
+                scheduler : Scheduler,
+                globalVar : GlobalVar
             ):
         # This action helps to remove pods from queue 
 
@@ -381,7 +382,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
     def Remove_pod_from_the_cluster_IF_service_isnotnull_IF_not_last_for_service_searched(self,
                 service : Service,
                 pod : Pod,
-                scheduler : Scheduler
+                scheduler : Scheduler,
+                globalVar : GlobalVar
             ):
         # This action helps to remove pods from queue 
         assert globalVar.block_node_outage_in_progress == False
@@ -446,7 +448,8 @@ class HypothesisysClean(K8ServiceInterruptSearch):
     @planned(cost=100)
     def Remove_pod_from_the_cluster_IF_service_isnull(self,
                 pod : Pod,
-                scheduler : Scheduler
+                scheduler : Scheduler,
+                globalVar: GlobalVar
             ):
         # This action helps to remove pods from queue 
 
