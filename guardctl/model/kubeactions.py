@@ -598,7 +598,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         serviceTargetForPod: "mservice.Service",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == True 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False  #TODO add this for branching
@@ -638,7 +638,7 @@ class KubernetesModel(ProblemTemplate):
         node: "Node" ,
         scheduler: "Scheduler",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -676,7 +676,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_deployment: Deployment,
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == True 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -719,7 +719,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         pods_deployment: Deployment,
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
@@ -758,7 +758,7 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         pods_daemonset: DaemonSet,
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == True #TODO add this for branching
@@ -799,7 +799,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod: "mservice.Service",
         pods_daemonset: DaemonSet,
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert podStarted.hasService == True
         assert podStarted.hasDeployment == False
         assert podStarted.hasDaemonset == True
