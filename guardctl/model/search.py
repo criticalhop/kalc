@@ -328,7 +328,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-
+        assert globalVar.block_node_outage_in_progress == False
 
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
@@ -352,7 +352,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
                 globalVar: GlobalVar
             ):
         # This action helps to remove pods from queue 
-
+        assert globalVar.block_node_outage_in_progress == False
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
         assert pod.hasService == True
@@ -384,7 +384,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
                 scheduler : Scheduler
             ):
         # This action helps to remove pods from queue 
-
+        assert globalVar.block_node_outage_in_progress == False
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
         assert pod.hasService == True
@@ -416,7 +416,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
                 globalVar: GlobalVar
             ):
         # This action helps to remove pods from queue 
-
+        assert globalVar.block_node_outage_in_progress == False
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
         assert pod.hasService == True
@@ -453,7 +453,7 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod.status == STATUS_POD["Pending"]
         assert pod.hasService == False
         assert pod in scheduler.podQueue
-
+        assert globalVar.block_node_outage_in_progress == False
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
         scheduler.queueLength -= 1
