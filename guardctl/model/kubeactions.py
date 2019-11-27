@@ -579,7 +579,7 @@ class KubernetesModel(ProblemTemplate):
         pod1: "Pod",
         SelectedNode: "Node",
         globalVar: GlobalVar):
-        # assert globalVar.block_node_outage_in_progress == False
+        assert globalVar.block_node_outage_in_progress == False
         assert pod1.toNode == Node.NODE_NULL
         pod1.toNode = SelectedNode
         return ScenarioStep(
