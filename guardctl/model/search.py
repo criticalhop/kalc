@@ -322,12 +322,12 @@ class HypothesisysClean(K8ServiceInterruptSearch):
             ):
         # This action helps to remove pods from queue 
 
+        assert globalVar.block_node_outage_in_progress == False
         assert pod.status == STATUS_POD["Pending"]
         assert pod in service.podList
         assert pod.hasService == True
         assert pod in scheduler.podQueue
         assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-        assert globalVar.block_node_outage_in_progress == False
 
         pod.status = STATUS_POD["Outaged"]
         scheduler.podQueue.remove(pod)
