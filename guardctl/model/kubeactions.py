@@ -342,7 +342,8 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
@@ -383,7 +384,8 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             pods_deployment: Deployment,
             nodeWithPod : "Node" ,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
@@ -423,7 +425,8 @@ class KubernetesModel(ProblemTemplate):
     def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
@@ -463,7 +466,8 @@ class KubernetesModel(ProblemTemplate):
             serviceOfPod: "Service",
             pods_deployment: Deployment,
             nodeWithPod : "Node" ,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
@@ -508,8 +512,8 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
             pods_daemonset: DaemonSet,
-            scheduler: "Scheduler"
-
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
@@ -547,7 +551,8 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             pods_daemonset: DaemonSet,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
@@ -585,7 +590,8 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == True
         assert podBeingKilled.atNode == nodeWithPod
@@ -622,7 +628,8 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             pods_deployment: Deployment,
             nodeWithPod : "Node" ,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == True
         assert podBeingKilled.atNode == nodeWithPod
@@ -655,7 +662,8 @@ class KubernetesModel(ProblemTemplate):
     def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull_Nodeoutage(self,
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == True
         assert podBeingKilled.atNode == nodeWithPod
@@ -690,7 +698,8 @@ class KubernetesModel(ProblemTemplate):
             serviceOfPod: "Service",
             pods_deployment: Deployment,
             nodeWithPod : "Node" ,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == True
         assert podBeingKilled.atNode == nodeWithPod
@@ -730,7 +739,8 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             serviceOfPod: "Service",
             pods_daemonset: DaemonSet,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
 
          ):
         assert globalVar.block_node_outage_in_progress == True
@@ -768,7 +778,8 @@ class KubernetesModel(ProblemTemplate):
             podBeingKilled : "Pod",
             nodeWithPod : "Node" ,
             pods_daemonset: DaemonSet,
-            scheduler: "Scheduler"
+            scheduler: "Scheduler",
+            globalVar: GlobalVar
          ):
         assert globalVar.block_node_outage_in_progress == True
         assert podBeingKilled.atNode == nodeWithPod
