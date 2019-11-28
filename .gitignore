@@ -21,3 +21,5 @@ venv/
 tests/NOTforRepo/
 *.pddl
 *.out
+*.vscode/
+pytest_*
