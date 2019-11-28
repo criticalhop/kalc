@@ -344,6 +344,7 @@ class KubernetesModel(ProblemTemplate):
             serviceOfPod: "Service",
             scheduler: "Scheduler"
          ):
+        assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
@@ -384,6 +385,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             scheduler: "Scheduler"
          ):
+        assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
@@ -423,6 +425,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             scheduler: "Scheduler"
          ):
+        assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled.hasService == False  
@@ -462,6 +465,7 @@ class KubernetesModel(ProblemTemplate):
             nodeWithPod : "Node" ,
             scheduler: "Scheduler"
          ):
+        assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_deployment.podList
@@ -507,6 +511,7 @@ class KubernetesModel(ProblemTemplate):
             scheduler: "Scheduler"
 
          ):
+        assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled in serviceOfPod.podList
         assert podBeingKilled.status == STATUS_POD["Killing"]
@@ -544,6 +549,7 @@ class KubernetesModel(ProblemTemplate):
             pods_daemonset: DaemonSet,
             scheduler: "Scheduler"
          ):
+        assert globalVar.block_node_outage_in_progress == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
         assert podBeingKilled in pods_daemonset.podList
@@ -557,6 +563,224 @@ class KubernetesModel(ProblemTemplate):
 
         nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
         nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+        nodeWithPod.amountOfActivePods -= 1 
+        pods_daemonset.amountOfActivePods -= 1
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+        scheduler.queueLength += 1
+        podBeingKilled.toNode = Node.NODE_NULL
+        podBeingKilled.atNode = Node.NODE_NULL
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=1)
+    def KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull_IF_Nodeoutage(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            serviceOfPod: "Service",
+            scheduler: "Scheduler"
+         ):
+        assert globalVar.block_node_outage_in_progress == True
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in serviceOfPod.podList
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        assert podBeingKilled.hasService == True 
+        assert podBeingKilled.hasDeployment == False #TODO add this for branching
+        assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert nodeWithPod.status == STATUS_NODE["Killing"]
+
+        serviceOfPod.amountOfActivePods -= 1
+        serviceOfPod.amountOfPodsInQueue += 1
+        nodeWithPod.amountOfActivePods -= 1 
+        podBeingKilled.status = STATUS_POD["Pending"]
+        podBeingKilled.toNode = Node.NODE_NULL
+        podBeingKilled.atNode = Node.NODE_NULL
+        scheduler.podQueue.add(podBeingKilled)
+
+        scheduler.status = STATUS_SCHED["Changed"]
+        scheduler.queueLength += 1
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=1)
+    def KillPod_IF_Deployment_isNotNUll_Service_isNull_Daemonset_isNull_Nodeoutage(self,
+            podBeingKilled : "Pod",
+            pods_deployment: Deployment,
+            nodeWithPod : "Node" ,
+            scheduler: "Scheduler"
+         ):
+        assert globalVar.block_node_outage_in_progress == True
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled in pods_deployment.podList
+        assert podBeingKilled.hasService == False 
+        assert podBeingKilled.hasDeployment == True 
+        assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert nodeWithPod.status == STATUS_NODE["Killing"]
+
+        nodeWithPod.amountOfActivePods -= 1 
+        pods_deployment.amountOfActivePods -= 1  # ERROR HERE
+        podBeingKilled.status = STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+        scheduler.queueLength += 1
+        podBeingKilled.toNode = Node.NODE_NULL
+        podBeingKilled.atNode = Node.NODE_NULL
+        # scheduler.debug_var = True # TODO DELETEME
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=1)
+    def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull_Nodeoutage(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            scheduler: "Scheduler"
+         ):
+        assert globalVar.block_node_outage_in_progress == True
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled.hasService == False  
+        assert podBeingKilled.hasDeployment == False 
+        assert podBeingKilled.hasDaemonset == False
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert nodeWithPod.status == STATUS_NODE["Killing"]
+
+        nodeWithPod.amountOfActivePods -= 1
+        podBeingKilled.status = STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"] # commented, solves
+        scheduler.queueLength += 1
+        podBeingKilled.toNode = Node.NODE_NULL
+        podBeingKilled.atNode = Node.NODE_NULL
+        # scheduler.debug_var = True # TODO DELETEME
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=1)
+    def KillPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull_Nodeoutage(self,
+            podBeingKilled : "Pod",
+            serviceOfPod: "Service",
+            pods_deployment: Deployment,
+            nodeWithPod : "Node" ,
+            scheduler: "Scheduler"
+         ):
+        assert globalVar.block_node_outage_in_progress == True
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled in pods_deployment.podList
+        assert podBeingKilled in serviceOfPod.podList
+        assert podBeingKilled.hasService == True 
+        assert podBeingKilled.hasDeployment == True 
+        assert podBeingKilled.hasDaemonset == False #TODO add this for branching
+        assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert nodeWithPod.status == STATUS_NODE["Killing"]
+
+        nodeWithPod.amountOfActivePods -= 1 
+        pods_deployment.amountOfActivePods -= 1
+        serviceOfPod.amountOfActivePods -= 1
+        serviceOfPod.amountOfPodsInQueue += 1
+        podBeingKilled.status = STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+        scheduler.queueLength += 1
+        podBeingKilled.toNode = Node.NODE_NULL
+        podBeingKilled.atNode = Node.NODE_NULL
+        # scheduler.debug_var = True # TODO DELETEME
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=1)
+    def KillPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull_Nodeoutage(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            serviceOfPod: "Service",
+            pods_daemonset: DaemonSet,
+            scheduler: "Scheduler"
+
+         ):
+        assert globalVar.block_node_outage_in_progress == True
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled in serviceOfPod.podList
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled in pods_daemonset.podList
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        assert podBeingKilled.hasService == True 
+        assert podBeingKilled.hasDeployment == False #TODO add this for branching
+        assert podBeingKilled.hasDaemonset == True #TODO add this for branching
+        assert nodeWithPod.status == STATUS_NODE["Killing"]
+
+        serviceOfPod.amountOfActivePods -= 1
+        serviceOfPod.amountOfPodsInQueue += 1
+        nodeWithPod.amountOfActivePods -= 1 
+        pods_daemonset.amountOfActivePods -= 1
+        podBeingKilled.status =  STATUS_POD["Pending"]
+        scheduler.podQueue.add(podBeingKilled)
+        scheduler.status = STATUS_SCHED["Changed"]
+        scheduler.queueLength += 1
+        podBeingKilled.toNode = Node.NODE_NULL
+        podBeingKilled.atNode = Node.NODE_NULL
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing pod",
+            parameters={"podBeingKilled": describe(podBeingKilled)},
+            probability=1.0,
+            affected=[describe(podBeingKilled)]
+        )
+
+    @planned(cost=1)
+    def KillPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNotNull_Nodeoutage(self,
+            podBeingKilled : "Pod",
+            nodeWithPod : "Node" ,
+            pods_daemonset: DaemonSet,
+            scheduler: "Scheduler"
+         ):
+        assert globalVar.block_node_outage_in_progress == True
+        assert podBeingKilled.atNode == nodeWithPod
+        assert podBeingKilled.status == STATUS_POD["Killing"]
+        assert podBeingKilled in pods_daemonset.podList
+        # assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        assert podBeingKilled.hasService == False 
+        assert podBeingKilled.hasDeployment == False  
+        assert podBeingKilled.hasDaemonset == True
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
+        assert nodeWithPod.status == STATUS_NODE["Killing"]
+
         nodeWithPod.amountOfActivePods -= 1 
         pods_daemonset.amountOfActivePods -= 1
         podBeingKilled.status =  STATUS_POD["Pending"]
