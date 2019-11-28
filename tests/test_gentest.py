@@ -30,7 +30,7 @@ LIN_COUNT = int(os.getenv("POODLE_LIN_COUNT", "99"))
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
     node_amount_range =       range(2,     5,     2)
-    pod_amount_range =        range(4,    61,     1)
+    pod_amount_range =        range(16,    61,     1)
     per_node_capacity_range = range(20,    41,     10)
 
     search = True
@@ -64,6 +64,7 @@ def test_node_killer_pod_with_service():
                 s.amountOfActivePods = 0
                 s.status = STATUS_SERV["Started"]
                 s.isSearched = True
+                isSearched = True
                 pod_id=0
                 for i in range(node_amount):
                     node_item = Node("node"+str(i))
@@ -71,7 +72,9 @@ def test_node_killer_pod_with_service():
                     node_item.memCapacity = node_capacity
                     node_item.isNull = False
                     node_item.status = STATUS_NODE["Active"]
-                    node_item.isSearched = True
+                    
+                    node_item.isSearched = isSearched
+                    isSearched = False
                     nodes.append(node_item)
                 node_counter = 0
                 for j in range(pod_amount):

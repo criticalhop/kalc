@@ -598,7 +598,10 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         serviceTargetForPod: "mservice.Service",
         globalVar: GlobalVar):
+        assert node.status == STATUS_NODE["Active"]
         assert globalVar.block_node_outage_in_progress == False
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert podStarted.hasService == True 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False  #TODO add this for branching
@@ -609,14 +612,11 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in serviceTargetForPod.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
-        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
-        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
-        assert node.status == STATUS_NODE["Active"]
 
+        scheduler.queueLength -= 1
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node       
-        scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         serviceTargetForPod.amountOfPodsInQueue -= 1
         node.amountOfActivePods += 1
