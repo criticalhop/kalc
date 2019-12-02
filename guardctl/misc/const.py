@@ -19,8 +19,9 @@ STATUS_LIM = {
 STATUS_NODE = {
     "Active" : StatusNode("Active"),
     "Inactive" : StatusNode("Inactive"),
-    "Killing" : StatusNode("Killing")
-}
+    "Killing" : StatusNode("Killing"),
+    "New" : StatusNode("New")
+    }
 
 STATUS_SCHED = {
     "Changed" : StatusSched("Changed"),

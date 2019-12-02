@@ -18,6 +18,7 @@ from guardctl.misc.const import *
 from guardctl.model.kubeactions import KubernetesModel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 import re
+import itertools
 
 class ExcludeDict:
     name: str
@@ -479,3 +480,44 @@ class HypothesisysNodeAndService(HypothesisysClean):
 class HypothesisysNode(HypothesisysClean):
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
                            self.globalVar.is_node_disrupted == True 
+
+class Antiaffinity_implement(KubernetesModel):
+
+
+    def goal(self):
+        for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod), self.objectList),2):
+            assert pod1 in pod2.not_on_same_node
+
+    @planned(cost=100)
+    def manually_initiate_killing_of_pod(self,
+        node_with_outage: "Node",
+        pod_killed: "podkind.Pod",
+        globalVar: GlobalVar
+        ):
+        assert pod_killed.status == STATUS_POD["Running"]
+        pod_killed.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing of pod initiated because of node outage",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
+    @planned(cost=100)
+    def Not_at_same_node(self,
+            pod1: Pod,
+            pod2: Pod,
+            node_of_pod2: Node):
+        assert node_of_pod2 == pod2.atNode
+        assert pod1.atNode in node_of_pod2.different_than
+        pod1.not_on_same_node.add(pod2)
+
+
+class Antiaffinity_implement_with_add_node(Antiaffinity_implement):
+
+    @planned(cost=100)
+    def Add_node(self,
+                node : Node):
+        assert node.status == STATUS_NODE["NEW"]
+        node.status = STATUS_NODE["Active"]

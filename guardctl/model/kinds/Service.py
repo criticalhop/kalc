@@ -18,6 +18,7 @@ class Service(HasLabel):
     isNull: bool
     isSearched: bool
     podList: Set["mpod.Pod"]
+    antiaffinity: bool
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)

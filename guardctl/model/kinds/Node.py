@@ -28,6 +28,7 @@ class Node(HasLabel):
     amountOfActivePods: int
     searchable: bool
     isSearched: bool
+    different_than: Set["Node"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,7 +46,13 @@ class Node(HasLabel):
         self.amountOfActivePods = 0
         self.searchable = True
         self.isSearched = False
-    
+        
+    def hook_after_create(self, object_space):
+        nodes = filter(lambda x: isinstance(x, Node), object_space)
+        for node in nodes:
+            if node != self:
+                self.different_than.add(node)
+
     @property
     def status_allocatable_memory(self):
         pass

@@ -16,6 +16,7 @@ from guardctl.model.scenario import ScenarioStep, describe
 # import guardctl.cli as cli
 import sys
 import random
+from typing import Set
 
 
 class Pod(HasLabel, HasLimitsRequests):
@@ -42,6 +43,7 @@ class Pod(HasLabel, HasLimitsRequests):
     hasDeployment: bool
     hasService: bool
     hasDaemonset: bool
+    not_on_same_node: Set["Pod"]
 
 
     def __init__(self, *args, **kwargs):
