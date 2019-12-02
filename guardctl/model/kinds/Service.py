@@ -3,12 +3,12 @@ from typing import Set
 from guardctl.model.system.primitives import Label, StatusServ
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.base import HasLabel
-import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.primitives import StatusSched
 from guardctl.misc.const import *
+import guardctl.model.kinds.Node as mnode
+from guardctl.model.kinds.Deployment import Deployment
 
-
-class Service(HasLabel):
+class Service(HasLabel, mnode.Affinity):
     spec_selector: Set[Label]
     amountOfActivePods: int
     amountOfPodsInQueue: int
@@ -31,6 +31,13 @@ class Service(HasLabel):
         self.amountOfPodsInQueue = 0
     
     def __str__(self): return str(self.metadata_name)
+
+    def hook_affinity(self, state_objects):
+        if hasattr(self, "affinity"):
+            for pod in list(self.podList):
+                pod.affinity_nodes = self.affinity_nodes
+                for d in [x for x in state_objects if (isinstance(x, Deployment) and (pod in x.podList))]:
+                    d.affinity_nodes = self.affinity_nodes
 
     # def __repr__(self):
     #     return 'Servicename : ' + str(self._get_value()) 

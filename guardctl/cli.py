@@ -13,7 +13,7 @@ from guardctl.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 from sys import stdout
-from guardctl.model.search import ExcludeDict, mark_excluded
+from guardctl.model.search import mark_excluded
 from guardctl.model.system.primitives import TypeServ
 from guardctl.misc.util import split_yamldumps
 from pyupdater.client import Client
@@ -53,8 +53,11 @@ ALL_PROFILES = [x for x in globals() if x.startswith("Check")]
     required=False, default=KubernetesCluster.CREATE_MODE)
 @click.option("--replicas", help="take pods amount for scale, default 5", \
     type=int, required=False, default=5)
+@click.option("--antiaffinity", "-aa", 
+    help="Node anti affinity for <Kind1>:<name1>:<nodeName1>,<Kind2>:<name2>:<nodeName1>,... (only service support)", \
+    required=False, default=None)
 @click.option("--profile", help="Search profile", default=DEFAULT_PROFILE, type=click.Choice(ALL_PROFILES))
-def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile):
+def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclusions, pipe, mode, replicas, profile, antiaffinity):
     run_start = time.time()
 
     k = KubernetesCluster()
@@ -85,6 +88,7 @@ def run(load_dump, output, filename, timeout, exclude, ignore_nonexistent_exclus
     if mode == KubernetesCluster.SCALE_MODE:
         k.scale(replicas, mode)
 
+    k.affinityLoad(antiaffinity, anti=True)
     click.echo(f"    - Building abstract state ...")
     k._build_state()
 

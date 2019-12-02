@@ -6,10 +6,13 @@ from poodle import planned, Property, Relation
 from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object, POODLE_MAXLIN, getint, split_yamldumps
 from guardctl.misc.util import cpuConvertToNorm, memConvertToNorm
 from guardctl.model.full import kinds_collection
-from guardctl.model.search import K8ServiceInterruptSearch
+from guardctl.model.search import K8ServiceInterruptSearch, TypeAndName
 from guardctl.model.system.globals import GlobalVar
 from guardctl.model.system.Scheduler import Scheduler
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
+from guardctl.model.kinds.Service import Service
+from guardctl.model.kinds.Node import Affinity
+
 import guardctl.misc.util
 
 KINDS_LOAD_ORDER = ["PriorityClass", "Service", "Node", "Pod", "ReplicaSet"]
@@ -21,6 +24,8 @@ class KubernetesCluster:
     APPLY_MODE = "apply"
     REPLACE_MODE = "replace"
     REMOVE_MODE = "remove"
+
+    affinityDict: {}
 
     def __init__(self):
         self.dict_states = defaultdict(list)
@@ -53,6 +58,23 @@ class KubernetesCluster:
         # type = str_.split(".")[0] # e.g. Deployment 
         # for k,v in dict_states.items():
         #     for item in v:
+
+    def affinityLoad(self, affinityFromArgs, anti = true):
+        affinables = set()
+        for val in affinityFromArgs.split(","):
+            kind = val.split(":")[0]
+            kind_name = val.split(":")[1]
+            typeAndName = TypeAndName(val)
+            node_affinity_name = val.split(":")[2]
+            obj = next([x for x in self.state_objects if isinstance(x, typeAndName.objType) and isinstance(x, Affinity)])
+            if obj == None:
+                raise "required Kind {0} name {1} doesn't support affinity yet".format(typeAndName.obj, typeAndName.name)
+                continue
+            obj.node_affinity_names.append()
+            affinables.add(obj)
+        for obj in affinables:
+            obj.affinity_search(self.state_objects)
+
 
     def load_item(self, item, mode=LOAD_MODE):
         assert isinstance(item, dict), item
@@ -140,9 +162,15 @@ class KubernetesCluster:
             for item in collected[k]:
                 self._build_item(item)
             del collected[k]
+        #build stage N1
         for k,v in collected.items():
             for item in v:
                 self._build_item(item)
+        #build stage N2 post build hooks
+        for obj in [x for x in self.state_objects if isinstance(x, Service)]:
+            if hasattr(obj, "hook_affinity"):
+                obj.hook_affinity(self.state_objects)
+               
         self._check()
         self.state_objects = [x for x in self.state_objects if not isinstance(x, ReplicaSet)]
 

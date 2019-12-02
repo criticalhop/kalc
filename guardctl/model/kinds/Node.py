@@ -8,6 +8,20 @@ from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstract
 from guardctl.misc.const import STATUS_NODE
 from guardctl.model.scenario import ScenarioStep, describe
 
+class Affinity():
+    anti: bool
+    affinity_nodes: Set["Node"]
+    affinity_node_names: []
+
+    def __init__(self, anti = true):
+        self.anti = anti
+   
+    def affinity_search(self, state_objects):
+        all_nodes = [x for x in state_objects if isinstance(x, Node)]
+        for node in all_nodes:
+            if node.metadata_name in self.affinity_node_names:
+                self.affinity_nodes.add(node)
+
 
 class Node(HasLabel):
     # k8s attributes

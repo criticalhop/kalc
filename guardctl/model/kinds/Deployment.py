@@ -7,13 +7,14 @@ import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status, Label
 from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
+import guardctl.model.kinds.Node as mnode
 from poodle import *
 from typing import Set
 from logzero import logger
 import guardctl.misc.util as util
 import random
 
-class Deployment(Controller, HasLimitsRequests):
+class Deployment(Controller, HasLimitsRequest, mnode.Affinity):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str
@@ -141,6 +142,9 @@ class Deployment(Controller, HasLimitsRequests):
             pod.cpuLimit = self.cpuLimit
             pod.memLimit = self.memLimit
             pod.set_priority(object_space, self)
+
+    def affinity_handler(self, node, antiAffinity = True):
+        self.spec_affinity_podAntiAffinity_requiredDuringSchedulingIgnoredDuringExecution
 
     # def check_pod(self, new_pod, object_space):
     #     for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):

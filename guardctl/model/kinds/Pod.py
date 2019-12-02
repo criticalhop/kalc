@@ -18,7 +18,7 @@ import sys
 import random
 
 
-class Pod(HasLabel, HasLimitsRequests):
+class Pod(HasLabel, HasLimitsRequests, mnode.Affinity):
     # k8s attributes
     metadata_ownerReferences__name: str
     spec_priorityClassName: str

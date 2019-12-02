@@ -19,7 +19,7 @@ from guardctl.model.kubeactions import KubernetesModel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 import re
 
-class ExcludeDict:
+class TypeAndName:
     name: str
     objType: str
     obj: TypeServ
@@ -88,7 +88,7 @@ def mark_excluded(object_space, excludeStr, skip_check=False):
     exclude = []
     if excludeStr != None:
         for kn in excludeStr.split(","):
-            exclude.append(ExcludeDict(kn))
+            exclude.append(TypeAndName(kn))
     else: 
         return
     names = []
