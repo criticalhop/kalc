@@ -165,6 +165,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
             pod.set_priority(object_space, self)
 
     def affinity_required_handler(self, label = None, node = None, antiAffinity = True):
+        assert node is None, "todo nodes not supported"
         if not hasattr(self, "yaml"):
             self.yaml = {}
         json_orig = copy.deepcopy(self.yaml)
@@ -178,7 +179,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
         selector = 'podSelector'
         selectorValue = "{0}-{1}".format(podAntiAffinityType,''.join(random.choice("0123456789abcdef") for i in range(8)))
         
-        if label != None:
+        if not label is None:
             selector = label['key']
             selectorValue = label['value']
         #append affinity
@@ -192,10 +193,11 @@ class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
         matchExpr['values'].append(selectorValue)
         labelSelector["matchExpressions"].append(matchExpr)
         self.yaml['spec']['template']['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'].append({"labelSelector": labelSelector})
-        #appent pod template selector
-        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'metadata','labels', selector], value = selectorValue)
-        #append top selector
-        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels', selector], value = selectorValue)
+        if label is None:
+            #appent pod template selector
+            self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'metadata','labels', selector], value = selectorValue)
+            #append top selector
+            self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels', selector], value = selectorValue)
         self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
 
     # def check_pod(self, new_pod, object_space):
