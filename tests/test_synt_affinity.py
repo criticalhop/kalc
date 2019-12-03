@@ -106,8 +106,8 @@ def test_1():
     d.spec_replicas = 2    
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 8
-    node_item.memCapacity = 8
+    node_item.cpuCapacity = 10
+    node_item.memCapacity = 10
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
@@ -119,8 +119,8 @@ def test_1():
  
     node_item = Node()
     node_item.metadata_name = "node 2"
-    node_item.cpuCapacity = 8
-    node_item.memCapacity = 8
+    node_item.cpuCapacity = 10
+    node_item.memCapacity = 10
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
@@ -156,7 +156,10 @@ def test_1():
     node_item.isNull = False
     node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
-
+    for node in nodes:
+        for node2 in nodes:
+            if node != node2:
+                node2.different_than.add(node)
     # priority for pod-to-evict
     pc = PriorityClass()
     pc.priority = 10
@@ -171,7 +174,12 @@ def test_1():
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     class Antiaffinity_implement_k1(Antiaffinity_implement):
-        pass
+        def goal(self):
+            assert pods[0] in pods[1].not_on_same_node
+            assert pods[0] in pods[4].not_on_same_node
+            assert pods[1] in pods[4].not_on_same_node
+
+
     p = Antiaffinity_implement_k1(k.state_objects)
     Antiaffinity_implement_k1.__name__ = inspect.stack()[0].function
     assert_conditions = ["manually_initiate_killing_of_podt",\
@@ -263,6 +271,11 @@ def test_2():
     node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
 
+    for node in nodes:
+        for node2 in nodes:
+            if node != node2:
+                node2.different_than.add(node)
+        
     # priority for pod-to-evict
     pc = PriorityClass()
     pc.priority = 10
@@ -277,7 +290,14 @@ def test_2():
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     class Antiaffinity_implement_with_add_node_k1(Antiaffinity_implement_with_add_node):
-        pass
+        def goal(self):
+            assert pods[0] in pods[1].not_on_same_node
+            assert pods[0] in pods[4].not_on_same_node
+            assert pods[1] in pods[4].not_on_same_node
+            assert pods[0] in pods[5].not_on_same_node
+            assert pods[1] in pods[5].not_on_same_node
+            assert pods[4] in pods[5].not_on_same_node         
+
     p = Antiaffinity_implement_with_add_node_k1(k.state_objects)
     Antiaffinity_implement_with_add_node_k1.__name__ = inspect.stack()[0].function
     assert_conditions = ["manually_initiate_killing_of_podt",\

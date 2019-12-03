@@ -17,6 +17,7 @@ from guardctl.model.scenario import ScenarioStep, describe
 from guardctl.misc.const import *
 from guardctl.model.kubeactions import KubernetesModel
 from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from guardctl.misc.const import STATUS_SCHED
 import re
 import itertools
 
@@ -517,12 +518,14 @@ class Antiaffinity_implement(KubernetesModel):
     def Not_at_same_node(self,
             pod1: Pod,
             pod2: Pod,
+            node_of_pod1: Node,
             node_of_pod2: Node,
-            service: Service):
+            service: Service,
+            scheduler: Scheduler):
         assert node_of_pod2 == pod2.atNode
+        assert node_of_pod1 == pod1.atNode
         assert pod1.atNode in node_of_pod2.different_than
-        assert pod1 in service.podList
-        assert pod2 in service.podList
+        assert scheduler.status == STATUS_SCHED["Clean"]
         pod1.not_on_same_node.add(pod2)
 
 
