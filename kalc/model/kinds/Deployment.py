@@ -29,7 +29,7 @@ class YAMLable():
                 if not keys[key] in yaml :
                     yaml[keys[key]] = {}
                 yaml = yaml[keys[key]]
-        if value != None:
+        if value != None and not keys[l-1] in yaml:
             yaml[keys[l-1]] = value
                 
     def affinity_required_handler(self, label = None, node = None, antiAffinity = True):
@@ -60,25 +60,11 @@ class YAMLable():
         matchExpr['values'].append(selectorValue)
         labelSelector["matchExpressions"].append(matchExpr)
         self.yaml['spec']['template']['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'].append({"labelSelector": labelSelector})
-        patchJSON = {}
-        patchJSON['op'] = 'add'
-        patchJSON['path']='spec/template/spec/{0}/requiredDuringSchedulingIgnoredDuringExecution'.format(podAntiAffinityType)
-        patchJSON['value'] = str(self.yaml['spec']['template']['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'])
-        self.patchJSON.append(patchJSON)
         #appent pod template selector
-        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'metadata','labels'], value = {selector: selectorValue})
-        patchJSON = {}
-        patchJSON['op'] = 'add'
-        patchJSON['path']='spec/template/metadata/labels'
-        patchJSON['value'] = str(self.yaml['spec']['template']['metadata']['labels'])
-        self.patchJSON.append(patchJSON)
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'metadata','labels', selector], value = selectorValue)
         #append top selector
-        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels'], value = {selector: selectorValue})
-        patchJSON = {}
-        patchJSON['op'] = 'add'
-        patchJSON['path']='spec/selector/matchLabels'
-        patchJSON['value'] = str(self.yaml['spec']['selector']['matchLabels'])
-        self.patchJSON.append(patchJSON)
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels', selector], value = selectorValue)
+        self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
 
 class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
     spec_replicas: int
