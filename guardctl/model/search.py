@@ -485,8 +485,7 @@ class Antiaffinity_implement(KubernetesModel):
 
 
     def goal(self):
-        for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod), self.objectList),2):
-            assert pod1 in pod2.not_on_same_node
+        
 
     @planned(cost=100)
     def manually_initiate_killing_of_pod(self,
@@ -508,9 +507,12 @@ class Antiaffinity_implement(KubernetesModel):
     def Not_at_same_node(self,
             pod1: Pod,
             pod2: Pod,
-            node_of_pod2: Node):
+            node_of_pod2: Node,
+            service: Service):
         assert node_of_pod2 == pod2.atNode
         assert pod1.atNode in node_of_pod2.different_than
+        assert pod1 in service.podList
+        assert pod2 in service.podList
         pod1.not_on_same_node.add(pod2)
 
 
