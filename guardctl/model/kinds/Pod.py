@@ -65,6 +65,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.hasDaemonset = False
         self.hasDeployment = False
         self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
+        self.antiaffinity = False
         # self.metadata_name = "model-default-name"
 
 
@@ -130,6 +131,13 @@ class Pod(HasLabel, HasLimitsRequests):
             except StopIteration:
                 raise Exception("Could not find priorityClass %s, maybe you \
                         did not dump PriorityClass?" % str(self.spec_priorityClassName))
+
+    def hook_after_create(self, object_space):
+        services = filter(lambda x: isinstance(x, mservice.Service), object_space)
+        for service in services:
+            if self in service.podList:
+                pod.antiaffinity = service.antiaffinity
+
 
     @property
     def spec_containers__resources_requests_cpu(self):

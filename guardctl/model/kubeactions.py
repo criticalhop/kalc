@@ -592,7 +592,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=1)
-    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(self, 
+    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull_IF_not_affinity(self, 
         podStarted: "Pod",
         node: "Node" ,
         scheduler: "Scheduler",
@@ -603,10 +603,12 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == False  #TODO add this for branching
 
+
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
         assert podStarted in serviceTargetForPod.podList
+        assert serviceTargetForPod.antiaffinity == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
@@ -623,6 +625,7 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
+        serviceTargetForPod.not_present_at_node.remove(podStarted)        
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -633,7 +636,7 @@ class KubernetesModel(ProblemTemplate):
         )
     
     @planned(cost=1)
-    def StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull(self, 
+    def StartPod_IF_Deployment_isNUll_Service_isNull_Daemonset_isNull_IF(self, 
         podStarted: "Pod",
         node: "Node" ,
         scheduler: "Scheduler",
@@ -669,7 +672,7 @@ class KubernetesModel(ProblemTemplate):
         )
 
     @planned(cost=1)
-    def StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull(self, 
+    def StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull_IF_not_affinity(self, 
         podStarted: "Pod",
         node: "Node" ,
         scheduler: "Scheduler",
@@ -685,6 +688,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.toNode == node
         assert node.isNull == False
         assert podStarted in serviceTargetForPod.podList
+        assert serviceTargetForPod.antiaffinity == False
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -703,6 +707,8 @@ class KubernetesModel(ProblemTemplate):
         pods_deployment.amountOfActivePods += 1 
         podStarted.status = STATUS_POD["Running"] 
         serviceTargetForPod.status = STATUS_SERV["Started"]
+        serviceTargetForPod.not_present_at_node.remove(podStarted)        
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
@@ -723,6 +729,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == True #TODO add this for branching
         assert podStarted.hasDaemonset == False #TODO add this for branching
+        assert podStarted.antiaffinity == False
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
@@ -762,6 +769,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.hasService == False 
         assert podStarted.hasDeployment == False #TODO add this for branching
         assert podStarted.hasDaemonset == True #TODO add this for branching
+        assert podStarted.antiaffinity == False
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
@@ -792,7 +800,7 @@ class KubernetesModel(ProblemTemplate):
 
 
     @planned(cost=1)
-    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull(self, 
+    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull_IF_not_affinity(self, 
         podStarted: "Pod",
         node: "Node" ,
         scheduler: "Scheduler",
@@ -808,6 +816,8 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted.toNode == node
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
+        assert podStarted in serviceTargetForPod.podList
+        assert serviceTargetForPod.antiaffinity == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
@@ -825,6 +835,151 @@ class KubernetesModel(ProblemTemplate):
         serviceTargetForPod.amountOfActivePods += 1
         serviceTargetForPod.amountOfPodsInQueue -= 1
         serviceTargetForPod.status = STATUS_SERV["Started"]
+        serviceTargetForPod.not_present_at_node.remove(podStarted)        
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+
+    @planned(cost=1)
+    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull_IF_antiaffinity(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        globalVar: GlobalVar):
+        # assert globalVar.block_node_outage_in_progress == False
+        assert podStarted.hasService == True 
+        assert podStarted.hasDeployment == False #TODO add this for branching
+        assert podStarted.hasDaemonset == False  #TODO add this for branching
+
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert node.isNull == False
+        assert podStarted in serviceTargetForPod.podList
+        assert serviceTargetForPod.antiaffinity == True
+        assert podStarted in serviceTargetForPod.not_present_at_node
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        serviceTargetForPod.amountOfPodsInQueue -= 1
+        node.amountOfActivePods += 1
+        serviceTargetForPod.amountOfActivePods += 1
+        podStarted.status = STATUS_POD["Running"] 
+        serviceTargetForPod.status = STATUS_SERV["Started"]
+        serviceTargetForPod.not_present_at_node.remove(podStarted)        
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+     
+    @planned(cost=1)
+    def StartPod_IF_Deployment_isNotNUll_Service_isNotNull_Daemonset_isNull_IF_antiaffinity(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        pods_deployment: Deployment,
+        globalVar: GlobalVar):
+        # assert globalVar.block_node_outage_in_progress == False
+        assert podStarted.hasService == True 
+        assert podStarted.hasDeployment == True #TODO add this for branching
+        assert podStarted.hasDaemonset == False #TODO add this for branching
+        assert podStarted.antiaffinity == True
+
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert node.isNull == False
+        assert podStarted in serviceTargetForPod.podList
+        assert serviceTargetForPod.antiaffinity == True
+        assert podStarted in pods_deployment.podList
+        assert podStarted in serviceTargetForPod.not_present_at_node
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        serviceTargetForPod.amountOfActivePods += 1
+        serviceTargetForPod.amountOfPodsInQueue -= 1
+        pods_deployment.amountOfActivePods += 1 
+        podStarted.status = STATUS_POD["Running"] 
+        serviceTargetForPod.status = STATUS_SERV["Started"]
+        serviceTargetForPod.not_present_at_node.remove(podStarted)        
+
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+    
+
+    @planned(cost=1)
+    def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNotNull_IF_antiaffinity(self, 
+        podStarted: "Pod",
+        node: "Node" ,
+        scheduler: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        pods_daemonset: DaemonSet,
+        globalVar: GlobalVar):
+        # assert globalVar.block_node_outage_in_progress == False
+        assert podStarted.hasService == True
+        assert podStarted.hasDeployment == False
+        assert podStarted.hasDaemonset == True
+        
+        assert podStarted in serviceTargetForPod.podList
+        assert serviceTargetForPod.antiaffinity == True
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert node.isNull == False
+        assert podStarted in pods_daemonset.podList
+        assert podStarted in serviceTargetForPod.not_present_at_node
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        pods_daemonset.amountOfActivePods += 1
+        podStarted.status = STATUS_POD["Running"]
+        serviceTargetForPod.amountOfActivePods += 1
+        serviceTargetForPod.amountOfPodsInQueue -= 1
+        serviceTargetForPod.status = STATUS_SERV["Started"]
+        serviceTargetForPod.not_present_at_node.remove(podStarted)        
+
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,

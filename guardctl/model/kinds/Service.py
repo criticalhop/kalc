@@ -3,7 +3,7 @@ from typing import Set
 from guardctl.model.system.primitives import Label, StatusServ
 import guardctl.model.kinds.Pod as mpod
 from guardctl.model.system.base import HasLabel
-import guardctl.model.kinds.Pod as mpod
+import guardctl.model.kinds.Node as mnode
 from guardctl.model.system.primitives import StatusSched
 from guardctl.misc.const import *
 
@@ -18,6 +18,9 @@ class Service(HasLabel):
     isNull: bool
     isSearched: bool
     podList: Set["mpod.Pod"]
+    antiaffinity: bool
+    not_present_at_node: Set["mnode.Node"]
+    affinity_met: bool
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
@@ -29,9 +32,15 @@ class Service(HasLabel):
         self.isNull = False
         self.isSearched = False
         self.amountOfPodsInQueue = 0
+        self.antiaffinity = False
+        self.affinity_met = False
     
     def __str__(self): return str(self.metadata_name)
-
+    
+    def hook_after_load(self, object_space, _ignore_orphan=False):
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
+        for node in nodes:
+                self.not_present_at_node.add(node)
     # def __repr__(self):
     #     return 'Servicename : ' + str(self._get_value()) 
 
