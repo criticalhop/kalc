@@ -519,5 +519,5 @@ class Antiaffinity_implement_with_add_node(Antiaffinity_implement):
     @planned(cost=100)
     def Add_node(self,
                 node : Node):
-        assert node.status == STATUS_NODE["NEW"]
+        assert node.status == STATUS_NODE["New"]
         node.status = STATUS_NODE["Active"]
