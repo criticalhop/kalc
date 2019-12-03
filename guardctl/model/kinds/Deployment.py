@@ -7,13 +7,58 @@ import guardctl.model.kinds.Pod as mpod
 from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status, Label
 from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
+import guardctl.model.kinds.Node as mnode
+import yaml
 from poodle import *
 from typing import Set
 from logzero import logger
 import guardctl.misc.util as util
 import random
 
-class Deployment(Controller, HasLimitsRequests):
+class YAMLable():
+    yaml: {}
+    rawYaml: str
+
+    def set_yaml_nested_key(self, yamlmod, keys, value = None):
+        l = len(keys)
+        yaml = yamlmod
+        if l > 1 or value == None:
+            for key in range(l):
+                if not key in yaml :
+                    yaml[key] = {}
+                yaml = yaml[key]
+        if value != None:
+            yaml[keys[l-1]] = value
+                
+    def affinity_required_handler(self, label = None, node = None, antiAffinity = True):
+                
+        if antiAffinity:
+            podAntiAffinityType = 'podAntiAffinity'
+        else:
+            podAntiAffinityType = 'podAffinity'
+
+        selector = 'selector'
+        selectorValue = '{0}-'.format(podAntiAffinityType).join(random.choice("0123456789abcdef") for i in range(8))
+        
+        if label != None:
+            selector = label['key']
+            selectorValue = label['value']
+
+
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', podAntiAffinityType, 'requiredDuringSchedulingIgnoredDuringExecution'], value=[])
+        self.spec_affinity_podAntiAffinity_requiredDuringSchedulingIgnoredDuringExecution
+        labelSelector = {}
+        labelSelector["matchExpressions"]=[]
+        matchExpr = {}
+        matchExpr['key']= selector
+        matchExpr['operator']= 'In'
+        matchExpr['values'] = [].append(selectorValue)
+        labelSelector["matchExpressions"].append(matchExpr)
+        self.yaml['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'].append({"labelSelector": labelSelector})
+        print(self.yaml)
+
+
+class Deployment(Controller, HasLimitsRequest, mnode.Affinity, YAMLable):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str
@@ -24,6 +69,7 @@ class Deployment(Controller, HasLimitsRequests):
     spec_template_spec_priorityClassName: str
     searchable: bool
     hash: str
+
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
