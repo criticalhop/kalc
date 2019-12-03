@@ -1,4 +1,4 @@
-import yaml
+import yaml, copy
 import os, click
 from collections import defaultdict
 from guardctl.misc.object_factory import labelFactory
@@ -80,6 +80,10 @@ class KubernetesCluster:
             else:
                 # means has setter
                 setattr(obj, p, val)
+        obj.yaml = copy.deepcopy(item)
+        del(obj.yaml["__created"])
+        del(obj.yaml["__mode"])
+        del(obj.yaml["__scale_replicas"])
         if mode == self.CREATE_MODE and hasattr(obj, "hook_after_create"):
             obj.hook_after_create(self.state_objects)
         if mode == self.LOAD_MODE and hasattr(obj, "hook_after_load"):

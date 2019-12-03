@@ -8,7 +8,7 @@ from guardctl.model.kinds.ReplicaSet import ReplicaSet
 from guardctl.model.system.primitives import Status, Label
 from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
 import guardctl.model.kinds.Node as mnode
-import yaml
+import yaml, copy, jsonpatch
 from poodle import *
 from typing import Set
 from logzero import logger
@@ -17,48 +17,69 @@ import random
 
 class YAMLable():
     yaml: {}
+    patchJSON: []
     rawYaml: str
 
     def set_yaml_nested_key(self, yamlmod, keys, value = None):
         l = len(keys)
         yaml = yamlmod
         if l > 1 or value == None:
-            for key in range(l):
-                if not key in yaml :
-                    yaml[key] = {}
-                yaml = yaml[key]
+            for key in range(l-1):
+                if not keys[key] in yaml :
+                    yaml[keys[key]] = {}
+                yaml = yaml[keys[key]]
         if value != None:
             yaml[keys[l-1]] = value
                 
     def affinity_required_handler(self, label = None, node = None, antiAffinity = True):
-                
+        if not hasattr(self, "yaml"):
+            self.yaml = {}
+        json_orig = copy.deepcopy(self.yaml)
+        if not hasattr(self, "patchJSON"):
+            self.patchJSON = []
         if antiAffinity:
             podAntiAffinityType = 'podAntiAffinity'
         else:
             podAntiAffinityType = 'podAffinity'
 
-        selector = 'selector'
-        selectorValue = '{0}-'.format(podAntiAffinityType).join(random.choice("0123456789abcdef") for i in range(8))
+        selector = 'podSelector'
+        selectorValue = "{0}-{1}".format(podAntiAffinityType,''.join(random.choice("0123456789abcdef") for i in range(8)))
         
         if label != None:
             selector = label['key']
             selectorValue = label['value']
-
-
-        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', podAntiAffinityType, 'requiredDuringSchedulingIgnoredDuringExecution'], value=[])
-        self.spec_affinity_podAntiAffinity_requiredDuringSchedulingIgnoredDuringExecution
+        #append affinity
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'spec', podAntiAffinityType, 'requiredDuringSchedulingIgnoredDuringExecution'], value=[])
         labelSelector = {}
         labelSelector["matchExpressions"]=[]
         matchExpr = {}
         matchExpr['key']= selector
         matchExpr['operator']= 'In'
-        matchExpr['values'] = [].append(selectorValue)
+        matchExpr['values'] = []
+        matchExpr['values'].append(selectorValue)
         labelSelector["matchExpressions"].append(matchExpr)
-        self.yaml['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'].append({"labelSelector": labelSelector})
-        print(self.yaml)
+        self.yaml['spec']['template']['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'].append({"labelSelector": labelSelector})
+        patchJSON = {}
+        patchJSON['op'] = 'add'
+        patchJSON['path']='spec/template/spec/{0}/requiredDuringSchedulingIgnoredDuringExecution'.format(podAntiAffinityType)
+        patchJSON['value'] = str(self.yaml['spec']['template']['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'])
+        self.patchJSON.append(patchJSON)
+        #appent pod template selector
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'metadata','labels'], value = {selector: selectorValue})
+        patchJSON = {}
+        patchJSON['op'] = 'add'
+        patchJSON['path']='spec/template/metadata/labels'
+        patchJSON['value'] = str(self.yaml['spec']['template']['metadata']['labels'])
+        self.patchJSON.append(patchJSON)
+        #append top selector
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels'], value = {selector: selectorValue})
+        patchJSON = {}
+        patchJSON['op'] = 'add'
+        patchJSON['path']='spec/selector/matchLabels'
+        patchJSON['value'] = str(self.yaml['spec']['selector']['matchLabels'])
+        self.patchJSON.append(patchJSON)
 
-
-class Deployment(Controller, HasLimitsRequest, mnode.Affinity, YAMLable):
+class Deployment(Controller, YAMLable):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str
