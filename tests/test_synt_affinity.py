@@ -82,110 +82,110 @@ class StateSet():
     services: []
 
 
-# def test_1():
-#     # Initialize scheduler, globalvar
-#     k = KubernetesCluster()
-#     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-#     # initial node state
-#     i = 0
-#     j = 0
-#     nodes = []
-#     pods = []
+def test_1():
+    # Initialize scheduler, globalvar
+    k = KubernetesCluster()
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    # initial node state
+    i = 0
+    j = 0
+    nodes = []
+    pods = []
     
-#     # Service to detecte eviction
-#     s1 = Service()
-#     s1.metadata_name = "test-service"
-#     s1.amountOfActivePods = 0
-#     s1.antiaffinity = True
+    # Service to detecte eviction
+    s1 = Service()
+    s1.metadata_name = "test-service"
+    s1.amountOfActivePods = 0
+    s1.antiaffinity = True
 
-#     s2 = Service()
-#     s2.metadata_name = "test-service2"
-#     s2.amountOfActivePods = 0
-#     # create Deploymnent that we're going to detect failure of...
-#     d = Deployment()
-#     d.spec_replicas = 2    
-#     node_item = Node()
-#     node_item.metadata_name = "node 1"
-#     node_item.cpuCapacity = 8
-#     node_item.memCapacity = 8
-#     node_item.isNull = False
-#     node_item.status = STATUS_NODE["Active"]
-#     nodes.append(node_item)
+    s2 = Service()
+    s2.metadata_name = "test-service2"
+    s2.amountOfActivePods = 0
+    # create Deploymnent that we're going to detect failure of...
+    d = Deployment()
+    d.spec_replicas = 2    
+    node_item = Node()
+    node_item.metadata_name = "node 1"
+    node_item.cpuCapacity = 8
+    node_item.memCapacity = 8
+    node_item.isNull = False
+    node_item.status = STATUS_NODE["Active"]
+    nodes.append(node_item)
 
-#     pod = build_running_pod_with_d(1,2,2,node_item,None,None,s1,pods)
-#     pod = build_running_pod_with_d(2,2,2,node_item,None,None,s1,pods)
-#     pod = build_running_pod_with_d(3,2,2,node_item,None,None,None,pods)
-#     pod = build_running_pod_with_d(4,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(1,2,2,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(2,2,2,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(3,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(4,2,2,node_item,None,None,None,pods)
  
-#     node_item = Node()
-#     node_item.metadata_name = "node 2"
-#     node_item.cpuCapacity = 8
-#     node_item.memCapacity = 8
-#     node_item.isNull = False
-#     node_item.status = STATUS_NODE["Active"]
-#     nodes.append(node_item)
+    node_item = Node()
+    node_item.metadata_name = "node 2"
+    node_item.cpuCapacity = 8
+    node_item.memCapacity = 8
+    node_item.isNull = False
+    node_item.status = STATUS_NODE["Active"]
+    nodes.append(node_item)
 
-#     pod = build_running_pod_with_d(5,2,2,node_item,None,None,s1,pods)
-#     pod = build_running_pod_with_d(7,2,2,node_item,None,None,s2,pods)
-#     pod = build_running_pod_with_d(8,2,2,node_item,None,None,s2,pods)
+    pod = build_running_pod_with_d(5,2,2,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(7,2,2,node_item,None,None,s2,pods)
+    pod = build_running_pod_with_d(8,2,2,node_item,None,None,s2,pods)
     
-#     node_item = Node()
-#     node_item.metadata_name = "node 3"
-#     node_item.cpuCapacity = 4
-#     node_item.memCapacity = 4
-#     node_item.isNull = False
-#     node_item.status = STATUS_NODE["Active"]
-#     nodes.append(node_item)
+    node_item = Node()
+    node_item.metadata_name = "node 3"
+    node_item.cpuCapacity = 4
+    node_item.memCapacity = 4
+    node_item.isNull = False
+    node_item.status = STATUS_NODE["Active"]
+    nodes.append(node_item)
 
-#     pod = build_running_pod_with_d(9,2,2,node_item,None,None,None,pods)
-#     pod = build_running_pod_with_d(6,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(9,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(6,2,2,node_item,None,None,None,pods)
 
-#     node_item = Node()
-#     node_item.metadata_name = "node 4"
-#     node_item.cpuCapacity = 8
-#     node_item.memCapacity = 8
-#     node_item.isNull = False
-#     node_item.status = STATUS_NODE["New"]
-#     nodes.append(node_item)
-
-    
-#     node_item = Node()
-#     node_item.metadata_name = "node 5"
-#     node_item.cpuCapacity = 8
-#     node_item.memCapacity = 8
-#     node_item.isNull = False
-#     node_item.status = STATUS_NODE["New"]
-#     nodes.append(node_item)
-
-#     # priority for pod-to-evict
-#     pc = PriorityClass()
-#     pc.priority = 10
-#     pc.metadata_name = "high-prio-test"
+    node_item = Node()
+    node_item.metadata_name = "node 4"
+    node_item.cpuCapacity = 8
+    node_item.memCapacity = 8
+    node_item.isNull = False
+    node_item.status = STATUS_NODE["New"]
+    nodes.append(node_item)
 
     
-#     k.state_objects.extend(nodes)
-#     k.state_objects.extend(pods)
-#     k.state_objects.extend([pc, s1, s2 ])
-#     create_objects = []
-#     k._build_state()
-#     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-#     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-#     class Antiaffinity_implement_k1(Antiaffinity_implement):
-#         pass
-#     p = Antiaffinity_implement_k1(k.state_objects)
-#     Antiaffinity_implement_k1.__name__ = inspect.stack()[0].function
-#     assert_conditions = ["manually_initiate_killing_of_podt",\
-#                         "Not_at_same_node"]
-#     not_assert_conditions = []
-#     print_objects(k.state_objects)
-#     test_case = StateSet()
-#     test_case.scheduler = scheduler
-#     test_case.globalVar = globalVar
-#     test_case.pods = pods
-#     test_case.nodes = nodes
-#     services = [s1,s2]
-#     test_case.services = services
-#     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+    node_item = Node()
+    node_item.metadata_name = "node 5"
+    node_item.cpuCapacity = 8
+    node_item.memCapacity = 8
+    node_item.isNull = False
+    node_item.status = STATUS_NODE["New"]
+    nodes.append(node_item)
+
+    # priority for pod-to-evict
+    pc = PriorityClass()
+    pc.priority = 10
+    pc.metadata_name = "high-prio-test"
+
+    
+    k.state_objects.extend(nodes)
+    k.state_objects.extend(pods)
+    k.state_objects.extend([pc, s1, s2 ])
+    create_objects = []
+    k._build_state()
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
+    class Antiaffinity_implement_k1(Antiaffinity_implement):
+        pass
+    p = Antiaffinity_implement_k1(k.state_objects)
+    Antiaffinity_implement_k1.__name__ = inspect.stack()[0].function
+    assert_conditions = ["manually_initiate_killing_of_podt",\
+                        "Not_at_same_node"]
+    not_assert_conditions = []
+    print_objects(k.state_objects)
+    test_case = StateSet()
+    test_case.scheduler = scheduler
+    test_case.globalVar = globalVar
+    test_case.pods = pods
+    test_case.nodes = nodes
+    services = [s1,s2]
+    test_case.services = services
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 
 def test_2():
     # Initialize scheduler, globalvar
