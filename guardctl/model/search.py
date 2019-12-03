@@ -485,6 +485,10 @@ class Antiaffinity_implement(KubernetesModel):
 
 
     def goal(self):
+        for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
+            for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
+                assert pod1 in pod2.not_on_same_node
+                print("aaa")
         
 
     @planned(cost=100)
