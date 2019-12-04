@@ -174,10 +174,11 @@ def test_1():
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     class Antiaffinity_implement_k1(Antiaffinity_implement):
-        def goal(self):
-            assert pods[0] in pods[1].not_on_same_node
-            assert pods[0] in pods[4].not_on_same_node
-            assert pods[1] in pods[4].not_on_same_node
+            pass
+        # def goal(self):
+            # assert pods[0] in pods[1].not_on_same_node
+            # assert pods[0] in pods[4].not_on_same_node
+            # assert pods[1] in pods[4].not_on_same_node
 
 
     p = Antiaffinity_implement_k1(k.state_objects)
@@ -290,13 +291,14 @@ def test_2():
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     class Antiaffinity_implement_with_add_node_k1(Antiaffinity_implement_with_add_node):
-        def goal(self):
-            assert pods[0] in pods[1].not_on_same_node
-            assert pods[0] in pods[4].not_on_same_node
-            assert pods[1] in pods[4].not_on_same_node
-            assert pods[0] in pods[5].not_on_same_node
-            assert pods[1] in pods[5].not_on_same_node
-            assert pods[4] in pods[5].not_on_same_node         
+        pass
+        # def goal(self):
+            # assert pods[0] in pods[1].not_on_same_node
+            # assert pods[0] in pods[4].not_on_same_node
+            # assert pods[1] in pods[4].not_on_same_node
+            # assert pods[0] in pods[5].not_on_same_node
+            # assert pods[1] in pods[5].not_on_same_node
+            # assert pods[4] in pods[5].not_on_same_node         
 
     p = Antiaffinity_implement_with_add_node_k1(k.state_objects)
     Antiaffinity_implement_with_add_node_k1.__name__ = inspect.stack()[0].function
