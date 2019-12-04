@@ -290,7 +290,7 @@ def test_2():
     k._build_state()
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    class Anktiaffinity_implement_with_add_node_k1(Antiaffinity_implement_with_add_node):
+    class Antiaffinity_implement_with_add_node_k1(Antiaffinity_implement_with_add_node):
         pass
         # def goal(self):
             # assert pods[0] in pods[1].not_on_same_node
