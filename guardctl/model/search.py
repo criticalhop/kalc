@@ -490,11 +490,12 @@ class Antiaffinity_implement(KubernetesModel):
         counter = 1 
         for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
             print("ccc"+ str(service.metadata_name))
-            for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
-                assert pod1 in pod2.not_on_same_node
-                print("aaa"+ str(pod1) + str(pod2))
-                print( "counter =" + str(counter))
-                counter += 1
+            for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod), self.objectList),2):
+                if  pod1 in service.podList and  pod2 in service.podList:
+                    assert pod1 in pod2.not_on_same_node
+                    print("aaa"+ str(pod1) + str(pod2))
+                    print( "counter =" + str(counter))
+                    counter += 1
         print("done")
         
 
