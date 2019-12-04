@@ -32,10 +32,14 @@ class ProblemTemplate:
                     getattr(self, obj.__class__.__name__.lower()).append(obj)
                 except:
                     pass
+            
+    def generate_goal(self):
+        pass
 
     def run(self, timeout=6000, sessionName=None, schedule=schedule, raise_=False):
         if not sessionName: sessionName = self.__class__.__name__
         self.problem()
+        self.generate_goal()
         self_methods = [getattr(self,m) for m in dir(self) if callable(getattr(self,m)) and hasattr(getattr(self, m), "_planned")]
         model_methods = []
         methods_scanned = set()

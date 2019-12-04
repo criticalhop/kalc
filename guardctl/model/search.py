@@ -484,19 +484,19 @@ class HypothesisysNode(HypothesisysClean):
 
 class Antiaffinity_implement(KubernetesModel):
 
+    def generate_goal(self):
+        self.generated_goal_in = []
+        self.generaged_goal_eq = []
+        for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
+            for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
+                self.generated_goal_in.append([pod1, pod2.not_on_same_node])
 
     def goal(self):
-        print("bbb")
-        counter = 1 
-        for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
-            print("ccc"+ str(service.metadata_name))
-            for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
-                assert pod1 in pod2.not_on_same_node
-                print("aaa"+ str(pod1) + str(pod2))
-                print( "counter =" + str(counter))
-                counter += 1
-        print("done")
-        
+        for what, where in self.generated_goal_in:
+            assert what in where
+        for what1, what2 in self.generaged_goal_eq:
+            assert what1 == what2
+       
 
     @planned(cost=1)
     def manually_initiate_killing_of_pod(self,
