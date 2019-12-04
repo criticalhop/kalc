@@ -498,7 +498,7 @@ class Antiaffinity_implement(KubernetesModel):
         print("done")
         
 
-    @planned(cost=100)
+    @planned(cost=1)
     def manually_initiate_killing_of_pod(self,
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
@@ -514,16 +514,13 @@ class Antiaffinity_implement(KubernetesModel):
             probability=1.0,
             affected=[]
         )
-    @planned(cost=100)
+    @planned(cost=1)
     def Not_at_same_node(self,
             pod1: Pod,
             pod2: Pod,
-            node_of_pod1: Node,
             node_of_pod2: Node,
-            service: Service,
             scheduler: Scheduler):
         assert node_of_pod2 == pod2.atNode
-        assert node_of_pod1 == pod1.atNode
         assert pod1.atNode in node_of_pod2.different_than
         assert scheduler.status == STATUS_SCHED["Clean"]
         pod1.not_on_same_node.add(pod2)
@@ -531,7 +528,7 @@ class Antiaffinity_implement(KubernetesModel):
 
 class Antiaffinity_implement_with_add_node(Antiaffinity_implement):
 
-    @planned(cost=100)
+    @planned(cost=1)
     def Add_node(self,
                 node : Node):
         assert node.status == STATUS_NODE["New"]
