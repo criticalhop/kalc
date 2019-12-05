@@ -15,6 +15,7 @@ class GlobalVar(Object):
     goal_achieved: bool
     block_node_outage_in_progress: bool
     block_policy_calculated : bool
+    antiaffinity_prefered_policy_met: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,3 +31,4 @@ class GlobalVar(Object):
         self.amountOfNodesDisrupted = 0
         self.block_node_outage_in_progress = False
         self.block_policy_calculated = False
+        self.antiaffinity_prefered_policy_met = False

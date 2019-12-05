@@ -12,6 +12,8 @@ class Service(HasLabel):
     spec_selector: Set[Label]
     amountOfActivePods: int
     amountOfPodsInQueue: int
+    amountOfPodsOnDifferentNodes: int
+    targetAmountOfPodsOnDifferentNodes: int
     status: StatusServ
     metadata_name: str
     searchable: bool
@@ -19,6 +21,8 @@ class Service(HasLabel):
     isSearched: bool
     podList: Set["mpod.Pod"]
     antiaffinity: bool
+    policy_antiaffinity_prefered : bool
+    
     
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
@@ -30,7 +34,9 @@ class Service(HasLabel):
         self.isNull = False
         self.isSearched = False
         self.amountOfPodsInQueue = 0
-    
+        self.amountOfPodsOnDifferentNodes = 0
+        self.targetAmountOfPodsOnDifferentNodes = 0
+        self.policy_antiaffinity_prefered = False    
     def __str__(self): return str(self.metadata_name)
 
     # def __repr__(self):
