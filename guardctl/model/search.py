@@ -545,7 +545,7 @@ class Antiaffinity_prefered(KubernetesModel):
         assert service.amountOfPodsOnDifferentNodes == service.targetAmountOfPodsOnDifferentNodes
         assert service.isSearched == True
         assert service.antiaffinity == True
-        globalVar.antiaffinity_prefered_policy_met = True
+        service.antiaffinity_prefered_policy_met = True
 
     @planned(cost=1)
     def manually_initiate_killing_of_pod(self,
@@ -563,6 +563,7 @@ class Antiaffinity_prefered(KubernetesModel):
             probability=1.0,
             affected=[]
         )
+
     @planned(cost=1)
     def mark_2_pods_of_service_as_not_at_same_node(self,
             pod1: Pod,
@@ -579,6 +580,7 @@ class Antiaffinity_prefered(KubernetesModel):
         pod1.not_on_same_node.add(pod2)
         service.amountOfPodsOnDifferentNodes = 2
 
+    @planned(cost=1)
     def mark_3_pods_of_service_as_not_at_same_node(self,
             pod1: Pod,
             pod2: Pod,
@@ -601,6 +603,7 @@ class Antiaffinity_prefered(KubernetesModel):
         assert scheduler.status == STATUS_SCHED["Clean"]
         service.amountOfPodsOnDifferentNodes = 3
 
+    @planned(cost=1)
     def mark_4_pods_of_service_as_not_at_same_node(self,
             pod1: Pod,
             pod2: Pod,
@@ -629,3 +632,51 @@ class Antiaffinity_prefered(KubernetesModel):
         assert pod4 in service.podList
         assert scheduler.status == STATUS_SCHED["Clean"]
         service.amountOfPodsOnDifferentNodes = 4
+
+
+    @planned(cost=1)
+    def mark_5_pods_of_service_as_not_at_same_node(self,
+            pod1: Pod,
+            pod2: Pod,
+            pod3: Pod,
+            pod4: Pod,
+            pod5: Pod,
+            node_of_pod1: Node,
+            node_of_pod2: Node,
+            node_of_pod3: Node,
+            node_of_pod4: Node,
+            node_of_pod5: Node,
+            service: Service,
+            scheduler: Scheduler):
+        
+        assert node_of_pod1 == pod1.atNode
+        assert node_of_pod2 == pod2.atNode
+        assert node_of_pod3 == pod3.atNode
+        assert node_of_pod4 == pod4.atNode
+        assert node_of_pod5 == pod5.atNode
+        assert node_of_pod1 in node_of_pod2.different_than
+        assert node_of_pod1 in node_of_pod3.different_than
+        assert node_of_pod1 in node_of_pod4.different_than
+        assert node_of_pod1 in node_of_pod5.different_than
+        assert node_of_pod2 in node_of_pod3.different_than
+        assert node_of_pod2 in node_of_pod4.different_than
+        assert node_of_pod2 in node_of_pod5.different_than
+        assert node_of_pod3 in node_of_pod4.different_than
+        assert node_of_pod3 in node_of_pod5.different_than
+        assert node_of_pod4 in node_of_pod5.different_than
+
+        assert pod1 in service.podList
+        assert pod2 in service.podList
+        assert pod3 in service.podList
+        assert pod4 in service.podList
+        assert pod5 in service.podList
+        assert scheduler.status == STATUS_SCHED["Clean"]
+        service.amountOfPodsOnDifferentNodes = 5
+
+class Antiaffinity_prefered_with_add_node(Antiaffinity_prefered):
+    @planned(cost=1)
+    def Add_node(self,
+            node : Node):
+        assert node.status == STATUS_NODE["New"]
+        node.status = STATUS_NODE["Active"]
+        

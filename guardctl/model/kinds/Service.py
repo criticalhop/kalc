@@ -22,6 +22,7 @@ class Service(HasLabel):
     podList: Set["mpod.Pod"]
     antiaffinity: bool
     policy_antiaffinity_prefered : bool
+    antiaffinity_prefered_policy_met: bool
     
     
     def __init__(self, *args, **kwargs):

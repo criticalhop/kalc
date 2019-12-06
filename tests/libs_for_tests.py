@@ -604,7 +604,6 @@ def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_condit
     else:
         if debug_mode > 0:
             print("--- ",test_mode,": Error")
-            print_plan(p)
     return_brake = brake
     return  return_brake
 
