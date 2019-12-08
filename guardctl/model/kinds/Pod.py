@@ -138,7 +138,11 @@ class Pod(HasLabel, HasLimitsRequests):
             except StopIteration:
                 raise Exception("Could not find priorityClass %s, maybe you \
                         did not dump PriorityClass?" % str(self.spec_priorityClassName))
-
+    def hook_after_create(self, object_space):
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
+        for node in nodes:
+            if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
+                
     @property
     def spec_containers__resources_requests_cpu(self):
         pass
