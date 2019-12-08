@@ -32,6 +32,10 @@ class StatusLim(Object):
     pass
 
 class Label(Object):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.key = kwargs["key"]
+        self.value = kwargs["value"]
     def __str__(self):
         return str(self._get_value())
 
