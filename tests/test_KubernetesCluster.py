@@ -1,14 +1,14 @@
 import pytest
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.misc.const import *
-from guardctl.model.search import K8ServiceInterruptSearch
-from guardctl.misc.object_factory import labelFactory
-from guardctl.misc.problem import ProblemTemplate
-from guardctl.model.kinds.PriorityClass import PriorityClass
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.system.Scheduler import Scheduler
+from kalc.misc.const import *
+from kalc.model.search import K8ServiceInterruptSearch
+from kalc.misc.object_factory import labelFactory
+from kalc.misc.problem import ProblemTemplate
+from kalc.model.kinds.PriorityClass import PriorityClass
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DAEMONET = "./tests/daemonset_eviction/daemonset_create.yaml"

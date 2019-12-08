@@ -1,12 +1,12 @@
 import pytest
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.DaemonSet import DaemonSet
-from guardctl.misc.object_factory import labelFactory
-from guardctl.misc.const import *
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.misc.object_factory import labelFactory
+from kalc.misc.const import *
 from tests.test_util import print_objects
 
 import logzero

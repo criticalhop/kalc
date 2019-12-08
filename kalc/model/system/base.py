@@ -1,8 +1,8 @@
 from typing import Set
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
-from guardctl.model.system.primitives import Label
-from guardctl.misc.object_factory import labelFactory
-from guardctl.misc.const import *
+from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from kalc.model.system.primitives import Label
+from kalc.misc.object_factory import labelFactory
+from kalc.misc.const import *
 
 from poodle import Object
 

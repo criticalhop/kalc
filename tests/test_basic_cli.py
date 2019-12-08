@@ -1,4 +1,4 @@
-from guardctl.cli import run
+from kalc.cli import run
 import click
 from click.testing import CliRunner
 import pytest

@@ -1,15 +1,15 @@
 import pytest
 import yaml
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.Deployment import Deployment
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.misc.const import *
-from guardctl.model.search import K8ServiceInterruptSearch
-from guardctl.misc.object_factory import labelFactory
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.system.Scheduler import Scheduler
+from kalc.misc.const import *
+from kalc.model.search import K8ServiceInterruptSearch
+from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from tests.test_util import print_objects
 

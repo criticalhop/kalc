@@ -1,6 +1,6 @@
 from typing import Set
-from guardctl.model.system.base import HasLabel
-from guardctl.model.system.primitives import Label
+from kalc.model.system.base import HasLabel
+from kalc.model.system.primitives import Label
 
 class Controller(HasLabel):
     "Kubernetes controller base class"

@@ -1,16 +1,16 @@
 import random
-from guardctl.model.system.Controller import Controller
-from guardctl.model.system.base import HasLimitsRequests
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from guardctl.model.system.Scheduler import Scheduler
-import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.primitives import StatusDaemonSet
-from guardctl.misc.const import *
+from kalc.model.system.Controller import Controller
+from kalc.model.system.base import HasLimitsRequests
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+from kalc.model.system.Scheduler import Scheduler
+import kalc.model.kinds.Pod as mpod
+from kalc.model.system.primitives import StatusDaemonSet
+from kalc.misc.const import *
 from poodle import *
 from typing import Set
 from logzero import logger
-import guardctl.misc.util as util
+import kalc.misc.util as util
 
 #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
 class DaemonSet(Controller, HasLimitsRequests):

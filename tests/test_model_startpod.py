@@ -1,22 +1,22 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import prepare_yamllist_for_diff
-from guardctl.model.search import HypothesisysNode, OptimisticRun
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.model.system.globals import GlobalVar
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Deployment import Deployment
-from guardctl.model.kinds.DaemonSet import DaemonSet
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.misc.const import *
+from kalc.model.search import HypothesisysNode, OptimisticRun
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.system.globals import GlobalVar
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.misc.const import *
 import pytest
 import inspect
-from guardctl.model.search import K8ServiceInterruptSearch
-from guardctl.misc.object_factory import labelFactory
+from kalc.model.search import K8ServiceInterruptSearch
+from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from guardctl.model.scenario import Scenario
+from kalc.model.scenario import Scenario
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 

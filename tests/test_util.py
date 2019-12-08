@@ -1,15 +1,15 @@
-# from guardctl.misc.util import dget
+# from kalc.misc.util import dget
 import yaml
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.ReplicaSet import ReplicaSet
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.model.kinds.Deployment import Deployment
-from guardctl.model.kinds.DaemonSet import DaemonSet
-from guardctl.model.kinds.ReplicaSet import ReplicaSet
-from guardctl.model.system.globals import GlobalVar
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.ReplicaSet import ReplicaSet
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.ReplicaSet import ReplicaSet
+from kalc.model.system.globals import GlobalVar
 
 # def test_dget_ok():
 #     d=yaml.load(open("./tests/kube-config/deployments.yaml"))

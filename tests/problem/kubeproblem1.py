@@ -1,21 +1,21 @@
 import sys
 from poodle import *
-from guardctl.misc.problem import ProblemTemplate
-from guardctl.model.kinds.PriorityClass import *
-from guardctl.model.kinds.DaemonSet import *
-from guardctl.model.kinds.LoadBalancer import *
-import guardctl.model.kinds.Service as mservice
-import guardctl.model.kinds.Pod as mpod
-import guardctl.model.kinds.Node as mnode
-import guardctl.model.system.globals as mglobals
-import guardctl.model.system.Scheduler as mscheduler
-from guardctl.misc.const import *
-from guardctl.misc.object_factory import labelFactory
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
+from kalc.misc.problem import ProblemTemplate
+from kalc.model.kinds.PriorityClass import *
+from kalc.model.kinds.DaemonSet import *
+from kalc.model.kinds.LoadBalancer import *
+import kalc.model.kinds.Service as mservice
+import kalc.model.kinds.Pod as mpod
+import kalc.model.kinds.Node as mnode
+import kalc.model.system.globals as mglobals
+import kalc.model.system.Scheduler as mscheduler
+from kalc.misc.const import *
+from kalc.misc.object_factory import labelFactory
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.system.Scheduler import Scheduler
 
 class Problem2(ProblemTemplate):
     def problem(self):

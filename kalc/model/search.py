@@ -1,23 +1,23 @@
 import sys
 from poodle import planned
 from logzero import logger
-from guardctl.model.system.base import HasLimitsRequests, HasLabel
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.model.system.globals import GlobalVar
-from guardctl.model.system.primitives import TypeServ
-from guardctl.model.system.Controller import Controller
-from guardctl.model.system.primitives import Label
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.Deployment import Deployment
-from guardctl.model.kinds.DaemonSet import DaemonSet
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from guardctl.model.scenario import ScenarioStep, describe
-from guardctl.misc.const import *
-from guardctl.model.kubeactions import KubernetesModel
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
-from guardctl.misc.const import STATUS_SCHED
+from kalc.model.system.base import HasLimitsRequests, HasLabel
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.system.globals import GlobalVar
+from kalc.model.system.primitives import TypeServ
+from kalc.model.system.Controller import Controller
+from kalc.model.system.primitives import Label
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+from kalc.model.scenario import ScenarioStep, describe
+from kalc.misc.const import *
+from kalc.model.kubeactions import KubernetesModel
+from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from kalc.misc.const import STATUS_SCHED
 import re
 import itertools
 

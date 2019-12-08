@@ -6,19 +6,19 @@ import re
 import time
 import json
 from collections import defaultdict
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import \
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.search import \
             Check_services, Check_deployments, Check_daemonsets, CheckNodeOutage
-from guardctl.model.scenario import Scenario
+from kalc.model.scenario import Scenario
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 from sys import stdout
-from guardctl.model.search import ExcludeDict, mark_excluded
-from guardctl.model.system.primitives import TypeServ
-from guardctl.misc.util import split_yamldumps
+from kalc.model.search import ExcludeDict, mark_excluded
+from kalc.model.system.primitives import TypeServ
+from kalc.misc.util import split_yamldumps
 from pyupdater.client import Client
-from guardctl.misc.client_config import ClientConfig
-import guardctl.misc.util as util
+from kalc.misc.client_config import ClientConfig
+import kalc.misc.util as util
 import poodle
 poodle.log.setLevel(logging.ERROR)
 

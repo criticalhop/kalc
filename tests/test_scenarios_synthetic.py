@@ -1,21 +1,21 @@
 from tests.test_util import print_objects
 from tests.libs_for_tests import prepare_yamllist_for_diff
-from guardctl.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun, CheckNodeOutage, Check_node_outage_and_service_restart
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.model.system.globals import GlobalVar
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Deployment import Deployment
-from guardctl.model.kinds.DaemonSet import DaemonSet
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.misc.const import *
+from kalc.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun, CheckNodeOutage, Check_node_outage_and_service_restart
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.system.globals import GlobalVar
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.misc.const import *
 import pytest
-from guardctl.model.search import K8ServiceInterruptSearch
-from guardctl.misc.object_factory import labelFactory
+from kalc.model.search import K8ServiceInterruptSearch
+from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from guardctl.model.scenario import Scenario
+from kalc.model.scenario import Scenario
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 
@@ -653,8 +653,8 @@ def test_4_synthetic_service_NO_outage_multi():
 def test_synthetic_service_NO_outage_deployment_IS_outage_step_1():
     "Deployment (partial) outage must be registered in case where Deployment exists"
     # Initialize scheduler, globalvar
-    # guardctl.misc.util.CPU_DIVISOR=40
-    # guardctl.misc.util.MEM_DIVISOR=125
+    # kalc.misc.util.CPU_DIVISOR=40
+    # kalc.misc.util.MEM_DIVISOR=125
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
@@ -709,8 +709,8 @@ def test_synthetic_service_NO_outage_deployment_IS_outage_step_1():
     d.podList.add(pod_running_1)
     d.podList.add(pod_running_2)
     k.state_objects.extend([n, pc, pod_running_1, pod_running_2, pod_pending_1,s,d])
-    # guardctl.misc.util.CPU_DIVISOR=40
-    # guardctl.misc.util.MEM_DIVISOR=125
+    # kalc.misc.util.CPU_DIVISOR=40
+    # kalc.misc.util.MEM_DIVISOR=125
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     k2 = KubernetesCluster()
     load_yaml(yamlState,k2)

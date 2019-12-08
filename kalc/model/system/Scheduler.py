@@ -1,9 +1,9 @@
 from poodle import Object, planned
 from typing import Set
-from guardctl.misc.const import *
-import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.primitives import StatusSched
-from guardctl.model.scenario import ScenarioStep, describe
+from kalc.misc.const import *
+import kalc.model.kinds.Pod as mpod
+from kalc.model.system.primitives import StatusSched
+from kalc.model.scenario import ScenarioStep, describe
 import sys
 
 
