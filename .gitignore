@@ -21,3 +21,4 @@ venv/
 tests/NOTforRepo/
 *.pddl
 *.out
+*-checkpoint*
