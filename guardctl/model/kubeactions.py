@@ -649,6 +649,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
+        assert node in podStarted.nodeSelectorList
         assert podStarted in serviceTargetForPod.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -690,6 +691,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -730,6 +732,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in serviceTargetForPod.podList
         assert podStarted in pods_deployment.podList
@@ -775,6 +778,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
@@ -816,6 +820,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
@@ -859,6 +864,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
