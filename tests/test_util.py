@@ -36,7 +36,9 @@ def print_objects(objectList):
         ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]) + \
         ", hasService: " + str(poditem.hasService._get_value()) + \
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
-        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()))
+        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()) + \
+        ", nodeSelectorSet:" + str(poditem.nodeSelectorSet) + \
+        ", nodeSelectorList" +  str([str(x) for x in poditem.nodeSelectorList._get_value()]))
     
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
     print("----------Nodes---------------")

@@ -611,7 +611,25 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podBeingKilled)]
         )
-
+    
+    @planned(cost=1)
+    def AddNodeToSelector(self, 
+        pod1: "Pod",
+        selectedNode: "Node",
+        globalVar: GlobalVar
+         ):
+        assert globalVar.block_policy_calculated == False
+        # assert globalVar.block_node_outage_in_progress == False
+        pod1.nodeSelectorList.add(selectedNode) 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Node shoud be added to pod selector",
+            parameters={"pod": describe(pod1), "node": describe(selectedNode)},
+            probability=1.0,
+            affected=[describe(pod1), describe(selectedNode)]
+        )
+    
     @planned(cost=1)
     def SelectNode(self, 
         pod1: "Pod",
