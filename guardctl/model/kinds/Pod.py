@@ -19,6 +19,7 @@ import random
 from typing import Set
 
 
+
 class Pod(HasLabel, HasLimitsRequests):
     # k8s attributes
     metadata_ownerReferences__name: str
@@ -44,6 +45,9 @@ class Pod(HasLabel, HasLimitsRequests):
     hasService: bool
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
+    nodesSelectorSet: bool
+    nodeSelectorList: Set["mnode.Node"]
+
 
 
     def __init__(self, *args, **kwargs):
@@ -68,6 +72,7 @@ class Pod(HasLabel, HasLimitsRequests):
         self.hasDeployment = False
         self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
         # self.metadata_name = "model-default-name"
+        self.nodeSelectorSet = False
 
 
     def set_priority(self, object_space, controller):
@@ -93,6 +98,7 @@ class Pod(HasLabel, HasLimitsRequests):
                     node.currentFormalMemConsumption += self.memRequest
                     assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
                 found = True
+            if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
         if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
