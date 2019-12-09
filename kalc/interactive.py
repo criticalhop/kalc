@@ -20,13 +20,21 @@ for k, v in kinds_collection.items():
 
 def update():
     "Fetch information from currently selected ccluster"
+    k = KubernetesCluster()
     result = subprocess.run(['kubectl', 'get', 'all', '-o=json'], stdout=subprocess.PIPE)
     if len(result.stdout) < 100:
         raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
     data = json.loads(result.stdout.decode("utf-8"))
-    k = KubernetesCluster()
     for item in data["items"]:
         k.load_item(item)
+
+    result = subprocess.run(['kubectl', 'get', 'node', '-o=json'], stdout=subprocess.PIPE)
+    if len(result.stdout) < 100:
+        raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+    data = json.loads(result.stdout.decode("utf-8"))
+    for item in data["items"]:
+        k.load_item(item)
+    
     k._build_state()
     global kalc_state_objects
     kalc_state_objects.clear()
