@@ -42,7 +42,7 @@ class YAMLable():
             return "".join(list(difflib.unified_diff(orig, new, n=4)))  #use differ n to make more reliable diff file
         return ""
 
-class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
+class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str
