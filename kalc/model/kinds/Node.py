@@ -1,6 +1,7 @@
 import sys
 import random
 from kalc.model.scenario import ScenarioStep, describe
+from kalc.model.system.base import ModularKind
 from typing import Set
 from kalc.model.system.primitives import Label, StatusNode
 from kalc.model.system.base import HasLabel
@@ -9,7 +10,7 @@ from kalc.misc.const import STATUS_NODE
 from kalc.model.scenario import ScenarioStep, describe
 
 
-class Node(HasLabel):
+class Node(ModularKind, HasLabel):
     # k8s attributes
     metadata_ownerReferences__name: str
     metadata_name: str

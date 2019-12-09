@@ -15,13 +15,13 @@ class PolicyImplementer:
         self._sealed = True
     
     def __setattr__(self, name, val):
-        if not self._sealed or name.startswith("_"): return super().__setattr__(name, val)
+        if name.startswith("_") or not self._sealed: return super().__setattr__(name, val)
         if name in self._instantiated_policies and self._instantiated_policies[name].TYPE == "property":
             self._instantiated_policies[name]._set(val)
         return super().__setattr__(name, val)
     
     def __getattr__(self, name):
-        if not self._sealed or name.startswith("_"): return super().__getattr__(name)
+        if name.startswith("_") or not self._sealed: return super().__getattr__(name)
         if name in self._instantiated_policies and self._instantiated_policies[name].TYPE == "property":
             self._instantiated_policies[name]._get()
         return super().__getattr__(name)
@@ -39,28 +39,62 @@ class PolicyEngineClass:
         self.registered_engines[kind_name][policy_name] = policy_class
     
     def get(self, obj):
-        return PolicyImplementer(self.registered_engines[obj.__class__.__name__])
-        return self.registered_engines[obj.__class__.__name__](obj, self.state_objects)
+        return PolicyImplementer(obj, self.registered_engines[obj.__class__.__name__], self.state_objects)
 
 policy_engine = PolicyEngineClass()
 
 for kind_name, kind_class in kinds_collection.items():
     kind_class.policy = "STUB"
-    old_getattr = kind_class.__getattr__
-    def _get_policy_getattr(self, name):
-        if name == "policy":
-            return policy_engine.get(self)
-        return old_getattr(self, name)
-    kind_class.__getattr__ = _get_policy_getattr
+    kind_class.policy_engine = policy_engine
+    # if hasattr(kind_class, "__getattr__"):
+    #     old_getattr = kind_class.__getattr__
+    #     _getattr = True
+    # else:
+    #     old_getattr = kind_class.__getattribute__
+    #     _getattr = False
+    # def _get_policy_getattr(self, name):
+    #     if name == "policy":
+    #         return policy_engine.get(self)
+    #     return old_getattr(self, name)
+    # if _getattr: kind_class.__getattr__ = _get_policy_getattr
+    # else: kind_class.__getattribute__ = _get_policy_getattr
 
 # WARNING this whole thing looks too cryptic and must be re-implemented
 
 class BasePolicy:
     TYPE = "function"
-    def __init__(self, obj):
+    def __init__(self, obj, state_objects):
         self.target_object = obj
+        self.activated = False
+        self.goal_eq_list = []
+        self.goal_in_list = []
+        self.hypotheses = {}
+        self.state_objects = state_objects
+    
+    def register_goal(self, f1, operator, f2):
+        assert op == "==" or op == "in", "operator must be == or in"
+        if operator == "==":
+            self.goal_eq_list.append([f1, f2])
+        else:
+            self.goal_in_list.append([f1, f2])
+
+    def register_hypothesis(name, func):
+        self.hypotheses[name] = func
+    
+    def clear_goal(self):
+        self.goal_eq_list = []
+        self.goal_in_list = []
+    
+    def get_goal_in(self):
+        return self.goal_in_list
+
+    def get_goal_eq(self):
+        return self.goal_eq_list
     
     def _set(self, val):
+        if not self.activated:
+            self.activated = True
+            self.register()
         return self.set(val)
     
     def _get(self):
@@ -81,14 +115,16 @@ from kalc.model.kinds.Service import Service
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.misc.const import *
+from poodle import planned
 
 class PreferredSelfAntiAffinityPolicy(BasePolicy):
     TYPE = "property"
     KIND = Service
 
     def register(self):
-        Service.register_property(name="antiaffinity", type=bool, defaul=False) # TODO
-        Service.register_property(name="antiaffinity_prefered_policy_met", type=bool, defaul=False)
+        Service.register_property(name="antiaffinity", type=bool, default=False)
+        Service.register_property(name="antiaffinity_prefered_policy_met", type=bool, default=False)
+        Service.register_property(name="targetAmountOfPodsOnDifferentNodes", type=int, default=-1)
         Pod.register_property(name="not_on_same_node", type=Set[Pod], default=[])
 
     def set(self, val: bool):
@@ -103,9 +139,9 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
             def hypothesis_1():
                 self.target_object.antiaffinity = True
                 self.target_object.targetAmountOfPodsOnDifferentNodes = pods_count
-                self.register_goal(self.target_object.antiaffinity_prefered_policy_met, True) # TODO
+                self.register_goal(self.target_object.antiaffinity_prefered_policy_met, "==", True)
             
-            self.register_hypothesis("All pods required done", hypothesis_1) # TODO
+            self.register_hypothesis("All pods required done", hypothesis_1)
         else:
             # disable
             pass

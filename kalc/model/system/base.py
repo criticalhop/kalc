@@ -6,6 +6,25 @@ from kalc.misc.const import *
 
 from poodle import Object
 
+class ModularKind(Object):
+    external_defaults = {}
+    policy_engine = None
+    @classmethod
+    def register_property(cls, name, type, default):
+        cls.__annotations__[name] = type
+        cls.external_defaults[name] = default
+ 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for prop_name, default_value in self.external_defaults.items():
+            setattr(self, prop_name, default_value)
+
+    def __getattribute__(self, name):
+        if name == "policy":
+            if self.policy_engine:
+                return self.policy_engine.get(self)
+        return super().__getattribute__(name)
+
 
 class HasLabel(Object):
     metadata_labels: Set[Label]

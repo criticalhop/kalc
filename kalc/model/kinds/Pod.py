@@ -2,6 +2,7 @@ from poodle import planned
 from logzero import logger
 from kalc.misc.const import *
 import kalc.model.kinds.Service as mservice
+from kalc.model.system.base import ModularKind
 import kalc.model.system.Scheduler as mscheduler
 import kalc.model.kinds.Node as mnode
 from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
@@ -19,7 +20,7 @@ import random
 from typing import Set
 
 
-class Pod(HasLabel, HasLimitsRequests):
+class Pod(ModularKind, HasLabel, HasLimitsRequests):
     # k8s attributes
     metadata_ownerReferences__name: str
     spec_priorityClassName: str

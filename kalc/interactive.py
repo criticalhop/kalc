@@ -34,8 +34,29 @@ def update():
 
 def run():
     kube = KubernetesModel(kalc_state_objects)
+    for ob in kalc_state_objects:
+        for pname, pobject in ob.policy._all_policies.items():
+            if pobject.activated:
+                for hname, hval in pobject.hypotheses.items():
+                    print("Adding hypothesis goal")
+                    pobject.clear_goal()
+                    hval()
+                    kube.add_goal_eq(pobject.get_goal_eq())
+                    kube.add_goal_in(pobject.get_goal_in())
+                for name in dir(pobject):
+                    if callable(getattr(pobject, name)) and hasattr(getattr(pobject, name), "_planned"):
+                        print("Adding method from policy")
+                        setattr(kube, name, getattr(pobject, name))
     kube.run()
+    # TODO. STUB
+    for a in kube.plan:
+        print(a)
+        r = a()
+        if isinstance(r, dict) and "kubectl" in r:
+            print(">>", r["kubectl"])
     # print summary
+
+def patch():
     pass
 
 def apply():

@@ -15,6 +15,8 @@ class ProblemTemplate:
         self.request = []
         self.containerConfig = []
         self.priorityDict = {}
+        self.goals_in = []
+        self.goals_eq = []
     
     def problem(self):
         pass

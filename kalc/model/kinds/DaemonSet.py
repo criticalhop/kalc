@@ -1,4 +1,5 @@
 import random
+from kalc.model.system.base import ModularKind
 from kalc.model.system.Controller import Controller
 from kalc.model.system.base import HasLimitsRequests
 from kalc.model.kinds.Node import Node
@@ -13,7 +14,7 @@ from logzero import logger
 import kalc.misc.util as util
 
 #TODO fill pod-template-hash with https://github.com/kubernetes/kubernetes/blob/0541d0bb79537431421774465721f33fd3b053bc/pkg/controller/controller_utils.go#L1024
-class DaemonSet(Controller, HasLimitsRequests):
+class DaemonSet(ModularKind, Controller, HasLimitsRequests):
     metadata_name: str
     metadata_uid: str
     amountOfActivePods: int

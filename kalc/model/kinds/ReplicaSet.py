@@ -1,6 +1,6 @@
 import random
 from kalc.model.system.Controller import Controller
-from kalc.model.system.base import HasLimitsRequests
+from kalc.model.system.base import HasLimitsRequests, ModularKind
 from kalc.model.kinds.Node import Node
 from kalc.model.kinds.PriorityClass import PriorityClass
 from kalc.model.system.Scheduler import Scheduler
@@ -11,7 +11,7 @@ from poodle import *
 from typing import Set
 from logzero import logger
 
-class ReplicaSet(Controller, HasLimitsRequests):
+class ReplicaSet(ModularKind, Controller, HasLimitsRequests):
     metadata_name: str
     metadata_namespace: str
     apiVersion: str

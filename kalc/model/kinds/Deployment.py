@@ -1,3 +1,4 @@
+from kalc.model.system.base import ModularKind
 from kalc.model.system.Controller import Controller
 from kalc.model.system.base import HasLimitsRequests
 from kalc.model.kinds.Node import Node
@@ -13,7 +14,7 @@ from logzero import logger
 import kalc.misc.util as util
 import random
 
-class Deployment(Controller, HasLimitsRequests):
+class Deployment(ModularKind, Controller, HasLimitsRequests):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str

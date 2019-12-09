@@ -19,6 +19,22 @@ from kalc.misc.problem import ProblemTemplate
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
 class KubernetesModel(ProblemTemplate):
+    def add_goal_in(self, goal_entry):
+        self.goals_in.append(goal_entry)
+
+    def add_goal_eq(self, goal_entry):
+        self.goals_eq.append(goal_entry)
+
+    def generate_goal(self):
+        pass
+
+    def goal(self):
+        for what, where in self.goals_in:
+            assert what in where
+        for what1, what2 in self.goals_eq:
+            assert what1 == what2
+       
+
     def problem(self):
         self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
         self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
@@ -1025,11 +1041,4 @@ class KubernetesModel(ProblemTemplate):
         ):
         assert pod_killed.status == STATUS_POD["Running"]
         pod_killed.status = STATUS_POD["Killing"]
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing of pod initiated because of node outage",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        return {"kubectl": "kubectl delete pod/%s" % pod_killed.metadata_name}
