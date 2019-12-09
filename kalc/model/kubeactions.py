@@ -20,19 +20,21 @@ from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProb
 
 class KubernetesModel(ProblemTemplate):
     def add_goal_in(self, goal_entry):
-        self.goals_in.append(goal_entry)
+        self.goals_in.extend(goal_entry)
 
     def add_goal_eq(self, goal_entry):
-        self.goals_eq.append(goal_entry)
+        self.goals_eq.extend(goal_entry)
 
     def generate_goal(self):
-        pass
+        self.add_goal_eq([[self.scheduler.status, STATUS_SCHED["Clean"]]])
 
     def goal(self):
-        for what, where in self.goals_in:
-            assert what in where
-        for what1, what2 in self.goals_eq:
-            assert what1 == what2
+        if self.goals_in:
+            for what, where in self.goals_in:
+                assert what in where
+        if self.goals_eq:
+            for what1, what2 in self.goals_eq:
+                assert what1 == what2
        
 
     def problem(self):

@@ -17,6 +17,7 @@ class ModularKind(Object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for prop_name, default_value in self.external_defaults.items():
+            if default_value is None: continue
             setattr(self, prop_name, default_value)
 
     def __getattribute__(self, name):

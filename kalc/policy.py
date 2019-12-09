@@ -9,6 +9,7 @@ class PolicyImplementer:
         self._instantiated_policies = {}
         self._sealed = False
         for p_name, p_class in all_policies.items():
+            # print("Adding policy")
             p_obj = p_class(obj, state_objects)
             self._instantiated_policies[p_name] = p_obj
             setattr(self, p_name, p_obj)
@@ -31,15 +32,19 @@ class PolicyEngineClass:
     def __init__(self):
         self.registered_engines = defaultdict(dict)
         self.state_objects = []
+        self._cache = {}
 
     def register_state_objects(self, state_objects):
         self.state_objects = state_objects
 
     def register(self, kind_name, policy_name, policy_class):
-        self.registered_engines[kind_name][policy_name] = policy_class
+        self.registered_engines[kind_name.__name__][policy_name] = policy_class
+        # print("Registered policy", self.registered_engines)
     
     def get(self, obj):
-        return PolicyImplementer(obj, self.registered_engines[obj.__class__.__name__], self.state_objects)
+        if not obj in self._cache:
+            self._cache[obj] = PolicyImplementer(obj, self.registered_engines[obj.__class__.__name__], self.state_objects)
+        return self._cache[obj]
 
 policy_engine = PolicyEngineClass()
 
@@ -72,13 +77,13 @@ class BasePolicy:
         self.state_objects = state_objects
     
     def register_goal(self, f1, operator, f2):
-        assert op == "==" or op == "in", "operator must be == or in"
+        assert operator == "==" or operator == "in", "operator must be == or in"
         if operator == "==":
             self.goal_eq_list.append([f1, f2])
         else:
             self.goal_in_list.append([f1, f2])
 
-    def register_hypothesis(name, func):
+    def register_hypothesis(self, name, func):
         self.hypotheses[name] = func
     
     def clear_goal(self):
@@ -125,7 +130,7 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
         Service.register_property(name="antiaffinity", type=bool, default=False)
         Service.register_property(name="antiaffinity_prefered_policy_met", type=bool, default=False)
         Service.register_property(name="targetAmountOfPodsOnDifferentNodes", type=int, default=-1)
-        Pod.register_property(name="not_on_same_node", type=Set[Pod], default=[])
+        Pod.register_property(name="not_on_same_node", type=Set[Pod], default=None)
 
     def set(self, val: bool):
         assert isinstance(val, bool), "Can only accept True or False"
