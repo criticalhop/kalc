@@ -6,6 +6,8 @@ from kalc.misc.kind_filter import FilterByLabelKey, FilterByName, KindPlaceholde
 from kalc.model.kubernetes import KubernetesCluster
 import kalc.policy 
 from kalc.model.search import KubernetesModel
+from kalc.model.kinds.Deployment import YAMLable, Deployment
+import random
 
 kalc_state_objects = []
 kind = KindPlaceholder
@@ -50,15 +52,24 @@ def run():
                         setattr(kube, name, getattr(pobject, name))
     kube.run(timeout=1000, sessionName="kalc")
     # TODO. STUB
-    for a in kube.plan:
-        print(a)
-        r = a()
-        if isinstance(r, dict) and "kubectl" in r:
-            print(">>", r["kubectl"])
+    # TODO example hanlers and patches
+    for obj in kalc_state_objects:
+        if isinstance(obj, Deployment):
+            obj.affinity_required_handler()
+            obj.scale_replicas_hook(random.randint(2,10))
+    patch()
+    # for a in kube.plan:
+    #     print(a)
+    #     r = a()
+    #     if isinstance(r, dict) and "kubectl" in r:
+    #         print(">>", r["kubectl"])
     # print summary
 
 def patch():
-    pass
+    for obj in k.state_objects:
+        if isinstance(obj, YAMLable):
+            print(obj.metadata_name)
+            print(obj.get_patch())
 
 def apply():
     pass

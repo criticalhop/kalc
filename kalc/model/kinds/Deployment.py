@@ -14,7 +14,7 @@ from typing import Set
 from logzero import logger
 import kalc.misc.util as util
 import random
-import yaml, copy, jsonpatch
+import yaml, copy, jsonpatch, difflib
 
 class YAMLable():
     yaml_orig: {}
@@ -34,8 +34,13 @@ class YAMLable():
             yaml[keys[l-1]] = value
     
 
-                
 
+    def get_patch(self):
+        if hasattr(self, "yaml") and hasattr(self, "yaml_rig"):
+            orig = yaml.dump(self.yaml_orig).splitlines(keepends=True)
+            new = yaml.dump(self.yaml).splitlines()
+            return "".join(list(difflib.unified_diff(orig, new, n=4)))  #use differ n to make more reliable diff file
+        return ""
 
 class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
     spec_replicas: int
@@ -203,9 +208,13 @@ class Deployment(ModularKind, Controller, HasLimitsRequest, YAMLable):
             self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels', selector], value = selectorValue)
         self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
 
-    # def check_pod(self, new_pod, object_space):
-    #     for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
-    #         pod1 = [x for x in list(pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
-    #         pod2 = [x for x in list(new_pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
-    #         if set(pod1) == set(pod2):
-    #             logger.warning("Pods have the same label")
+    def scale_replicas_hook(self, replicas):
+        if not hasattr(self, "yaml"):
+            self.yaml = {}
+        if not hasattr(self, "yaml_orig"):
+            self.yaml = {}
+        json_orig = copy.deepcopy(self.yaml)
+        if not hasattr(self, "patchJSON"):
+            self.patchJSON = []
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','replicas'], value=replicas)
+        self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
