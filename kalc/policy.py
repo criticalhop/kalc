@@ -126,7 +126,7 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
     TYPE = "property"
     KIND = Service
 
-    def register(self):
+    def register(self): # TODO: call only once... classmethod?
         Service.register_property(name="antiaffinity", type=bool, default=False)
         Service.register_property(name="antiaffinity_prefered_policy_met", type=bool, default=False)
         Service.register_property(name="targetAmountOfPodsOnDifferentNodes", type=int, default=-1)
