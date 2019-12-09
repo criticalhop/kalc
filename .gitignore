@@ -22,3 +22,5 @@ venv/
 tests/NOTforRepo/
 *.pddl
 *.out
+README.rst
+setup.pyc

@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "kubectl-val"
+name = "kalc"
 version = "0.1.4"
-description = "Run formal check of Kubernetes configurations using Poodle AI planner"
+description = "Kalc - the Kubernetes Calculator core"
 authors = ["CriticalHop Team <info@criticalhop.com>"]
 license = "Apache-2.0"
 readme = "README.md"
@@ -16,8 +16,9 @@ PyYAML = "^5.1.2"
 yaspin = "^0.15.0"
 Click = "^7.0"
 logzero = "^1.5.0"
-pyupdater = "^3.1"
+# pyupdater = "^3.1"
 poodle = ">=0.1.1"
+pandas = "^0.25.3"
 
 [tool.poetry.dev-dependencies]
 

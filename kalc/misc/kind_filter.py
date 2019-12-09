@@ -1,7 +1,12 @@
-import pandas
+import pandas as pd
 
 def label_string_to_python(label: str):
     return label.replace("_", "__").replace("-", "_")
+
+def return_one_or_dataframe(matched: list):
+    if len(matched) > 1: return KindFilterResult(matched)
+    elif len(matched) == 1: return matched[0]
+    else: return None
 
 class KindPlaceholder:
     pass
@@ -27,16 +32,26 @@ class FilteredKind:
         if value.startswith("_"): return super().__getattribute__(value)
         return self._safe_getattr(value)
     
-class KindFilterResult:
-    def __init__(self, objects):
-        self._objects = objects
-    def __list__(self):
-        return self._objects
-    def __iter__(self):
-        return iter(self._objects)
-    def __repr__(self):
-        return repr(pandas.DataFrame(list(self)))
+class KindFilterResultSeries(pd.Series):
 
+    @property
+    def _constructor(self):
+        return KindFilterResultSeries 
+
+    @property
+    def _constructor_expanddim(self):
+        return KindFilterResult 
+
+
+class KindFilterResult(pd.DataFrame):
+
+    @property
+    def _constructor(self):
+        return KindFilterResult 
+
+    @property
+    def _constructor_sliced(self):
+        return KindFilterResultSeries 
 
 class FilterByLabelValue(FilteredKind):
     def __init__(self, kind_name, state_objects, target_key):
@@ -61,7 +76,7 @@ class FilterByLabelValue(FilteredKind):
                     if label_string_to_python(l.key) == self._target_key and \
                                     label_string_to_python(l.value) == val:
                         matched.append(ob)
-            return KindFilterResult(matched)
+            return return_one_or_dataframe(matched)
         return super().__getattribute__(val)
 
 class FilterByLabelKey(FilteredKind):
@@ -101,6 +116,6 @@ class FilterByName(FilteredKind):
     
     def _safe_getattr(self, val):
         if val in self._gen_listing():
-            return KindFilterResult([self._gen_listing(return_object=val)])
+            return self._gen_listing(return_object=val)
         super().__getattribute__(val)
 
