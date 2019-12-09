@@ -64,7 +64,11 @@ def print_objects(objectList):
         ", Status: " + str(service.status._get_value()) +
         ", Spec_selector: "+str([str(x) for x in service.spec_selector._property_value])+\
         ", Pod_List: "+str([str(x) for x in service.podList._get_value()])+\
-        ", IsSearched: ", str(service.isSearched._get_value()))
+        ", IsSearched: ", str(service.isSearched._get_value())+\
+        ", amountOfPodsOnDifferentNodes: "+str(service.amountOfPodsOnDifferentNodes._get_value())+\
+        ", targetAmountOfPodsOnDifferentNodes: "+str(service.targetAmountOfPodsOnDifferentNodes._get_value())+\
+        ", policy_antiaffinity_prefered: "+str(service.policy_antiaffinity_prefered._get_value())+\
+        ", antiaffinity_prefered_policy_met: "+str(service.antiaffinity_prefered_policy_met._get_value()))
 
 
     prios = filter(lambda x: isinstance(x, PriorityClass), objectList)
