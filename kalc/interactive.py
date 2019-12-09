@@ -4,9 +4,13 @@ from poodle import Object
 from kalc.model.full import kinds_collection
 from kalc.misc.kind_filter import FilterByLabelKey, FilterByName, KindPlaceholder
 from kalc.model.kubernetes import KubernetesCluster
+import kalc.policy 
+from kalc.model.search import KubernetesModel
 
 kalc_state_objects = []
 kind = KindPlaceholder
+
+kalc.policy.policy_engine.register_state_objects(kalc_state_objects)
 
 for k, v in kinds_collection.items():
     v.by_name = FilterByName(k, kalc_state_objects)
@@ -27,3 +31,12 @@ def update():
     global kalc_state_objects
     kalc_state_objects.clear()
     kalc_state_objects.extend(k.state_objects)
+
+def run():
+    kube = KubernetesModel(kalc_state_objects)
+    kube.run()
+    # print summary
+    pass
+
+def apply():
+    pass

@@ -1016,3 +1016,20 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
+
+    @planned(cost=1)
+    def manually_initiate_killing_of_pod(self,
+        node_with_outage: "Node",
+        pod_killed: "Pod",
+        globalVar: GlobalVar
+        ):
+        assert pod_killed.status == STATUS_POD["Running"]
+        pod_killed.status = STATUS_POD["Killing"]
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Killing of pod initiated because of node outage",
+            parameters={},
+            probability=1.0,
+            affected=[]
+        )
