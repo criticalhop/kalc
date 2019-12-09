@@ -71,11 +71,11 @@ def run():
             obj.scale_replicas_handler(random.randint(4,10))
 
     patch()
-    # for a in kube.plan:
-    #     print(a)
-    #     r = a()
-    #     if isinstance(r, dict) and "kubectl" in r:
-    #         print(">>", r["kubectl"])
+    for a in kube.plan:
+        print(a)
+        r = a()
+        if isinstance(r, dict) and "kubectl" in r:
+            print(">>", r["kubectl"])
     # print summary
 
 def patch():
