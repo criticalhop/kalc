@@ -36,9 +36,10 @@ class YAMLable():
 
 
     def get_patch(self):
-        if hasattr(self, "yaml") and hasattr(self, "yaml_rig"):
+
+        if hasattr(self, "yaml") and hasattr(self, "yaml_orig"):
             orig = yaml.dump(self.yaml_orig).splitlines(keepends=True)
-            new = yaml.dump(self.yaml).splitlines()
+            new = yaml.dump(self.yaml).splitlines(keepends=True)
             return "".join(list(difflib.unified_diff(orig, new, n=4)))  #use differ n to make more reliable diff file
         return ""
 
@@ -208,7 +209,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
             self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels', selector], value = selectorValue)
         self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
 
-    def scale_replicas_hook(self, replicas):
+    def scale_replicas_handler(self, replicas):
         if not hasattr(self, "yaml"):
             self.yaml = {}
         if not hasattr(self, "yaml_orig"):
@@ -217,4 +218,5 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         if not hasattr(self, "patchJSON"):
             self.patchJSON = []
         self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','replicas'], value=replicas)
+        self.yaml['spec']['replicas']=replicas
         self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))

@@ -88,7 +88,7 @@ class KubernetesCluster:
                 setattr(obj, p, val)
         obj.yaml = copy.deepcopy(item)
         #cleanup service information
-        for y in obj.yaml:
+        for y in item:
             if y[0:2] == '__':
                 del(obj.yaml[y])
         obj.yaml_orig = copy.deepcopy(obj.yaml)

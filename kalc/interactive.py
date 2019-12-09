@@ -55,8 +55,10 @@ def run():
     # TODO example hanlers and patches
     for obj in kalc_state_objects:
         if isinstance(obj, Deployment):
+            print("handler")
             obj.affinity_required_handler()
             obj.scale_replicas_hook(random.randint(2,10))
+
     patch()
     # for a in kube.plan:
     #     print(a)
@@ -66,8 +68,9 @@ def run():
     # print summary
 
 def patch():
-    for obj in k.state_objects:
-        if isinstance(obj, YAMLable):
+    for obj in kalc_state_objects:
+        if isinstance(obj, Deployment):
+            print("patch")
             print(obj.metadata_name)
             print(obj.get_patch())
 
