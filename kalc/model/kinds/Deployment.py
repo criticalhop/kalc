@@ -17,6 +17,7 @@ import random
 import yaml, copy, jsonpatch
 
 class YAMLable():
+    yaml_orig: {}
     yaml: {}
     patchJSON: []
     rawYaml: str
@@ -31,6 +32,8 @@ class YAMLable():
                 yaml = yaml[keys[key]]
         if value != None and not keys[l-1] in yaml:
             yaml[keys[l-1]] = value
+    
+
                 
 
 
