@@ -5,6 +5,7 @@ build/
 *.egg-info/
 
 .tox/
+.vscode/.ropeproject/
 .coverage
 
 Session.vim

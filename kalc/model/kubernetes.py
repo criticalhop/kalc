@@ -1,5 +1,6 @@
 import yaml
 import os, click
+from logzero import logger
 from collections import defaultdict
 from kalc.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
@@ -64,7 +65,12 @@ class KubernetesCluster:
         self.dict_states[item["kind"]].append(item)
 
     def _build_item(self, item):
-        obj = kinds_collection[item["kind"]]()
+        try:
+            obj = kinds_collection[item["kind"]]()
+        except KeyError:
+            logger.warning("Skipping unsupported kind %s" % item["kind"])
+            return
+
         create = item["__created"]
         mode = item["__mode"]
         replicas = item["__scale_replicas"]
