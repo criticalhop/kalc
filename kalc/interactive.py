@@ -46,8 +46,9 @@ def run():
                     kube.add_goal_in(pobject.get_goal_in())
                 for name in dir(pobject):
                     if callable(getattr(pobject, name)) and hasattr(getattr(pobject, name), "_planned"):
-                        # print("Adding method from policy")
-                        setattr(kube, name, getattr(pobject, name))
+                        # print("Adding planned method from policy", name)
+                        kube.add_external_method(getattr(pobject, name))
+                        # setattr(kube, name, getattr(pobject, name))
     kube.run(timeout=1000, sessionName="kalc")
     # TODO. STUB
     for a in kube.plan:
