@@ -7,6 +7,9 @@ from kalc.model.kubernetes import KubernetesCluster
 import kalc.policy 
 from kalc.model.search import KubernetesModel
 from kalc.model.kinds.Deployment import YAMLable, Deployment
+from pygments import highlight
+from pygments.lexers.diff import DiffLexer
+from pygments.formatters.terminal import TerminalFormatter
 import random
 
 kalc_state_objects = []
@@ -55,9 +58,8 @@ def run():
     # TODO example hanlers and patches
     for obj in kalc_state_objects:
         if isinstance(obj, Deployment):
-            print("handler")
             obj.affinity_required_handler()
-            obj.scale_replicas_hook(random.randint(2,10))
+            obj.scale_replicas_handler(random.randint(4,10))
 
     patch()
     # for a in kube.plan:
@@ -70,9 +72,8 @@ def run():
 def patch():
     for obj in kalc_state_objects:
         if isinstance(obj, Deployment):
-            print("patch")
-            print(obj.metadata_name)
-            print(obj.get_patch())
+            print("patch for ", obj.metadata_name)
+            print(highlight(obj.get_patch(), DiffLexer(), TerminalFormatter()))
 
 def apply():
     pass
