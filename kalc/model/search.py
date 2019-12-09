@@ -499,7 +499,7 @@ class Antiaffinity_implement(KubernetesModel):
        
 
     @planned(cost=1)
-    def manually_initiate_killing_of_pod(self,
+    def manually_initiate_killing_of_pod_2(self,
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
         globalVar: GlobalVar
@@ -548,7 +548,7 @@ class Antiaffinity_prefered(KubernetesModel):
         service.antiaffinity_prefered_policy_met = True
 
     @planned(cost=1)
-    def manually_initiate_killing_of_pod(self,
+    def manually_initiate_killing_of_pod_3(self,
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
         globalVar: GlobalVar

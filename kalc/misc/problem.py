@@ -40,7 +40,7 @@ class ProblemTemplate:
         pass
 
     def add_external_method(self, action):
-        self.external_actions.append(action)
+        if not action in self.external_actions: self.external_actions.append(action)
 
     def run(self, timeout=6000, sessionName=None, schedule=schedule, raise_=False):
         if not sessionName: sessionName = self.__class__.__name__
@@ -58,6 +58,7 @@ class ProblemTemplate:
         try:
             self.plan = schedule(
                 methods=self_methods + list(model_methods) + self.external_actions, 
+                # methods=self_methods + list(model_methods), 
                 space=list(self.__dict__.values())+self.objectList,
                 goal=lambda:(self.goal()),
                 timeout=timeout,

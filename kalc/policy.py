@@ -156,18 +156,8 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
         service: Service,
         globalVar: GlobalVar):
         assert service.amountOfPodsOnDifferentNodes == service.targetAmountOfPodsOnDifferentNodes
-        assert service.isSearched == True
         assert service.antiaffinity == True
         service.antiaffinity_prefered_policy_met = True
-
-    @planned(cost=1)
-    def manually_initiate_killing_of_pod(self,
-        node_with_outage: Node,
-        pod_killed: Pod,
-        globalVar: GlobalVar
-        ):
-        assert pod_killed.status == STATUS_POD["Running"]
-        pod_killed.status = STATUS_POD["Killing"]
 
     @planned(cost=1)
     def mark_2_pods_of_service_as_not_at_same_node(self,
