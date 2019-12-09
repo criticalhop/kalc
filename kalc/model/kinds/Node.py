@@ -53,6 +53,14 @@ class Node(ModularKind, HasLabel):
         for node in nodes:
             if node != self:
                 self.different_than.add(node)
+                node.different_than.add(self)
+
+    def hook_after_load(self, object_space):
+        nodes = filter(lambda x: isinstance(x, Node), object_space)
+        for node in nodes:
+            if node != self:
+                self.different_than.add(node)
+                node.different_than.add(self)
 
     @property
     def status_allocatable_memory(self):
