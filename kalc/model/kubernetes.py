@@ -1,4 +1,4 @@
-import yaml
+import yaml, copy
 import os, click
 from logzero import logger
 from collections import defaultdict
@@ -86,6 +86,12 @@ class KubernetesCluster:
             else:
                 # means has setter
                 setattr(obj, p, val)
+        obj.yaml = copy.deepcopy(item)
+        #cleanup service information
+        for y in item:
+            if y[0:2] == '__':
+                del(obj.yaml[y])
+        obj.yaml_orig = copy.deepcopy(obj.yaml)
         if mode == self.CREATE_MODE and hasattr(obj, "hook_after_create"):
             obj.hook_after_create(self.state_objects)
         if mode == self.LOAD_MODE and hasattr(obj, "hook_after_load"):

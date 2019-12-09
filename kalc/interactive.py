@@ -6,6 +6,11 @@ from kalc.misc.kind_filter import FilterByLabelKey, FilterByName, KindPlaceholde
 from kalc.model.kubernetes import KubernetesCluster
 import kalc.policy 
 from kalc.model.search import KubernetesModel
+from kalc.model.kinds.Deployment import YAMLable, Deployment
+from pygments import highlight
+from pygments.lexers.diff import DiffLexer
+from pygments.formatters.terminal import TerminalFormatter
+import random
 
 kalc_state_objects = []
 kind = KindPlaceholder
@@ -59,6 +64,13 @@ def run():
                         # setattr(kube, name, getattr(pobject, name))
     kube.run(timeout=1000, sessionName="kalc")
     # TODO. STUB
+    # TODO example hanlers and patches
+    for obj in kalc_state_objects:
+        if isinstance(obj, Deployment):
+            obj.affinity_required_handler()
+            obj.scale_replicas_handler(random.randint(4,10))
+
+    patch()
     for a in kube.plan:
         print(a)
         r = a()
@@ -67,7 +79,10 @@ def run():
     # print summary
 
 def patch():
-    pass
+    for obj in kalc_state_objects:
+        if isinstance(obj, Deployment):
+            print("patch for ", obj.metadata_name)
+            print(highlight(obj.get_patch(), DiffLexer(), TerminalFormatter()))
 
 def apply():
     pass
