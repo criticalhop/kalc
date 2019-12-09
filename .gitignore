@@ -5,6 +5,7 @@ build/
 *.egg-info/
 
 .tox/
+.vscode/.ropeproject/
 .coverage
 
 Session.vim
@@ -22,3 +23,5 @@ tests/NOTforRepo/
 *.pddl
 *.out
 *-checkpoint*
+README.rst
+setup.pyc

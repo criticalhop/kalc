@@ -1,16 +1,17 @@
 import yaml
 import os, click
+from logzero import logger
 from collections import defaultdict
-from guardctl.misc.object_factory import labelFactory
+from kalc.misc.object_factory import labelFactory
 from poodle import planned, Property, Relation
-from guardctl.misc.util import objwalk, find_property, k8s_to_domain_object, POODLE_MAXLIN, getint, split_yamldumps
-from guardctl.misc.util import cpuConvertToNorm, memConvertToNorm
-from guardctl.model.full import kinds_collection
-from guardctl.model.search import K8ServiceInterruptSearch
-from guardctl.model.system.globals import GlobalVar
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.model.kinds.ReplicaSet import ReplicaSet
-import guardctl.misc.util
+from kalc.misc.util import objwalk, find_property, k8s_to_domain_object, POODLE_MAXLIN, getint, split_yamldumps
+from kalc.misc.util import cpuConvertToNorm, memConvertToNorm
+from kalc.model.full import kinds_collection
+from kalc.model.search import K8ServiceInterruptSearch
+from kalc.model.system.globals import GlobalVar
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.kinds.ReplicaSet import ReplicaSet
+import kalc.misc.util
 
 KINDS_LOAD_ORDER = ["PriorityClass", "Service", "Node", "Pod", "ReplicaSet"]
 
@@ -64,7 +65,12 @@ class KubernetesCluster:
         self.dict_states[item["kind"]].append(item)
 
     def _build_item(self, item):
-        obj = kinds_collection[item["kind"]]()
+        try:
+            obj = kinds_collection[item["kind"]]()
+        except KeyError:
+            logger.warning("Skipping unsupported kind %s" % item["kind"])
+            return
+
         create = item["__created"]
         mode = item["__mode"]
         replicas = item["__scale_replicas"]
@@ -120,17 +126,17 @@ class KubernetesCluster:
                 if k == "PriorityClass":
                     priorities.append(int(item["value"]))
         if max_cpu > 0:
-            guardctl.misc.util.CPU_DIVISOR = int(max_cpu / (guardctl.misc.util.POODLE_MAXLIN / 2))
+            kalc.misc.util.CPU_DIVISOR = int(max_cpu / (kalc.misc.util.POODLE_MAXLIN / 2))
         if max_ram > 0:
-            guardctl.misc.util.MEM_DIVISOR = int(max_ram / (guardctl.misc.util.POODLE_MAXLIN / 2))
+            kalc.misc.util.MEM_DIVISOR = int(max_ram / (kalc.misc.util.POODLE_MAXLIN / 2))
         if len(priorities):
             pri_map = {}
             i = 1
             for p in sorted(priorities):
                 pri_map[p] = i
                 i+=1
-            guardctl.misc.util.PRIO_MAPPING = pri_map
-            assert i <= guardctl.misc.util.POODLE_MAXLIN, "Too many different priorities"
+            kalc.misc.util.PRIO_MAPPING = pri_map
+            assert i <= kalc.misc.util.POODLE_MAXLIN, "Too many different priorities"
 
     def _build_state(self):
         self._normalize_mappings()

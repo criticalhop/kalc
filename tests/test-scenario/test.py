@@ -1,27 +1,27 @@
 import pytest
 import yaml
 import sys
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.search import K8ServiceInterruptSearch
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.misc.const import *
-from guardctl.misc.object_factory import labelFactory
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.search import K8ServiceInterruptSearch
+from kalc.model.system.Scheduler import Scheduler
+from kalc.misc.const import *
+from kalc.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
-from guardctl.model.scenario import Scenario
-import guardctl.model.kinds.Service as mservice
+from kalc.model.scenario import Scenario
+import kalc.model.kinds.Service as mservice
 from tests.test_util import print_objects
-import guardctl.model.kinds.Pod as mpod
-from guardctl.cli import run
+import kalc.model.kinds.Pod as mpod
+from kalc.cli import run
 import click
 from click.testing import CliRunner
 from poodle import planned
-from guardctl.model.scenario import ScenarioStep, describe
-from guardctl.model.system.globals import GlobalVar
+from kalc.model.scenario import ScenarioStep, describe
+from kalc.model.system.globals import GlobalVar
 
 #replicas 3 cpu: 100m memory: 500Mi
 DEPLOYMENT_NEW = "./tests/test-scenario/deployment/deployment-new.yaml"

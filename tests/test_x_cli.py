@@ -1,12 +1,12 @@
-from guardctl.cli import run
+from kalc.cli import run
 import click
 from click.testing import CliRunner
 import pytest
 
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.search import Check_services
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.search import Check_services
 from tests.libs_for_tests import convert_space_to_yaml
-from guardctl.model.scenario import Scenario
+from kalc.model.scenario import Scenario
 from tests.test_util import print_objects
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"

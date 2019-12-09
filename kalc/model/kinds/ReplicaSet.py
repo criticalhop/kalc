@@ -1,17 +1,17 @@
 import random
-from guardctl.model.system.Controller import Controller
-from guardctl.model.system.base import HasLimitsRequests
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
-import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.primitives import Status
-from guardctl.misc.const import STATUS_POD, STATUS_SCHED
+from kalc.model.system.Controller import Controller
+from kalc.model.system.base import HasLimitsRequests, ModularKind
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.system.Scheduler import Scheduler
+import kalc.model.kinds.Pod as mpod
+from kalc.model.system.primitives import Status
+from kalc.misc.const import STATUS_POD, STATUS_SCHED
 from poodle import *
 from typing import Set
 from logzero import logger
 
-class ReplicaSet(Controller, HasLimitsRequests):
+class ReplicaSet(ModularKind, Controller, HasLimitsRequests):
     metadata_name: str
     metadata_namespace: str
     apiVersion: str

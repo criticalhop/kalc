@@ -1,14 +1,14 @@
 import random
 from typing import Set
-from guardctl.model.system.primitives import Label, StatusServ
-import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.base import HasLabel
-import guardctl.model.kinds.Pod as mpod
-from guardctl.model.system.primitives import StatusSched
-from guardctl.misc.const import *
+from kalc.model.system.primitives import Label, StatusServ
+import kalc.model.kinds.Pod as mpod
+from kalc.model.system.base import HasLabel, ModularKind
+import kalc.model.kinds.Pod as mpod
+from kalc.model.system.primitives import StatusSched
+from kalc.misc.const import *
 
 
-class Service(HasLabel):
+class Service(ModularKind, HasLabel):
     spec_selector: Set[Label]
     amountOfActivePods: int
     amountOfPodsInQueue: int

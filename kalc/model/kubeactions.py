@@ -1,24 +1,42 @@
 import sys
 from poodle import planned
 from logzero import logger
-from guardctl.model.system.base import HasLimitsRequests, HasLabel
-from guardctl.model.system.Scheduler import Scheduler
-from guardctl.model.system.globals import GlobalVar
-from guardctl.model.system.primitives import TypeServ
-from guardctl.model.system.Controller import Controller
-from guardctl.model.system.primitives import Label
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.Deployment import Deployment
-from guardctl.model.kinds.DaemonSet import DaemonSet
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from guardctl.model.scenario import ScenarioStep, describe
-from guardctl.misc.const import *
-from guardctl.misc.problem import ProblemTemplate
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from kalc.model.system.base import HasLimitsRequests, HasLabel
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.system.globals import GlobalVar
+from kalc.model.system.primitives import TypeServ
+from kalc.model.system.Controller import Controller
+from kalc.model.system.primitives import Label
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+from kalc.model.scenario import ScenarioStep, describe
+from kalc.misc.const import *
+from kalc.misc.problem import ProblemTemplate
+from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
 class KubernetesModel(ProblemTemplate):
+    def add_goal_in(self, goal_entry):
+        self.goals_in.extend(goal_entry)
+
+    def add_goal_eq(self, goal_entry):
+        self.goals_eq.extend(goal_entry)
+
+    def generate_goal(self):
+        self.add_goal_eq([[self.scheduler.status, STATUS_SCHED["Clean"]]])
+
+    def goal(self):
+        if self.goals_in:
+            for what, where in self.goals_in:
+                assert what in where
+        if self.goals_eq:
+            for what1, what2 in self.goals_eq:
+                assert what1 == what2
+       
+
     def problem(self):
         self.scheduler = next(filter(lambda x: isinstance(x, Scheduler), self.objectList))
         self.globalVar = next(filter(lambda x: isinstance(x, GlobalVar), self.objectList))
@@ -1041,3 +1059,13 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
+
+    @planned(cost=1)
+    def manually_initiate_killing_of_pod(self,
+        node_with_outage: "Node",
+        pod_killed: "Pod",
+        globalVar: GlobalVar
+        ):
+        assert pod_killed.status == STATUS_POD["Running"]
+        pod_killed.status = STATUS_POD["Killing"]
+        return {"kubectl": "kubectl delete pod/%s" % pod_killed.metadata_name}

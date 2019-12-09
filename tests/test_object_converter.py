@@ -1,6 +1,6 @@
-from guardctl.misc.util import k8s_to_domain_object, cpuConvertToAbstractProblem, memConvertToAbstractProblem, MEM_DIVISOR, CPU_DIVISOR
-import guardctl.misc.util as util
-from guardctl.model.system.primitives import Label
+from kalc.misc.util import k8s_to_domain_object, cpuConvertToAbstractProblem, memConvertToAbstractProblem, MEM_DIVISOR, CPU_DIVISOR
+import kalc.misc.util as util
+from kalc.model.system.primitives import Label
 
 def test_convert_string():
     assert isinstance(k8s_to_domain_object("just_string"), str)

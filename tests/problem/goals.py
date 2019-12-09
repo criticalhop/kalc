@@ -1,9 +1,9 @@
 import sys
 from poodle import * 
-from guardctl.misc.const import *
+from kalc.misc.const import *
 # from tests.problem.kubeproblem1 import * 
 from kubeproblem1 import * 
-from guardctl.model.search import *
+from kalc.model.search import *
 
 
 

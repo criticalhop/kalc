@@ -1,10 +1,30 @@
 from typing import Set
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
-from guardctl.model.system.primitives import Label
-from guardctl.misc.object_factory import labelFactory
-from guardctl.misc.const import *
+from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from kalc.model.system.primitives import Label
+from kalc.misc.object_factory import labelFactory
+from kalc.misc.const import *
 
 from poodle import Object
+
+class ModularKind(Object):
+    external_defaults = {}
+    policy_engine = None
+    @classmethod
+    def register_property(cls, name, type, default):
+        cls.__annotations__[name] = type
+        cls.external_defaults[name] = default
+ 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for prop_name, default_value in self.external_defaults.items():
+            if default_value is None: continue
+            setattr(self, prop_name, default_value)
+
+    def __getattribute__(self, name):
+        if name == "policy":
+            if self.policy_engine:
+                return self.policy_engine.get(self)
+        return super().__getattribute__(name)
 
 
 class HasLabel(Object):

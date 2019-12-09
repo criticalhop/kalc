@@ -1,5 +1,5 @@
 from poodle import Object
-from guardctl.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy, TypeServ, StatusDeployment, StatusDaemonSet
+from kalc.model.system.primitives import StatusServ, StatusNode, StatusPod, StatusLim, StatusSched, StatusReq, TypePolicy, TypeServ, StatusDeployment, StatusDaemonSet
 
 
 STATUS_POD = {

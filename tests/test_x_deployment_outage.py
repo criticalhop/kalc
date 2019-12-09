@@ -1,18 +1,18 @@
 import pytest
 import yaml
-from guardctl.model.kubernetes import KubernetesCluster
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.misc.const import *
-# from guardctl.model.search import K8ServiceInterruptSearch, AnyDeploymentInterrupted
-from guardctl.model.search import Check_services 
-from guardctl.misc.object_factory import labelFactory
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.misc.const import *
+# from kalc.model.search import K8ServiceInterruptSearch, AnyDeploymentInterrupted
+from kalc.model.search import Check_services 
+from kalc.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
-from guardctl.model.scenario import Scenario
-import guardctl.model.kinds.Service as mservice
+from kalc.model.scenario import Scenario
+import kalc.model.kinds.Service as mservice
 from tests.test_util import print_objects
 
 pytestmark = pytest.mark.skip # TODO DELETEME

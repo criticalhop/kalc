@@ -1,19 +1,20 @@
-from guardctl.model.system.Controller import Controller
-from guardctl.model.system.base import HasLimitsRequests
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from guardctl.model.system.Scheduler import Scheduler
-import guardctl.model.kinds.Pod as mpod
-from guardctl.model.kinds.ReplicaSet import ReplicaSet
-from guardctl.model.system.primitives import Status, Label
-from guardctl.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
+from kalc.model.system.base import ModularKind
+from kalc.model.system.Controller import Controller
+from kalc.model.system.base import HasLimitsRequests
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+from kalc.model.system.Scheduler import Scheduler
+import kalc.model.kinds.Pod as mpod
+from kalc.model.kinds.ReplicaSet import ReplicaSet
+from kalc.model.system.primitives import Status, Label
+from kalc.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
 from poodle import *
 from typing import Set
 from logzero import logger
-import guardctl.misc.util as util
+import kalc.misc.util as util
 import random
 
-class Deployment(Controller, HasLimitsRequests):
+class Deployment(ModularKind, Controller, HasLimitsRequests):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str

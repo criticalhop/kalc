@@ -1,15 +1,16 @@
 import sys
 import random
-from guardctl.model.scenario import ScenarioStep, describe
+from kalc.model.scenario import ScenarioStep, describe
+from kalc.model.system.base import ModularKind
 from typing import Set
-from guardctl.model.system.primitives import Label, StatusNode
-from guardctl.model.system.base import HasLabel
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
-from guardctl.misc.const import STATUS_NODE
-from guardctl.model.scenario import ScenarioStep, describe
+from kalc.model.system.primitives import Label, StatusNode
+from kalc.model.system.base import HasLabel
+from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from kalc.misc.const import STATUS_NODE
+from kalc.model.scenario import ScenarioStep, describe
 
 
-class Node(HasLabel):
+class Node(ModularKind, HasLabel):
     # k8s attributes
     metadata_ownerReferences__name: str
     metadata_name: str
@@ -52,6 +53,14 @@ class Node(HasLabel):
         for node in nodes:
             if node != self:
                 self.different_than.add(node)
+                node.different_than.add(self)
+
+    def hook_after_load(self, object_space):
+        nodes = filter(lambda x: isinstance(x, Node), object_space)
+        for node in nodes:
+            if node != self:
+                self.different_than.add(node)
+                node.different_than.add(self)
 
     @property
     def status_allocatable_memory(self):

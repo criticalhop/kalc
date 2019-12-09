@@ -15,6 +15,9 @@ class ProblemTemplate:
         self.request = []
         self.containerConfig = []
         self.priorityDict = {}
+        self.goals_in = []
+        self.goals_eq = []
+        self.external_actions = []
     
     def problem(self):
         pass
@@ -36,6 +39,9 @@ class ProblemTemplate:
     def generate_goal(self):
         pass
 
+    def add_external_method(self, action):
+        if not action in self.external_actions: self.external_actions.append(action)
+
     def run(self, timeout=6000, sessionName=None, schedule=schedule, raise_=False):
         if not sessionName: sessionName = self.__class__.__name__
         self.problem()
@@ -51,7 +57,8 @@ class ProblemTemplate:
                         model_methods.append(getattr(obj, m))
         try:
             self.plan = schedule(
-                methods=self_methods + list(model_methods), 
+                methods=self_methods + list(model_methods) + self.external_actions, 
+                # methods=self_methods + list(model_methods), 
                 space=list(self.__dict__.values())+self.objectList,
                 goal=lambda:(self.goal()),
                 timeout=timeout,

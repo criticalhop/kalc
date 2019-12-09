@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Set, Sequence 
-from guardctl.misc.object_factory import labelFactory 
+from kalc.misc.object_factory import labelFactory 
 import string
 
 CPU_DIVISOR = 65

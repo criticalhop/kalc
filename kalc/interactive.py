@@ -1,23 +1,78 @@
-# from kalc.misc.util import dget
-import yaml
-from kalc.model.kinds.Pod import Pod
-from kalc.model.kinds.ReplicaSet import ReplicaSet
-from kalc.model.kinds.Node import Node
-from kalc.model.kinds.Service import Service
-from kalc.model.kinds.PriorityClass import PriorityClass
-from kalc.model.system.Scheduler import Scheduler
-from kalc.model.kinds.Deployment import Deployment
-from kalc.model.kinds.DaemonSet import DaemonSet
-from kalc.model.kinds.ReplicaSet import ReplicaSet
-from kalc.model.system.globals import GlobalVar
+import subprocess
+import json
+from poodle import Object
+from kalc.model.full import kinds_collection
+from kalc.misc.kind_filter import FilterByLabelKey, FilterByName, KindPlaceholder
+from kalc.model.kubernetes import KubernetesCluster
+import kalc.policy 
+from kalc.model.search import KubernetesModel
 
-# def test_dget_ok():
-#     d=yaml.load(open("./tests/kube-config/deployments.yaml"))
-#     assert dget(d["items"][0], "metadata/name", "NONE") == "redis-master"
+kalc_state_objects = []
+kind = KindPlaceholder
 
-# def test_dget_default():
-#     d=yaml.load(open("./tests/kube-config/deployments.yaml"))
-#     assert dget(d["items"][0], "name", "NONE") == "NONE"
+kalc.policy.policy_engine.register_state_objects(kalc_state_objects)
+
+for k, v in kinds_collection.items():
+    v.by_name = FilterByName(k, kalc_state_objects)
+    v.by_label = FilterByLabelKey(k, kalc_state_objects)
+    globals()[k] = v
+    setattr(kind, k, v)
+
+def update():
+    "Fetch information from currently selected ccluster"
+    k = KubernetesCluster()
+    result = subprocess.run(['kubectl', 'get', 'all', '-o=json'], stdout=subprocess.PIPE)
+    if len(result.stdout) < 100:
+        raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+    data = json.loads(result.stdout.decode("utf-8"))
+    for item in data["items"]:
+        k.load_item(item)
+
+    result = subprocess.run(['kubectl', 'get', 'node', '-o=json'], stdout=subprocess.PIPE)
+    if len(result.stdout) < 100:
+        raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+    data = json.loads(result.stdout.decode("utf-8"))
+    for item in data["items"]:
+        k.load_item(item)
+    
+    k._build_state()
+    global kalc_state_objects
+    kalc_state_objects.clear()
+    kalc_state_objects.extend(k.state_objects)
+
+def run():
+    kube = KubernetesModel(kalc_state_objects)
+    for ob in kalc_state_objects:
+        if isinstance(ob.policy, str): continue # STUB. find and fix
+        for pname, pobject in ob.policy._instantiated_policies.items():
+            if pobject.activated:
+                for hname, hval in pobject.hypotheses.items():
+                    # print("Adding hypothesis goal")
+                    pobject.clear_goal()
+                    hval()
+                    kube.add_goal_eq(pobject.get_goal_eq())
+                    kube.add_goal_in(pobject.get_goal_in())
+                for name in dir(pobject):
+                    if callable(getattr(pobject, name)) and hasattr(getattr(pobject, name), "_planned"):
+                        # print("Adding planned method from policy", name)
+                        kube.add_external_method(getattr(pobject, name))
+                        # setattr(kube, name, getattr(pobject, name))
+    kube.run(timeout=1000, sessionName="kalc")
+    # TODO. STUB
+    for a in kube.plan:
+        print(a)
+        r = a()
+        if isinstance(r, dict) and "kubectl" in r:
+            print(">>", r["kubectl"])
+    # print summary
+
+def patch():
+    pass
+
+def apply():
+    pass
+
+
 def print_objects(objectList):
     print("<==== Domain Object List =====>")
 
@@ -36,9 +91,7 @@ def print_objects(objectList):
         ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]) + \
         ", hasService: " + str(poditem.hasService._get_value()) + \
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
-        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()) + \
-        ", nodeSelectorSet:" + str(poditem.nodeSelectorSet) + \
-        ", nodeSelectorList" +  str([str(x) for x in poditem.nodeSelectorList._get_value()]))
+        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()))
     
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
     print("----------Nodes---------------")
@@ -64,11 +117,7 @@ def print_objects(objectList):
         ", Status: " + str(service.status._get_value()) +
         ", Spec_selector: "+str([str(x) for x in service.spec_selector._property_value])+\
         ", Pod_List: "+str([str(x) for x in service.podList._get_value()])+\
-        ", IsSearched: ", str(service.isSearched._get_value())+\
-        ", amountOfPodsOnDifferentNodes: "+str(service.amountOfPodsOnDifferentNodes._get_value())+\
-        ", targetAmountOfPodsOnDifferentNodes: "+str(service.targetAmountOfPodsOnDifferentNodes._get_value())+\
-        ", policy_antiaffinity_prefered: "+str(service.policy_antiaffinity_prefered._get_value())+\
-        ", antiaffinity_prefered_policy_met: "+str(service.antiaffinity_prefered_policy_met._get_value()))
+        ", IsSearched: ", str(service.isSearched._get_value()))
 
 
     prios = filter(lambda x: isinstance(x, PriorityClass), objectList)

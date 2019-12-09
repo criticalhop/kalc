@@ -1,11 +1,12 @@
 import random
 from poodle import Object
-from guardctl.model.system.primitives import TypePolicy
-from guardctl.misc.const import *
-from guardctl.misc.util import convertPriorityValue
+from kalc.model.system.base import ModularKind
+from kalc.model.system.primitives import TypePolicy
+from kalc.misc.const import *
+from kalc.misc.util import convertPriorityValue
 
 
-class PriorityClass(Object):
+class PriorityClass(ModularKind):
     metadata_name: str
 
     priority: int

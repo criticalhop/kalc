@@ -1,26 +1,26 @@
 from poodle import planned
 from logzero import logger
-from guardctl.misc.const import *
-import guardctl.model.kinds.Service as mservice
-import guardctl.model.system.Scheduler as mscheduler
-import guardctl.model.kinds.Node as mnode
-from guardctl.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from guardctl.model.system.Controller import Controller
-from guardctl.model.system.primitives import Label
+from kalc.misc.const import *
+import kalc.model.kinds.Service as mservice
+from kalc.model.system.base import ModularKind
+import kalc.model.system.Scheduler as mscheduler
+import kalc.model.kinds.Node as mnode
+from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
+from kalc.model.system.Controller import Controller
+from kalc.model.system.primitives import Label
 
-from guardctl.model.system.base import HasLimitsRequests, HasLabel
-from guardctl.model.system.globals import GlobalVar
-from guardctl.misc.const import *
-from guardctl.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
-from guardctl.model.scenario import ScenarioStep, describe
-# import guardctl.cli as cli
+from kalc.model.system.base import HasLimitsRequests, HasLabel
+from kalc.model.system.globals import GlobalVar
+from kalc.misc.const import *
+from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
+from kalc.model.scenario import ScenarioStep, describe
+# import kalc.cli as cli
 import sys
 import random
 from typing import Set
 
 
-
-class Pod(HasLabel, HasLimitsRequests):
+class Pod(ModularKind, HasLabel, HasLimitsRequests):
     # k8s attributes
     metadata_ownerReferences__name: str
     spec_priorityClassName: str

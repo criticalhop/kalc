@@ -1,4 +1,4 @@
-from guardctl.model.system.primitives import Label
+from kalc.model.system.primitives import Label
 
 class _LabelFactory:
     def __init__(self):
