@@ -24,6 +24,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     # k8s attributes
     metadata_ownerReferences__name: str
     spec_priorityClassName: str
+    spec_nodeSelector: Set[Label]
     metadata_name: str
 
     # internal model attributes
@@ -45,6 +46,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     hasService: bool
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
+
     nodesSelectorSet: bool
     nodeSelectorList: Set["mnode.Node"]
 
@@ -129,6 +131,13 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             scheduler.status = STATUS_SCHED["Changed"]
             target_service_of_pod_localVar.amountOfPodsInQueue += 1
 
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
+        for node in nodes:
+            if list(node.metadata_labels) and \
+                    set(self.spec_nodeSelector)\
+                        .issubset(set(node.metadata_labels)):
+                        self.nodeSelectorList.add(node)
+                        self.nodeSelectorSet = True
 
         if str(self.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             try:
@@ -139,10 +148,16 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                 raise Exception("Could not find priorityClass %s, maybe you \
                         did not dump PriorityClass?" % str(self.spec_priorityClassName))
     def hook_after_create(self, object_space):
-        nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
+        for node in nodes:
+            if list(node.metadata_labels) and \
+                    set(self.spec_nodeSelector)\
+                        .issubset(set(node.metadata_labels)):
+                        self.nodeSelectorList.add(node)
+                        self.nodeSelectorSet = True
         for node in nodes:
             if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
-                
+
     @property
     def spec_containers__resources_requests_cpu(self):
         pass
