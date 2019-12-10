@@ -22,5 +22,6 @@ venv/
 tests/NOTforRepo/
 *.pddl
 *.out
+*-checkpoint*
 README.rst
 setup.pyc

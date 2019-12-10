@@ -158,6 +158,8 @@ def test_1():
     node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)
@@ -272,6 +274,8 @@ def test_2():
     nodes.append(node_item)
 
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)
@@ -390,6 +394,8 @@ def test_3():
     nodes.append(node_item)
 
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)
@@ -515,6 +521,8 @@ def test_4():
     nodes.append(node_item)
 
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)
@@ -642,6 +650,8 @@ def test_5():
     nodes.append(node_item)
 
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)
@@ -770,6 +780,8 @@ def test_6_3nodes_but_needed4nodes_possible_to_add_2_nodes_suggests_this():
     nodes.append(node_item)
 
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)
@@ -897,6 +909,8 @@ def test_7_3nodes_and_needed3nodes_suggests_movement_of_pods():
     nodes.append(node_item)
 
     for node in nodes:
+        for pod in pods:
+            if not pod.nodeSelectorSet: pod.nodeSelectorList.add(node)
         for node2 in nodes:
             if node != node2:
                 node2.different_than.add(node)

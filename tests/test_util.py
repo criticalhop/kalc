@@ -36,7 +36,9 @@ def print_objects(objectList):
         ", Metadata_labels:" + str([str(x) for x in poditem.metadata_labels._property_value]) + \
         ", hasService: " + str(poditem.hasService._get_value()) + \
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
-        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()))
+        ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()) + \
+        ", nodeSelectorSet:" + str(poditem.nodeSelectorSet) + \
+        ", nodeSelectorList" +  str([str(x) for x in poditem.nodeSelectorList._get_value()]))
     
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
     print("----------Nodes---------------")
@@ -62,7 +64,11 @@ def print_objects(objectList):
         ", Status: " + str(service.status._get_value()) +
         ", Spec_selector: "+str([str(x) for x in service.spec_selector._property_value])+\
         ", Pod_List: "+str([str(x) for x in service.podList._get_value()])+\
-        ", IsSearched: ", str(service.isSearched._get_value()))
+        ", IsSearched: ", str(service.isSearched._get_value())+\
+        ", amountOfPodsOnDifferentNodes: "+str(service.amountOfPodsOnDifferentNodes._get_value())+\
+        ", targetAmountOfPodsOnDifferentNodes: "+str(service.targetAmountOfPodsOnDifferentNodes._get_value())+\
+        ", policy_antiaffinity_prefered: "+str(service.policy_antiaffinity_prefered._get_value())+\
+        ", antiaffinity_prefered_policy_met: "+str(service.antiaffinity_prefered_policy_met._get_value()))
 
 
     prios = filter(lambda x: isinstance(x, PriorityClass), objectList)

@@ -629,24 +629,43 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podBeingKilled)]
         )
-
+    
+    @planned(cost=1)
+    def AddNodeToSelector(self, 
+        pod1: "Pod",
+        selectedNode: "Node",
+        globalVar: GlobalVar
+         ):
+        assert globalVar.block_policy_calculated == False
+        # assert globalVar.block_node_outage_in_progress == False
+        pod1.nodeSelectorList.add(selectedNode) 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Node shoud be added to pod selector",
+            parameters={"pod": describe(pod1), "node": describe(selectedNode)},
+            probability=1.0,
+            affected=[describe(pod1), describe(selectedNode)]
+        )
+    
     @planned(cost=1)
     def SelectNode(self, 
         pod1: "Pod",
-        SelectedNode: "Node",
+        selectedNode: "Node",
         globalVar: GlobalVar
          ):
         assert globalVar.block_policy_calculated == False
         # assert globalVar.block_node_outage_in_progress == False
         assert pod1.toNode == Node.NODE_NULL
-        pod1.toNode = SelectedNode
+        assert selectedNode in pod1.nodeSelectorList
+        pod1.toNode = selectedNode
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
             description="Selected node for pod placement",
-            parameters={"pod": describe(pod1), "node": describe(SelectedNode)},
+            parameters={"pod": describe(pod1), "node": describe(selectedNode)},
             probability=1.0,
-            affected=[describe(pod1), describe(SelectedNode)]
+            affected=[describe(pod1), describe(selectedNode)]
         )
 
     @planned(cost=1)
@@ -666,6 +685,7 @@ class KubernetesModel(ProblemTemplate):
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
+        assert node in podStarted.nodeSelectorList
         assert podStarted in serviceTargetForPod.podList
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -707,6 +727,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
@@ -747,6 +768,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in serviceTargetForPod.podList
         assert podStarted in pods_deployment.podList
@@ -792,6 +814,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in pods_deployment.podList
         assert podStarted.cpuRequest > -1
@@ -833,6 +856,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1
@@ -876,6 +900,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
+        assert node in podStarted.nodeSelectorList
         assert node.isNull == False
         assert podStarted in pods_daemonset.podList
         assert podStarted.cpuRequest > -1

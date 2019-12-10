@@ -45,6 +45,9 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     hasService: bool
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
+    nodesSelectorSet: bool
+    nodeSelectorList: Set["mnode.Node"]
+
 
 
     def __init__(self, *args, **kwargs):
@@ -69,6 +72,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.hasDeployment = False
         self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
         # self.metadata_name = "model-default-name"
+        self.nodeSelectorSet = False
 
 
     def set_priority(self, object_space, controller):
@@ -94,6 +98,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                     node.currentFormalMemConsumption += self.memRequest
                     assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
                 found = True
+            if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
         if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
@@ -133,7 +138,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             except StopIteration:
                 raise Exception("Could not find priorityClass %s, maybe you \
                         did not dump PriorityClass?" % str(self.spec_priorityClassName))
-
+    def hook_after_create(self, object_space):
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
+        for node in nodes:
+            if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
+                
     @property
     def spec_containers__resources_requests_cpu(self):
         pass
