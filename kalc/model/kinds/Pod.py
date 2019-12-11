@@ -73,6 +73,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
         # self.metadata_name = "model-default-name"
         self.nodeSelectorSet = False
+        self.pretty_dir.append("atNode")
 
 
     def set_priority(self, object_space, controller):
@@ -197,6 +198,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         )
 
     def __str__(self): return str(self.metadata_name)
+
+    def __repr__(self): return str(self.metadata_name)
 
 
 Pod.POD_NULL = Pod("NULL")

@@ -8,7 +8,7 @@ from kalc.model.system.base import HasLabel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from kalc.misc.const import STATUS_NODE
 from kalc.model.scenario import ScenarioStep, describe
-import kalc.model.kinds.Pod as mpod
+# import kalc.model.kinds.Pod as mpod
 
 
 class Node(ModularKind, HasLabel):
@@ -49,6 +49,7 @@ class Node(ModularKind, HasLabel):
         self.searchable = True
         self.isSearched = False
         self.pretty_dir.append("podList")
+        self.state_objects=[]
         
     def hook_after_create(self, object_space):
         nodes = filter(lambda x: isinstance(x, Node), object_space)
@@ -82,13 +83,16 @@ class Node(ModularKind, HasLabel):
         if str(self.metadata_name) == "None":
             return "<unnamed node>"
         return str(self.metadata_name)
-    # def __repr__(self):
-    #     return 'Nodename : ' + str(self._get_value())
+    def __repr__(self):
 
-    @property
+         return 'Nodename : ' + str(self)
+
+    # def get_state_objects(self):
+        # return self.state_objects
+
     def podList(self):
-        assert self.object_space, "Please set self.object_space"
-        return filter(lambda p: isinstance(p, mpod.Pod) and p.atNode == self, self.object_space)
+        assert self.state_objects, "Please set self.object_space"
+        return list(filter(lambda p: (p.__class__.__name__ == "Pod") and p.atNode == self, self.state_objects))
 
 
 Node.NODE_NULL = Node("NULL")

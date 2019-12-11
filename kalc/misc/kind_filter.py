@@ -91,9 +91,26 @@ class FilterByALL(FilteredKind):
     def _safe_getattr(self, val):
         self._gen_listing()
         ret = []
-        for obj in filter(lambda x: x.__class__.__name__ == self._kind_name, self._state_objects):
-            ret.append(getattr(obj, val))
-        return ret
+        for obj in self._state_objects:
+            if obj.__class__.__name__ == self._kind_name:
+                retIn = []
+                attr = getattr(obj, val)
+                retIn.append(obj)
+                if callable(attr):
+                    target = attr()
+                    if isinstance(target, list):
+                        retIn.extend(target)
+                    else:
+                        retIn.append(target)
+                else:
+                    target = attr
+                    if isinstance(target, list):
+                        retIn.extend(target)
+                    else:
+                        retIn.append(target)
+                    retIn.append(attr)
+                ret.append(retIn)
+        return pd.DataFrame(ret)
     
 
 
