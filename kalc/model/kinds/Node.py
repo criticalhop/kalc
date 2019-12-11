@@ -48,7 +48,7 @@ class Node(ModularKind, HasLabel):
         self.amountOfActivePods = 0
         self.searchable = True
         self.isSearched = False
-        self.pretty_dir.append("podList")
+        self.pretty_dir.extend(["podList","label"])
         self.state_objects=[]
         
     def hook_after_create(self, object_space):
@@ -89,8 +89,10 @@ class Node(ModularKind, HasLabel):
 
     # def get_state_objects(self):
         # return self.state_objects
-
+    @property
     def podList(self):
+        if not hasattr(self, 'state_objects'):
+            return []
         assert self.state_objects, "Please set self.object_space"
         return list(filter(lambda p: (p.__class__.__name__ == "Pod") and p.atNode == self, self.state_objects))
 

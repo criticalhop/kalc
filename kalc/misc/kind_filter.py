@@ -88,6 +88,26 @@ class FilterByALL(FilteredKind):
                 objAttr.update(obj.pretty_dir)
         return objAttr
 
+    def gen_legend(self, data):
+        column = []
+        column.append(self._kind_name)
+        max_len = 1
+        for row in data:
+            if max_len < len(row):
+                max_len = len(row)
+
+        if max_len == 1:
+            return column
+        
+        kind = None
+        for row in data:
+            if len(row) > 1:
+                kind = row[1].__class__.__name__
+        if kind :
+            for i in range(max_len-1):
+                column.append("{0}{1}".format(kind, i+1))
+        return column
+
     def _safe_getattr(self, val):
         self._gen_listing()
         ret = []
@@ -108,9 +128,8 @@ class FilterByALL(FilteredKind):
                         retIn.extend(target)
                     else:
                         retIn.append(target)
-                    retIn.append(attr)
                 ret.append(retIn)
-        return pd.DataFrame(ret)
+        return pd.DataFrame(ret, columns=self.gen_legend(data=ret))
     
 
 
