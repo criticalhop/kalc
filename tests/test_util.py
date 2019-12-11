@@ -1,5 +1,4 @@
 # from kalc.misc.util import dget
-import yaml
 from kalc.model.kinds.Pod import Pod
 from kalc.model.kinds.ReplicaSet import ReplicaSet
 from kalc.model.kinds.Node import Node

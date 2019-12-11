@@ -14,7 +14,10 @@ from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
 from kalc.model.scenario import Scenario
 import kalc.model.kinds.Service as mservice
-from tests.test_util import print_objects
+try: 
+    from tests.test_util import print_objects
+except:
+    from test_util import print_objects
 import kalc.model.kinds.Pod as mpod
 from kalc.cli import run
 import click

@@ -1,5 +1,4 @@
 from poodle import planned
-from logzero import logger
 from kalc.misc.const import *
 import kalc.model.kinds.Service as mservice
 from kalc.model.system.base import ModularKind
