@@ -8,13 +8,42 @@ import kalc.model.kinds.Pod as mpod
 from kalc.model.kinds.ReplicaSet import ReplicaSet
 from kalc.model.system.primitives import Status, Label
 from kalc.misc.const import STATUS_POD, STATUS_SCHED, StatusDeployment
+import kalc.model.kinds.Node as mnode
 from poodle import *
 from typing import Set
 from logzero import logger
 import kalc.misc.util as util
 import random
+import yaml, copy, jsonpatch, difflib
 
-class Deployment(ModularKind, Controller, HasLimitsRequests):
+class YAMLable():
+    yaml_orig: {}
+    yaml: {}
+    patchJSON: []
+    rawYaml: str
+
+    def set_yaml_nested_key(self, yamlmod, keys, value = None):
+        l = len(keys)
+        yaml = yamlmod
+        if l > 1 or value == None:
+            for key in range(l-1):
+                if not keys[key] in yaml :
+                    yaml[keys[key]] = {}
+                yaml = yaml[keys[key]]
+        if value != None and not keys[l-1] in yaml:
+            yaml[keys[l-1]] = value
+    
+
+
+    def get_patch(self):
+
+        if hasattr(self, "yaml") and hasattr(self, "yaml_orig"):
+            orig = yaml.dump(self.yaml_orig).splitlines(keepends=True)
+            new = yaml.dump(self.yaml).splitlines(keepends=True)
+            return "".join(list(difflib.unified_diff(orig, new, n=4)))  #use differ n to make more reliable diff file
+        return ""
+
+class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     spec_replicas: int
     metadata_name: str
     metadata_namespace: str
@@ -25,6 +54,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests):
     spec_template_spec_priorityClassName: str
     searchable: bool
     hash: str
+
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
@@ -143,9 +173,50 @@ class Deployment(ModularKind, Controller, HasLimitsRequests):
             pod.memLimit = self.memLimit
             pod.set_priority(object_space, self)
 
-    # def check_pod(self, new_pod, object_space):
-    #     for pod in filter(lambda x: isinstance(x, mpod.Pod), object_space):
-    #         pod1 = [x for x in list(pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
-    #         pod2 = [x for x in list(new_pod.metadata_labels._get_value()) if str(x).split(":")[0] != "pod-template-hash"]
-    #         if set(pod1) == set(pod2):
-    #             logger.warning("Pods have the same label")
+    def affinity_required_handler(self, label = None, node = None, antiAffinity = True):
+        assert node is None, "todo nodes not supported"
+        if not hasattr(self, "yaml"):
+            self.yaml = {}
+        json_orig = copy.deepcopy(self.yaml)
+        if not hasattr(self, "patchJSON"):
+            self.patchJSON = []
+        if antiAffinity:
+            podAntiAffinityType = 'podAntiAffinity'
+        else:
+            podAntiAffinityType = 'podAffinity'
+
+        selector = 'podSelector'
+        selectorValue = "{0}-{1}".format(podAntiAffinityType,''.join(random.choice("0123456789abcdef") for i in range(8)))
+        
+        if not label is None:
+            selector = label['key']
+            selectorValue = label['value']
+        #append affinity
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'spec', podAntiAffinityType, 'requiredDuringSchedulingIgnoredDuringExecution'], value=[])
+        labelSelector = {}
+        labelSelector["matchExpressions"]=[]
+        matchExpr = {}
+        matchExpr['key']= selector
+        matchExpr['operator']= 'In'
+        matchExpr['values'] = []
+        matchExpr['values'].append(selectorValue)
+        labelSelector["matchExpressions"].append(matchExpr)
+        self.yaml['spec']['template']['spec'][podAntiAffinityType]['requiredDuringSchedulingIgnoredDuringExecution'].append({"labelSelector": labelSelector})
+        if label is None:
+            #appent pod template selector
+            self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec', 'template', 'metadata','labels', selector], value = selectorValue)
+            #append top selector
+            self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','selector','matchLabels', selector], value = selectorValue)
+        self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
+
+    def scale_replicas_handler(self, replicas):
+        if not hasattr(self, "yaml"):
+            self.yaml = {}
+        if not hasattr(self, "yaml_orig"):
+            self.yaml = {}
+        json_orig = copy.deepcopy(self.yaml)
+        if not hasattr(self, "patchJSON"):
+            self.patchJSON = []
+        self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','replicas'], value=replicas)
+        self.yaml['spec']['replicas']=replicas
+        self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
