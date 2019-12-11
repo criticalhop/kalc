@@ -2,7 +2,7 @@ import subprocess
 import json
 from poodle import Object
 from kalc.model.full import kinds_collection
-from kalc.misc.kind_filter import FilterByLabelKey, FilterByName, KindPlaceholder
+from kalc.misc.kind_filter import FilterByLabelKey, FilterByName, KindPlaceholder, FilterByALL
 from kalc.model.kubernetes import KubernetesCluster
 import kalc.policy 
 from kalc.model.search import KubernetesModel
@@ -17,11 +17,12 @@ kind = KindPlaceholder
 
 kalc.policy.policy_engine.register_state_objects(kalc_state_objects)
 
-for k, v in kinds_collection.items():
-    v.by_name = FilterByName(k, kalc_state_objects)
-    v.by_label = FilterByLabelKey(k, kalc_state_objects)
-    globals()[k] = v
-    setattr(kind, k, v)
+for kind_name, kind_class in kinds_collection.items():
+    kind_class.by_name = FilterByName(kind_name, kalc_state_objects)
+    kind_class.by_label = FilterByLabelKey(kind_name, kalc_state_objects)
+    kind_class.ALL = FilterByALL(kind_name, kalc_state_objects)
+    globals()[kind_name] = kind_class
+    setattr(kind, kind_name, kind_class)
 
 def update():
     "Fetch information from currently selected ccluster"

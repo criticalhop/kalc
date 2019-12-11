@@ -79,6 +79,24 @@ class FilterByLabelValue(FilteredKind):
             return return_one_or_dataframe(matched)
         return super().__getattribute__(val)
 
+
+class FilterByALL(FilteredKind):
+    def _gen_listing(self):
+        objAttr = set()
+        for obj in filter(lambda x: x.__class__.__name__ == self._kind_name, self._state_objects):
+            if hasattr(obj, 'pretty_dir'):
+                objAttr.update(obj.pretty_dir)
+        return objAttr
+
+    def _safe_getattr(self, val):
+        self._gen_listing()
+        ret = []
+        for obj in filter(lambda x: x.__class__.__name__ == self._kind_name, self._state_objects):
+            ret.append(getattr(obj, val))
+        return ret
+    
+
+
 class FilterByLabelKey(FilteredKind):
     def _gen_listing(self):
         label_keys = set()

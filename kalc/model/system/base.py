@@ -7,6 +7,8 @@ from kalc.misc.const import *
 from poodle import Object
 
 class ModularKind(Object):
+    # state_objects: list
+    # pretty_dir: list
     external_defaults = {}
     policy_engine = None
     @classmethod
@@ -16,6 +18,8 @@ class ModularKind(Object):
  
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.state_objects = []
+        self.pretty_dir = []
         for prop_name, default_value in self.external_defaults.items():
             if default_value is None: continue
             setattr(self, prop_name, default_value)
