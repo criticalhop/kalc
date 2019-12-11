@@ -25,3 +25,5 @@ tests/NOTforRepo/
 *-checkpoint*
 README.rst
 setup.pyc
+*.vscode/
+pytest_*
