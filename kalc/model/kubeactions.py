@@ -648,7 +648,56 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(pod1), describe(SelectedNode)]
         )
+    
+    #@planned(cost=1) # TODO
+    def StartPod(self, 
+        podStarted: "Pod",
+        node: "Node",
+        scheduler: "Scheduler",
+        serviceTargetForPod: "mservice.Service",
+        pods_deployment: Deployment,
+        pods_daemonset: DaemonSet,
+        globalVar: GlobalVar
+         ):
+        assert globalVar.block_policy_calculated == False
+        # assert globalVar.block_node_outage_in_progress == False
+        if podStarted.hasService == True:
+            assert podStarted in serviceTargetForPod.podList
+            serviceTargetForPod.amountOfPodsInQueue -= 1
+            serviceTargetForPod.amountOfActivePods += 1
+            serviceTargetForPod.status = STATUS_SERV["Started"]
+        if podStarted.hasDeployment == True:
+            assert podStarted in pods_deployment.podList
+            pods_deployment.amountOfActivePods += 1 
+        if podStarted.hasDaemonset == True:
+            assert podStarted in pods_daemonset.podList
+            pods_daemonset.amountOfActivePods += 1 
 
+        assert podStarted in scheduler.podQueue
+        assert podStarted.toNode == node
+        assert node.isNull == False
+        assert podStarted.cpuRequest > -1
+        assert podStarted.memRequest > -1
+        assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
+        assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
+        assert node.status == STATUS_NODE["Active"]
+
+        node.currentFormalCpuConsumption += podStarted.cpuRequest
+        node.currentFormalMemConsumption += podStarted.memRequest
+        podStarted.atNode = node       
+        scheduler.queueLength -= 1
+        scheduler.podQueue.remove(podStarted)
+        node.amountOfActivePods += 1
+        podStarted.status = STATUS_POD["Running"] 
+        return ScenarioStep(
+            name=sys._getframe().f_code.co_name,
+            subsystem=self.__class__.__name__,
+            description="Starting pod",
+            parameters={"podStarted": describe(podStarted)},
+            probability=1.0,
+            affected=[describe(podStarted), describe(node)]
+        )
+    
     @planned(cost=1)
     def StartPod_IF_Deployment_isNUll_Service_isNotNull_Daemonset_isNull(self, 
         podStarted: "Pod",
