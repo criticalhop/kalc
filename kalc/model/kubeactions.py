@@ -651,14 +651,14 @@ class KubernetesModel(ProblemTemplate):
     
     #@planned(cost=1) # TODO
     def StartPod(self, 
-        podStarted: "Pod",
-        node: "Node",
-        scheduler: "Scheduler",
-        serviceTargetForPod: "mservice.Service",
-        pods_deployment: Deployment,
-        pods_daemonset: DaemonSet,
-        globalVar: GlobalVar
-         ):
+            podStarted: "Pod",
+            node: "Node",
+            scheduler: "Scheduler",
+            serviceTargetForPod: "mservice.Service",
+            pods_deployment: Deployment,
+            pods_daemonset: DaemonSet,
+            globalVar: GlobalVar
+        ):
         assert globalVar.block_policy_calculated == False
         # assert globalVar.block_node_outage_in_progress == False
         if podStarted.hasService == True:
