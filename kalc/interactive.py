@@ -47,10 +47,12 @@ def update():
 
 def run():
     kube = KubernetesModel(kalc_state_objects)
+    policy_added = False
     for ob in kalc_state_objects:
         if isinstance(ob.policy, str): continue # STUB. find and fix
         for pname, pobject in ob.policy._instantiated_policies.items():
             if pobject.activated:
+                policy_added = True
                 for hname, hval in pobject.hypotheses.items():
                     # print("Adding hypothesis goal")
                     pobject.clear_goal()
@@ -67,10 +69,11 @@ def run():
     # TODO example hanlers and patches
     for obj in kalc_state_objects:
         if isinstance(obj, Deployment):
-            obj.affinity_required_handler()
-            obj.scale_replicas_handler(random.randint(4,10))
+            if "redis-slave" in str(obj.metadata_name):
+                obj.affinity_required_handler()
+                # obj.scale_replicas_handler(random.randint(4,10))
 
-    patch()
+    if policy_added: patch()
     for a in kube.plan:
         print(a)
         r = a()
@@ -81,7 +84,7 @@ def run():
 def patch():
     for obj in kalc_state_objects:
         if isinstance(obj, Deployment):
-            print("patch for ", obj.metadata_name)
+            # print("patch for ", obj.metadata_name)
             print(highlight(obj.get_patch(), DiffLexer(), TerminalFormatter()))
 
 def apply():
