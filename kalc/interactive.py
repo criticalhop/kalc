@@ -62,7 +62,7 @@ def run():
                         # print("Adding planned method from policy", name)
                         kube.add_external_method(getattr(pobject, name))
                         # setattr(kube, name, getattr(pobject, name))
-    kube.run(timeout=1000, sessionName="kalc")
+    kube.run(timeout=999000, sessionName="kalc")
     # TODO. STUB
     # TODO example hanlers and patches
     for obj in kalc_state_objects:
