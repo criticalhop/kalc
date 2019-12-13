@@ -68,9 +68,9 @@ for kind_name, kind_class in kinds_collection.items():
 
 class BasePolicy:
     TYPE = "function"
+    ACTIVATED = False
     def __init__(self, obj, state_objects):
         self.target_object = obj
-        self.activated = False
         self.goal_eq_list = []
         self.goal_in_list = []
         self.hypotheses = {}
@@ -97,8 +97,8 @@ class BasePolicy:
         return self.goal_eq_list
     
     def _set(self, val):
-        if not self.activated:
-            self.activated = True
+        if not self.ACTIVATED:
+            self.ACTIVATED = True
             self.register()
         return self.set(val)
     
@@ -126,7 +126,7 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
     TYPE = "property"
     KIND = Service
 
-    def register(self): # TODO: call only once... classmethod?
+    def register(self):
         Service.register_property(name="antiaffinity", type=bool, default=False)
         Service.register_property(name="antiaffinity_prefered_policy_met", type=bool, default=False)
         Service.register_property(name="targetAmountOfPodsOnDifferentNodes", type=int, default=-1)
@@ -142,6 +142,7 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
             assert pods_count <= 5, "We currently support up to 5 pods"
 
             def hypothesis_1():
+                # TODO: hypotheses can not work in parallel this way: will modify main object
                 self.target_object.antiaffinity = True
                 self.target_object.targetAmountOfPodsOnDifferentNodes = pods_count
                 self.register_goal(self.target_object.antiaffinity_prefered_policy_met, "==", True)
