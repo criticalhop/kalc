@@ -37,7 +37,9 @@ def print_objects(objectList):
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
         ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()) + \
         ", nodeSelectorSet:" + str(poditem.nodeSelectorSet) + \
-        ", nodeSelectorList" +  str([str(x) for x in poditem.nodeSelectorList._get_value()]))
+        ", nodeSelectorList" +  str([str(x) for x in poditem.nodeSelectorList._get_value()]) + \
+        ", podsMatchedByAffinity" +  str([str(x) for x in poditem.podsMatchedByAffinity._get_value()]) + \
+        ", podsMatchedByAntiaffinity" +  str([str(x) for x in poditem.podsMatchedByAntiaffinity._get_value()]))
     
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
     print("----------Nodes---------------")

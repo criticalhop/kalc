@@ -346,7 +346,7 @@ class Antiaffinity_implement(KubernetesModel):
        
 
     @planned(cost=1)
-    def manually_initiate_killing_of_pod_2(self,
+    def manually_initiate_killing_of_pod(self,
         node_with_outage: "Node",
         pod_killed: "podkind.Pod",
         globalVar: GlobalVar
@@ -384,6 +384,15 @@ class Antiaffinity_implement_with_add_node(Antiaffinity_implement):
 class Antiaffinity_prefered(KubernetesModel):
 
     goal = lambda self: self.globalVar.antiaffinity_prefered_policy_met == True
+
+    @planned(cost=1)
+    def mark_antiaffinity_prefered_policy_set(self,
+        service: Service,
+        globalVar: GlobalVar):
+        assert service.amountOfPodsInAntiaffinityGroup == service.targetAmountOfPodsOnDifferentNodes
+        assert service.isSearched == True
+        assert service.antiaffinity == True
+        service.antiaffinity_prefered_policy_set = True
 
     @planned(cost=1)
     def mark_antiaffinity_prefered_policy_met(self,
@@ -526,4 +535,63 @@ class Antiaffinity_prefered_with_add_node(Antiaffinity_prefered):
             node : Node):
         assert node.status == STATUS_NODE["New"]
         node.status = STATUS_NODE["Active"]
+
+class Antiaffinity_set(KubernetesModel):
+
+    goal = lambda self: self.service.antiaffinity_prefered_policy_set == True
+
+    @planned(cost=1)
+    def mark_antiaffinity_set(self,
+        pod1: Pod,
+        pod2: Pod):
+        assert pod2.isSearched == True
+        assert pod1 in pod2.podsMatchedByAntiaffinity
+        pod1.antiaffinity_set = True
+
+class Antiaffinity_met(KubernetesModel):
+    @planned(cost=1)
+    def mark_antiaffinity_met(self,
+        pod: Pod):
+        assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
+        pod.antiaffinity_met = True
+    
+    def generate_goal(self):
+        self.generated_goal_in = []
+        self.generaged_goal_eq = []
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_policy_implemented == True, self.objectList):
+                self.generated_goal_eq.append([pod1.antiaffinity_met, True])
+
+    def goal(self):
+        for what, where in self.generated_goal_in:
+            assert what in where
+        for what1, what2 in self.generaged_goal_eq:
+            assert what1 == what2
+
+    @planned(cost=1)
+    def manually_initiate_killing_of_pod(self,
+        node_with_outage: "Node",
+        pod_killed: "podkind.Pod",
+        globalVar: GlobalVar
+        ):
+        assert pod_killed.status == STATUS_POD["Running"]
+        pod_killed.status = STATUS_POD["Killing"]
+
+    @planned(cost=1)
+    def Not_at_same_node(self,
+            pod1: Pod,
+            pod2: Pod,
+            node_of_pod2: Node,
+            scheduler: Scheduler):
+        assert pod2 in pod1.podsMatchedByAntiaffinity
+        assert pod2 in pod1.calc_nonantiaffinity_pods_list
+        assert node_of_pod2 == pod2.atNode
+        assert pod1.atNode in node_of_pod2.different_than
+        assert scheduler.status == STATUS_SCHED["Clean"]
+        pod1.not_on_same_node.add(pod2)
+        pod1.calc_nonantiaffinity_pods_list.remove(pod2)
+        pod1.calc_nonantiaffinity_pods_lenth -= 1
+        pod1.calc_antiaffinity_pods_list.add(pod2)
+        pod1.calc_antiaffinity_pods_list_lenth += 1
+
+        
         

@@ -102,7 +102,6 @@ class KubernetesModel(ProblemTemplate):
                 probability=1.0,
                 affected=[describe(pod1)]
             )
-
     @planned(cost=1)
     def SetDefaultCpuRequestForPod(self,
         pod1: "Pod",
@@ -125,7 +124,6 @@ class KubernetesModel(ProblemTemplate):
                 probability=1.0,
                 affected=[describe(pod1)]
             )
-
     @planned(cost=1)
     def SetDefaultMemLimitForPod(self,
         pod1: "Pod",
@@ -148,7 +146,6 @@ class KubernetesModel(ProblemTemplate):
                 probability=1.0,
                 affected=[describe(pod1)]
             )
-
     @planned(cost=1)
     def SetDefaultCpuLimitForPod(self,
         pod1: "Pod",
@@ -172,7 +169,6 @@ class KubernetesModel(ProblemTemplate):
                 probability=1.0,
                 affected=[describe(pod1)]
             )
-
     @planned(cost=1)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
@@ -195,7 +191,6 @@ class KubernetesModel(ProblemTemplate):
                 probability=1.0,
                 affected=[describe(pod1)]
             )
-
     @planned(cost=1)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
@@ -218,8 +213,6 @@ class KubernetesModel(ProblemTemplate):
                 probability=1.0,
                 affected=[describe(pod1)]
             )
-
-
     @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_byMEM(self,
                 podPending: "Pod",
@@ -255,7 +248,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podPending), describe(podToBeReplaced)]
         )
-
     @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_byCPU(self,
                 podPending: "Pod",
@@ -291,8 +283,7 @@ class KubernetesModel(ProblemTemplate):
             parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
             probability=1.0,
             affected=[describe(podPending), describe(podToBeReplaced)]
-        )
-        
+        ) 
     @planned(cost=1)
     def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "Node",
         globalVar: GlobalVar
@@ -313,7 +304,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def Mark_Pod_As_Not_Exceeding_Mem_Limits(self, podTobeReanimated: "Pod",
         nodeOfPod: "Node",
@@ -336,7 +326,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def MemoryErrorKillPodExceedingLimits(self,
         nodeOfPod: "Node" ,
@@ -358,7 +347,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def MemoryErrorKillPodNotExceedingLimits(self,
         nodeOfPod: "Node" ,
@@ -381,7 +369,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def KillPod(self,
             podBeingKilled : "Pod",
@@ -433,7 +420,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(podBeingKilled)]
         )
-
     @planned(cost=1)
     def AddNodeToSelector(self, 
         pod1: "Pod",
@@ -451,7 +437,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(pod1), describe(selectedNode)]
         )
-    
     @planned(cost=1)
     def SelectNode(self, 
         pod1: "Pod",
@@ -472,7 +457,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[describe(pod1), describe(selectedNode)]
         )
-    
     @planned(cost=1) # TODO
     def StartPod(self, 
             podStarted: "Pod",
@@ -495,8 +479,9 @@ class KubernetesModel(ProblemTemplate):
             pods_deployment.amountOfActivePods += 1 
         if podStarted.hasDaemonset == True:
             assert podStarted in pods_daemonset.podList
-            pods_daemonset.amountOfActivePods += 1 
-
+            pods_daemonset.amountOfActivePods += 1
+        if globalVar.nodeSelectorsEnabled == True:
+            assert node in podStarted.nodeSelectorList
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
@@ -523,7 +508,6 @@ class KubernetesModel(ProblemTemplate):
         )
     
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
-    
     @planned(cost=1)
     def SchedulerCleaned(self, 
         scheduler: "Scheduler",
@@ -541,27 +525,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
-    # @planned(cost=90)
-    # def Initiate_node_outage(self,
-    #     node_with_outage: "Node",
-    #     globalVar: GlobalVar):
-    #     assert globalVar.block_node_outage_in_progress == False
-    #     # assert globalVar.amountOfNodesDisrupted < globalVar.limitOfAmountOfNodesDisrupted
-    #     assert globalVar.is_node_disrupted == False # TODO: checking ONE node outage! Need fixing
-    #     assert node_with_outage.searchable == True
-    #     assert node_with_outage.status == STATUS_NODE["Active"]
-    #     node_with_outage.status = STATUS_NODE["Killing"]
-    #     globalVar.block_node_outage_in_progress = True
-    #     return ScenarioStep(
-    #         name=sys._getframe().f_code.co_name,
-    #         subsystem=self.__class__.__name__,
-    #         description="Outage of Node initiated ",
-    #         parameters={},
-    #         probability=1.0,
-    #         affected=[]
-    #     )
-
     @planned(cost=1)
     def Initiate_node_outage_searched(self,
         node_with_outage: "Node",
@@ -582,7 +545,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def Initiate_killing_of_Pod_because_of_node_outage(self,
         node_with_outage: "Node",
@@ -601,7 +563,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def NodeOutageFinished(self,
         node: "Node",
@@ -622,7 +583,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def ReplaceNullCpuRequestsWithZero(self,
         pod: "Pod"):
@@ -637,7 +597,6 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
     def ReplaceNullMemRequestsWithZero(self,
         pod: "Pod"):
@@ -652,9 +611,8 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-
     @planned(cost=1)
-    def manually_initiate_killing_of_pod(self,
+    def Manually_initiate_killing_of_pod(self,
         node_with_outage: "Node",
         pod_killed: "Pod",
         globalVar: GlobalVar
