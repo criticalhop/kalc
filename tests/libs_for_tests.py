@@ -31,7 +31,6 @@ import logzero
 from logzero import logger
 
 # This log message goes to the console
-logger.debug("hello")
 # Set a minimum log level
 logzero.loglevel(logging.INFO)
 # Set a minimum log level

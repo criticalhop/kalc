@@ -552,12 +552,19 @@ class Antiaffinity_met(KubernetesModel):
         pod: Pod):
         assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
         pod.antiaffinity_met = True
+    @planned(cost=1)
+    def mark_antiaffinity_preferred_met(self,
+        pod: Pod):
+        assert pod.calc_antiaffinity_preferred_pods_list_lenth == pod.target_number_of_antiaffinity_preferred_pods
+        pod.antiaffinity_preferred_met = True
     
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
         for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_policy_implemented == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_policy_implemented == True, self.objectList):
+                self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
 
     def goal(self):
         for what, where in self.generated_goal_in:
@@ -575,21 +582,20 @@ class Antiaffinity_met(KubernetesModel):
         pod_killed.status = STATUS_POD["Killing"]
 
     @planned(cost=1)
-    def Not_at_same_node(self,
+    def Not_at_same_node_preferred(self,
             pod1: Pod,
             pod2: Pod,
             node_of_pod2: Node,
             scheduler: Scheduler):
-        assert pod2 in pod1.podsMatchedByAntiaffinity
-        assert pod2 in pod1.calc_nonantiaffinity_pods_list
+        assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
+        assert pod2 in pod1.calc_nonprocessed_for_antiaffinity_preferred_pods_list
         assert node_of_pod2 == pod2.atNode
         assert pod1.atNode in node_of_pod2.different_than
         assert scheduler.status == STATUS_SCHED["Clean"]
         pod1.not_on_same_node.add(pod2)
-        pod1.calc_nonantiaffinity_pods_list.remove(pod2)
-        pod1.calc_nonantiaffinity_pods_lenth -= 1
-        pod1.calc_antiaffinity_pods_list.add(pod2)
-        pod1.calc_antiaffinity_pods_list_lenth += 1
-
+        pod1.calc_nonprocessed_for_antiaffinity_preferred_pods_list.remove(pod2)
+        pod1.calc_nonprocessed_for_antiaffinity_preferred_pods_lenth -= 1
+        pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
+        pod1.calc_antiaffinity_preferred_pods_list_lenth += 1
         
         

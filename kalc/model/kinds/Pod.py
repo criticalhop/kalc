@@ -49,16 +49,27 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     nodesSelectorSet: bool
     nodeSelectorList: Set["mnode.Node"]
     antiaffinity_policy_implemented: bool
+    antiaffinity_preferred_policy_implemented: bool
+    
     antiaffinity_met: bool
+    antiaffinity_preferred_met: bool
     podsMatchedByAffinity: Set["Pod"]
     podsMatchedByAntiaffinity: Set["Pod"]
-    calc_nonantiaffinity_pods_list: Set["Pod"]
-    calc_nonantiaffinity_pods_list_lenth: int
+    podsMatchedByAntiaffinityPrefered: Set["Pod"]
+    
+    calc_nonprocessed_for_antiaffinity_pods_list: Set["Pod"]
+    calc_nonprocessed_for_antiaffinity_pods_list_lenth: int
+    calc_nonprocessed_for_antiaffinity_preferred_pods_list: Set["Pod"]
+    calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth: int
     calc_antiaffinity_pods_list: Set["Pod"]
     calc_antiaffinity_pods_list_lenth: int
+    calc_antiaffinity_preferred_pods_list: Set["Pod"]
+    calc_antiaffinity_preferred_pods_list_lenth: int
     antiaffinity_pods_list: Set["Pod"]
-    target_number_of_antiaffinity_pods: int
+    antiaffinity_preferred_pods_list: Set["Pod"]
     
+    target_number_of_antiaffinity_pods: int
+    target_number_of_antiaffinity_preferred_pods: int
 
 
 
@@ -86,8 +97,10 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         # self.metadata_name = "model-default-name"
         self.nodeSelectorSet = False
         self.antiaffinity_policy_implemented = False
-        self.calc_nonantiaffinity_pods_list_lenth = 0
+        self.calc_nonprocessed_for_antiaffinity_pods_list_lenth = 0
+        self.calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth = 0
         self.calc_antiaffinity_pods_list_lenth = 0
+        self.calc_antiaffinity_preferred_pods_list_lenth = 0
         self.target_number_of_antiaffinity_pods = 0
         self.antiaffinity_met = False
 
@@ -105,9 +118,9 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     def hook_after_load(self, object_space, _ignore_orphan=False):
         pods = list(filter(lambda x: isinstance(x, Pod), object_space))
         for pod in pods:
-            pod.calc_nonantiaffinity_pods_list.add(self) 
+            pod.calc_nonprocessed_for_antiaffinity_pods_list.add(self) 
 
-        self.calc_nonantiaffinity_pods_list.add(self)
+        self.calc_nonprocessed_for_antiaffinity_pods_list.add(self)
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
         for node in nodes:
@@ -181,7 +194,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
         pods = list(filter(lambda x: isinstance(x, Pod), object_space))
         for pod in pods:
-            pod.calc_nonantiaffinity_pods_list.add(self) 
+            pod.calc_nonprocessed_for_antiaffinity_pods_list.add(self)
+            pod.calc_nonprocessed_for_antiaffinity_preferred_pods_list.add(self)
 
     @property
     def spec_containers__resources_requests_cpu(self):
