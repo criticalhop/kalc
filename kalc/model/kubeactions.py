@@ -240,23 +240,15 @@ class KubernetesModel(ProblemTemplate):
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Because pod has lower priority, it is getting evicted to make room for new pod",
-            parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
-            probability=1.0,
-            affected=[describe(podPending), describe(podToBeReplaced)]
-        )
     @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_byCPU(self,
-                podPending: "Pod",
-                podToBeReplaced: "Pod",
-                nodeForPodPending: "Node" ,
-                scheduler: "Scheduler",
-                priorityClassOfPendingPod: PriorityClass,
-                priorityClassOfPodToBeReplaced: PriorityClass,
-                globalVar: GlobalVar
+        podPending: "Pod",
+        podToBeReplaced: "Pod",
+        nodeForPodPending: "Node" ,
+        scheduler: "Scheduler",
+        priorityClassOfPendingPod: PriorityClass,
+        priorityClassOfPodToBeReplaced: PriorityClass,
+        globalVar: GlobalVar
          ):
         assert globalVar.block_policy_calculated == False
         
@@ -276,14 +268,6 @@ class KubernetesModel(ProblemTemplate):
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Because pod has lower priority, it is getting evicted to make room for new pod",
-            parameters={"podPending": describe(podPending), "podToBeReplaced": describe(podToBeReplaced)},
-            probability=1.0,
-            affected=[describe(podPending), describe(podToBeReplaced)]
-        ) 
     @planned(cost=1)
     def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "Node",
         globalVar: GlobalVar
@@ -318,14 +302,6 @@ class KubernetesModel(ProblemTemplate):
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
         podTobeReanimated.memLimitsStatus = STATUS_LIM["Limit Met"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
     @planned(cost=1)
     def MemoryErrorKillPodExceedingLimits(self,
         nodeOfPod: "Node" ,
@@ -361,24 +337,11 @@ class KubernetesModel(ProblemTemplate):
 
         podTobeKilled.status = STATUS_POD["Killing"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
-    @planned(cost=1)
-    def KillPod(self,
-            podBeingKilled : "Pod",
-            nodeWithPod : "Node" ,
-            serviceOfPod: "Service",
-            scheduler: "Scheduler",
-            pods_daemonset: DaemonSet,
-            pods_deployment: Deployment,
-            globalVar: GlobalVar
-        ):
+    def Killpod_common_part(self,
+        podBeingKilled : "Pod",
+        nodeWithPod : "Node" ,
+        serviceOfPod: "Service",
+        scheduler: "Scheduler"):
         assert globalVar.block_policy_calculated == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
@@ -386,24 +349,6 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.hasDaemonset == False
         assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
-        #TODO: make sure that calculation excude situations that lead to negative number in the result
-
-        ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
-        ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-
-        if globalVar.block_node_outage_in_progress == False:
-            nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
-            nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
-        if podBeingKilled.hasService == True:
-            assert podBeingKilled in serviceOfPod.podList
-            serviceOfPod.amountOfActivePods -= 1
-            serviceOfPod.amountOfPodsInQueue += 1
-        if podBeingKilled.hasDeployment == True:
-            assert podBeingKilled in pods_deployment.podList
-            pods_deployment.amountOfActivePods -= 1
-        if podBeingKilled.hasDaemonset == True:
-            assert podBeingKilled in pods_daemonset.podList
-            pods_daemonset.amountOfActivePods -= 1
         nodeWithPod.amountOfActivePods -= 1
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
@@ -412,14 +357,55 @@ class KubernetesModel(ProblemTemplate):
         podBeingKilled.toNode = Node.NODE_NULL
         podBeingKilled.atNode = Node.NODE_NULL
         # scheduler.debug_var = True # TODO DELETEME
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing pod",
-            parameters={"podBeingKilled": describe(podBeingKilled)},
-            probability=1.0,
-            affected=[describe(podBeingKilled)]
-        )
+        
+        #TODO: make sure that calculation excude situations that lead to negative number in the result
+
+        ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
+        ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+
+
+    @planned(cost=1)
+    def KillPod(self,
+        podBeingKilled : "Pod",
+        nodeWithPod : "Node" ,
+        serviceOfPod: "Service",
+        scheduler: "Scheduler",
+        pods_daemonset: DaemonSet,
+        pods_deployment: Deployment,
+        globalVar: GlobalVar
+        ):
+
+        if globalVar.block_node_outage_in_progress == False:
+            nodeWithPod.currentFormalMemConsumption -= podBeingKilled.memRequest
+            nodeWithPod.currentFormalCpuConsumption -= podBeingKilled.cpuRequest
+            self.Killpod_common_part()
+        else:
+            assert globalVar.block_node_outage_in_progress == True
+            self.Killpod_common_part()
+
+        if podBeingKilled.hasService == True:
+            assert podBeingKilled in serviceOfPod.podList
+            serviceOfPod.amountOfActivePods -= 1
+            serviceOfPod.amountOfPodsInQueue += 1
+            self.Killpod_common_part()
+        else:
+            assert podBeingKilled.hasService ==  True
+            self.Killpod_common_part()
+
+        if podBeingKilled.hasDeployment == True:
+            assert podBeingKilled in pods_deployment.podList
+            pods_deployment.amountOfActivePods -= 1
+        else:
+            assert podBeingKilled.hasDeployment == False
+            self.Killpod_common_part()
+
+        if podBeingKilled.hasDaemonset == True:
+            assert podBeingKilled in pods_daemonset.podList
+            pods_daemonset.amountOfActivePods -= 1
+        else:
+            assert podBeingKilled.hasDaemonset == False
+            self.Killpod_common_part()
+
     @planned(cost=1)
     def AddNodeToSelector(self, 
         pod1: "Pod",
@@ -429,14 +415,6 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.block_policy_calculated == False
         # assert globalVar.block_node_outage_in_progress == False
         pod1.nodeSelectorList.add(selectedNode) 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Node shoud be added to pod selector",
-            parameters={"pod": describe(pod1), "node": describe(selectedNode)},
-            probability=1.0,
-            affected=[describe(pod1), describe(selectedNode)]
-        )
     @planned(cost=1)
     def SelectNode(self, 
         pod1: "Pod",
@@ -449,39 +427,14 @@ class KubernetesModel(ProblemTemplate):
         assert selectedNode in pod1.nodeSelectorList
         pod1.toNode = selectedNode
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Selected node for pod placement",
-            parameters={"pod": describe(pod1), "node": describe(selectedNode)},
-            probability=1.0,
-            affected=[describe(pod1), describe(selectedNode)]
-        )
-    @planned(cost=1) # TODO
-    def StartPod(self, 
+
+    def Start_pod_common_part(self, 
             podStarted: "Pod",
             node: "Node",
-            scheduler: "Scheduler",
-            serviceTargetForPod: "mservice.Service",
-            pods_deployment: Deployment,
-            pods_daemonset: DaemonSet,
-            globalVar: GlobalVar
+            scheduler: "Scheduler"
         ):
-        assert globalVar.block_policy_calculated == False
         # assert globalVar.block_node_outage_in_progress == False
-        if podStarted.hasService == True:
-            assert podStarted in serviceTargetForPod.podList
-            serviceTargetForPod.amountOfPodsInQueue -= 1
-            serviceTargetForPod.amountOfActivePods += 1
-            serviceTargetForPod.status = STATUS_SERV["Started"]
-        if podStarted.hasDeployment == True:
-            assert podStarted in pods_deployment.podList
-            pods_deployment.amountOfActivePods += 1 
-        if podStarted.hasDaemonset == True:
-            assert podStarted in pods_daemonset.podList
-            pods_daemonset.amountOfActivePods += 1
-        if globalVar.nodeSelectorsEnabled == True:
-            assert node in podStarted.nodeSelectorList
+        assert globalVar.block_policy_calculated == False
         assert podStarted in scheduler.podQueue
         assert podStarted.toNode == node
         assert node.isNull == False
@@ -497,16 +450,49 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
-        podStarted.status = STATUS_POD["Running"] 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Starting pod",
-            parameters={"podStarted": describe(podStarted)},
-            probability=1.0,
-            affected=[describe(podStarted), describe(node)]
-        )
-    
+        podStarted.status = STATUS_POD["Running"]          
+            
+    @planned(cost=1) # TODO
+    def StartPod(self, 
+            podStarted: "Pod",
+            node: "Node",
+            scheduler: "Scheduler",
+            serviceTargetForPod: "mservice.Service",
+            pods_deployment: Deployment,
+            pods_daemonset: DaemonSet,
+            globalVar: GlobalVar
+        ):
+        if globalVar.nodeSelectorsEnabled == True:
+            assert node in podStarted.nodeSelectorList
+            self.Start_pod_common_part()
+        else:
+            assert  globalVar.nodeSelectorsEnabled == False
+            self.Start_pod_common_part()
+
+        if podStarted.hasService == True:
+            assert podStarted in serviceTargetForPod.podList
+            serviceTargetForPod.amountOfPodsInQueue -= 1
+            serviceTargetForPod.amountOfActivePods += 1
+            serviceTargetForPod.status = STATUS_SERV["Started"]
+            self.Start_pod_common_part()
+        else:
+            assert podStarted.hasService == False
+            self.Start_pod_common_part()
+
+        if podStarted.hasDeployment == True:
+            assert podStarted in pods_deployment.podList
+            pods_deployment.amountOfActivePods += 1
+            self.Start_pod_common_part()
+        else:
+            assert podStarted.hasDeployment == False
+            self.Start_pod_common_part()
+
+        if podStarted.hasDaemonset == True:
+            assert podStarted in pods_daemonset.podList
+            pods_daemonset.amountOfActivePods += 1
+        else:
+            assert  podStarted.hasDaemonset == False
+            self.Start_pod_common_part()
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
     @planned(cost=1)
     def SchedulerCleaned(self, 

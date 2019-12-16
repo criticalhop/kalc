@@ -45,10 +45,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     hasService: bool
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
-
+    
     nodesSelectorSet: bool
     nodeSelectorList: Set["mnode.Node"]
     antiaffinity_policy_implemented: bool
+    antiaffinity_met: bool
     podsMatchedByAffinity: Set["Pod"]
     podsMatchedByAntiaffinity: Set["Pod"]
     calc_nonantiaffinity_pods_list: Set["Pod"]
@@ -88,6 +89,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.calc_nonantiaffinity_pods_list_lenth = 0
         self.calc_antiaffinity_pods_list_lenth = 0
         self.target_number_of_antiaffinity_pods = 0
+        self.antiaffinity_met = False
 
 
 

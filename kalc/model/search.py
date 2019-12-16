@@ -282,9 +282,19 @@ class Check_node_outage_and_service_restart(Check_services_restart):
     goal = lambda self: self.globalVar.is_service_disrupted == True and \
                                 self.globalVar.is_node_disrupted == True
 
+
 class HypothesisysClean(K8ServiceInterruptSearch):
+    def Remove_pod_common_part(self,
+        pod: Pod,
+        scheduler: Scheduler):
+        pod.status = STATUS_POD["Outaged"]
+        scheduler.podQueue.remove(pod)
+        scheduler.queueLength -= 1
+        scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
+        scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
+
     @planned(cost=100)
-    def Remove_pod_from_the_cluster_IF_not_last_for_service(self,
+    def Remove_pod_from_the_cluster(self,
                 service : Service,
                 pod : Pod,
                 scheduler : Scheduler,
@@ -296,28 +306,16 @@ class HypothesisysClean(K8ServiceInterruptSearch):
         assert pod in scheduler.podQueue
         if pod.hasService == True:
             assert pod in service.podList
-            assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-            assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-            assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
             if service.amountOfActivePods + service.amountOfPodsInQueue == 1:
-                    assert service.amountOfActivePods + service.amountOfPodsInQueue == 1 #TODO: remove this once replaced with costs
-                    assert service.amountOfActivePods + service.amountOfPodsInQueue == 1 #TODO: remove this once  replaced with costs
                     service.status = STATUS_SERV["Interrupted"]
                     globalVar.is_service_disrupted = True
-        pod.status = STATUS_POD["Outaged"]
-        scheduler.podQueue.remove(pod)
-        scheduler.queueLength -= 1
-        scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
-        scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Pod removed from the queue due to being unable to start pod",
-            parameters={"service.amountOfActivePods": describe(service.amountOfActivePods), "service": describe(service)},
-            probability=1.0,
-            affected=[describe(service)]
-        )
-    
+                    self.Remove_pod_common_part()
+            else:
+                assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+                self.Remove_pod_common_part()
+        else:
+            assert pod.hasService == False
+            self.Remove_pod_common_part()
     
 class HypothesisysNodeAndService(HypothesisysClean):
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
@@ -557,14 +555,14 @@ class Antiaffinity_met(KubernetesModel):
     
     def generate_goal(self):
         self.generated_goal_in = []
-        self.generaged_goal_eq = []
+        self.generated_goal_eq = []
         for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_policy_implemented == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
 
     def goal(self):
         for what, where in self.generated_goal_in:
             assert what in where
-        for what1, what2 in self.generaged_goal_eq:
+        for what1, what2 in self.generated_goal_eq:
             assert what1 == what2
 
     @planned(cost=1)
