@@ -51,7 +51,7 @@ def run():
     for ob in kalc_state_objects:
         if isinstance(ob.policy, str): continue # STUB. find and fix
         for pname, pobject in ob.policy._instantiated_policies.items():
-            if pobject.activated:
+            if pobject.ACTIVATED:
                 policy_added = True
                 for hname, hval in pobject.hypotheses.items():
                     # print("Adding hypothesis goal")
