@@ -53,10 +53,18 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     
     antiaffinity_met: bool
     antiaffinity_preferred_met: bool
+    podsToBeMatchedByAntiaffinity: Set["Pod"]
+    podsToBeMatchedByAntiaffinity_lenght: int
+    podsToBeMatchedByAntiaffinity_Preferred: Set["Pod"]
+    podsToBeMatchedByAntiaffinity_Preferred_lenght: int
+
+
     podsMatchedByAffinity: Set["Pod"]
+    podsMatchedByAffinity_lenght: int
     podsMatchedByAntiaffinity: Set["Pod"]
+    podsMatchedByAntiaffinity_lenght: int
     podsMatchedByAntiaffinityPrefered: Set["Pod"]
-    
+    podsMatchedByAntiaffinityPrefered_lenght: int
     calc_nonprocessed_for_antiaffinity_pods_list: Set["Pod"]
     calc_nonprocessed_for_antiaffinity_pods_list_lenth: int
     calc_nonprocessed_for_antiaffinity_preferred_pods_list: Set["Pod"]
@@ -71,6 +79,19 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     target_number_of_antiaffinity_pods: int
     target_number_of_antiaffinity_preferred_pods: int
 
+
+    calc_labels_notprocessed_for_antiaffinity_matching: Set["Label"]
+    calc_labels_notprocessed_for_antiaffinity_matching_lenth: int
+    calc_labels_antiaffinity_matching: Set["Label"]
+    calc_labels_antiaffinity_matching_lenth: int
+    antiaffinity_labels: Set["Label"]
+    antiaffinity_labels_lenght: int
+    antiaffinity_preferred_labels: Set["Label"]
+    antiaffinity_preferred_labels_lenght: int
+    affinity_labels: Set["Label"]
+    affinity_labels_lenght: int
+    is_checked_as_source_for_labels: bool
+    is_checked_as_target_for_labels: bool
 
 
     def __init__(self, *args, **kwargs):
@@ -103,6 +124,13 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.calc_antiaffinity_preferred_pods_list_lenth = 0
         self.target_number_of_antiaffinity_pods = 0
         self.antiaffinity_met = False
+        self.podsToBeMatchedByAntiaffinity_lenght = 0
+        self.podsToBeMatchedByAntiaffinity_Preferred_lenght = 0
+        self.podsMatchedByAffinity_lenght = 0
+        self.podsMatchedByAntiaffinity_lenght = 0
+        self.podsMatchedByAntiaffinityPrefered_lenght = 0
+        self.is_checked_as_source_for_labels = False
+        self.is_checked_as_target_for_labels = False
 
 
 
@@ -241,14 +269,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[describe(pod)]
-        )
 
     def __str__(self): return str(self.metadata_name)
 
