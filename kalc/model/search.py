@@ -594,7 +594,6 @@ class Antiaffinity_met(KubernetesModel):
         assert scheduler.status == STATUS_SCHED["Clean"]
         pod1.not_on_same_node.add(pod2)
         pod1.calc_nonprocessed_for_antiaffinity_preferred_pods_list.remove(pod2)
-        pod1.calc_nonprocessed_for_antiaffinity_preferred_pods_lenth -= 1
         pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
         pod1.calc_antiaffinity_preferred_pods_list_lenth += 1
         
