@@ -24,3 +24,4 @@ tests/NOTforRepo/
 *.out
 README.rst
 setup.pyc
+.ipynb_checkpoints/
