@@ -410,11 +410,9 @@ class KubernetesModel(ProblemTemplate):
             serviceTargetForPod.amountOfPodsInQueue -= 1
             serviceTargetForPod.amountOfActivePods += 1
             serviceTargetForPod.status = STATUS_SERV["Started"]
-            self.Start_pod_common_part()
         if podStarted.hasDeployment == True:
             assert podStarted in pods_deployment.podList
             pods_deployment.amountOfActivePods += 1
-            self.Start_pod_common_part()
         if podStarted.hasDaemonset == True:
             assert podStarted in pods_daemonset.podList
             pods_daemonset.amountOfActivePods += 1
