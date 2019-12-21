@@ -28,3 +28,9 @@ setup.pyc
 .ipynb_checkpoints/
 *.vscode/
 pytest_*
+setup.py
+*DELETEME*
+*.ipynb
+*.prof
+LOG
+*.log
