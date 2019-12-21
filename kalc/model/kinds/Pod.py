@@ -46,10 +46,12 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
     
+
     nodesSelectorSet: bool
     nodeSelectorList: Set["mnode.Node"]
-    antiaffinity_policy_implemented: bool
-    antiaffinity_preferred_policy_implemented: bool
+    affinity_set: bool
+    antiaffinity_set: bool
+    antiaffinity_preferred_set: bool
     
     antiaffinity_met: bool
     antiaffinity_preferred_met: bool
@@ -66,7 +68,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     podsMatchedByAntiaffinityPrefered: Set["Pod"]
     podsMatchedByAntiaffinityPrefered_lenght: int
     calc_nonprocessed_for_antiaffinity_pods_list: Set["Pod"]
-    calc_nonprocessed_for_antiaffinity_pods_list_lenth: int
+    calc_nonprocessed_for_antiaffinity_pods_list_lenght: int
     calc_nonprocessed_for_antiaffinity_preferred_pods_list: Set["Pod"]
     calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth: int
     calc_antiaffinity_pods_list: Set["Pod"]
@@ -117,8 +119,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
         # self.metadata_name = "model-default-name"
         self.nodeSelectorSet = False
-        self.antiaffinity_policy_implemented = False
-        self.calc_nonprocessed_for_antiaffinity_pods_list_lenth = 0
+        self.antiaffinity_set = False
+        self.calc_nonprocessed_for_antiaffinity_pods_list_lenght = 0
         self.calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth = 0
         self.calc_antiaffinity_pods_list_lenth = 0
         self.calc_antiaffinity_preferred_pods_list_lenth = 0

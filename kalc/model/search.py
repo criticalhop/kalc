@@ -327,212 +327,212 @@ class HypothesisysNode(HypothesisysClean):
     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
                            self.globalVar.is_node_disrupted == True 
 
-class Antiaffinity_implement(KubernetesModel):
+# class Antiaffinity_implement(KubernetesModel):
 
-    def generate_goal(self):
-        self.generated_goal_in = []
-        self.generaged_goal_eq = []
-        for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
-            for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
-                self.generated_goal_in.append([pod1, pod2.not_on_same_node])
+#     def generate_goal(self):
+#         self.generated_goal_in = []
+#         self.generaged_goal_eq = []
+#         for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
+#             for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
+#                 self.generated_goal_in.append([pod1, pod2.not_on_same_node])
 
-    def goal(self):
-        for what, where in self.generated_goal_in:
-            assert what in where
-        for what1, what2 in self.generaged_goal_eq:
-            assert what1 == what2
+#     def goal(self):
+#         for what, where in self.generated_goal_in:
+#             assert what in where
+#         for what1, what2 in self.generaged_goal_eq:
+#             assert what1 == what2
        
 
-    @planned(cost=1)
-    def manually_initiate_killing_of_pod(self,
-        node_with_outage: "Node",
-        pod_killed: "podkind.Pod",
-        globalVar: GlobalVar
-        ):
-        assert pod_killed.status == STATUS_POD["Running"]
-        pod_killed.status = STATUS_POD["Killing"]
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing of pod initiated because of node outage",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
-    @planned(cost=1)
-    def Not_at_same_node(self,
-            pod1: Pod,
-            pod2: Pod,
-            node_of_pod2: Node,
-            scheduler: Scheduler):
-        assert node_of_pod2 == pod2.atNode
-        assert pod1.atNode in node_of_pod2.different_than
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        pod1.not_on_same_node.add(pod2)
+#     @planned(cost=1)
+#     def manually_initiate_killing_of_pod(self,
+#         node_with_outage: "Node",
+#         pod_killed: "podkind.Pod",
+#         globalVar: GlobalVar
+#         ):
+#         assert pod_killed.status == STATUS_POD["Running"]
+#         pod_killed.status = STATUS_POD["Killing"]
+#         return ScenarioStep(
+#             name=sys._getframe().f_code.co_name,
+#             subsystem=self.__class__.__name__,
+#             description="Killing of pod initiated because of node outage",
+#             parameters={},
+#             probability=1.0,
+#             affected=[]
+#         )
+#     @planned(cost=1)
+#     def Not_at_same_node(self,
+#             pod1: Pod,
+#             pod2: Pod,
+#             node_of_pod2: Node,
+#             scheduler: Scheduler):
+#         assert node_of_pod2 == pod2.atNode
+#         assert pod1.atNode in node_of_pod2.different_than
+#         assert scheduler.status == STATUS_SCHED["Clean"]
+#         pod1.not_on_same_node.add(pod2)
 
 
-class Antiaffinity_implement_with_add_node(Antiaffinity_implement):
+# class Antiaffinity_implement_with_add_node(Antiaffinity_implement):
 
-    @planned(cost=1)
-    def Add_node(self,
-                node : Node):
-        assert node.status == STATUS_NODE["New"]
-        node.status = STATUS_NODE["Active"]
+#     @planned(cost=1)
+#     def Add_node(self,
+#                 node : Node):
+#         assert node.status == STATUS_NODE["New"]
+#         node.status = STATUS_NODE["Active"]
 
-class Antiaffinity_prefered(KubernetesModel):
+# class Antiaffinity_prefered(KubernetesModel):
 
-    goal = lambda self: self.globalVar.antiaffinity_prefered_policy_met == True
+#     goal = lambda self: self.globalVar.antiaffinity_prefered_policy_met == True
 
-    @planned(cost=1)
-    def mark_antiaffinity_prefered_policy_set(self,
-        service: Service,
-        globalVar: GlobalVar):
-        assert service.amountOfPodsInAntiaffinityGroup == service.targetAmountOfPodsOnDifferentNodes
-        assert service.isSearched == True
-        assert service.antiaffinity == True
-        service.antiaffinity_prefered_policy_set = True
+#     @planned(cost=1)
+#     def mark_antiaffinity_prefered_policy_set(self,
+#         service: Service,
+#         globalVar: GlobalVar):
+#         assert service.amountOfPodsInAntiaffinityGroup == service.targetAmountOfPodsOnDifferentNodes
+#         assert service.isSearched == True
+#         assert service.antiaffinity == True
+#         service.antiaffinity_prefered_policy_set = True
 
-    @planned(cost=1)
-    def mark_antiaffinity_prefered_policy_met(self,
-        service: Service,
-        globalVar: GlobalVar):
-        assert service.amountOfPodsOnDifferentNodes == service.targetAmountOfPodsOnDifferentNodes
-        assert service.isSearched == True
-        assert service.antiaffinity == True
-        service.antiaffinity_prefered_policy_met = True
+#     @planned(cost=1)
+#     def mark_antiaffinity_prefered_policy_met(self,
+#         service: Service,
+#         globalVar: GlobalVar):
+#         assert service.amountOfPodsOnDifferentNodes == service.targetAmountOfPodsOnDifferentNodes
+#         assert service.isSearched == True
+#         assert service.antiaffinity == True
+#         service.antiaffinity_prefered_policy_met = True
 
-    @planned(cost=1)
-    def manually_initiate_killing_of_pod_3(self,
-        node_with_outage: "Node",
-        pod_killed: "podkind.Pod",
-        globalVar: GlobalVar
-        ):
-        assert pod_killed.status == STATUS_POD["Running"]
-        pod_killed.status = STATUS_POD["Killing"]
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing of pod initiated because of node outage",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+#     @planned(cost=1)
+#     def manually_initiate_killing_of_pod_3(self,
+#         node_with_outage: "Node",
+#         pod_killed: "podkind.Pod",
+#         globalVar: GlobalVar
+#         ):
+#         assert pod_killed.status == STATUS_POD["Running"]
+#         pod_killed.status = STATUS_POD["Killing"]
+#         return ScenarioStep(
+#             name=sys._getframe().f_code.co_name,
+#             subsystem=self.__class__.__name__,
+#             description="Killing of pod initiated because of node outage",
+#             parameters={},
+#             probability=1.0,
+#             affected=[]
+#         )
 
-    @planned(cost=1)
-    def mark_2_pods_of_service_as_not_at_same_node(self,
-            pod1: Pod,
-            pod2: Pod,
-            node_of_pod1: Node,
-            node_of_pod2: Node,
-            service: Service,
-            scheduler: Scheduler):
-        assert node_of_pod2 == pod2.atNode
-        assert pod1.atNode in node_of_pod2.different_than
-        assert pod1 in service.podList
-        assert pod2 in service.podList
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        pod1.not_on_same_node.add(pod2)
-        service.amountOfPodsOnDifferentNodes = 2
+#     @planned(cost=1)
+#     def mark_2_pods_of_service_as_not_at_same_node(self,
+#             pod1: Pod,
+#             pod2: Pod,
+#             node_of_pod1: Node,
+#             node_of_pod2: Node,
+#             service: Service,
+#             scheduler: Scheduler):
+#         assert node_of_pod2 == pod2.atNode
+#         assert pod1.atNode in node_of_pod2.different_than
+#         assert pod1 in service.podList
+#         assert pod2 in service.podList
+#         assert scheduler.status == STATUS_SCHED["Clean"]
+#         pod1.not_on_same_node.add(pod2)
+#         service.amountOfPodsOnDifferentNodes = 2
 
-    @planned(cost=1)
-    def mark_3_pods_of_service_as_not_at_same_node(self,
-            pod1: Pod,
-            pod2: Pod,
-            pod3: Pod,
-            node_of_pod1: Node,
-            node_of_pod2: Node,
-            node_of_pod3: Node,
-            service: Service,
-            scheduler: Scheduler):
+#     @planned(cost=1)
+#     def mark_3_pods_of_service_as_not_at_same_node(self,
+#             pod1: Pod,
+#             pod2: Pod,
+#             pod3: Pod,
+#             node_of_pod1: Node,
+#             node_of_pod2: Node,
+#             node_of_pod3: Node,
+#             service: Service,
+#             scheduler: Scheduler):
         
-        assert node_of_pod1 == pod1.atNode
-        assert node_of_pod2 == pod2.atNode
-        assert node_of_pod3 == pod3.atNode
-        assert node_of_pod1 in node_of_pod2.different_than
-        assert node_of_pod1 in node_of_pod3.different_than
-        assert node_of_pod2 in node_of_pod3.different_than
-        assert pod1 in service.podList
-        assert pod2 in service.podList
-        assert pod3 in service.podList
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        service.amountOfPodsOnDifferentNodes = 3
+#         assert node_of_pod1 == pod1.atNode
+#         assert node_of_pod2 == pod2.atNode
+#         assert node_of_pod3 == pod3.atNode
+#         assert node_of_pod1 in node_of_pod2.different_than
+#         assert node_of_pod1 in node_of_pod3.different_than
+#         assert node_of_pod2 in node_of_pod3.different_than
+#         assert pod1 in service.podList
+#         assert pod2 in service.podList
+#         assert pod3 in service.podList
+#         assert scheduler.status == STATUS_SCHED["Clean"]
+#         service.amountOfPodsOnDifferentNodes = 3
 
-    @planned(cost=1)
-    def mark_4_pods_of_service_as_not_at_same_node(self,
-            pod1: Pod,
-            pod2: Pod,
-            pod3: Pod,
-            pod4: Pod,
-            node_of_pod1: Node,
-            node_of_pod2: Node,
-            node_of_pod3: Node,
-            node_of_pod4: Node,
-            service: Service,
-            scheduler: Scheduler):
+#     @planned(cost=1)
+#     def mark_4_pods_of_service_as_not_at_same_node(self,
+#             pod1: Pod,
+#             pod2: Pod,
+#             pod3: Pod,
+#             pod4: Pod,
+#             node_of_pod1: Node,
+#             node_of_pod2: Node,
+#             node_of_pod3: Node,
+#             node_of_pod4: Node,
+#             service: Service,
+#             scheduler: Scheduler):
         
-        assert node_of_pod1 == pod1.atNode
-        assert node_of_pod2 == pod2.atNode
-        assert node_of_pod3 == pod3.atNode
-        assert node_of_pod4 == pod4.atNode
-        assert node_of_pod1 in node_of_pod2.different_than
-        assert node_of_pod1 in node_of_pod3.different_than
-        assert node_of_pod1 in node_of_pod4.different_than
-        assert node_of_pod2 in node_of_pod3.different_than
-        assert node_of_pod2 in node_of_pod4.different_than
-        assert node_of_pod3 in node_of_pod4.different_than
-        assert pod1 in service.podList
-        assert pod2 in service.podList
-        assert pod3 in service.podList
-        assert pod4 in service.podList
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        service.amountOfPodsOnDifferentNodes = 4
+#         assert node_of_pod1 == pod1.atNode
+#         assert node_of_pod2 == pod2.atNode
+#         assert node_of_pod3 == pod3.atNode
+#         assert node_of_pod4 == pod4.atNode
+#         assert node_of_pod1 in node_of_pod2.different_than
+#         assert node_of_pod1 in node_of_pod3.different_than
+#         assert node_of_pod1 in node_of_pod4.different_than
+#         assert node_of_pod2 in node_of_pod3.different_than
+#         assert node_of_pod2 in node_of_pod4.different_than
+#         assert node_of_pod3 in node_of_pod4.different_than
+#         assert pod1 in service.podList
+#         assert pod2 in service.podList
+#         assert pod3 in service.podList
+#         assert pod4 in service.podList
+#         assert scheduler.status == STATUS_SCHED["Clean"]
+#         service.amountOfPodsOnDifferentNodes = 4
 
 
-    @planned(cost=1)
-    def mark_5_pods_of_service_as_not_at_same_node(self,
-            pod1: Pod,
-            pod2: Pod,
-            pod3: Pod,
-            pod4: Pod,
-            pod5: Pod,
-            node_of_pod1: Node,
-            node_of_pod2: Node,
-            node_of_pod3: Node,
-            node_of_pod4: Node,
-            node_of_pod5: Node,
-            service: Service,
-            scheduler: Scheduler):
+#     @planned(cost=1)
+#     def mark_5_pods_of_service_as_not_at_same_node(self,
+#             pod1: Pod,
+#             pod2: Pod,
+#             pod3: Pod,
+#             pod4: Pod,
+#             pod5: Pod,
+#             node_of_pod1: Node,
+#             node_of_pod2: Node,
+#             node_of_pod3: Node,
+#             node_of_pod4: Node,
+#             node_of_pod5: Node,
+#             service: Service,
+#             scheduler: Scheduler):
         
-        assert node_of_pod1 == pod1.atNode
-        assert node_of_pod2 == pod2.atNode
-        assert node_of_pod3 == pod3.atNode
-        assert node_of_pod4 == pod4.atNode
-        assert node_of_pod5 == pod5.atNode
-        assert node_of_pod1 in node_of_pod2.different_than
-        assert node_of_pod1 in node_of_pod3.different_than
-        assert node_of_pod1 in node_of_pod4.different_than
-        assert node_of_pod1 in node_of_pod5.different_than
-        assert node_of_pod2 in node_of_pod3.different_than
-        assert node_of_pod2 in node_of_pod4.different_than
-        assert node_of_pod2 in node_of_pod5.different_than
-        assert node_of_pod3 in node_of_pod4.different_than
-        assert node_of_pod3 in node_of_pod5.different_than
-        assert node_of_pod4 in node_of_pod5.different_than
+#         assert node_of_pod1 == pod1.atNode
+#         assert node_of_pod2 == pod2.atNode
+#         assert node_of_pod3 == pod3.atNode
+#         assert node_of_pod4 == pod4.atNode
+#         assert node_of_pod5 == pod5.atNode
+#         assert node_of_pod1 in node_of_pod2.different_than
+#         assert node_of_pod1 in node_of_pod3.different_than
+#         assert node_of_pod1 in node_of_pod4.different_than
+#         assert node_of_pod1 in node_of_pod5.different_than
+#         assert node_of_pod2 in node_of_pod3.different_than
+#         assert node_of_pod2 in node_of_pod4.different_than
+#         assert node_of_pod2 in node_of_pod5.different_than
+#         assert node_of_pod3 in node_of_pod4.different_than
+#         assert node_of_pod3 in node_of_pod5.different_than
+#         assert node_of_pod4 in node_of_pod5.different_than
 
-        assert pod1 in service.podList
-        assert pod2 in service.podList
-        assert pod3 in service.podList
-        assert pod4 in service.podList
-        assert pod5 in service.podList
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        service.amountOfPodsOnDifferentNodes = 5
+#         assert pod1 in service.podList
+#         assert pod2 in service.podList
+#         assert pod3 in service.podList
+#         assert pod4 in service.podList
+#         assert pod5 in service.podList
+#         assert scheduler.status == STATUS_SCHED["Clean"]
+#         service.amountOfPodsOnDifferentNodes = 5
 
-class Antiaffinity_prefered_with_add_node(Antiaffinity_prefered):
-    @planned(cost=1)
-    def Add_node(self,
-            node : Node):
-        assert node.status == STATUS_NODE["New"]
-        node.status = STATUS_NODE["Active"]
+# class Antiaffinity_prefered_with_add_node(Antiaffinity_prefered):
+#     @planned(cost=1)
+#     def Add_node(self,
+#             node : Node):
+#         assert node.status == STATUS_NODE["New"]
+#         node.status = STATUS_NODE["Active"]
 
 class Antiaffinity_set(KubernetesModel):
 
@@ -551,6 +551,7 @@ class Antiaffinity_met(KubernetesModel):
     def mark_antiaffinity_met(self,
         pod: Pod):
         assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
+
         pod.antiaffinity_met = True
     @planned(cost=1)
     def mark_antiaffinity_preferred_met(self,
@@ -561,9 +562,9 @@ class Antiaffinity_met(KubernetesModel):
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
-        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_policy_implemented == True, self.objectList):
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_set == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
-        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_policy_implemented == True, self.objectList):
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
 
     def goal(self):
@@ -597,4 +598,49 @@ class Antiaffinity_met(KubernetesModel):
         pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
         pod1.calc_antiaffinity_preferred_pods_list_lenth += 1
         
-        
+class Antiaffinity_check(KubernetesModel):
+    @planned(cost=1)
+    def mark_checked_pod_as_antiaffinity_checked_for_target_pod(self,
+        checked_pod: Pod,
+        target_pod: Pod,
+        node_of_target_pod: Node,
+        node_of_checked_pod: Node,
+        globalVar: GlobalVar,
+        scheduler: Scheduler):
+        if checked_pod in target_pod.podsMatchedByAntiaffinity and \
+            target_pod.antiaffinity_set == True and \
+            checked_pod.atNode != target_pod.atNode and \
+            checked_pod in target_pod.calc_nonprocessed_for_antiaffinity_pods_list# and \
+            #globalVar.block_policy_calculated == True :
+                target_pod.calc_antiaffinity_pods_list.add(checked_pod)
+                target_pod.calc_antiaffinity_pods_list_lenth += 1
+        target_pod.calc_nonprocessed_for_antiaffinity_pods_list.remove(checked_pod)
+        target_pod.calc_nonprocessed_for_antiaffinity_pods_list_lenght -= 1
+
+    @planned(cost=1)
+    def mark_antiaffinity_met(self,
+        target_pod: Pod,
+        globalVar: GlobalVar):
+        assert globalVar.block_policy_calculated == True
+        assert target_pod.calc_antiaffinity_pods_list_lenth == target_pod.target_number_of_antiaffinity_pods
+        target_pod.antiaffinity_met = True
+    
+    def generate_goal(self):
+        self.generated_goal_in = []
+        self.generated_goal_eq = []
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_set == True, self.objectList):
+                self.generated_goal_eq.append([pod1.antiaffinity_met, True])
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
+                self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
+
+    def goal(self):
+        for what, where in self.generated_goal_in:
+            assert what in where
+        for what1, what2 in self.generated_goal_eq:
+            assert what1 == what2
+class Antiaffinity_check_with_add_node(Antiaffinity_check):
+    @planned(cost=1)
+    def Add_node(self,
+            node : Node):
+        assert node.status == STATUS_NODE["New"]
+        node.status = STATUS_NODE["Active"]

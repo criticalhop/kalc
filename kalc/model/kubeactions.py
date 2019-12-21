@@ -205,14 +205,6 @@ class KubernetesModel(ProblemTemplate):
             pod1.toNode = node
             pod1.cpuLimit = cpuCapacity
 
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="no description provided",
-                parameters={},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
     @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_byMEM(self,
                 podPending: "Pod",

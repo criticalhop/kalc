@@ -33,3 +33,4 @@ class GlobalVar(Object):
         self.block_policy_calculated = False
         self.antiaffinity_prefered_policy_met = False
         self.nodeSelectorsEnabled = False
+    def __str__(self): return str(self._get_value())

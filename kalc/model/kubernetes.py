@@ -29,8 +29,8 @@ class KubernetesCluster:
 
     def _reset(self):
         "Reset object states and require a rebuild with _bulid_state"
-        self.scheduler = Scheduler()
-        self.globalvar = GlobalVar()
+        self.scheduler = Scheduler("Sheduler")
+        self.globalvar = GlobalVar("GlobalVar")
         self.state_objects = [self.scheduler, self.globalvar]
 
     def load_dir(self, dir_path):
