@@ -13,7 +13,6 @@ from kalc.model.kinds.DaemonSet import DaemonSet
 from kalc.model.kinds.Pod import Pod
 from kalc.model.kinds.Node import Node
 from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.misc.const import *
 from kalc.misc.problem import ProblemTemplate
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
@@ -53,14 +52,6 @@ class KubernetesModel(ProblemTemplate):
         # assert globalVar.block_node_outage_in_progress == False
         service1.status = STATUS_SERV["Started"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Mark service as started",
-            parameters={},
-            probability=1.0,
-            affected=[describe(service1)]
-        )
     @planned(cost=1)
     def Fill_priority_class_object(self,
             pod: "Pod",
@@ -72,14 +63,7 @@ class KubernetesModel(ProblemTemplate):
         assert pod.spec_priorityClassName == pclass.metadata_name
         pod.priorityClass = pclass
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[describe(pod)]
-        )
+        
     @planned(cost=1)
     def SetDefaultMemRequestForPod(self,
         pod1: "Pod",
@@ -94,14 +78,7 @@ class KubernetesModel(ProblemTemplate):
 
             pod1.memRequest = memLimit
 
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="Setting default memory request for pod",
-                parameters={"currentMemoryRequest": -1, "newMemoryRequest": str(pod1.memLimit)},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
+            
     @planned(cost=1)
     def SetDefaultCpuRequestForPod(self,
         pod1: "Pod",
@@ -116,14 +93,7 @@ class KubernetesModel(ProblemTemplate):
 
             pod1.cpuRequest = cpuLimit
 
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="Setting default cpu request for pod",
-                parameters={"currentCpuRequest": -1, "newCpuRequest": str(pod1.cpuLimit)},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
+           
     @planned(cost=1)
     def SetDefaultMemLimitForPod(self,
         pod1: "Pod",
@@ -138,14 +108,7 @@ class KubernetesModel(ProblemTemplate):
             assert memCapacity == node.memCapacity
             pod1.memLimit = memCapacity
 
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="Setting default memory limit for pod",
-                parameters={"currentMemoryLimit": -1, "newMemoryLimit": str(pod1.memLimit)},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
+            
     @planned(cost=1)
     def SetDefaultCpuLimitForPod(self,
         pod1: "Pod",
@@ -161,14 +124,7 @@ class KubernetesModel(ProblemTemplate):
 
             pod1.cpuLimit = cpuCapacity
 
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="Setting default cpu limit for pod to node capacity",
-                parameters={"currentCpuLimit": -1, "newCpuLimit": str(pod1.cpuLimit)},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
+            
     @planned(cost=1)
     def SetDefaultMemLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
@@ -183,14 +139,7 @@ class KubernetesModel(ProblemTemplate):
             pod1.toNode = node
             pod1.memLimit = memCapacity
 
-            return ScenarioStep(
-                name=sys._getframe().f_code.co_name,
-                subsystem=self.__class__.__name__,
-                description="no description provided",
-                parameters={},
-                probability=1.0,
-                affected=[describe(pod1)]
-            )
+            
     @planned(cost=1)
     def SetDefaultCpuLimitForPodBeforeNodeAssignment(self,
         pod1: "Pod",
@@ -270,14 +219,7 @@ class KubernetesModel(ProblemTemplate):
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits += 1
         podTobeKilled.memLimitsStatus = STATUS_LIM["Limit Exceeded"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def Mark_Pod_As_Not_Exceeding_Mem_Limits(self, podTobeReanimated: "Pod",
         nodeOfPod: "Node",
@@ -304,14 +246,7 @@ class KubernetesModel(ProblemTemplate):
         assert pod1TobeKilled.memLimitsStatus == STATUS_LIM["Limit Exceeded"]
         pod1TobeKilled.status = STATUS_POD["Killing"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def MemoryErrorKillPodNotExceedingLimits(self,
         nodeOfPod: "Node" ,
@@ -435,14 +370,7 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.block_policy_calculated == False
         scheduler.status = STATUS_SCHED["Clean"]
         globalVar.block_policy_calculated = True
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Finished processing pod queue",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def Initiate_node_outage_searched(self,
         node_with_outage: "Node",
@@ -455,14 +383,7 @@ class KubernetesModel(ProblemTemplate):
         assert node_with_outage.isSearched == True
         node_with_outage.status = STATUS_NODE["Killing"]
         globalVar.block_node_outage_in_progress = True
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Outage of Node initiated ",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def Initiate_killing_of_Pod_because_of_node_outage(self,
         node_with_outage: "Node",
@@ -473,14 +394,7 @@ class KubernetesModel(ProblemTemplate):
         assert pod_killed.atNode == node_with_outage
         assert node_with_outage.status == STATUS_NODE["Killing"]
         pod_killed.status = STATUS_POD["Killing"]
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Killing of pod initiated because of node outage",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def NodeOutageFinished(self,
         node: "Node",
@@ -493,42 +407,21 @@ class KubernetesModel(ProblemTemplate):
         globalVar.block_node_outage_in_progress = False
         globalVar.is_node_disrupted = True # TODO: checking ONE node outage! Need fixing
         # TODO make ability to calculate multiple nodes outage
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Node outage",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def ReplaceNullCpuRequestsWithZero(self,
         pod: "Pod"):
         # assert pod.status == STATUS_POD["Running"]
         assert pod.cpuRequest == -1
         pod.cpuRequest = 0
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="CPU request for Pod is not defined, further it is threated as Zero",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def ReplaceNullMemRequestsWithZero(self,
         pod: "Pod"):
         # assert pod.status == STATUS_POD["Running"]
         assert pod.memRequest == -1
         pod.memRequest = 0
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="MEM request for Pod is not defined, further it is threated as Zero",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def Manually_initiate_killing_of_pod(self,
         node_with_outage: "Node",

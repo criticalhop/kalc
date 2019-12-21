@@ -12,7 +12,6 @@ from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.model.system.globals import GlobalVar
 from kalc.misc.const import *
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
-from kalc.model.scenario import ScenarioStep, describe
 # import kalc.cli as cli
 import sys
 import random

@@ -20,7 +20,6 @@ from kalc.cli import run
 import click
 from click.testing import CliRunner
 from poodle import planned
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.model.system.globals import GlobalVar
 
 #replicas 3 cpu: 100m memory: 500Mi
@@ -52,42 +51,18 @@ class OptimisticRun(K8ServiceInterruptSearch):
         assert self.scheduler.status == STATUS_SCHED["Clean"]
         self.OptimisticRun = True
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Some service is interrupted",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
     
     @planned(cost=100)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar):
         assert globalVar.is_deployment_interrupted == True
         assert self.scheduler.status == STATUS_SCHED["Clean"]
         self.OptimisticRun = True
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Some deployment is interrupted",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
         
     @planned(cost=100)
     def NodeNServiceInterupted(self,globalVar:GlobalVar):
         assert globalVar.is_node_interrupted == True
         assert globalVar.is_service_interrupted == True
         self.OptimisticRun = True
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Node and Service are interrupted",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
 
 @pytest.mark.skip(reason="temporary skip")
 def test_test():

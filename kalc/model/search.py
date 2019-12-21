@@ -13,7 +13,6 @@ from kalc.model.kinds.DaemonSet import DaemonSet
 from kalc.model.kinds.Pod import Pod
 from kalc.model.kinds.Node import Node
 from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.misc.const import *
 from kalc.model.kubeactions import KubernetesModel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
@@ -39,14 +38,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert globalVar.is_service_disrupted == True
         assert scheduler.status == STATUS_SCHED["Clean"]
         globalVar.goal_achieved = True 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Node and Service are interrupted",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def Mark_node_outage_event(self,
         node:"Node",
@@ -55,14 +47,7 @@ class K8ServiceInterruptSearch(KubernetesModel):
         assert node.searchable == True
         globalvar.is_node_disrupted = True
         
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="node outage",
-            parameters={},
-            probability=0.01,
-            affected=[describe(node)]
-        )
+        
 def mark_excluded(object_space, excludeStr, skip_check=False):
     exclude = []
     if excludeStr != None:
@@ -111,28 +96,13 @@ class OptimisticRun(K8ServiceInterruptSearch):
     #     assert global_.block_node_outage_in_progress == False
     #     global_.goal_achieved = True
     
-    #     return ScenarioStep(
-    #         name=sys._getframe().f_code.co_name,
-    #         subsystem=self.__class__.__name__,
-    #         description="Processing finished",
-    #         # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
-    #         parameters={},
-    #         probability=1.0,
-    #         affected=[]
-    #     )
+  
     @planned(cost=1)
     def Scheduler_cant_place_pod(self, scheduler: "Scheduler",
         globalVar: GlobalVar):
         # assert globalVar.block_node_outage_in_progress == False
         scheduler.queueLength -= 1
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Can't place a pod",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
 class Check_deployments(OptimisticRun):
     @planned(cost=1)
     def AnyDeploymentInterrupted(self,globalVar:GlobalVar,
@@ -140,14 +110,7 @@ class Check_deployments(OptimisticRun):
         assert globalVar.is_deployment_disrupted == True
         # assert scheduler.status == STATUS_SCHED["Clean"]
         globalVar.goal_achieved = True 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Some deployment is interrupted",
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
+        
     @planned(cost=1)
     def MarkDeploymentOutageEvent(self,
                 deployment_current: Deployment,
@@ -164,14 +127,6 @@ class Check_deployments(OptimisticRun):
         deployment_current.status = STATUS_DEPLOYMENT["Interrupted"]
         global_.is_deployment_disrupted = True
         
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Detected deployment outage event",
-            parameters={"Pod": describe(pod_current)},
-            probability=1.0,
-            affected=[describe(deployment_current)]
-        )
 class Check_services(OptimisticRun):
     @planned(cost=1)
     def MarkServiceOutageEvent(self,
@@ -191,14 +146,6 @@ class Check_services(OptimisticRun):
         service1.status = STATUS_SERV["Interrupted"]
         global_.is_service_disrupted = True #TODO:  Optimistic search 
         
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Detected service outage event",
-            parameters={"service.amountOfActivePods": 0, "service": describe(service1)},
-            probability=1.0,
-            affected=[describe(service1)]
-        )
 class Check_services_restart(OptimisticRun):
     @planned(cost=1)
     def MarkServiceOutageEvent(self,
@@ -218,29 +165,12 @@ class Check_services_restart(OptimisticRun):
         service1.status = STATUS_SERV["Interrupted"]
         global_.is_service_disrupted = True #TODO:  Optimistic search 
         
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Detected service outage event",
-            parameters={"service.amountOfActivePods": 0, "service": describe(service1)},
-            probability=1.0,
-            affected=[describe(service1)]
-        )
     @planned(cost=1) # this works for no-outage case
     def SchedulerQueueCleanLowCost(self, scheduler: Scheduler, global_: GlobalVar):
         assert scheduler.status == STATUS_SCHED["Clean"]
         assert global_.block_node_outage_in_progress == False
         global_.goal_achieved = True
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Processing finished",
-            # parameters={"podsNotPlaced": int(scheduler.queueLength._get_value())},
-            parameters={},
-            probability=1.0,
-            affected=[]
-        )
     @planned(cost=1)
     def AnyServiceInterrupted(self,globalVar:GlobalVar, scheduler: Scheduler):
         assert globalVar.is_service_disrupted == True
@@ -262,14 +192,6 @@ class Check_daemonsets(OptimisticRun):
         # daemonset_current.status = STATUS_DAEMONSET_INTERRUPTED
         global_.is_daemonset_disrupted = True
         
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="Detected daemonset outage event",
-            parameters={"Pod": describe(pod_current)},
-            probability=1.0,
-            affected=[describe(daemonset_current)]
-        )
 class CheckNodeOutage(Check_services):
     goal = lambda self: self.globalVar.goal_achieved == True and \
                                 self.globalVar.is_node_disrupted == True
@@ -351,14 +273,6 @@ class HypothesisysNode(HypothesisysClean):
 #         ):
 #         assert pod_killed.status == STATUS_POD["Running"]
 #         pod_killed.status = STATUS_POD["Killing"]
-#         return ScenarioStep(
-#             name=sys._getframe().f_code.co_name,
-#             subsystem=self.__class__.__name__,
-#             description="Killing of pod initiated because of node outage",
-#             parameters={},
-#             probability=1.0,
-#             affected=[]
-#         )
 #     @planned(cost=1)
 #     def Not_at_same_node(self,
 #             pod1: Pod,
@@ -409,14 +323,6 @@ class HypothesisysNode(HypothesisysClean):
 #         ):
 #         assert pod_killed.status == STATUS_POD["Running"]
 #         pod_killed.status = STATUS_POD["Killing"]
-#         return ScenarioStep(
-#             name=sys._getframe().f_code.co_name,
-#             subsystem=self.__class__.__name__,
-#             description="Killing of pod initiated because of node outage",
-#             parameters={},
-#             probability=1.0,
-#             affected=[]
-#         )
 
 #     @planned(cost=1)
 #     def mark_2_pods_of_service_as_not_at_same_node(self,
@@ -610,7 +516,7 @@ class Antiaffinity_check(KubernetesModel):
         if checked_pod in target_pod.podsMatchedByAntiaffinity and \
             target_pod.antiaffinity_set == True and \
             checked_pod.atNode != target_pod.atNode and \
-            checked_pod in target_pod.calc_nonprocessed_for_antiaffinity_pods_list# and \
+            checked_pod in target_pod.calc_nonprocessed_for_antiaffinity_pods_list:# and \
             #globalVar.block_policy_calculated == True :
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
                 target_pod.calc_antiaffinity_pods_list_lenth += 1
