@@ -22,6 +22,9 @@ venv/
 tests/NOTforRepo/
 *.pddl
 *.out
+*-checkpoint*
 README.rst
 setup.pyc
 .ipynb_checkpoints/
+*.vscode/
+pytest_*

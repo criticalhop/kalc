@@ -1,5 +1,12 @@
-from tests.test_util import print_objects
-from tests.libs_for_tests import prepare_yamllist_for_diff
+try: 
+    from tests.test_util import print_objects
+except:
+    from test_util import print_objects
+try: 
+    from tests.libs_for_tests import prepare_yamllist_for_diff
+except:
+    from libs_for_tests import prepare_yamllist_for_diff
+    
 from kalc.model.search import Check_services, Check_deployments, Check_daemonsets, OptimisticRun, CheckNodeOutage, Check_node_outage_and_service_restart
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
@@ -17,7 +24,10 @@ from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
 from kalc.model.scenario import Scenario
 from poodle import planned
-from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
+try:
+    from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
+except:
+    from libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 
 DEBUG_MODE = 0 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
 

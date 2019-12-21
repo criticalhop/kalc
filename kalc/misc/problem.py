@@ -42,7 +42,7 @@ class ProblemTemplate:
     def add_external_method(self, action):
         if not action in self.external_actions: self.external_actions.append(action)
 
-    def run(self, timeout=6000, sessionName=None, schedule=schedule, raise_=False):
+    def run(self, timeout=999000, sessionName=None, schedule=schedule, raise_=False):
         if not sessionName: sessionName = self.__class__.__name__
         self.problem()
         self.generate_goal()
@@ -71,7 +71,7 @@ class ProblemTemplate:
             else:
                 pass
     
-    def xrun(self, timeout=6000, sessionName=None):
+    def xrun(self, timeout=999000, sessionName=None):
         "Run and execute plan"
         self.run(timeout, sessionName, schedule=xschedule, raise_=True)
 

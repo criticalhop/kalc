@@ -1,5 +1,4 @@
 from poodle import planned
-from logzero import logger
 from kalc.misc.const import *
 import kalc.model.kinds.Service as mservice
 from kalc.model.system.base import ModularKind
@@ -24,6 +23,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     # k8s attributes
     metadata_ownerReferences__name: str
     spec_priorityClassName: str
+    spec_nodeSelector: Set[Label]
     metadata_name: str
 
     # internal model attributes
@@ -45,6 +45,55 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     hasService: bool
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
+    
+
+    nodesSelectorSet: bool
+    nodeSelectorList: Set["mnode.Node"]
+    affinity_set: bool
+    antiaffinity_set: bool
+    antiaffinity_preferred_set: bool
+    
+    antiaffinity_met: bool
+    antiaffinity_preferred_met: bool
+    podsToBeMatchedByAntiaffinity: Set["Pod"]
+    podsToBeMatchedByAntiaffinity_lenght: int
+    podsToBeMatchedByAntiaffinity_Preferred: Set["Pod"]
+    podsToBeMatchedByAntiaffinity_Preferred_lenght: int
+
+
+    podsMatchedByAffinity: Set["Pod"]
+    podsMatchedByAffinity_lenght: int
+    podsMatchedByAntiaffinity: Set["Pod"]
+    podsMatchedByAntiaffinity_lenght: int
+    podsMatchedByAntiaffinityPrefered: Set["Pod"]
+    podsMatchedByAntiaffinityPrefered_lenght: int
+    calc_nonprocessed_for_antiaffinity_pods_list: Set["Pod"]
+    calc_nonprocessed_for_antiaffinity_pods_list_lenght: int
+    calc_nonprocessed_for_antiaffinity_preferred_pods_list: Set["Pod"]
+    calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth: int
+    calc_antiaffinity_pods_list: Set["Pod"]
+    calc_antiaffinity_pods_list_lenth: int
+    calc_antiaffinity_preferred_pods_list: Set["Pod"]
+    calc_antiaffinity_preferred_pods_list_lenth: int
+    antiaffinity_pods_list: Set["Pod"]
+    antiaffinity_preferred_pods_list: Set["Pod"]
+    
+    target_number_of_antiaffinity_pods: int
+    target_number_of_antiaffinity_preferred_pods: int
+
+
+    calc_labels_notprocessed_for_antiaffinity_matching: Set["Label"]
+    calc_labels_notprocessed_for_antiaffinity_matching_lenth: int
+    calc_labels_antiaffinity_matching: Set["Label"]
+    calc_labels_antiaffinity_matching_lenth: int
+    antiaffinity_labels: Set["Label"]
+    antiaffinity_labels_lenght: int
+    antiaffinity_preferred_labels: Set["Label"]
+    antiaffinity_preferred_labels_lenght: int
+    affinity_labels: Set["Label"]
+    affinity_labels_lenght: int
+    is_checked_as_source_for_labels: bool
+    is_checked_as_target_for_labels: bool
 
 
     def __init__(self, *args, **kwargs):
@@ -69,6 +118,23 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.hasDeployment = False
         self.metadata_name = "modelPod"+str(random.randint(100000000, 999999999))
         # self.metadata_name = "model-default-name"
+        self.nodeSelectorSet = False
+        self.antiaffinity_set = False
+        self.calc_nonprocessed_for_antiaffinity_pods_list_lenght = 0
+        self.calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth = 0
+        self.calc_antiaffinity_pods_list_lenth = 0
+        self.calc_antiaffinity_preferred_pods_list_lenth = 0
+        self.target_number_of_antiaffinity_pods = 0
+        self.antiaffinity_met = False
+        self.podsToBeMatchedByAntiaffinity_lenght = 0
+        self.podsToBeMatchedByAntiaffinity_Preferred_lenght = 0
+        self.podsMatchedByAffinity_lenght = 0
+        self.podsMatchedByAntiaffinity_lenght = 0
+        self.podsMatchedByAntiaffinityPrefered_lenght = 0
+        self.is_checked_as_source_for_labels = False
+        self.is_checked_as_target_for_labels = False
+
+
 
 
     def set_priority(self, object_space, controller):
@@ -80,6 +146,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                 logger.warning("Could not reference priority class %s %s" % (str(controller.spec_template_spec_priorityClassName), str(self.metadata_name)))
 
     def hook_after_load(self, object_space, _ignore_orphan=False):
+        pods = list(filter(lambda x: isinstance(x, Pod), object_space))
+        for pod in pods:
+            pod.calc_nonprocessed_for_antiaffinity_pods_list.add(self) 
+
+        self.calc_nonprocessed_for_antiaffinity_pods_list.add(self)
         nodes = list(filter(lambda x: isinstance(x, mnode.Node) and self.spec_nodeName == x.metadata_name, object_space))
         found = False
         for node in nodes:
@@ -94,6 +165,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                     node.currentFormalMemConsumption += self.memRequest
                     assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
                 found = True
+            if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
         if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
             logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
         
@@ -124,6 +196,13 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             scheduler.status = STATUS_SCHED["Changed"]
             target_service_of_pod_localVar.amountOfPodsInQueue += 1
 
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
+        for node in nodes:
+            if list(node.metadata_labels) and \
+                    set(self.spec_nodeSelector)\
+                        .issubset(set(node.metadata_labels)):
+                        self.nodeSelectorList.add(node)
+                        self.nodeSelectorSet = True
 
         if str(self.spec_priorityClassName) != "KUBECTL-VAL-NONE":
             try:
@@ -133,6 +212,20 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             except StopIteration:
                 raise Exception("Could not find priorityClass %s, maybe you \
                         did not dump PriorityClass?" % str(self.spec_priorityClassName))
+    def hook_after_create(self, object_space):
+        nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
+        for node in nodes:
+            if list(node.metadata_labels) and \
+                    set(self.spec_nodeSelector)\
+                        .issubset(set(node.metadata_labels)):
+                        self.nodeSelectorList.add(node)
+                        self.nodeSelectorSet = True
+        for node in nodes:
+            if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
+        pods = list(filter(lambda x: isinstance(x, Pod), object_space))
+        for pod in pods:
+            pod.calc_nonprocessed_for_antiaffinity_pods_list.add(self)
+            pod.calc_nonprocessed_for_antiaffinity_preferred_pods_list.add(self)
 
     @property
     def spec_containers__resources_requests_cpu(self):
@@ -178,14 +271,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         service.amountOfActivePods += 1
         service.status = STATUS_SERV["Started"]
 
-        return ScenarioStep(
-            name=sys._getframe().f_code.co_name,
-            subsystem=self.__class__.__name__,
-            description="no description provided",
-            parameters={},
-            probability=1.0,
-            affected=[describe(pod)]
-        )
 
     def __str__(self): return str(self.metadata_name)
 

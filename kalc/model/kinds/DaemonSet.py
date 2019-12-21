@@ -99,5 +99,6 @@ class DaemonSet(ModularKind, Controller, HasLimitsRequests):
                 pod.memLimit = self.memLimit
                 pod.set_priority(object_space, self)
             object_space.remove(old_daemonSet) # delete old Deployment
+    def __str__(self): return str(self._get_value())
 
 
