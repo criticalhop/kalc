@@ -24,9 +24,6 @@ jsonpatch = "^1.24"
 
 [tool.poetry.dev-dependencies]
 
-[tool.poetry.scripts]
-kubectl-val = "kalc.cli:run"
-
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
