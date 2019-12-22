@@ -6,6 +6,7 @@ from kalc.model.system.primitives import Label, StatusNode
 from kalc.model.system.base import HasLabel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from kalc.misc.const import STATUS_NODE
+import kalc.model.kinds.Pod as mpod
 
 
 class Node(ModularKind, HasLabel):
@@ -14,6 +15,7 @@ class Node(ModularKind, HasLabel):
     metadata_name: str
     spec_priorityClassName: str
     labels: Set[Label]
+    pods: Set[mpod.Pod]
     cpuCapacity: int
     memCapacity: int
     currentFormalCpuConsumption: int
@@ -81,8 +83,4 @@ class Node(ModularKind, HasLabel):
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
 
-Node.NODE_NULL = Node("NULL")
-Node.NODE_NULL.isNull = True
-Node.NODE_NULL.metadata_name = "Null-Node"
-Node.NODE_NULL.searchable = False
 

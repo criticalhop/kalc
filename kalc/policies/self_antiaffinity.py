@@ -37,6 +37,7 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
 
             def hypothesis_existing_match_group():
                 # TODO: 
+                pass
 
             def hypothesis_new_match_group():
                 # TODO: hypotheses can not work in parallel this way: will modify main object

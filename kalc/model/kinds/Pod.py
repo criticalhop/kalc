@@ -155,6 +155,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
+                node.pods.add(self)
                 node.amountOfActivePods += 1
                 assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max %s > %s" % (getint(node.amountOfActivePods), POODLE_MAXLIN) 
                 if self.cpuRequest > 0:
@@ -272,8 +273,4 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
 
 
     def __str__(self): return str(self.metadata_name)
-
-
-Pod.POD_NULL = Pod("NULL")
-Pod.POD_NULL.isNull = True
 

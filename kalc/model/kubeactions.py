@@ -180,6 +180,7 @@ class KubernetesModel(ProblemTemplate):
         assert podPending.memRequest > nodeForPodPending.memCapacity - nodeForPodPending.currentFormalMemConsumption
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
+
     @planned(cost=1)
     def Evict_and_replace_less_prioritized_pod_byCPU(self,
         podPending: "Pod",
@@ -207,6 +208,7 @@ class KubernetesModel(ProblemTemplate):
         assert podPending.cpuRequest > nodeForPodPending.cpuCapacity - nodeForPodPending.currentFormalCpuConsumption
         assert podToBeReplaced.status == STATUS_POD["Running"]
         podToBeReplaced.status = STATUS_POD["Killing"]
+
     @planned(cost=1)
     def Mark_Pod_As_Exceeding_Mem_Limits(self, podTobeKilled: "Pod",nodeOfPod: "Node",
         globalVar: GlobalVar
@@ -233,6 +235,7 @@ class KubernetesModel(ProblemTemplate):
         assert podTobeReanimated.memLimit >  podTobeReanimated.currentRealMemConsumption
         nodeOfPod.AmountOfPodsOverwhelmingMemLimits -= 1
         podTobeReanimated.memLimitsStatus = STATUS_LIM["Limit Met"]
+
     @planned(cost=1)
     def MemoryErrorKillPodExceedingLimits(self,
         nodeOfPod: "Node" ,
@@ -259,6 +262,7 @@ class KubernetesModel(ProblemTemplate):
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
         podTobeKilled.status = STATUS_POD["Killing"]
+
     @planned(cost=1)
     def KillPod(self,
         podBeingKilled : "Pod",
@@ -285,11 +289,10 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.block_policy_calculated == False
         assert podBeingKilled.atNode == nodeWithPod
         assert podBeingKilled.status == STATUS_POD["Killing"]
-        assert podBeingKilled.hasDeployment == False 
-        assert podBeingKilled.hasDaemonset == False
         assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         nodeWithPod.amountOfActivePods -= 1
+        nodeWithPod.pods.remove(podBeingKilled)
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"] # commented, solves
@@ -300,6 +303,7 @@ class KubernetesModel(ProblemTemplate):
         #TODO: make sure that calculation excude situations that lead to negative number in the result
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
+
     @planned(cost=1)
     def AddNodeToSelector(self, 
         pod1: "Pod",
@@ -309,6 +313,7 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.block_policy_calculated == False
         # assert globalVar.block_node_outage_in_progress == False
         pod1.nodeSelectorList.add(selectedNode) 
+
     @planned(cost=1)
     def SelectNode(self, 
         pod1: "Pod",
@@ -320,6 +325,7 @@ class KubernetesModel(ProblemTemplate):
         assert pod1.toNode == Node.NODE_NULL
         assert selectedNode in pod1.nodeSelectorList
         pod1.toNode = selectedNode    
+
     @planned(cost=1) # TODO
     def StartPod(self, 
             podStarted: "Pod",
@@ -354,13 +360,21 @@ class KubernetesModel(ProblemTemplate):
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
         assert node.status == STATUS_NODE["Active"]
+
+        # TODO THIS DOES NOT WORK -->>>
+        for pod in node.pods: # -> (forall (?pod-1 - Pod) ... (and (Node-pods ?node ?pod-1)
+            assert not podStarted in pod.anti_affinite_with #      (not (Pod-anti_affninite_with ?pod-1 ?podStarted))))
+        # TODO <<<--- 
+
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node       
+        node.pods.add(podStarted)
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
         podStarted.status = STATUS_POD["Running"]      
+
     @planned(cost=1)
     def SchedulerCleaned(self, 
         scheduler: "Scheduler",
