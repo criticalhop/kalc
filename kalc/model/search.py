@@ -607,18 +607,15 @@ class Antiaffinity_check(KubernetesModel):
         node_of_checked_pod: Node,
         globalVar: GlobalVar,
         scheduler: Scheduler):
-        if checked_pod in target_pod.podsMatchedByAntiaffinity and \
+        if  checked_pod in target_pod.podsMatchedByAntiaffinity and \
             target_pod.antiaffinity_set == True and \
             checked_pod.atNode != target_pod.atNode and \
-            checked_pod not in target_pod.calc_antiaffinity_pods_list:# and \
-            #globalVar.block_policy_calculated == True :
+            checked_pod not in target_pod.calc_antiaffinity_pods_list and \
+            globalVar.block_policy_calculated == True :
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
                 target_pod.calc_antiaffinity_pods_list_lenth += 1
         # assert 1 == 1 
-        # assert checked_pod.atNode == checked_pod.atNode 
-        # checked_pod.atNode = checked_pod.atNode 
-        target_pod.calc_nonprocessed_for_antiaffinity_pods_list.remove(checked_pod)
-        target_pod.calc_nonprocessed_for_antiaffinity_pods_list_lenght -= 1
+        target_pod.antiaffinity_set = True 
 
     @planned(cost=1)
     def mark_antiaffinity_met(self,
