@@ -599,6 +599,13 @@ class Antiaffinity_met(KubernetesModel):
         pod1.calc_antiaffinity_preferred_pods_list_lenth += 1
         
 class Antiaffinity_check(KubernetesModel):
+    @planned
+    def brakepoint(self,
+        pod: Pod):
+        assert pod.status == STATUS_POD["Pending"]
+        assert pod.antiaffinity_set == True
+        pod.antiaffinity_met = True
+        
     @planned(cost=1)
     def mark_checked_pod_as_antiaffinity_checked_for_target_pod(self,
         checked_pod: Pod,
@@ -611,7 +618,9 @@ class Antiaffinity_check(KubernetesModel):
             target_pod.antiaffinity_set == True and \
             checked_pod.atNode != target_pod.atNode and \
             checked_pod not in target_pod.calc_antiaffinity_pods_list and \
-            globalVar.block_policy_calculated == True :
+            globalVar.block_policy_calculated == True and \
+            checked_pod.status == STATUS_POD["Running"] and \
+            target_pod.status == STATUS_POD["Running"]:
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
                 target_pod.calc_antiaffinity_pods_list_lenth += 1
         # assert 1 == 1 
@@ -625,13 +634,20 @@ class Antiaffinity_check(KubernetesModel):
         assert target_pod.calc_antiaffinity_pods_list_lenth == target_pod.target_number_of_antiaffinity_pods
         target_pod.antiaffinity_met = True
     
+    # def generate_goal(self):
+    #     self.generated_goal_in = []
+    #     self.generated_goal_eq = []
+    #     for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_set == True, self.objectList):
+    #             self.generated_goal_eq.append([pod1.antiaffinity_met, True])
+    #     for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
+    #             self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
         for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_set == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
         for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
-                self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
+                self.generated_goal_eq.append([pod1.status, STATUS_POD["Pending"]])
 
     def goal(self):
         for what, where in self.generated_goal_in:
