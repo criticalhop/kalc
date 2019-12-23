@@ -531,10 +531,10 @@ class KubernetesModel(ProblemTemplate):
         )
     @planned(cost=1)
     def Manually_initiate_killing_of_pod(self,
-        node_with_outage: "Node",
         pod_killed: "Pod",
         globalVar: GlobalVar
         ):
         assert pod_killed.status == STATUS_POD["Running"]
+        assert globalVar.block_policy_calculated == False
         pod_killed.status = STATUS_POD["Killing"]
         return {"kubectl": "kubectl delete pod/%s" % pod_killed.metadata_name}
