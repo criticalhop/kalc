@@ -43,9 +43,6 @@ def print_objects(objectList):
         ", antiaffinity_set:" + str(poditem.antiaffinity_set._get_value()) + \
         ", podsMatchedByAntiaffinity" +  str([str(x) for x in poditem.podsMatchedByAntiaffinity._get_value()])+\
         ", antiaffinity_preferred_set:" + str(poditem.antiaffinity_preferred_set._get_value()) + \
-        ", podsMatchedByAntiaffinity: " +  str([str(x) for x in poditem.podsToBeMatchedByAntiaffinity_Preferred._get_value()])+\
-        ", calc_nonprocessed_for_antiaffinity_pods_list: " + str([str(x) for x in poditem.calc_nonprocessed_for_antiaffinity_pods_list._get_value()]) + \
-        ", calc_nonprocessed_for_antiaffinity_pods_list_lenght: " + str(poditem.calc_nonprocessed_for_antiaffinity_pods_list_lenght._get_value())+\
         ", target_number_of_antiaffinity_pods: "+ str(poditem.target_number_of_antiaffinity_pods._get_value()))
     
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
