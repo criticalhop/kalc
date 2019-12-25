@@ -551,7 +551,6 @@ class Antiaffinity_met(KubernetesModel):
     def mark_antiaffinity_met(self,
         pod: Pod):
         assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
-
         pod.antiaffinity_met = True
     @planned(cost=1)
     def mark_antiaffinity_preferred_met(self,
@@ -562,10 +561,10 @@ class Antiaffinity_met(KubernetesModel):
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
-        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_set == True, self.objectList):
-                self.generated_goal_eq.append([pod1.antiaffinity_met, True])
-        for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
-                self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
+        for target_pod in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_set == True, self.objectList):
+                self.generated_goal_eq.append([target_pod.calc_antiaffinity_pods_list_lenth, target_pod.target_number_of_antiaffinity_pods])
+        for target_pod in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
+                self.generated_goal_eq.append([target_pod.calc_antiaffinity_pods_list_lenth, target_pod.target_number_of_antiaffinity_preferred_pods])
 
     def goal(self):
         for what, where in self.generated_goal_in:
@@ -614,17 +613,71 @@ class Antiaffinity_check(KubernetesModel):
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
                 target_pod.calc_antiaffinity_pods_list_lenth += 1
         target_pod.antiaffinity_set = True
-
-
-
+        
+    @planned(cost=1)
+    def mark_that_node_cant_allocate_pod_by_cpu(self,
+        pod: Pod,
+        node: Node,
+        globalVar: GlobalVar):
+        if node in pod.nodesThatCantAllocateThisPod:
+            node.amountOfActivePods = node.amountOfActivePods 
+        else:
+            assert pod.cpuRequest > node.cpuCapacity - node.currentFormalCpuConsumption
+            assert globalVar.block_policy_calculated == False
+            pod.nodesThatCantAllocateThisPod.add(node)
+            pod.nodesThatCantAllocateThisPod_lenght += 1
+    @planned(cost=1)
+    def mark_that_node_cant_allocate_pod_by_mem(self,
+        pod: Pod,
+        node: Node,
+        globalVar: GlobalVar):
+        if node in pod.nodesThatCantAllocateThisPod:
+            node.amountOfActivePods = node.amountOfActivePods
+        else:
+            assert pod.memRequest > node.memCapacity - node.currentFormalMemConsumption
+            assert globalVar.block_policy_calculated == False
+            pod.nodesThatCantAllocateThisPod.add(node)
+            pod.nodesThatCantAllocateThisPod_lenght += 1
+    @planned(cost=1)
+    def mark_that_node_cant_allocate_pod_because_of_antiaffinity(self,
+        target_pod: Pod,
+        checked_pod:Pod,
+        node: Node,
+        globalVar: GlobalVar):
+        if node in target_pod.nodesThatCantAllocateThisPod:
+            node.amountOfActivePods = node.amountOfActivePods
+        else:
+            if checked_pod  in target_pod.podsMatchedByAntiaffinity:
+                assert globalVar.block_policy_calculated == False
+                assert node == checked_pod.atNode
+                target_pod.nodesThatCantAllocateThisPod.add(node)
+                target_pod.nodesThatCantAllocateThisPod_lenght += 1
+    @planned(cost=1)
+    def mark_that_node_cant_allocate_pod_because_of_antiaffinity_preferred(self,
+        target_pod: Pod,
+        checked_pod:Pod,
+        node: Node,
+        globalVar: GlobalVar):
+        if checked_pod  in target_pod.podsMatchedByAntiaffinityPrefered:
+            assert globalVar.block_policy_calculated == False
+            assert node == checked_pod.atNode
+            target_pod.nodesThatCantAllocateThisPod.add(node)
+            target_pod.nodesThatCantAllocateThisPod_lenght += 1
+    @planned(cost=1)
+    def reduce_antiaffinity_pod_amount(self,
+        pod: Pod,
+        globalVar: GlobalVar):
+        assert globalVar.block_policy_calculated == False
+        assert globalVar.amountOfNodes == pod.nodesThatCantAllocateThisPod_lenght-1
+        pod.target_number_of_antiaffinity_pods -= 1
     @planned(cost=1)
     def mark_antiaffinity_met(self,
-        target_pod: Pod,
+        pod: Pod,
         globalVar: GlobalVar):
-        assert globalVar.block_policy_calculated == True
-        assert target_pod.calc_antiaffinity_pods_list_lenth == target_pod.target_number_of_antiaffinity_pods
-        target_pod.antiaffinity_met = True
-    
+        assert globalVar.block_policy_calculated == False
+        assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
+        pod.antiaffinity_met = True
+
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []

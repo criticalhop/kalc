@@ -60,6 +60,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     podsMatchedByAffinity_lenght: int
     podsMatchedByAntiaffinity: Set["Pod"]
     podsMatchedByAntiaffinity_lenght: int
+    nodesThatCantAllocateThisPod: Set["Node"]
+    nodesThatCantAllocateThisPod_lenght: int
     podsMatchedByAntiaffinityPrefered: Set["Pod"]
     podsMatchedByAntiaffinityPrefered_lenght: int
     calc_antiaffinity_pods_list: Set["Pod"]
@@ -117,6 +119,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.podsMatchedByAntiaffinityPrefered_lenght = 0
         self.is_checked_as_source_for_labels = False
         self.is_checked_as_target_for_labels = False
+        self.nodesThatCantAllocateThisPod_lenght = 0 
 
 
 

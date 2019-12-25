@@ -8,6 +8,7 @@ from kalc.model.system.base import HasLabel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from kalc.misc.const import STATUS_NODE
 from kalc.model.scenario import ScenarioStep, describe
+from kalc.model.system.globals import GlobalVar
 
 
 class Node(ModularKind, HasLabel):
@@ -49,6 +50,9 @@ class Node(ModularKind, HasLabel):
         self.isSearched = False
         
     def hook_after_create(self, object_space):
+        globalVar = next(filter(lambda x: isinstance(x, GlobalVar), object_space))
+        globalVar.amountOfNodes += 1
+
         nodes = filter(lambda x: isinstance(x, Node), object_space)
         for node in nodes:
             if node != self:
@@ -56,6 +60,8 @@ class Node(ModularKind, HasLabel):
                 node.different_than.add(self)
 
     def hook_after_load(self, object_space):
+        globalVar = next(filter(lambda x: isinstance(x, GlobalVar), object_space))
+        globalVar.amountOfNodes += 1
         nodes = filter(lambda x: isinstance(x, Node), object_space)
         for node in nodes:
             if node != self:
