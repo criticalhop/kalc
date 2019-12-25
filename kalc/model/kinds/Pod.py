@@ -69,11 +69,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     calc_nonprocessed_for_antiaffinity_pods_list: Set["Pod"]
     calc_nonprocessed_for_antiaffinity_pods_list_lenght: int
     calc_nonprocessed_for_antiaffinity_preferred_pods_list: Set["Pod"]
-    calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth: int
+    calc_nonprocessed_for_antiaffinity_preferred_pods_list_length: int
     calc_antiaffinity_pods_list: Set["Pod"]
-    calc_antiaffinity_pods_list_lenth: int
+    calc_antiaffinity_pods_list_length: int
     calc_antiaffinity_preferred_pods_list: Set["Pod"]
-    calc_antiaffinity_preferred_pods_list_lenth: int
+    calc_antiaffinity_preferred_pods_list_length: int
     antiaffinity_pods_list: Set["Pod"]
     antiaffinity_preferred_pods_list: Set["Pod"]
     
@@ -82,9 +82,9 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
 
 
     calc_labels_notprocessed_for_antiaffinity_matching: Set["Label"]
-    calc_labels_notprocessed_for_antiaffinity_matching_lenth: int
+    calc_labels_notprocessed_for_antiaffinity_matching_length: int
     calc_labels_antiaffinity_matching: Set["Label"]
-    calc_labels_antiaffinity_matching_lenth: int
+    calc_labels_antiaffinity_matching_length: int
     antiaffinity_labels: Set["Label"]
     antiaffinity_labels_lenght: int
     antiaffinity_preferred_labels: Set["Label"]
@@ -120,9 +120,9 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodeSelectorSet = False
         self.antiaffinity_set = False
         self.calc_nonprocessed_for_antiaffinity_pods_list_lenght = 0
-        self.calc_nonprocessed_for_antiaffinity_preferred_pods_list_lenth = 0
-        self.calc_antiaffinity_pods_list_lenth = 0
-        self.calc_antiaffinity_preferred_pods_list_lenth = 0
+        self.calc_nonprocessed_for_antiaffinity_preferred_pods_list_length = 0
+        self.calc_antiaffinity_pods_list_length = 0
+        self.calc_antiaffinity_preferred_pods_list_length = 0
         self.target_number_of_antiaffinity_pods = 0
         self.antiaffinity_met = False
         self.podsToBeMatchedByAntiaffinity_lenght = 0

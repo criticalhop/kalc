@@ -456,13 +456,13 @@ class Antiaffinity_met(KubernetesModel):
     @planned(cost=1)
     def mark_antiaffinity_met(self,
         pod: Pod):
-        assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
+        assert pod.calc_antiaffinity_pods_list_length == pod.target_number_of_antiaffinity_pods
 
         pod.antiaffinity_met = True
     @planned(cost=1)
     def mark_antiaffinity_preferred_met(self,
         pod: Pod):
-        assert pod.calc_antiaffinity_preferred_pods_list_lenth == pod.target_number_of_antiaffinity_preferred_pods
+        assert pod.calc_antiaffinity_preferred_pods_list_length == pod.target_number_of_antiaffinity_preferred_pods
         pod.antiaffinity_preferred_met = True
     
     def generate_goal(self):
@@ -502,7 +502,7 @@ class Antiaffinity_met(KubernetesModel):
         pod1.not_on_same_node.add(pod2)
         pod1.calc_nonprocessed_for_antiaffinity_preferred_pods_list.remove(pod2)
         pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list_lenth += 1
+        pod1.calc_antiaffinity_preferred_pods_list_length += 1
         
 class Antiaffinity_check(KubernetesModel):
     @planned(cost=1)
@@ -519,7 +519,7 @@ class Antiaffinity_check(KubernetesModel):
             checked_pod in target_pod.calc_nonprocessed_for_antiaffinity_pods_list:# and \
             #globalVar.block_policy_calculated == True :
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
-                target_pod.calc_antiaffinity_pods_list_lenth += 1
+                target_pod.calc_antiaffinity_pods_list_length += 1
         target_pod.calc_nonprocessed_for_antiaffinity_pods_list.remove(checked_pod)
         target_pod.calc_nonprocessed_for_antiaffinity_pods_list_lenght -= 1
 
@@ -528,7 +528,7 @@ class Antiaffinity_check(KubernetesModel):
         target_pod: Pod,
         globalVar: GlobalVar):
         assert globalVar.block_policy_calculated == True
-        assert target_pod.calc_antiaffinity_pods_list_lenth == target_pod.target_number_of_antiaffinity_pods
+        assert target_pod.calc_antiaffinity_pods_list_length == target_pod.target_number_of_antiaffinity_pods
         target_pod.antiaffinity_met = True
     
     def generate_goal(self):
