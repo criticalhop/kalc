@@ -608,8 +608,8 @@ class Antiaffinity_check(KubernetesModel):
         if checked_pod in target_pod.podsMatchedByAntiaffinity and \
             target_pod.antiaffinity_set == True and \
             checked_pod.atNode != target_pod.atNode and \
-            checked_pod not in target_pod.calc_antiaffinity_pods_list and \
-            globalVar.block_policy_calculated == True :
+            checked_pod not in target_pod.calc_antiaffinity_pods_list:# and \
+#            globalVar.block_policy_calculated == True :
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
                 target_pod.calc_antiaffinity_pods_list_lenth += 1
         target_pod.antiaffinity_set = True
@@ -674,7 +674,7 @@ class Antiaffinity_check(KubernetesModel):
     def mark_antiaffinity_met(self,
         pod: Pod,
         globalVar: GlobalVar):
-        assert globalVar.block_policy_calculated == False
+        assert globalVar.block_policy_calculated == True
         assert pod.calc_antiaffinity_pods_list_lenth == pod.target_number_of_antiaffinity_pods
         pod.antiaffinity_met = True
 
