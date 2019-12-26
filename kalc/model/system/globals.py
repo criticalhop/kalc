@@ -9,6 +9,8 @@ class GlobalVar(Object):
     is_node_disrupted: bool
     amountOfNodesDisrupted: int
     limitOfAmountOfNodesDisrupted: int
+    amountOfNodes: int
+
     is_node_disruption_searchable: bool
     is_daemonset_disrupted: bool
     is_daemonset_distuption_searchable: bool
@@ -33,4 +35,5 @@ class GlobalVar(Object):
         self.block_policy_calculated = False
         self.antiaffinity_prefered_policy_met = False
         self.nodeSelectorsEnabled = False
+        self.amountOfNodes = 0
     def __str__(self): return str(self._get_value())
