@@ -623,7 +623,8 @@ class Antiaffinity_check(KubernetesModel):
             node.amountOfActivePods = node.amountOfActivePods 
         else:
             assert pod.cpuRequest > node.cpuCapacity - node.currentFormalCpuConsumption
-            assert globalVar.block_policy_calculated == False
+            assert globalVar.block_policy_calculated == True
+            assert node.isNull == False
             pod.nodesThatCantAllocateThisPod.add(node)
             pod.nodesThatCantAllocateThisPod_lenght += 1
     @planned(cost=1)
@@ -635,7 +636,8 @@ class Antiaffinity_check(KubernetesModel):
             node.amountOfActivePods = node.amountOfActivePods
         else:
             assert pod.memRequest > node.memCapacity - node.currentFormalMemConsumption
-            assert globalVar.block_policy_calculated == False
+            assert globalVar.block_policy_calculated == True
+            assert node.isNull == False
             pod.nodesThatCantAllocateThisPod.add(node)
             pod.nodesThatCantAllocateThisPod_lenght += 1
     @planned(cost=1)
@@ -648,8 +650,9 @@ class Antiaffinity_check(KubernetesModel):
             node.amountOfActivePods = node.amountOfActivePods
         else:
             if checked_pod  in target_pod.podsMatchedByAntiaffinity:
-                assert globalVar.block_policy_calculated == False
+                assert globalVar.block_policy_calculated == True
                 assert node == checked_pod.atNode
+                assert node.isNull == False
                 target_pod.nodesThatCantAllocateThisPod.add(node)
                 target_pod.nodesThatCantAllocateThisPod_lenght += 1
     @planned(cost=1)
@@ -659,16 +662,17 @@ class Antiaffinity_check(KubernetesModel):
         node: Node,
         globalVar: GlobalVar):
         if checked_pod  in target_pod.podsMatchedByAntiaffinityPrefered:
-            assert globalVar.block_policy_calculated == False
+            assert globalVar.block_policy_calculated == True
             assert node == checked_pod.atNode
+            assert node.isNull == False
             target_pod.nodesThatCantAllocateThisPod.add(node)
             target_pod.nodesThatCantAllocateThisPod_lenght += 1
     @planned(cost=1)
     def reduce_antiaffinity_pod_amount(self,
         pod: Pod,
         globalVar: GlobalVar):
-        assert globalVar.block_policy_calculated == False
-        assert globalVar.amountOfNodes == pod.nodesThatCantAllocateThisPod_lenght-1
+        assert globalVar.block_policy_calculated == True
+        assert globalVar.amountOfNodes == pod.nodesThatCantAllocateThisPod_lenght
         pod.target_number_of_antiaffinity_pods -= 1
     @planned(cost=1)
     def mark_antiaffinity_met(self,
