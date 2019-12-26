@@ -639,7 +639,7 @@ class Antiaffinity_check(KubernetesModel):
         pod.target_number_of_antiaffinity_pods += 0
         pod.target_number_of_antiaffinity_pods -= 0
         pod.target_number_of_antiaffinity_pods -= 0
-        # pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods -= 0
 
 
 
