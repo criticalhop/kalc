@@ -615,6 +615,32 @@ class Antiaffinity_check(KubernetesModel):
                 target_pod.calc_antiaffinity_pods_list_lenth += 1
         target_pod.antiaffinity_set = True
 
+    @planned(cost=1)
+    def reduce_target_number_of_antiaffinity_pods(self,
+        pod: Pod,
+        globalVar: GlobalVar):
+        assert globalVar.block_policy_calculated == False
+        pod.target_number_of_antiaffinity_pods -= 1
+
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods += 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        pod.target_number_of_antiaffinity_pods -= 0
+        # pod.target_number_of_antiaffinity_pods -= 0
+
 
 
     @planned(cost=1)

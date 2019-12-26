@@ -365,7 +365,7 @@ class KubernetesModel(ProblemTemplate):
         #TODO: make sure that calculation excude situations that lead to negative number in the result
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
         ## assert amountOfActivePodsPrev == serviceOfPod.amountOfActivePods
-    @planned(cost=1)
+    #@planned(cost=1)
     def AddNodeToSelector(self, 
         pod1: "Pod",
         selectedNode: "Node",
