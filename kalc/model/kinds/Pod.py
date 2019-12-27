@@ -57,13 +57,15 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     antiaffinity_preferred_met: bool
 
     podsMatchedByAffinity: Set["Pod"]
-    podsMatchedByAffinity_lenght: int
+    podsMatchedByAffinity_length: int
     podsMatchedByAntiaffinity: Set["Pod"]
-    podsMatchedByAntiaffinity_lenght: int
+    podsMatchedByAntiaffinity_length: int
     nodesThatCantAllocateThisPod: Set["Node"]
-    nodesThatCantAllocateThisPod_lenght: int
+    nodesThatCantAllocateThisPod_length: int
+    nodesThatHaveAllocateThisPod: Set["Node"]
+    nodesThatHaveAllocateThisPod_length: int
     podsMatchedByAntiaffinityPrefered: Set["Pod"]
-    podsMatchedByAntiaffinityPrefered_lenght: int
+    podsMatchedByAntiaffinityPrefered_length: int
     calc_antiaffinity_pods_list: Set["Pod"]
     calc_antiaffinity_pods_list_lenth: int
     calc_antiaffinity_preferred_pods_list: Set["Pod"]
@@ -75,11 +77,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     target_number_of_antiaffinity_preferred_pods: int
 
     antiaffinity_labels: Set["Label"]
-    antiaffinity_labels_lenght: int
+    antiaffinity_labels_length: int
     antiaffinity_preferred_labels: Set["Label"]
-    antiaffinity_preferred_labels_lenght: int
+    antiaffinity_preferred_labels_length: int
     affinity_labels: Set["Label"]
-    affinity_labels_lenght: int
+    affinity_labels_length: int
     is_checked_as_source_for_labels: bool
     is_checked_as_target_for_labels: bool
 
@@ -112,14 +114,15 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.calc_antiaffinity_preferred_pods_list_lenth = 0
         self.target_number_of_antiaffinity_pods = 0
         self.antiaffinity_met = False
-        self.podsToBeMatchedByAntiaffinity_lenght = 0
-        self.podsToBeMatchedByAntiaffinity_Preferred_lenght = 0
-        self.podsMatchedByAffinity_lenght = 0
-        self.podsMatchedByAntiaffinity_lenght = 0
-        self.podsMatchedByAntiaffinityPrefered_lenght = 0
+        self.podsToBeMatchedByAntiaffinity_length = 0
+        self.podsToBeMatchedByAntiaffinity_Preferred_length = 0
+        self.podsMatchedByAffinity_length = 0
+        self.podsMatchedByAntiaffinity_length = 0
+        self.podsMatchedByAntiaffinityPrefered_length = 0
         self.is_checked_as_source_for_labels = False
         self.is_checked_as_target_for_labels = False
-        self.nodesThatCantAllocateThisPod_lenght = 0 
+        self.nodesThatCantAllocateThisPod_length = 0 
+        self.nodesThatHaveAllocateThisPod_length = 0
 
 
 

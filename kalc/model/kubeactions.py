@@ -408,6 +408,22 @@ class KubernetesModel(ProblemTemplate):
         if podStarted.hasDaemonset == True:
             assert podStarted in pods_daemonset.podList
             pods_daemonset.amountOfActivePods += 1
+        # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
+        #     podStarted.memRequest = podStarted.memLimit
+        # if podStarted.cpuRequest == -1 and podStarted.cpuLimit > -1:
+        #     podStarted.cpuRequest = podStarted.cpuLimit
+
+        # if podStarted.memRequest > -1 and podStarted.memLimit == -1:
+        #     podStarted.memLimit = node.memCapacity
+        # if podStarted.cpuRequest > -1 and podStarted.cpuLimit == -1:
+        #     podStarted.cpuLimit = node.cpuCapacity
+
+        # if podStarted.memRequest == -1 and podStarted.memLimit == -1:
+        #     podStarted.memLimit = node.memCapacity
+        #     podStarted.memRequest = 0
+        # if podStarted.cpuRequest == -1 and podStarted.cpuLimit == -1:
+        #     podStarted.cpuLimit = node.cpuCapacity
+        #     podStarted.cpuRequest = 0
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False
         assert globalVar.block_policy_calculated == False

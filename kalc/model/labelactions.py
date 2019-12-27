@@ -48,7 +48,7 @@ class LabelsModel(ProblemTemplate):
         pod: Pod,
         label: Label):
         pod.antiaffinity_labels.add(label)
-        pod.antiaffinity_labels_lenght += 1
+        pod.antiaffinity_labels_length += 1
     @planned(cost=1)
     def remove_label_from_pod(self,
         pod: Pod,
@@ -60,7 +60,7 @@ class LabelsModel(ProblemTemplate):
         pod: Pod,
         label: Label):
         pod.antiaffinity_labels.add(label)
-        pod.antiaffinity_labels_lenght += 1
+        pod.antiaffinity_labels_length += 1
     
     @planned(cost=1)
     def add_label_to_label_connection_with_antiaffinity(self,
@@ -93,7 +93,7 @@ class LabelsModel(ProblemTemplate):
         assert pod_target.is_checked_as_target_for_labels == True
         assert pod_source == label_connection.pod_source
         assert pod_target == label_connection.pod_target
-        assert label_connection.Label_connection_lenth == pod_source.antiaffinity_labels_lenght
+        assert label_connection.Label_connection_lenth == pod_source.antiaffinity_labels_length
         pod_source.antiaffinity_pods_list.add(pod_target)
 
         
