@@ -17,6 +17,6 @@ class Scheduler(Object):
         super().__init__(*args, **kwargs)
         self.queueLength = 0
         # self.debug_var = False
-        self.status = STATUS_SCHED["Changed"]
+        self.status = STATUS_SCHED["Clean"]
     def __str__(self): return str(self._get_value())
     

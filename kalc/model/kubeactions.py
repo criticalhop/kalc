@@ -349,9 +349,7 @@ class KubernetesModel(ProblemTemplate):
             pods_daemonset.amountOfActivePods -= 1
         assert globalVar.block_policy_calculated == False
         assert podBeingKilled.atNode == nodeWithPod
-        assert podBeingKilled.status == STATUS_POD["Killing"]
-        assert podBeingKilled.hasDeployment == False 
-        assert podBeingKilled.hasDaemonset == False
+        assert podBeingKilled.status == STATUS_POD["Running"]
         assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         nodeWithPod.amountOfActivePods -= 1
@@ -545,12 +543,3 @@ class KubernetesModel(ProblemTemplate):
             probability=1.0,
             affected=[]
         )
-    @planned(cost=1)
-    def Manually_initiate_killing_of_pod(self,
-        pod_killed: "Pod",
-        globalVar: GlobalVar
-        ):
-        assert pod_killed.status == STATUS_POD["Running"]
-        assert globalVar.block_policy_calculated == False
-        pod_killed.status = STATUS_POD["Killing"]
-        return {"kubectl": "kubectl delete pod/%s" % pod_killed.metadata_name}
