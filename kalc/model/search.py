@@ -597,6 +597,20 @@ class Antiaffinity_met(KubernetesModel):
         pod1.calc_antiaffinity_preferred_pods_list_lenth += 1
         
 class Antiaffinity_check(KubernetesModel):
+    # @planned(cost=1)
+    def brakepoint(self,
+        target_pod: Pod):
+        assert target_pod.status == STATUS_POD["Pending"]
+        # assert target_pod.antiaffinity_set == True
+        target_pod.antiaffinity_met = True
+    @planned(cost=1)
+    def brakepoint2(self,
+        target_pod: Pod,
+        node: Node):
+        assert target_pod.status == STATUS_POD["Running"]
+        assert target_pod.atNode == node
+        assert node.isSearched == True
+        target_pod.antiaffinity_met = True
     @planned(cost=1)
     def mark_checked_pod_as_antiaffinity_checked_for_target_pod(self,
         target_pod: Pod,
