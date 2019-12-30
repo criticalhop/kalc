@@ -27,5 +27,5 @@ README.rst
 setup.pyc
 *.vscode/
 pytest_*
-.yaml
-.ipynb
+*.yaml
+*.ipynb
