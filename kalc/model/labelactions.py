@@ -78,7 +78,7 @@ class LabelsModel(ProblemTemplate):
 
         label_connection.matching_labels_candidates.remove(label)
         label_connection.Label_connection.add(label)
-        label_connection.Label_connection_lenth += 1
+        label_connection.Label_connection_length += 1
 
     @planned(cost=1)
     def Mark_pod_as_matching(self,
@@ -93,7 +93,7 @@ class LabelsModel(ProblemTemplate):
         assert pod_target.is_checked_as_target_for_labels == True
         assert pod_source == label_connection.pod_source
         assert pod_target == label_connection.pod_target
-        assert label_connection.Label_connection_lenth == pod_source.antiaffinity_labels_length
+        assert label_connection.Label_connection_length == pod_source.antiaffinity_labels_length
         pod_source.antiaffinity_pods_list.add(pod_target)
 
         

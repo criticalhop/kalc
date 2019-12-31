@@ -53,6 +53,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     antiaffinity_set: bool
     antiaffinity_preferred_set: bool
     
+    affinity_met: bool   
     antiaffinity_met: bool
     antiaffinity_preferred_met: bool
 
@@ -66,10 +67,15 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     nodesThatHaveAllocateThisPod_length: int
     podsMatchedByAntiaffinityPrefered: Set["Pod"]
     podsMatchedByAntiaffinityPrefered_length: int
+    calc_affinity_pods_list: Set["Pod"]
+    calc_affinity_pods_list_length: int
     calc_antiaffinity_pods_list: Set["Pod"]
-    calc_antiaffinity_pods_list_lenth: int
+    calc_antiaffinity_pods_list_length: int
+    calc_cantmatch_antiaffinity_pods_list: Set["Pod"]
+    calc_cantmatch_antiaffinity_pods_list_length: int
+
     calc_antiaffinity_preferred_pods_list: Set["Pod"]
-    calc_antiaffinity_preferred_pods_list_lenth: int
+    calc_antiaffinity_preferred_pods_list_length: int
     antiaffinity_pods_list: Set["Pod"]
     antiaffinity_preferred_pods_list: Set["Pod"]
     
@@ -110,8 +116,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         # self.metadata_name = "model-default-name"
         self.nodeSelectorSet = False
         self.antiaffinity_set = False
-        self.calc_antiaffinity_pods_list_lenth = 0
-        self.calc_antiaffinity_preferred_pods_list_lenth = 0
+        self.calc_antiaffinity_pods_list_length = 0
+        self.calc_antiaffinity_preferred_pods_list_length = 0
         self.target_number_of_antiaffinity_pods = 0
         self.antiaffinity_met = False
         self.podsToBeMatchedByAntiaffinity_length = 0
@@ -123,6 +129,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.is_checked_as_target_for_labels = False
         self.nodesThatCantAllocateThisPod_length = 0 
         self.nodesThatHaveAllocateThisPod_length = 0
+        self.calc_cantmatch_antiaffinity_pods_list_length = 0
 
 
 
