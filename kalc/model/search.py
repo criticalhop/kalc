@@ -661,22 +661,25 @@ class Antiaffinity_check(KubernetesModel):
     def mark_that_checked_pod_cant_match_antiaffinity_of_target_pod_when_all_nodes_dont_suite(self,
         target_pod: Pod,
         checked_pod:Pod,
-        node: Node,
         globalVar: GlobalVar):
         assert checked_pod in target_pod.podsMatchedByAntiaffinity
         assert checked_pod.nodesThatCantAllocateThisPod_length == globalVar.amountOfNodes - 1
-        checked_pod.calc_cantmatch_antiaffinity_pods_list.add()
-        checked_pod.calc_cantmatch_antiaffinity_pods_list_length += 1
+        assert globalVar.block_policy_calculated == True
+        target_pod.calc_cantmatch_antiaffinity_pods_list.add(checked_pod)
+        target_pod.calc_cantmatch_antiaffinity_pods_list_length += 1
     
     
     @planned(cost=1)
-    def remove_pod_from_cluster((self,
+    def remove_pod_from_cluster_because_of_anitaffinity_conflict(self,
         target_pod: Pod,
         checked_pod:Pod,
-        node: Node,
+        scheduler: Scheduler,
         globalVar: GlobalVar):
-        
-        checked_pod.status = STATUS_POD["Outaged"]
+        assert checked_pod in target_pod.podsMatchedByAntiaffinity
+        assert checked_pod in target_pod.calc_cantmatch_antiaffinity_pods_list
+        target_pod.status = STATUS_POD["Outaged"]
+        scheduler.podQueue.remove(target_pod)
+        scheduler.queueLength -= 1
     
     @planned(cost=1)
     def mark_antiaffinity_met_because_all_antiaffinity_pods_are_matched(self,
