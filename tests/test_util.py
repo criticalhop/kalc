@@ -41,10 +41,14 @@ def print_objects(objectList):
         ", AffinitySet:" + str(poditem.affinity_set._get_value()) + \
         ", podsMatchedByAffinity: " +  str([str(x) for x in poditem.podsMatchedByAffinity._get_value()]) + \
         ", antiaffinity_set:" + str(poditem.antiaffinity_set._get_value()) + \
-        ", podsMatchedByAntiaffinity" +  str([str(x) for x in poditem.podsMatchedByAntiaffinity._get_value()])+\
+        ", podsMatchedByAntiaffinity: " +  str([str(x) for x in poditem.podsMatchedByAntiaffinity._get_value()])+\
+        ", calc_cantmatch_antiaffinity: " + str(poditem.antiaffinity_set._get_value()) + \
         ", antiaffinity_preferred_set:" + str(poditem.antiaffinity_preferred_set._get_value()) + \
-        ", target_number_of_antiaffinity_pods: "+ str(poditem.target_number_of_antiaffinity_pods._get_value()))
+        ", target_number_of_antiaffinity_pods: "+ str(poditem.target_number_of_antiaffinity_pods._get_value()) +\
+        ", nodesThatCantAllocateThisPod_length: "+ str(poditem.nodesThatCantAllocateThisPod_length._get_value()))
     
+    
+
     node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
     print("----------Nodes---------------")
     for nodeitem in node_loaded_list:
@@ -129,4 +133,6 @@ def print_objects(objectList):
         list_of_objects_output.extend(['is_deployment_disrupted',str(globalvar_item.is_deployment_disrupted._get_value())])
         list_of_objects_output.extend(['is_daemonset_disrupted',str(globalvar_item.is_daemonset_disrupted._get_value())])
         list_of_objects_output.extend(['is_node_disrupted',str(globalvar_item.is_node_disrupted._get_value())])
+        list_of_objects_output.extend(['amountOfNodes',str(globalvar_item.amountOfNodes._get_value())])
+    
     print(list_of_objects_output)

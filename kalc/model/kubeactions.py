@@ -446,9 +446,8 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar):
         assert globalVar.block_node_outage_in_progress == False
         assert  scheduler.queueLength == 0
-        assert globalVar.block_policy_calculated == False
+        assert globalVar.block_policy_calculated == True
         scheduler.status = STATUS_SCHED["Clean"]
-        globalVar.block_policy_calculated = True
         return ScenarioStep(
             name=sys._getframe().f_code.co_name,
             subsystem=self.__class__.__name__,
