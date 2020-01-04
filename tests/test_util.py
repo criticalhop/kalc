@@ -64,7 +64,11 @@ def print_objects(objectList):
         ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
         ", Searchable: " + str(nodeitem.searchable._get_value())+\
         ", IsSearched: ", str(nodeitem.isSearched._get_value())+\
-        ", different_than: ", str([str(x) for x in nodeitem.different_than._get_value()]))
+        ", different_than: ", str([str(x) for x in nodeitem.different_than._get_value()]) +\
+        ", allocatedPodList: ", str([str(x) for x in nodeitem.allocatedPodList._get_value()]) +\
+        ", allocatedPodList_length: " + str(nodeitem.allocatedPodList_length._get_value())+\
+        ", directedPodList: ", str([str(x) for x in nodeitem.directedPodList._get_value()]) +\
+        ", directedPodList_length: " + str(nodeitem.directedPodList_length._get_value()))
     services = filter(lambda x: isinstance(x, Service), objectList)
     print("----------Services---------------")
     for service in services:

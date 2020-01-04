@@ -611,25 +611,44 @@ class Antiaffinity_check(KubernetesModel):
         assert target_pod.atNode == node
         assert node.isSearched == True
         target_pod.antiaffinity_met = True
-    @planned(cost=1)
-    def finish_cluster_changes_calculate_meassures(self,
-        globalVar: GlobalVar):
-        assert globalVar.block_policy_calculated == False
-        globalVar.block_policy_calculated = True
+    # @planned(cost=1)
+    # def finish_cluster_changes_calculate_meassures(self,
+    #     scheduler: Scheduler,
+    #     globalVar: GlobalVar):
+    #     assert globalVar.block_policy_calculated == False
+    #     assert scheduler.queueLength == 0
+    #     globalVar.block_policy_calculated = True
     @planned(cost=1)
     def mark_checked_pod_as_antiaffinity_checked_for_target_pod(self,
         target_pod: Pod,
         checked_pod: Pod,
         globalVar: GlobalVar,
-        scheduler: Scheduler):
+        scheduler: Scheduler,
+        node: Node):
         if checked_pod.atNode != target_pod.atNode and \
                     target_pod.antiaffinity_set == True and \
                 checked_pod not in target_pod.calc_antiaffinity_pods_list:
                 target_pod.calc_antiaffinity_pods_list.add(checked_pod)
                 target_pod.calc_antiaffinity_pods_list_length += 1
         assert checked_pod in target_pod.podsMatchedByAntiaffinity 
-        assert globalVar.block_policy_calculated == True 
-        target_pod.antiaffinity_set = True
+        assert checked_pod.atNode == node
+        assert node.isNull == False
+        # assert globalVar.block_policy_calculated == True
+        globalVar.block_policy_calculated = True
+    @planned(cost=1)
+    def mark_checked_pod_as_affinity_checked_for_target_pod(self,
+        target_pod: Pod,
+        checked_pod: Pod,
+        globalVar: GlobalVar,
+        scheduler: Scheduler):
+        if checked_pod.atNode == target_pod.atNode and \
+                    target_pod.affinity_set == True and \
+                checked_pod not in target_pod.calc_affinity_pods_list:
+                target_pod.calc_affinity_pods_list.add(checked_pod)
+                target_pod.calc_affinity_pods_list_length += 1
+        assert checked_pod in target_pod.podsMatchedByAffinity 
+        # assert globalVar.block_policy_calculated == True 
+        globalVar.block_policy_calculated = True
     @planned(cost=1)
     def mark_that_node_cant_allocate_pod_by_cpu(self,
         checked_pod: Pod,
@@ -637,9 +656,10 @@ class Antiaffinity_check(KubernetesModel):
         globalVar: GlobalVar):
         if not node in checked_pod.nodesThatCantAllocateThisPod:
             assert checked_pod.cpuRequest > node.cpuCapacity - node.currentFormalCpuConsumption
-            assert globalVar.block_policy_calculated == True
             checked_pod.nodesThatCantAllocateThisPod.add(node)
             checked_pod.nodesThatCantAllocateThisPod_length += 1
+        # assert globalVar.block_policy_calculated == True
+        globalVar.block_policy_calculated = True
     @planned(cost=1)
     def mark_that_node_cant_allocate_pod_by_mem(self,
         checked_pod: Pod,
@@ -647,36 +667,69 @@ class Antiaffinity_check(KubernetesModel):
         globalVar: GlobalVar):
         if not node in checked_pod.nodesThatCantAllocateThisPod:
             assert checked_pod.memRequest > node.memCapacity - node.currentFormalMemConsumption
-            assert globalVar.block_policy_calculated == True
             checked_pod.nodesThatCantAllocateThisPod.add(node)
             checked_pod.nodesThatCantAllocateThisPod_length += 1
+        # assert globalVar.block_policy_calculated == True
+        globalVar.block_policy_calculated = True
     @planned(cost=1)
     def mark_that_node_cant_allocate_pod_because_of_antiaffinity(self,
         target_pod: Pod,
-        checked_pod:Pod,
+        antiaffinity_pod:Pod,
         node: Node,
         globalVar: GlobalVar):
         if not node in target_pod.nodesThatCantAllocateThisPod:
-            assert checked_pod in target_pod.podsMatchedByAntiaffinity
-            assert globalVar.block_policy_calculated == True
-            assert node == target_pod.atNode
-            checked_pod.nodesThatCantAllocateThisPod.add(node)
-            checked_pod.nodesThatCantAllocateThisPod_length += 1
+            assert antiaffinity_pod in target_pod.podsMatchedByAntiaffinity
+            # assert antiaffinity_pod == antiaffinity_pod.atNode
+            assert antiaffinity_pod in node.allocatedPodList
+            target_pod.nodesThatCantAllocateThisPod.add(node)
+            target_pod.nodesThatCantAllocateThisPod_length += 1
+        # assert globalVar.block_policy_calculated == True
+        globalVar.block_policy_calculated = True
+    @planned(cost=1)
+    def mark_that_node_cant_allocate_pod_because_of_affinity(self,
+        target_pod: Pod,
+        affinity_pod:Pod,
+        node: Node,
+        globalVar: GlobalVar):
+        assert affinity_pod in target_pod.podsMatchedByAffinity
+        assert node == affinity_pod.atNode
+        if node not in target_pod.nodesThatCantAllocateThisPod and \
+            affinity_pod not in node.allocatedPodList:
+                target_pod.nodesThatCantAllocateThisPod.add(node)
+                target_pod.nodesThatCantAllocateThisPod_length += 1
+        # assert globalVar.block_policy_calculated == True
+        globalVar.block_policy_calculated = True
     @planned(cost=1)
     def mark_that_all_nodes_dont_suite_for_checked_pod(self,
         checked_pod: Pod,
         globalVar: GlobalVar):
-        assert checked_pod.nodesThatCantAllocateThisPod_length == globalVar.amountOfNodes 
         assert globalVar.block_policy_calculated == True
+        assert checked_pod.nodesThatCantAllocateThisPod_length == globalVar.amountOfNodes 
         checked_pod.calc_cantmatch_antiaffinity = True
+        checked_pod.calc_cantmatch_affinity = True
     @planned(cost=1)
     def remove_pod_from_cluster_because_of_anitaffinity_conflict(self,
         target_pod: Pod,
         checked_pod:Pod,
         scheduler: Scheduler,
         globalVar: GlobalVar):
+        # assert globalVar.block_policy_calculated == True
         assert checked_pod in target_pod.podsMatchedByAntiaffinity
         assert checked_pod.calc_cantmatch_antiaffinity == True
+        scheduler.podQueue.remove(target_pod)
+        scheduler.queueLength -= 1
+        scheduler.podQueue_excluded_pods.add(target_pod)
+        scheduler.podQueue_excluded_pods_length += 1
+        target_pod.target_number_of_antiaffinity_pods = 0
+        globalVar.block_policy_calculated = True
+    @planned(cost=1)
+    def remove_pod_from_cluster_because_of_affinity_conflict(self,
+        target_pod: Pod,
+        checked_pod:Pod,
+        scheduler: Scheduler,
+        globalVar: GlobalVar):
+        assert checked_pod in target_pod.podsMatchedByAffinity
+        assert checked_pod.calc_cantmatch_affinity == True
         scheduler.podQueue.remove(target_pod)
         scheduler.queueLength -= 1
         scheduler.podQueue_excluded_pods.add(target_pod)
@@ -689,13 +742,31 @@ class Antiaffinity_check(KubernetesModel):
         assert pod.calc_antiaffinity_pods_list_length == pod.podsMatchedByAntiaffinity_length
         # assert globalVar.block_policy_calculated == True
         pod.antiaffinity_met = True
+        globalVar.block_policy_calculated = True
+    @planned(cost=1)
+    def mark_affinity_met_because_all_affinity_pods_are_matched(self,
+        pod: Pod,
+        globalVar: GlobalVar):
+        assert pod.calc_affinity_pods_list_length == pod.podsMatchedByAffinity_length
+        # assert globalVar.block_policy_calculated == True
+        pod.affinity_met = True
+        globalVar.block_policy_calculated = True
     @planned(cost=1)
     def mark_antiaffinity_met_bacause_all_antiaffinity_pods_are_matched_and_those_that_cant_dont_suite(self,
         pod: Pod,
         globalVar: GlobalVar):
         if pod.calc_antiaffinity_pods_list_length == pod.target_number_of_antiaffinity_pods:
-            assert globalVar.block_policy_calculated == True
+            # assert globalVar.block_policy_calculated == True
             pod.antiaffinity_met = True
+            globalVar.block_policy_calculated = True
+    @planned(cost=1)
+    def mark_affinity_met_bacause_all_affinity_pods_are_matched_and_those_that_cant_dont_suite(self,
+        pod: Pod,
+        globalVar: GlobalVar):
+        if pod.calc_affinity_pods_list_length == pod.podsMatchedByAffinity_length:
+            # assert globalVar.block_policy_calculated == True
+            pod.affinity_met = True
+            globalVar.block_policy_calculated = True
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
@@ -703,7 +774,10 @@ class Antiaffinity_check(KubernetesModel):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
         for pod1 in filter(lambda p: isinstance(p, Pod) and p.antiaffinity_preferred_set == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_preferred_met, True])
-
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.affinity_set == True, self.objectList):
+                self.generated_goal_eq.append([pod1.affinity_met, True])
+        scheduler = next(filter(lambda x: isinstance(x, Scheduler),self.objectList))
+        self.generated_goal_eq.append([scheduler.status, STATUS_SCHED["Clean"]])
     def goal(self):
         for what, where in self.generated_goal_in:
             assert what in where

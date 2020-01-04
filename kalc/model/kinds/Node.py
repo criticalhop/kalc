@@ -31,6 +31,10 @@ class Node(ModularKind, HasLabel):
     searchable: bool
     isSearched: bool
     different_than: Set["Node"]
+    allocatedPodList: Set["Pod"]
+    allocatedPodList_length: int
+    directedPodList: Set["Pod"]
+    directedPodList_length: int
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,6 +52,8 @@ class Node(ModularKind, HasLabel):
         self.amountOfActivePods = 0
         self.searchable = True
         self.isSearched = False
+        self.allocatedPodList_length = 0
+        self.directedPodList_length = 0
         
     def hook_after_create(self, object_space):
         globalVar = next(filter(lambda x: isinstance(x, GlobalVar), object_space))

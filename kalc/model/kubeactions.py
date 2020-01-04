@@ -353,12 +353,18 @@ class KubernetesModel(ProblemTemplate):
         assert podBeingKilled.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert podBeingKilled.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         nodeWithPod.amountOfActivePods -= 1
+        nodeWithPod.allocatedPodList.remove(podBeingKilled)
+        nodeWithPod.allocatedPodList_length -= 1
+        if podBeingKilled in nodeWithPod.directedPodList:
+            nodeWithPod.directedPodList.remove(podBeingKilled)
+            nodeWithPod.directedPodList_length -= 1
         podBeingKilled.status = STATUS_POD["Pending"]
         scheduler.podQueue.add(podBeingKilled)
         scheduler.status = STATUS_SCHED["Changed"] # commented, solves
         scheduler.queueLength += 1
         podBeingKilled.toNode = Node.NODE_NULL
         podBeingKilled.atNode = Node.NODE_NULL
+
         # scheduler.debug_var = True # TODO DELETEME
         #TODO: make sure that calculation excude situations that lead to negative number in the result
         ## assert podBeingKilled.amountOfActiveRequests == 0 #For Requests
@@ -439,6 +445,8 @@ class KubernetesModel(ProblemTemplate):
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1
+        node.allocatedPodList.add(podStarted)
+        node.allocatedPodList_length += 1
         podStarted.status = STATUS_POD["Running"]      
     @planned(cost=1)
     def SchedulerCleaned(self, 

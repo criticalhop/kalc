@@ -72,6 +72,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     calc_antiaffinity_pods_list: Set["Pod"]
     calc_antiaffinity_pods_list_length: int
     calc_cantmatch_antiaffinity: bool
+    calc_cantmatch_affinity: bool
 
     calc_antiaffinity_preferred_pods_list: Set["Pod"]
     calc_antiaffinity_preferred_pods_list_length: int
@@ -129,6 +130,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodesThatCantAllocateThisPod_length = 0 
         self.nodesThatHaveAllocateThisPod_length = 0
         self.calc_cantmatch_antiaffinity = False
+        self.calc_cantmatch_affinity = False
 
 
 
@@ -148,6 +150,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
+                node.allocatedPodList.add(self)
+                node.directedPodList.add(self)
                 node.amountOfActivePods += 1
                 assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max %s > %s" % (getint(node.amountOfActivePods), POODLE_MAXLIN) 
                 if self.cpuRequest > 0:
