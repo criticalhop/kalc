@@ -94,7 +94,9 @@ def print_objects(objectList):
     print("----------Shedulers---------------")
     print("## Sheduler: "+str(scheduler.status._get_value()) +\
         " PodList: "+str([str(x) for x in scheduler.podQueue._get_value()]) +\
-        " QueueLength: "+str(scheduler.queueLength._get_value()))
+        " QueueLength: "+str(scheduler.queueLength._get_value()) +\
+        " podQueue_excluded_pods: "+str([str(x) for x in scheduler.podQueue_excluded_pods._get_value()]) +\
+        " podQueue_excluded_pods_length: "+str(scheduler.podQueue_excluded_pods_length._get_value()))
 
     deployments_loaded_list = filter(lambda x: isinstance(x, Deployment), objectList)
     print("----------Deployments------------")
