@@ -140,5 +140,6 @@ def print_objects(objectList):
         list_of_objects_output.extend(['is_daemonset_disrupted',str(globalvar_item.is_daemonset_disrupted._get_value())])
         list_of_objects_output.extend(['is_node_disrupted',str(globalvar_item.is_node_disrupted._get_value())])
         list_of_objects_output.extend(['amountOfNodes',str(globalvar_item.amountOfNodes._get_value())])
+        list_of_objects_output.extend(['amountOfNodes_limit',str(globalvar_item.amountOfNodes_limit._get_value())])
     
     print(list_of_objects_output)

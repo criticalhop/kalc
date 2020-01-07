@@ -324,7 +324,7 @@ class KubernetesModel(ProblemTemplate):
         assert nodeOfPod.memCapacity < nodeOfPod.currentRealMemConsumption
         assert podTobeKilled.memLimitsStatus == STATUS_LIM["Limit Met"]
         podTobeKilled.status = STATUS_POD["Killing"]
-    @planned(cost=1)
+    # @planned(cost=1)
     def KillPod(self,
         podBeingKilled : "Pod",
         nodeWithPod : "Node" ,
@@ -432,13 +432,13 @@ class KubernetesModel(ProblemTemplate):
             # assert globalVar.block_node_outage_in_progress == False
         assert globalVar.block_policy_calculated == False
         assert podStarted in scheduler.podQueue
-        assert podStarted.toNode == node
-        assert node.isNull == False
+        if podStarted.toNode != Node.NODE_NULL:
+            assert node == podStarted.toNode
+        assert node.status == STATUS_NODE["Active"]
         assert podStarted.cpuRequest > -1
         assert podStarted.memRequest > -1
         assert node.currentFormalCpuConsumption + podStarted.cpuRequest <= node.cpuCapacity
         assert node.currentFormalMemConsumption + podStarted.memRequest <= node.memCapacity
-        assert node.status == STATUS_NODE["Active"]
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node       
@@ -448,6 +448,58 @@ class KubernetesModel(ProblemTemplate):
         node.allocatedPodList.add(podStarted)
         node.allocatedPodList_length += 1
         podStarted.status = STATUS_POD["Running"]      
+    @planned(cost=1)
+    def MoveRunningPodToAnotherNode(self,
+        pod: "Pod",
+        nodeFrom: "Node",
+        nodeTo: "Node",
+        scheduler: "Scheduler",
+        globalVar: GlobalVar
+        ):
+        # assert globalVar.block_policy_calculated == False
+        assert pod.atNode == nodeFrom
+        assert pod.status == STATUS_POD["Running"]
+        assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert nodeTo in pod.nodeSelectorList
+        assert nodeTo.status == STATUS_NODE["Active"]
+        assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
+        assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
+        assert pod.antiaffinity_met == False
+
+        nodeFrom.currentFormalMemConsumption -= pod.memRequest
+        nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
+        nodeFrom.amountOfActivePods -= 1
+        nodeFrom.allocatedPodList.remove(pod)
+        nodeFrom.allocatedPodList_length -= 1
+        nodeTo.currentFormalCpuConsumption += pod.cpuRequest
+        nodeTo.currentFormalMemConsumption += pod.memRequest
+        pod.atNode = nodeTo
+        nodeTo.amountOfActivePods += 1
+        nodeTo.allocatedPodList.add(pod)
+        nodeTo.allocatedPodList_length += 1
+
+        # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
+        #     podStarted.memRequest = podStarted.memLimit
+        # if podStarted.cpuRequest == -1 and podStarted.cpuLimit > -1:
+        #     podStarted.cpuRequest = podStarted.cpuLimit
+
+        # if podStarted.memRequest > -1 and podStarted.memLimit == -1:
+        #     podStarted.memLimit = node.memCapacity
+        # if podStarted.cpuRequest > -1 and podStarted.cpuLimit == -1:
+        #     podStarted.cpuLimit = node.cpuCapacity
+
+        # if podStarted.memRequest == -1 and podStarted.memLimit == -1:
+        #     podStarted.memLimit = node.memCapacity
+        #     podStarted.memRequest = 0
+        # if podStarted.cpuRequest == -1 and podStarted.cpuLimit == -1:
+        #     podStarted.cpuLimit = node.cpuCapacity
+        #     podStarted.cpuRequest = 0
+        #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
+            # assert globalVar.block_node_outage_in_progress == False
+
+
+
     @planned(cost=1)
     def SchedulerCleaned(self, 
         scheduler: "Scheduler",
