@@ -389,7 +389,7 @@ class KubernetesModel(ProblemTemplate):
         assert pod1.toNode == Node.NODE_NULL
         assert selectedNode in pod1.nodeSelectorList
         pod1.toNode = selectedNode    
-    @planned(cost=1) # TODO
+    # @planned(cost=1) # TODO
     def StartPod(self, 
             podStarted: "Pod",
             node: "Node",

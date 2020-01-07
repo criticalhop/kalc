@@ -630,24 +630,15 @@ class Antiaffinity_check_basis(KubernetesModel):
                 antiaffinity_pod not in target_pod.calc_antiaffinity_pods_list:
                 target_pod.calc_antiaffinity_pods_list.add(antiaffinity_pod)
                 target_pod.calc_antiaffinity_pods_list_length += 1
+                if antiaffinity_pod_node not in target_pod.nodesThatCantAllocateThisPod:
+                    target_pod.nodesThatCantAllocateThisPod_length += 1
+                    target_pod.nodesThatCantAllocateThisPod.add(antiaffinity_pod_node)
         assert antiaffinity_pod in target_pod.podsMatchedByAntiaffinity 
         assert antiaffinity_pod.atNode == antiaffinity_pod_node
         assert antiaffinity_pod_node.isNull == False
         # assert globalVar.block_policy_calculated == True
         globalVar.block_policy_calculated = True
-    @planned(cost=1)
-    def calculate_length_of_nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod(self,
-        target_pod: Pod,
-        antiaffinity_pod: Pod,
-        antiaffinity_pod_node: Node,
-        debug_nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length: int):
-        assert antiaffinity_pod in target_pod.podsMatchedByAntiaffinity
-        assert antiaffinity_pod in target_pod.calc_affinity_pods_list
-        assert antiaffinity_pod_node == antiaffinity_pod.atNode
-        if antiaffinity_pod_node not in target_pod.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod:
-            assert debug_nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length == target_pod.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length           
-            target_pod.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod.add(antiaffinity_pod_node)
-            target_pod.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length += 1
+
     @planned(cost=1)
     def mark_checked_pod_as_affinity_checked_for_target_pod(self,
         target_pod: Pod,
@@ -787,7 +778,7 @@ class Antiaffinity_check_basis(KubernetesModel):
     def mark_antiaffinity_met_because_all_antiaffinity_pods_are_matched_and_those_that_cant_dont_suite_below_the_limit_for_node_amount(self,
         pod: Pod,
         globalVar: GlobalVar):
-        assert pod.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length + pod.nodesThatCantAllocateThisPod_length == globalVar.amountOfNodes_limit
+        assert pod.nodesThatCantAllocateThisPod_length == globalVar.amountOfNodes_limit
         assert pod.antiaffinity_set == True
         pod.antiaffinity_met = True
 

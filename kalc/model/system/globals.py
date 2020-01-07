@@ -19,8 +19,9 @@ class GlobalVar(Object):
     block_node_outage_in_progress: bool
     block_policy_calculated : bool
     nodeSelectorsEnabled: bool
-
-
+    amountOfDeploymentsWithAntiaffinity: int
+    amountOfPodsWithAntiaffinity: int
+    amountOfServicesWithAntiaffinity: int
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.is_service_disrupted = False
@@ -39,4 +40,8 @@ class GlobalVar(Object):
         self.nodeSelectorsEnabled = False
         self.amountOfNodes = 0
         self.amountOfNodes_limit = 0
+        self.amountOfDeploymentsWithAntiaffinity = 0
+        self.amountOfPodsWithAntiaffinity = 0
+        self.amountOfServicesWithAntiaffinity = 0
+
     def __str__(self): return str(self._get_value())
