@@ -446,7 +446,7 @@ class KubernetesModel(ProblemTemplate):
         node.allocatedPodList.add(podStarted)
         node.allocatedPodList_length += 1
         podStarted.status = STATUS_POD["Running"]      
-    @planned(cost=1)
+    # @planned(cost=1)
     def Mark_Antiaffinity_Met(self,
         pod: "Pod"):
         # assert globalVar.block_policy_calculated == False
@@ -455,6 +455,7 @@ class KubernetesModel(ProblemTemplate):
         assert pod.antiaffinity_met == False
         assert pod.calc_toNodeCheckedForAntiaffinityPodsNodes_length == pod.podsMatchedByAntiaffinity_length
         pod.antiaffinity_met = True
+
 
     @planned(cost=1)
     def MoveRunningPodToAnotherNode(self,
@@ -465,6 +466,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar
         ):
         # assert globalVar.block_policy_calculated == False
+        assert pod.blocked_movement == False
         assert pod.atNode == nodeFrom
         assert pod.status == STATUS_POD["Running"]
         assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
@@ -475,7 +477,7 @@ class KubernetesModel(ProblemTemplate):
         assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
         assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
         assert pod.antiaffinity_met == False
-        # assert pod.calc_toNodeCheckedForAntiaffinityPodsNodes == pod.podsMatchedByAntiaffinity_length
+        assert pod.calc_toNodeCheckedForAntiaffinityPodsNodes_length == pod.podsMatchedByAntiaffinity_length
         nodeFrom.currentFormalMemConsumption -= pod.memRequest
         nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
         nodeFrom.amountOfActivePods -= 1
@@ -487,6 +489,7 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.amountOfActivePods += 1
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
+        pod.antiaffinity_met = True
 
 
         # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
@@ -514,8 +517,8 @@ class KubernetesModel(ProblemTemplate):
         target_pod_node: Node,
         anitaffinity_pod_node: Node):
         if  anitaffinity_pod not in target_pod.calc_toNodeCheckedForAntiaffinityPodsNodes:
-            assert target_pod_node == target_pod.atNode
-            assert anitaffinity_pod_node == anitaffinity_pod.atNode
+            assert target_pod_node == target_pod.toNode
+            assert anitaffinity_pod_node == anitaffinity_pod.toNode
             assert anitaffinity_pod in target_pod.podsMatchedByAntiaffinity
             assert anitaffinity_pod_node in target_pod_node.different_than
             target_pod.calc_toNodeCheckedForAntiaffinityPodsNodes.add(anitaffinity_pod)
