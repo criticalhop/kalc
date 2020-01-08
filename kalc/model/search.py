@@ -783,7 +783,7 @@ class Antiaffinity_check_basis(KubernetesModel):
         pod.antiaffinity_met = True
         globalVar.block_policy_calculated = True
 
-    @planned(cost=1)
+    # @planned(cost=1)
     def mark_antiaffinity_met_because_all_antiaffinity_pods_are_matched_and_those_that_cant_dont_suite_below_the_limit_for_node_amount(self,
         pod: Pod,
         globalVar: GlobalVar):
