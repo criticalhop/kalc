@@ -54,6 +54,8 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     spec_template_spec_priorityClassName: str
     searchable: bool
     hash: str
+    NumberOfPodsOnSameNodeForDeployment: int
+    amountOfPodsWithAntiaffinity: int
 
 
     def __init__(self, *args, **kwargs):
@@ -67,6 +69,8 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
         self.spec_replicas = 0
+        self.NumberOfPodsOnSameNodeForDeployment = 0
+        self.amountOfPodsWithAntiaffinity = 0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)

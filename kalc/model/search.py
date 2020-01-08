@@ -817,21 +817,42 @@ class Antiaffinity_check_with_add_node(Antiaffinity_check):
         node.status = STATUS_NODE["Active"]
         globalVar.amountOfNodes += 1
 
-class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check):
+class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
+    def generate_goal(self):
+        self.generated_goal_in = []
+        self.generated_goal_eq = []
+        for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+                self.generated_goal_eq.append([globalVar.deploymentsWithAntiaffinityBalanced, True])
+        scheduler = next(filter(lambda x: isinstance(x, Scheduler),self.objectList))
+        self.generated_goal_eq.append([scheduler.status, STATUS_SCHED["Clean"]])
+    def goal(self):
+        for what, where in self.generated_goal_in:
+            assert what in where
+        for what1, what2 in self.generated_goal_eq:
+            assert what1 == what2
+
     @planned(cost=1)
     def Set_antiaffinity_between_pods_of_deployment(self,
         pod1: Pod,
         pod2: Pod,
-        deployment: Deployment):
-        assert pod1 in deployment.podList
-        assert pod2 in deployment.podList
-        pod1.antiaffinity_set = True
-        pod1.podsMatchedByAffinity.add(pod2)
-        pod1.podsMatchedByAffinity_length += 1
-        pod2.antiaffinity_set = True
-        pod2.podsMatchedByAffinity.add(pod1)
-        pod2.podsMatchedByAffinity_length += 1
-    
+        deployment: Deployment,
+        globalVar: GlobalVar):
+        if pod1 not in pod2.podsMatchedByAffinity and pod2 not in pod1.podsMatchedByAffinity:
+            assert pod1 in deployment.podList
+            assert pod2 in deployment.podList
+            assert deployment.NumberOfPodsOnSameNodeForDeployment == globalVar.maxNumberOfPodsOnSameNodeForDeployment
+            pod1.antiaffinity_set = True
+            pod1.podsMatchedByAffinity.add(pod2)
+            pod1.podsMatchedByAffinity_length += 1
+            pod2.antiaffinity_set = True
+            pod2.podsMatchedByAffinity.add(pod1)
+            pod2.podsMatchedByAffinity_length += 1
+ 
+    @planned(cost=1)
+    def Reduce_maxNumberOfPodsOnSameNodeForDeployment(self,
+        globalVar: GlobalVar):
+        globalVar.maxNumberOfPodsOnSameNodeForDeployment -= 1       
+   
     @planned(cost=1)
     def Calculate_fulfilled_antiaffinity_pods_of_deployment(self,
         pod1: Pod,
@@ -849,8 +870,8 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check):
         deployment: Deployment,
         globalVar: GlobalVar):
         assert pod1 in deployment.podList
-        assert globalVar.amountOfPodsWithAntiaffinity > 0
-        assert pod1.podsMatchedByAffinity_length == globalVar.amountOfPodsWithAntiaffinity
+        assert globalVar.target_amountOfPodsWithAntiaffinity > 0
+        assert pod1.podsMatchedByAffinity_length == globalVar.target_amountOfPodsWithAntiaffinity
         deployment.amountOfPodsWithAntiaffinity += 1
 
     @planned(cost=1)
@@ -859,3 +880,19 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check):
         globalVar: GlobalVar):
         assert deployment.amountOfPodsWithAntiaffinity == deployment.amountOfActivePods
         globalVar.amountOfDeploymentsWithAntiaffinity += 1
+    
+    @planned(cost=1)
+    def mark_finalization_of_antiaffinity_setting_for_pods_of_deployment(self,
+        deployment: Deployment,
+        globalVar: GlobalVar):
+        assert globalVar.amountOfDeploymentsWithAntiaffinity == globalVar.target_amountOfDeploymentsWithAntiaffinity
+        globalVar.deploymentsWithAntiaffinityBalanced = True
+    
+class Antiaffinity_check_with_limited_number_of_pods_with_add_node(Antiaffinity_check_with_limited_number_of_pods):
+    @planned(cost=1)
+    def Add_node(self,
+            node : Node,
+            globalVar: GlobalVar):
+        assert node.status == STATUS_NODE["New"]
+        node.status = STATUS_NODE["Active"]
+        globalVar.amountOfNodes += 1

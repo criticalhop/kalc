@@ -11,6 +11,11 @@ class GlobalVar(Object):
     limitOfAmountOfNodesDisrupted: int
     amountOfNodes: int
     amountOfNodes_limit: int
+    amountOfDeploymentsWithAntiaffinity: int
+    target_amountOfDeploymentsWithAntiaffinity: int
+    amountOfPodsWithAntiaffinity: int
+    target_amountOfPodsWithAntiaffinity: int
+
 
     is_node_disruption_searchable: bool
     is_daemonset_disrupted: bool
@@ -19,6 +24,8 @@ class GlobalVar(Object):
     block_node_outage_in_progress: bool
     block_policy_calculated : bool
     nodeSelectorsEnabled: bool
+    deploymentsWithAntiaffinityBalanced: bool
+    maxNumberOfPodsOnSameNodeForDeployment: int
 
 
     def __init__(self, *args, **kwargs):
@@ -39,4 +46,10 @@ class GlobalVar(Object):
         self.nodeSelectorsEnabled = False
         self.amountOfNodes = 0
         self.amountOfNodes_limit = 0
+        self.amountOfDeploymentsWithAntiaffinity = 0
+        self.target_amountOfDeploymentsWithAntiaffinity = 0
+        self.amountOfPodsWithAntiaffinity = 0
+        self.target_amountOfPodsWithAntiaffinity = 0
+        self.deploymentsWithAntiaffinityBalanced = False
+        self.maxNumberOfPodsOnSameNodeForDeployment = 0
     def __str__(self): return str(self._get_value())
