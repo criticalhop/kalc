@@ -380,15 +380,13 @@ class KubernetesModel(ProblemTemplate):
         pod1.nodeSelectorList.add(selectedNode) 
     @planned(cost=1)
     def SelectNode(self, 
-        pod1: "Pod",
+        pod: "Pod",
         selectedNode: "Node",
         globalVar: GlobalVar
          ):
-        assert globalVar.block_policy_calculated == False
-        assert globalVar.block_node_outage_in_progress == False
-        assert pod1.toNode == Node.NODE_NULL
-        assert selectedNode in pod1.nodeSelectorList
-        pod1.toNode = selectedNode    
+        assert selectedNode in pod.nodeSelectorList
+        # assert pod.calc_toNodeCheckedForAntiaffinityPodsNodes_length== 0
+        pod.toNode = selectedNode    
     # @planned(cost=1) # TODO
     def StartPod(self, 
             podStarted: "Pod",
@@ -449,6 +447,16 @@ class KubernetesModel(ProblemTemplate):
         node.allocatedPodList_length += 1
         podStarted.status = STATUS_POD["Running"]      
     @planned(cost=1)
+    def Mark_Antiaffinity_Met(self,
+        pod: "Pod"):
+        # assert globalVar.block_policy_calculated == False
+        assert pod.atNode == pod.toNode
+        assert pod.status == STATUS_POD["Running"]
+        assert pod.antiaffinity_met == False
+        assert pod.calc_toNodeCheckedForAntiaffinityPodsNodes_length == pod.podsMatchedByAntiaffinity_length
+        pod.antiaffinity_met = True
+
+    @planned(cost=1)
     def MoveRunningPodToAnotherNode(self,
         pod: "Pod",
         nodeFrom: "Node",
@@ -461,12 +469,13 @@ class KubernetesModel(ProblemTemplate):
         assert pod.status == STATUS_POD["Running"]
         assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert nodeTo == pod.toNode
         assert nodeTo in pod.nodeSelectorList
         assert nodeTo.status == STATUS_NODE["Active"]
         assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
         assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
         assert pod.antiaffinity_met == False
-
+        # assert pod.calc_toNodeCheckedForAntiaffinityPodsNodes == pod.podsMatchedByAntiaffinity_length
         nodeFrom.currentFormalMemConsumption -= pod.memRequest
         nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
         nodeFrom.amountOfActivePods -= 1
@@ -478,6 +487,7 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.amountOfActivePods += 1
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
+
 
         # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
         #     podStarted.memRequest = podStarted.memLimit
@@ -497,9 +507,20 @@ class KubernetesModel(ProblemTemplate):
         #     podStarted.cpuRequest = 0
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False
-
-
-
+    @planned(cost=1)
+    def mark_that_antiaffinity_pod_is_on_another_node(self,
+        target_pod: Pod,
+        anitaffinity_pod: Pod,
+        target_pod_node: Node,
+        anitaffinity_pod_node: Node):
+        if  anitaffinity_pod not in target_pod.calc_toNodeCheckedForAntiaffinityPodsNodes:
+            assert target_pod_node == target_pod.atNode
+            assert anitaffinity_pod_node == anitaffinity_pod.atNode
+            assert anitaffinity_pod in target_pod.podsMatchedByAntiaffinity
+            assert anitaffinity_pod_node in target_pod_node.different_than
+            target_pod.calc_toNodeCheckedForAntiaffinityPodsNodes.add(anitaffinity_pod)
+            target_pod.calc_toNodeCheckedForAntiaffinityPodsNodes_length+= 1
+    
     @planned(cost=1)
     def SchedulerCleaned(self, 
         scheduler: "Scheduler",

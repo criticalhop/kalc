@@ -42,10 +42,13 @@ def print_objects(objectList):
         ", podsMatchedByAffinity: " +  str([str(x) for x in poditem.podsMatchedByAffinity._get_value()]) + \
         ", antiaffinity_set:" + str(poditem.antiaffinity_set._get_value()) + \
         ", podsMatchedByAntiaffinity: " +  str([str(x) for x in poditem.podsMatchedByAntiaffinity._get_value()])+\
+        ", podsMatchedByAntiaffinity_length: " + str(poditem.podsMatchedByAntiaffinity_length._get_value()) + \
         ", calc_cantmatch_antiaffinity: " + str(poditem.antiaffinity_set._get_value()) + \
         ", antiaffinity_preferred_set:" + str(poditem.antiaffinity_preferred_set._get_value()) + \
         ", target_number_of_antiaffinity_pods: "+ str(poditem.target_number_of_antiaffinity_pods._get_value()) +\
-        ", nodesThatCantAllocateThisPod_length: "+ str(poditem.nodesThatCantAllocateThisPod_length._get_value()))
+        ", nodesThatCantAllocateThisPod_length: "+ str(poditem.nodesThatCantAllocateThisPod_length._get_value()) +\
+        ", calc_toNodeCheckedForAntiaffinityPodsNodes: " +  str([str(x) for x in poditem.calc_toNodeCheckedForAntiaffinityPodsNodes._get_value()])+\
+        ", calc_toNodeCheckedForAntiaffinityPodsNodes_length: "+ str(poditem.calc_toNodeCheckedForAntiaffinityPodsNodes_length))
     
     
 

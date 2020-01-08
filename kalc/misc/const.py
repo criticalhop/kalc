@@ -8,7 +8,9 @@ STATUS_POD = {
     "Killing" : StatusPod("Killing"),
     "Failed" : StatusPod("Failed"),
     "Succeeded" : StatusPod("Succeeded"),
-    "Outaged" : StatusPod("Outaged")
+    "Outaged" : StatusPod("Outaged"),
+    "Moving" : StatusPod("Moving"),
+    "Moving2" : StatusPod("Moving2")    
 }
 
 STATUS_LIM = {

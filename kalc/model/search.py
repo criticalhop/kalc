@@ -784,6 +784,7 @@ class Antiaffinity_check_basis(KubernetesModel):
         pod.antiaffinity_met = True
         globalVar.block_policy_calculated = True
 
+
 class Antiaffinity_check(Antiaffinity_check_basis):       
     def generate_goal(self):
         self.generated_goal_in = []
@@ -816,14 +817,16 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check):
         pod1: Pod,
         pod2: Pod,
         deployment: Deployment):
-        assert pod1 in deployment.podList
-        assert pod2 in deployment.podList
-        pod1.antiaffinity_set = True
-        pod1.podsMatchedByAffinity.add(pod2)
-        pod1.podsMatchedByAffinity_length += 1
-        pod2.antiaffinity_set = True
-        pod2.podsMatchedByAffinity.add(pod1)
-        pod2.podsMatchedByAffinity_length += 1
+        if pod1 not in pod2.podsMatchedByAntiaffinity and \
+            pod2 not in pod1.podsMatchedByAntiaffinity:
+            assert pod1 in deployment.podList
+            assert pod2 in deployment.podList
+            pod1.antiaffinity_set = True
+            pod1.podsMatchedByAntiaffinity.add(pod2)
+            pod1.podsMatchedByAntiaffinity_length += 1
+            pod2.antiaffinity_set = True
+            pod2.podsMatchedByAntiaffinity.add(pod1)
+            pod2.podsMatchedByAntiaffinity_length += 1
     
     @planned(cost=1)
     def Calculate_fulfilled_antiaffinity_pods_of_deployment(self,
@@ -832,7 +835,7 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check):
         deployment: Deployment):
         assert pod1 in deployment.podList
         assert deployment.amountOfActivePods > 0
-        assert pod1.podsMatchedByAffinity_length == deployment.amountOfActivePods
+        assert pod1.podsMatchedByAntiaffinity_length == deployment.amountOfActivePods
         deployment.amountOfPodsWithAntiaffinity += 1
     
     @planned(cost=1)
