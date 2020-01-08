@@ -748,12 +748,14 @@ class Antiaffinity_check_basis(KubernetesModel):
     #     target_pod.affinity_met = True
     @planned(cost=1)
     def reduce_target_number_of_antiaffinity_pods_because_amount_of_nodes_limit(self,
-        pod: Pod,
+        target_pod: Pod,
+        antiaffinity_pod: Pod, 
         globalVar: GlobalVar):
-        assert pod.target_number_of_antiaffinity_pods > globalVar.amountOfNodes_limit
-        pod.target_number_of_antiaffinity_pods = globalVar.amountOfNodes_limit
-
-    
+        assert target_pod.target_number_of_antiaffinity_pods > globalVar.amountOfNodes_limit - 1
+        assert antiaffinity_pod in target_pod.podsMatchedByAntiaffinity
+        target_pod.target_number_of_antiaffinity_pods -= 1
+        target_pod.podsMatchedByAntiaffinity.remove(antiaffinity_pod)
+        target_pod.podsMatchedByAntiaffinity_length -= 1
     @planned(cost=1)
     def mark_antiaffinity_met_because_all_antiaffinity_pods_are_matched(self,
         pod: Pod,
@@ -776,7 +778,7 @@ class Antiaffinity_check_basis(KubernetesModel):
     def mark_antiaffinity_met_because_all_antiaffinity_pods_are_matched_and_those_that_cant_dont_suite(self,
         pod: Pod,
         globalVar: GlobalVar):
-        assert pod.calc_antiaffinity_pods_list_length == pod.target_number_of_antiaffinity_pods- pod.nodesThatCantAllocateThisPod_length
+        assert pod.calc_antiaffinity_pods_list_length == pod.target_number_of_antiaffinity_pods
         assert pod.antiaffinity_set == True
         # assert globalVar.block_policy_calculated == True
         pod.antiaffinity_met = True
