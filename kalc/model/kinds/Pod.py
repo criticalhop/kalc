@@ -12,7 +12,6 @@ from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.model.system.globals import GlobalVar
 from kalc.misc.const import *
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
-from kalc.model.scenario import ScenarioStep, describe
 # import kalc.cli as cli
 import sys
 import random
@@ -265,8 +264,4 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
 
 
     def __str__(self): return str(self.metadata_name)
-
-
-Pod.POD_NULL = Pod("NULL")
-Pod.POD_NULL.isNull = True
 

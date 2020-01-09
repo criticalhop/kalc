@@ -1,6 +1,5 @@
 import sys
 import random
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.model.system.base import ModularKind
 from typing import Set
 from kalc.model.system.primitives import Label, StatusNode
@@ -17,6 +16,7 @@ class Node(ModularKind, HasLabel):
     metadata_name: str
     spec_priorityClassName: str
     labels: Set[Label]
+    pods: Set[mpod.Pod]
     cpuCapacity: int
     memCapacity: int
     currentFormalCpuConsumption: int
@@ -95,8 +95,4 @@ class Node(ModularKind, HasLabel):
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
 
-Node.NODE_NULL = Node("NULL")
-Node.NODE_NULL.isNull = True
-Node.NODE_NULL.metadata_name = "Null-Node"
-Node.NODE_NULL.searchable = False
 

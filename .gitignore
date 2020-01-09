@@ -25,7 +25,14 @@ tests/NOTforRepo/
 *-checkpoint*
 README.rst
 setup.pyc
+.ipynb_checkpoints/
 *.vscode/
 pytest_*
 *.yaml
 *.ipynb
+setup.py
+*DELETEME*
+*.ipynb
+*.prof
+LOG
+*.log

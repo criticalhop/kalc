@@ -23,7 +23,6 @@ from kalc.cli import run
 import click
 from click.testing import CliRunner
 from poodle import planned
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.model.system.globals import GlobalVar
 
 import logging

@@ -3,7 +3,6 @@ from typing import Set
 from kalc.misc.const import *
 import kalc.model.kinds.Pod as mpod
 from kalc.model.system.primitives import StatusSched
-from kalc.model.scenario import ScenarioStep, describe
 import sys
 
 

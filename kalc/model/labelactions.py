@@ -11,7 +11,6 @@ from kalc.model.kinds.DaemonSet import DaemonSet
 from kalc.model.kinds.Pod import Pod
 from kalc.model.kinds.Node import Node
 from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.misc.const import *
 from kalc.misc.problem import ProblemTemplate
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
