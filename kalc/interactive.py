@@ -61,20 +61,7 @@ def run():
     policy_added = False
     for ob in kalc_state_objects:
         if isinstance(ob.policy, str): continue # STUB. find and fix
-        for pname, pobject in ob.policy._instantiated_policies.items():
-            if pobject.activated:
-                policy_added = True
-                for hname, hval in pobject.hypotheses.items():
-                    # print("Adding hypothesis goal")
-                    pobject.clear_goal()
-                    hval()
-                    kube.add_goal_eq(pobject.get_goal_eq())
-                    kube.add_goal_in(pobject.get_goal_in())
-                for name in dir(pobject):
-                    if callable(getattr(pobject, name)) and hasattr(getattr(pobject, name), "_planned"):
-                        # print("Adding planned method from policy", name)
-                        kube.add_external_method(getattr(pobject, name))
-                        # setattr(kube, name, getattr(pobject, name))
+        ob.policy.apply(kube)
     kube.run(timeout=999000, sessionName="kalc")
     # TODO. STUB
     # TODO example hanlers and patches

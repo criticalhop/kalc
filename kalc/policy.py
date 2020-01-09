@@ -1,5 +1,6 @@
 from kalc.model.full import kinds_collection
 from collections import defaultdict
+from kalc.model.search import KubernetesModel
 
 class PolicyImplementer:
     def __init__(self, obj, all_policies, state_objects):
@@ -26,6 +27,23 @@ class PolicyImplementer:
         if name in self._instantiated_policies and self._instantiated_policies[name].TYPE == "property":
             self._instantiated_policies[name]._get()
         return super().__getattr__(name)
+    
+    def apply(self, kube: KubernetesModel):
+        print("AAA trying to activate policy", self._instantiated_policies)
+        for pname, pobject in self._instantiated_policies.items():
+            print("AAA checking ", pname)
+            if pobject.activated:
+                print("AAA found activated policy")
+                for hname, hval in pobject.hypotheses.items():
+                    print("AAA Adding hypothesis goal")
+                    pobject.clear_goal()
+                    hval()
+                    kube.add_goal_eq(pobject.get_goal_eq())
+                    kube.add_goal_in(pobject.get_goal_in())
+                for name in dir(pobject):
+                    if callable(getattr(pobject, name)) and hasattr(getattr(pobject, name), "_planned"):
+                        print("AAA Adding planned method from policy", name)
+                        kube.add_external_method(getattr(pobject, name))
 
 
 class PolicyEngineClass:
