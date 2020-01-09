@@ -11,6 +11,7 @@ from pygments import highlight
 from pygments.lexers.diff import DiffLexer
 from pygments.formatters.terminal import TerminalFormatter
 import random
+import io
 
 kalc_state_objects = []
 kind = KindPlaceholder
@@ -23,22 +24,28 @@ for k, v in kinds_collection.items():
     globals()[k] = v
     setattr(kind, k, v)
 
-def update():
-    "Fetch information from currently selected ccluster"
+def update(data=None):
+    "Fetch information from currently selected cluster"
+    if isinstance(data, io.IOBase):
+        data = data.read()
     k = KubernetesCluster()
-    result = subprocess.run(['kubectl', 'get', 'all', '-o=json'], stdout=subprocess.PIPE)
-    if len(result.stdout) < 100:
-        raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
-    data = json.loads(result.stdout.decode("utf-8"))
-    for item in data["items"]:
-        k.load_item(item)
+    if not data:
+        result = subprocess.run(['kubectl', 'get', 'all', '-o=json'], stdout=subprocess.PIPE)
+        if len(result.stdout) < 100:
+            raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+        data = json.loads(result.stdout.decode("utf-8"))
+        for item in data["items"]:
+            k.load_item(item)
 
-    result = subprocess.run(['kubectl', 'get', 'node', '-o=json'], stdout=subprocess.PIPE)
-    if len(result.stdout) < 100:
-        raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
-    data = json.loads(result.stdout.decode("utf-8"))
-    for item in data["items"]:
-        k.load_item(item)
+        result = subprocess.run(['kubectl', 'get', 'node', '-o=json'], stdout=subprocess.PIPE)
+        if len(result.stdout) < 100:
+            raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+        data = json.loads(result.stdout.decode("utf-8"))
+        for item in data["items"]:
+            k.load_item(item)
+    else:
+        for item in json.loads(data)["items"]:
+            k.load_item(item)
     
     k._build_state()
     global kalc_state_objects

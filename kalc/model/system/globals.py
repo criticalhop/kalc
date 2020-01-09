@@ -24,7 +24,7 @@ class GlobalVar(Object):
     block_node_outage_in_progress: bool
     block_policy_calculated : bool
     nodeSelectorsEnabled: bool
-    deploymentsWithAntiaffinityBalanced: bool
+    # deploymentsWithAntiaffinityBalanced: bool
     maxNumberOfPodsOnSameNodeForDeployment: int
 
 
@@ -50,6 +50,6 @@ class GlobalVar(Object):
         self.target_amountOfDeploymentsWithAntiaffinity = 0
         self.amountOfPodsWithAntiaffinity = 0
         self.target_amountOfPodsWithAntiaffinity = 0
-        self.deploymentsWithAntiaffinityBalanced = False
+        # self.deploymentsWithAntiaffinityBalanced = False
         self.maxNumberOfPodsOnSameNodeForDeployment = 0
     def __str__(self): return str(self._get_value())
