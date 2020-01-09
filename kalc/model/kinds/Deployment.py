@@ -1,7 +1,6 @@
 from kalc.model.system.base import ModularKind
 from kalc.model.system.Controller import Controller
 from kalc.model.system.base import HasLimitsRequests
-from kalc.model.kinds.Node import Node
 from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from kalc.model.system.Scheduler import Scheduler
 import kalc.model.kinds.Pod as mpod
@@ -55,7 +54,10 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     searchable: bool
     hash: str
     NumberOfPodsOnSameNodeForDeployment: int
-    amountOfPodsWithAntiaffinity: int
+    calc_PodsWithAntiaffinitySet: Set["mpod.Pod"]
+    calc_PodsWithAntiaffinitySet_length: int
+    
+
 
 
     def __init__(self, *args, **kwargs):
@@ -71,6 +73,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.spec_replicas = 0
         self.NumberOfPodsOnSameNodeForDeployment = 0
         self.amountOfPodsWithAntiaffinity = 0
+        self.calc_PodsWithAntiaffinitySet_length = 0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
@@ -224,3 +227,6 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.set_yaml_nested_key(yamlmod = self.yaml, keys=['spec','replicas'], value=replicas)
         self.yaml['spec']['replicas']=replicas
         self.patchJSON.extend(jsonpatch.make_patch(json_orig, self.yaml))
+
+        
+    def __str__(self): return str(self.metadata_name)

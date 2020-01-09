@@ -1,5 +1,7 @@
 from poodle import Object
 from kalc.model.system.primitives import Type, Status
+import kalc.model.kinds.Deployment as mdeployment
+from typing import Set
 
 class GlobalVar(Object):
     is_deployment_disrupted: bool
@@ -11,8 +13,8 @@ class GlobalVar(Object):
     limitOfAmountOfNodesDisrupted: int
     amountOfNodes: int
     amountOfNodes_limit: int
-    amountOfDeploymentsWithAntiaffinity: int
-    target_amountOfDeploymentsWithAntiaffinity: int
+    DeploymentsWithAntiaffinity_length: int
+    target_DeploymentsWithAntiaffinity_length: int
     amountOfPodsWithAntiaffinity: int
     target_amountOfPodsWithAntiaffinity: int
 
@@ -26,7 +28,9 @@ class GlobalVar(Object):
     nodeSelectorsEnabled: bool
     deploymentsWithAntiaffinityBalanced: bool
     maxNumberOfPodsOnSameNodeForDeployment: int
-
+    DeploymentsWithAntiaffinity: Set["mdeployment.Deployment"]
+    DeploymentsWithAntiaffinity_length: int
+    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,8 +50,8 @@ class GlobalVar(Object):
         self.nodeSelectorsEnabled = False
         self.amountOfNodes = 0
         self.amountOfNodes_limit = 0
-        self.amountOfDeploymentsWithAntiaffinity = 0
-        self.target_amountOfDeploymentsWithAntiaffinity = 0
+        self.DeploymentsWithAntiaffinity_length = 0
+        self.target_DeploymentsWithAntiaffinity_length = 0
         self.amountOfPodsWithAntiaffinity = 0
         self.target_amountOfPodsWithAntiaffinity = 0
         self.deploymentsWithAntiaffinityBalanced = False

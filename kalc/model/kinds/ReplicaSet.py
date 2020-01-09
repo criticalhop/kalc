@@ -1,7 +1,6 @@
 import random
 from kalc.model.system.Controller import Controller
 from kalc.model.system.base import HasLimitsRequests, ModularKind
-from kalc.model.kinds.Node import Node
 from kalc.model.kinds.PriorityClass import PriorityClass
 from kalc.model.system.Scheduler import Scheduler
 import kalc.model.kinds.Pod as mpod
