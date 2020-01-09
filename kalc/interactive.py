@@ -12,9 +12,11 @@ from pygments.lexers.diff import DiffLexer
 from pygments.formatters.terminal import TerminalFormatter
 import random
 import io
+import kalc.misc.util
 
 kalc_state_objects = []
 kind = KindPlaceholder
+cluster = None
 
 kalc.policy.policy_engine.register_state_objects(kalc_state_objects)
 
@@ -44,13 +46,15 @@ def update(data=None):
         for item in data["items"]:
             k.load_item(item)
     else:
-        for item in json.loads(data)["items"]:
-            k.load_item(item)
+        for ys in kalc.misc.util.split_yamldumps(data):
+            k.load(ys)
     
     k._build_state()
     global kalc_state_objects
     kalc_state_objects.clear()
     kalc_state_objects.extend(k.state_objects)
+    global cluster
+    cluster = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
 def run():
     kube = KubernetesModel(kalc_state_objects)

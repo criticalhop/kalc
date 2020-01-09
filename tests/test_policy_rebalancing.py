@@ -1,6 +1,29 @@
 from kalc.interactive import *
 from libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 
+from test_util import print_objects
+from libs_for_tests import prepare_yamllist_for_diff
+from kalc.model.search import HypothesisysNode, OptimisticRun
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.system.globals import GlobalVar
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.misc.const import *
+import pytest
+import inspect
+from kalc.model.search import *
+from kalc.misc.object_factory import labelFactory
+from click.testing import CliRunner
+from kalc.model.scenario import Scenario
+from poodle import planned
+from libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
+from typing import Set
+
 
 DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
 
@@ -206,6 +229,10 @@ def test_stub_completion():
     k.state_objects.extend(pods)
     k.state_objects.extend([pc, s1, s2 ])
     create_objects = []
-    k._build_state()
+    # k._build_state()
 
-    update()
+    yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
+    print("LEN", len(yamlState))
+    print(''.join(yamlState))
+    update(''.join(yamlState))
+
