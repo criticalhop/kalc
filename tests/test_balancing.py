@@ -116,11 +116,11 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     # create Deploymnent that we're going to detect failure of...
     d = Deployment()
     d.spec_replicas = 6    
-    d.NumberOfPodsOnSameNodeForDeployment = 4
+    d.NumberOfPodsOnSameNodeForDeployment = 4         # New parameter that is calculated in ython loading process 
     deployments.append(d)
     d2 = Deployment()
     d2.spec_replicas = 2    
-    d2.NumberOfPodsOnSameNodeForDeployment = 2
+    d2.NumberOfPodsOnSameNodeForDeployment = 2      # New parameter that is calculated in ython loading process
     deployments.append(d2)
     node_item = Node()
     node_item.metadata_name = "node 1"
@@ -241,9 +241,9 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     k._build_state()
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    globalVar.target_DeploymentsWithAntiaffinity_length = 1
-    globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
-    globalVar.target_amountOfPodsWithAntiaffinity = 4
+    globalVar.target_DeploymentsWithAntiaffinity_length = 1 # New parameter that is set as hypothesys
+    globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10   # New parameter that is calculated in ython loading process 
+    globalVar.target_amountOfPodsWithAntiaffinity = 4       # New parameter that is set as hypothesys
     
     
     class Antiaffinity_check_k1(Antiaffinity_check_with_limited_number_of_pods_with_add_node):
