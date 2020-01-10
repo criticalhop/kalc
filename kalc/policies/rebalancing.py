@@ -6,6 +6,19 @@ from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.misc.const import *
 from poodle import planned
+from kalc.policy import policy_engine, BasePolicy
+
+from kalc.model.system.Scheduler import Scheduler
+from kalc.model.system.globals import GlobalVar
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Deployment import Deployment
+from kalc.model.kinds.DaemonSet import DaemonSet
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.kubernetes import KubernetesCluster
+from kalc.misc.const import *
+
 
 class BalancedClusterPolicy(BasePolicy):
     TYPE = "property"
@@ -227,5 +240,5 @@ class BalancedClusterPolicy(BasePolicy):
         node.status = STATUS_NODE["Active"]
         globalVar.amountOfNodes += 1
     
-policy_engine.register(Service, "self_antiaffinity", PreferredSelfAntiAffinityPolicy)
+policy_engine.register(Service, "self_antiaffinity", BalancedClusterPolicy)
 

@@ -6,6 +6,7 @@ from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.misc.const import *
 from poodle import planned
+from kalc.policy import policy_engine, BasePolicy
 
 class StubPolicy(BasePolicy):
     TYPE = "property"

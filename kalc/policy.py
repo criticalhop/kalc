@@ -29,13 +29,16 @@ class PolicyImplementer:
         return super().__getattr__(name)
     
     def apply(self, kube: KubernetesModel):
+        # TODO HERE: hypothesis must be added in some fashion to allow running combinations:
+        # - add hypotheses to a list with its goals and order
+        # - after we collected all hypoteses, take first N and generate basic run plan
         print("AAA trying to activate policy", self._instantiated_policies)
         for pname, pobject in self._instantiated_policies.items():
             print("AAA checking ", pname)
             if pobject.activated:
                 print("AAA found activated policy")
                 for hname, hval in pobject.hypotheses.items():
-                    print("AAA Adding hypothesis goal")
+                    print("AAA Adding hypothesis", hname)
                     pobject.clear_goal()
                     hval()
                     kube.add_goal_eq(pobject.get_goal_eq())
@@ -140,6 +143,7 @@ policies_collection = {}
 for importer, modname, ispkg in pkgutil.iter_modules(
         path=kalc.policies.__path__,
         prefix=kalc.policies.__name__+'.'):
+    # print("Importing", modname)
     module = __import__(modname, fromlist="dummy") # importing should be enough
     # for n in dir(module):
     #     c = getattr(module, n)

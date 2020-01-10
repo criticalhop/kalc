@@ -88,6 +88,6 @@ def test_stub_completion():
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
     update(''.join(yamlState))
     cluster = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
-    cluster.stub = True
+    cluster.policy.stub = True
     run()
 

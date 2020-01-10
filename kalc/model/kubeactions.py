@@ -383,7 +383,9 @@ class KubernetesModel(ProblemTemplate):
         node.currentFormalCpuConsumption += podStarted.cpuRequest
         node.currentFormalMemConsumption += podStarted.memRequest
         podStarted.atNode = node       
-        node.pods.add(podStarted)
+        # node.pods.add(podStarted) # for new method
+        # for pod in node.pods: # -> (forall (?pod-1 - Pod) ... (and (Node-pods ?node ?pod-1)
+        #     assert not podStarted in pod.anti_affinite_with #      (not (Pod-anti_affninite_with ?pod-1 ?podStarted))))
         scheduler.queueLength -= 1
         scheduler.podQueue.remove(podStarted)
         node.amountOfActivePods += 1

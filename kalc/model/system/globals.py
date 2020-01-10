@@ -1,7 +1,8 @@
 from poodle import Object
 from kalc.model.system.primitives import Type, Status
+from kalc.model.system.base import ModularKind
 
-class GlobalVar(Object):
+class GlobalVar(ModularKind):
     is_deployment_disrupted: bool
     is_deployment_distuption_searchable: bool
     is_service_disrupted: bool

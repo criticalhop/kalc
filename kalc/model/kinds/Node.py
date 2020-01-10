@@ -16,7 +16,7 @@ class Node(ModularKind, HasLabel):
     metadata_name: str
     spec_priorityClassName: str
     labels: Set[Label]
-    pods: Set[mpod.Pod]
+    # pods: Set[mpod.Pod]
     cpuCapacity: int
     memCapacity: int
     currentFormalCpuConsumption: int
