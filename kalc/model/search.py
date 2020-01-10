@@ -5,6 +5,7 @@ from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.system.primitives import TypeServ
+from kalc.model.system.math import Combinations, combinations_list
 from kalc.model.system.Controller import Controller
 from kalc.model.system.primitives import Label
 from kalc.model.kinds.Service import Service
@@ -745,6 +746,7 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
         scheduler = next(filter(lambda x: isinstance(x, Scheduler),self.objectList))
         self.generated_goal_eq.append([scheduler.status, STATUS_SCHED["Clean"]])
+
     def goal(self):
         for what, where in self.generated_goal_in:
             assert what in where
@@ -807,11 +809,19 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
     def Calculate_fulfilled_antiaffinity_pods_of_deployment(self,
         pod: Pod,
         deployment: Deployment,
+        combinations_of_amountOfActivePods: Combinations,
         globalVar: GlobalVar):
         if deployment not in globalVar.DeploymentsWithAntiaffinity: 
             assert pod in deployment.podList
             assert deployment.amountOfActivePods > 1
-            assert pod.podsMatchedByAntiaffinity_length == deployment.amountOfActivePods - 1
+            assert combinations_of_amountOfActivePods.number == deployment.amountOfActivePods
+            assert pod.podsMatchedByAntiaffinity_length == combinations_of_amountOfActivePods.combinations - 1
+
+            # if deployment.amountOfActivePods > 10:
+            #     assert pod.podsMatchedByAntiaffinity_length == 45 
+            # else:    
+            #     assert combinations_of_amountOfActivePods.number == deployment.amountOfActivePods
+            #     assert pod.podsMatchedByAntiaffinity_length == combinations_of_amountOfActivePods.combinations - 1
             globalVar.DeploymentsWithAntiaffinity.add(deployment)
             globalVar.DeploymentsWithAntiaffinity_length += 1
 
@@ -819,17 +829,24 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
     def Calculate_fulfilled_antiaffinity_pods_of_deployment_with_pod_limit(self,
         pod: Pod,
         deployment: Deployment,
+        combinations_of_target_amountOfPodsWithAntiaffinity: Combinations,
         globalVar: GlobalVar):
         if deployment not in globalVar.DeploymentsWithAntiaffinity: 
             assert pod in deployment.podList
             assert deployment.amountOfActivePods > 1
             assert globalVar.target_amountOfPodsWithAntiaffinity > 0
-            assert pod.podsMatchedByAntiaffinity_length == globalVar.target_amountOfPodsWithAntiaffinity - 1
+            assert combinations_of_target_amountOfPodsWithAntiaffinity.number == globalVar.target_amountOfPodsWithAntiaffinity
+            assert pod.podsMatchedByAntiaffinity_length == combinations_of_target_amountOfPodsWithAntiaffinity.combinations - 1
+            # if globalVar.target_amountOfPodsWithAntiaffinity > 10:
+            #     assert pod.podsMatchedByAntiaffinity_length == 45 
+            # else:    
+            #     assert combinations_of_target_amountOfPodsWithAntiaffinity.number == globalVar.target_amountOfPodsWithAntiaffinity
+            #     assert pod.podsMatchedByAntiaffinity_length == combinations_of_target_amountOfPodsWithAntiaffinity.combinations - 1
             globalVar.DeploymentsWithAntiaffinity.add(deployment)
             globalVar.DeploymentsWithAntiaffinity_length += 1
 
     @planned(cost=1)
-    def Mark_that_antiaffinity_is_set_for_requested_number_of_deployments(self, 
+    def mark_that_antiaffinity_is_set_for_requested_number_of_deployments(self, 
         globalVar: GlobalVar):
         assert globalVar.DeploymentsWithAntiaffinity_length == globalVar.target_DeploymentsWithAntiaffinity_length
         globalVar.deploymentsWithAntiaffinityBalanced = True
@@ -843,61 +860,39 @@ class Antiaffinity_check_with_limited_number_of_pods_with_add_node(Antiaffinity_
         node.status = STATUS_NODE["Active"]
         globalVar.amountOfNodes += 1
 
-class Antiaffinity_check_with_exact_number_of_pods(Antiaffinity_check_basis):
+class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods):
+    @planned(cost=1)
+    def DrainNode(self,
+        node: "Node",
+        globalVar: GlobalVar):
+        assert node.amountOfActivePods == 0
+        assert node.status == STATUS_NODE["Active"]
+        globalVar.NodesDrained_length += 1
+        globalVar.NodesDrained.add(node)
+        node.status = STATUS_NODE["Inactive"]
+    
+    @planned(cost=1)
+    def Reqested_amount_of_nodes_drained(self,
+        globalVar: GlobalVar):
+        assert globalVar.NodesDrained_length == globalVar.target_NodesDrained_length
+        globalVar.target_NodesDrained_length_reached = True
+
     def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
         for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
                 self.generated_goal_eq.append([globalVar.deploymentsWithAntiaffinityBalanced, True])
+        for pod1 in filter(lambda p: isinstance(p, Pod), self.objectList):
+                self.generated_goal_eq.append([pod1.antiaffinity_met, True])
+        for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+            self.generated_goal_eq.append([globalVar.target_NodesDrained_length_reached, True])
         scheduler = next(filter(lambda x: isinstance(x, Scheduler),self.objectList))
         self.generated_goal_eq.append([scheduler.status, STATUS_SCHED["Clean"]])
-    def goal(self):
-        for what, where in self.generated_goal_in:
-            assert what in where
-        for what1, what2 in self.generated_goal_eq:
-            assert what1 == what2
- 
-    @planned(cost=1)
-    def Set_antiaffinity_between_3_pods_of_deployment(self,
-        pod1: Pod,
-        pod2: Pod,
-        pod3: Pod,
-        deployment: Deployment,
-        globalVar: GlobalVar):
-        assert globalVar.target_amountOfPodsWithAntiaffinity == 3
-        if  pod1 != pod2 and pod1 != pod3 and pod2 != pod3:
-            assert pod1 in deployment.podList
-            assert pod2 in deployment.podList
-            assert pod3 in deployment.podList
-            pod1.antiaffinity_set = True
-            pod1.podsMatchedByAntiaffinity.add(pod2)
-            pod1.podsMatchedByAntiaffinity_length += 1
-            pod1.podsMatchedByAntiaffinity.add(pod3)
-            pod1.podsMatchedByAntiaffinity_length += 1
-            pod2.antiaffinity_set = True
-            pod2.podsMatchedByAntiaffinity.add(pod1)
-            pod2.podsMatchedByAntiaffinity_length += 1
-            pod2.podsMatchedByAntiaffinity.add(pod3)
-            pod2.podsMatchedByAntiaffinity_length += 1
-            pod3.antiaffinity_set = True
-            pod3.podsMatchedByAntiaffinity.add(pod1)
-            pod3.podsMatchedByAntiaffinity_length += 1
-            pod3.podsMatchedByAntiaffinity.add(pod2)
-            pod3.podsMatchedByAntiaffinity_length += 1
-            globalVar.DeploymentsWithAntiaffinity.add(deployment)
-            globalVar.DeploymentsWithAntiaffinity_length += 1
-   
-    @planned(cost=1)
-    def Mark_that_antiaffinity_is_set_for_requested_number_of_deployments(self, 
-        globalVar: GlobalVar):
-        assert globalVar.DeploymentsWithAntiaffinity_length == globalVar.target_DeploymentsWithAntiaffinity_length
-        globalVar.deploymentsWithAntiaffinityBalanced = True
+
+    # def goal(self):
+    #     for what, where in self.generated_goal_in:
+    #         assert what in where
+    #     for what1, what2 in self.generated_goal_eq:
+    #         assert what1 == what2
+
     
-class Antiaffinity_check_with_exact_number_of_pods_with_add_node(Antiaffinity_check_with_exact_number_of_pods):
-    @planned(cost=1)
-    def Add_node(self,
-            node : Node,
-            globalVar: GlobalVar):
-        assert node.status == STATUS_NODE["New"]
-        node.status = STATUS_NODE["Active"]
-        globalVar.amountOfNodes += 1

@@ -95,4 +95,9 @@ class Node(ModularKind, HasLabel):
     # def __repr__(self):
     #     return 'Nodename : ' + str(self._get_value()) 
 
+Node.NODE_NULL = Node("NULL")
+Node.NODE_NULL.isNull = True
+Node.NODE_NULL.status = STATUS_NODE["Inactive"]
+Node.NODE_NULL.metadata_name = "Null-Node"
+Node.NODE_NULL.searchable = False
 

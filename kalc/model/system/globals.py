@@ -2,6 +2,7 @@ from poodle import Object
 from kalc.model.system.primitives import Type, Status
 from kalc.model.system.base import ModularKind
 import kalc.model.kinds.Deployment as mdeployment
+import kalc.model.kinds.Node as mnode
 from typing import Set
 
 class GlobalVar(ModularKind):
@@ -31,7 +32,10 @@ class GlobalVar(ModularKind):
     maxNumberOfPodsOnSameNodeForDeployment: int
     DeploymentsWithAntiaffinity: Set["mdeployment.Deployment"]
     DeploymentsWithAntiaffinity_length: int
-    
+    NodesDrained: Set["mnode.Node"]
+    NodesDrained_length: int
+    target_NodesDrained_length: int
+    target_NodesDrained_length_reached: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -57,4 +61,8 @@ class GlobalVar(ModularKind):
         self.target_amountOfPodsWithAntiaffinity = 0
         # self.deploymentsWithAntiaffinityBalanced = False
         self.maxNumberOfPodsOnSameNodeForDeployment = 0
+        self.NodesDrained_length = 0
+        self.target_NodesDrained_length = 0
+        self.target_NodesDrained_length_reached = False
+        
     def __str__(self): return str(self._get_value())
