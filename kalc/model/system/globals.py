@@ -32,7 +32,8 @@ class GlobalVar(Object):
     DeploymentsWithAntiaffinity: Set["mdeployment.Deployment"]
     DeploymentsWithAntiaffinity_length: int
     NodesDrained: Set["mnode.Node"]
-    NodesDrained_lenght: int
+    NodesDrained_length: int
+    target_NodesDrained_length: int
     target_NodesDrained_length_reached: bool
 
     def __init__(self, *args, **kwargs):
@@ -59,7 +60,8 @@ class GlobalVar(Object):
         self.target_amountOfPodsWithAntiaffinity = 0
         self.deploymentsWithAntiaffinityBalanced = False
         self.maxNumberOfPodsOnSameNodeForDeployment = 0
-        self.NodesDrained_lenght = 0
+        self.NodesDrained_length = 0
+        self.target_NodesDrained_length = 0
         self.target_NodesDrained_length_reached = False
         
     def __str__(self): return str(self._get_value())
