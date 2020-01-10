@@ -33,20 +33,19 @@ class PolicyImplementer:
         # - add hypotheses to a list with its goals and order
         # - after we collected all hypoteses, take first N and generate basic run plan
         print("AAA trying to activate policy", self._instantiated_policies)
+        hypotheses = []
         for pname, pobject in self._instantiated_policies.items():
             print("AAA checking ", pname)
             if pobject.activated:
                 print("AAA found activated policy")
                 for hname, hval in pobject.hypotheses.items():
                     print("AAA Adding hypothesis", hname)
-                    pobject.clear_goal()
-                    hval()
-                    kube.add_goal_eq(pobject.get_goal_eq())
-                    kube.add_goal_in(pobject.get_goal_in())
+                    hypotheses.append(hval)
                 for name in dir(pobject):
                     if callable(getattr(pobject, name)) and hasattr(getattr(pobject, name), "_planned"):
                         print("AAA Adding planned method from policy", name)
                         kube.add_external_method(getattr(pobject, name))
+        return hypotheses
 
 
 class PolicyEngineClass:
@@ -92,30 +91,11 @@ class BasePolicy:
     ACTIVATED = False
     def __init__(self, obj, state_objects):
         self.target_object = obj
-        self.goal_eq_list = []
-        self.goal_in_list = []
         self.hypotheses = {}
         self.state_objects = state_objects
-    
-    def register_goal(self, f1, operator, f2):
-        assert operator == "==" or operator == "in", "operator must be == or in"
-        if operator == "==":
-            self.goal_eq_list.append([f1, f2])
-        else:
-            self.goal_in_list.append([f1, f2])
 
-    def register_hypothesis(self, name, func):
-        self.hypotheses[name] = func
-    
-    def clear_goal(self):
-        self.goal_eq_list = []
-        self.goal_in_list = []
-    
-    def get_goal_in(self):
-        return self.goal_in_list
-
-    def get_goal_eq(self):
-        return self.goal_eq_list
+    def register_hypothesis(self, name, func, order=1):
+        self.hypotheses[name] = [order, name, func]
     
     def _set(self, val):
         if not self.ACTIVATED:

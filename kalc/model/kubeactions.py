@@ -18,6 +18,9 @@ from kalc.misc.problem import ProblemTemplate
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 
 class KubernetesModel(ProblemTemplate):
+    def register_goal(self, lambda_fun):
+        self.lambda_goal.append(lambda_fun)
+
     def add_goal_in(self, goal_entry):
         self.goals_in.extend(goal_entry)
 
@@ -28,6 +31,8 @@ class KubernetesModel(ProblemTemplate):
         self.add_goal_eq([[self.scheduler.status, STATUS_SCHED["Clean"]]])
 
     def goal(self):
+        for l in self.lambda_goal:
+            assert l()
         if self.goals_in:
             for what, where in self.goals_in:
                 assert what in where

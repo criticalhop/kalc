@@ -7,6 +7,7 @@ from kalc.model.system.globals import GlobalVar
 from kalc.misc.const import *
 from poodle import planned
 from kalc.policy import policy_engine, BasePolicy
+from kalc.model.search import KubernetesModel
 
 class StubPolicy(BasePolicy):
     TYPE = "property"
@@ -20,10 +21,10 @@ class StubPolicy(BasePolicy):
         if val:
             # enable
 
-            def hypothesis_1():
+            def hypothesis_1(kube: KubernetesModel):
                 # TODO: hypotheses can not work in parallel this way: will modify main object
                 self.target_object.stub = False
-                self.register_goal(self.target_object.stub, "==", True)
+                kube.register_goal(lambda: self.target_object.stub == True)
             
             self.register_hypothesis("Stub worked", hypothesis_1, order=1)
         else:

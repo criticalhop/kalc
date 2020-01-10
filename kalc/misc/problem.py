@@ -18,6 +18,7 @@ class ProblemTemplate:
         self.goals_in = []
         self.goals_eq = []
         self.external_actions = []
+        self.lambda_goal = []
     
     def problem(self):
         pass

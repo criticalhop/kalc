@@ -57,11 +57,17 @@ def update(data=None):
     cluster = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 
 def run():
+    # TODO HERE: copy state_objects!
+    # as we will be running multiple times, we need to store original state
+    # or we actually don't! we can continue computing on top of previous...?
+    # for now it is ok..
     kube = KubernetesModel(kalc_state_objects)
     policy_added = False
+    hypotheses = []
     for ob in kalc_state_objects:
         if isinstance(ob.policy, str): continue # STUB. find and fix
-        ob.policy.apply(kube)
+        hypotheses.append(ob.policy.apply(kube))
+    # TODO HERE: generate different combinations of hypotheses
     kube.run(timeout=999000, sessionName="kalc")
     # TODO. STUB
     # TODO example hanlers and patches
