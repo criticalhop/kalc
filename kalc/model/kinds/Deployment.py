@@ -56,6 +56,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     NumberOfPodsOnSameNodeForDeployment: int
     calc_PodsWithAntiaffinitySet: Set["mpod.Pod"]
     calc_PodsWithAntiaffinitySet_length: int
+    podsMatchedByAntiaffinity_length: int
     
 
 
@@ -71,9 +72,10 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
         self.spec_replicas = 0
-        self.NumberOfPodsOnSameNodeForDeployment = 0
-        self.amountOfPodsWithAntiaffinity = 0
+        self.NumberOfPodsOnSameNodeForDeployment = 10
+        self.amountOfPodsWithAntiaffinity = 5
         self.calc_PodsWithAntiaffinitySet_length = 0
+        self.podsMatchedByAntiaffinity_length = 0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
