@@ -58,7 +58,6 @@ def print_objects(objectList):
         ", CurrentFormalCpuConsumption: "  + str(nodeitem.currentFormalCpuConsumption._get_value()) + \
         ", CurrentFormalMemConsumption: " + str(nodeitem.currentFormalMemConsumption._get_value()) + \
         ", AmountOfPodsOverwhelmingMemLimits: " + str(nodeitem.AmountOfPodsOverwhelmingMemLimits._get_value()) + \
-        ", PodAmount: "  + str(nodeitem.podAmount._get_value()) + \
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
         ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
