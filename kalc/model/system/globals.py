@@ -56,11 +56,11 @@ class GlobalVar(ModularKind):
         self.amountOfNodes = 0
         self.amountOfNodes_limit = 0
         self.DeploymentsWithAntiaffinity_length = 0
-        self.target_DeploymentsWithAntiaffinity_length = 0
+        self.target_DeploymentsWithAntiaffinity_length = 1
         self.amountOfPodsWithAntiaffinity = 0
-        self.target_amountOfPodsWithAntiaffinity = 0
-        # self.deploymentsWithAntiaffinityBalanced = False
-        self.maxNumberOfPodsOnSameNodeForDeployment = 0
+        self.target_amountOfPodsWithAntiaffinity = 5
+        self.deploymentsWithAntiaffinityBalanced = False
+        self.maxNumberOfPodsOnSameNodeForDeployment = 10
         self.NodesDrained_length = 0
         self.target_NodesDrained_length = 0
         self.target_NodesDrained_length_reached = False

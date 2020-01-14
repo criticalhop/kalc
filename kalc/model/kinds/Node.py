@@ -24,7 +24,6 @@ class Node(ModularKind, HasLabel):
     currentRealMemConsumption: int
     currentRealCpuConsumption: int
     AmountOfPodsOverwhelmingMemLimits: int
-    podAmount: int
     isNull: bool
     status: StatusNode
     amountOfActivePods: int

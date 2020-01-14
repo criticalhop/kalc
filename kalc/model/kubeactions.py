@@ -416,6 +416,7 @@ class KubernetesModel(ProblemTemplate):
         assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
         assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
         assert pod.antiaffinity_met == False
+        assert pod.calc_antiaffinity_pods_list_length == 0
 
         nodeFrom.currentFormalMemConsumption -= pod.memRequest
         nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest

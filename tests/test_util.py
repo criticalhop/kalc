@@ -58,7 +58,6 @@ def print_objects(objectList):
         ", CurrentFormalCpuConsumption: "  + str(nodeitem.currentFormalCpuConsumption._get_value()) + \
         ", CurrentFormalMemConsumption: " + str(nodeitem.currentFormalMemConsumption._get_value()) + \
         ", AmountOfPodsOverwhelmingMemLimits: " + str(nodeitem.AmountOfPodsOverwhelmingMemLimits._get_value()) + \
-        ", PodAmount: "  + str(nodeitem.podAmount._get_value()) + \
         ", IsNull:"  + str(nodeitem.isNull._get_value()) + \
         ", Status:"  + str(nodeitem.status._get_value()) +\
         ", AmountOfActivePods: " + str(nodeitem.amountOfActivePods._get_value()) +\
@@ -108,7 +107,8 @@ def print_objects(objectList):
         " Status: " + str(deployment.status._get_value())+\
         " PodList: " + str([str(x) for x in deployment.podList._get_value()])+\
         " PriorityClassName: " + str(deployment.spec_template_spec_priorityClassName._property_value) + \
-        " Searchable:" + str(deployment.searchable))
+        " Searchable:" + str(deployment.searchable)+\
+        " NumberOfPodsOnSameNodeForDeployment: " + str(deployment.NumberOfPodsOnSameNodeForDeployment._get_value()))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
     
     daemonsets_loaded_list = filter(lambda x: isinstance(x, DaemonSet), objectList)
@@ -141,5 +141,8 @@ def print_objects(objectList):
         list_of_objects_output.extend(['is_node_disrupted',str(globalvar_item.is_node_disrupted._get_value())])
         list_of_objects_output.extend(['amountOfNodes',str(globalvar_item.amountOfNodes._get_value())])
         list_of_objects_output.extend(['amountOfNodes_limit',str(globalvar_item.amountOfNodes_limit._get_value())])
+        list_of_objects_output.extend(['target_DeploymentsWithAntiaffinity_length',str(globalvar_item.target_DeploymentsWithAntiaffinity_length._get_value())])
+        list_of_objects_output.extend(['maxNumberOfPodsOnSameNodeForDeployment',str(globalvar_item.maxNumberOfPodsOnSameNodeForDeployment._get_value())])
+        list_of_objects_output.extend(['target_amountOfPodsWithAntiaffinity',str(globalvar_item.target_amountOfPodsWithAntiaffinity._get_value())])
     
     print(list_of_objects_output)
