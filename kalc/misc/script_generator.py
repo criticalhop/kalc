@@ -1,6 +1,33 @@
 import subprocess
 import json
 from kalc.model.kinds.Node import Node
+import kalc.model.kinds.ReplicaSet as rs
+import kalc.model.kinds.Deployment as d
+
+
+def get_rs_from_deployment(deployment, object_space):
+    replicasets = filter(lambda x: isinstance(x, rs.ReplicaSet), object_space)
+    for replicaset in replicasets:
+        if replicaset.metadata_ownerReferences__name == deployment.metadata_name:
+            return replicaset
+    return None
+
+
+def get_deployment_from_pod(pod, object_space):
+    deployments = filter(lambda x: isinstance(x, d.Deployment), object_space)
+    for deployment in deployments:
+        if pod in deployment.podList:
+            return deployment 
+    return None
+
+
+def move_pod_with_deployment_script_simple(pod, node_to: Node, object_space):
+    if hasattr(pod, "_variable_mode") and pod._variable_mode: 
+        return "" # FIX for https://github.com/criticalhop/poodle/issues/59
+    d = get_deployment_from_pod(pod, object_space)
+    return move_pod_with_deployment_script(pod, node_to, d,
+        get_rs_from_deployment(d, object_space))
+
 
 def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     "Move the pod when the pod is part of Deployment"

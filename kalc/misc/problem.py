@@ -21,6 +21,7 @@ class ProblemTemplate:
         self.goals_eq = []
         self.external_actions = []
         self.lambda_goal = []
+        self.script_gen = []
     
     def problem(self):
         pass
@@ -80,3 +81,5 @@ class ProblemTemplate:
 
     def goal(self):
         pass
+
+    

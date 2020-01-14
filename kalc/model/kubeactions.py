@@ -16,6 +16,7 @@ from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from kalc.misc.const import *
 from kalc.misc.problem import ProblemTemplate
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
+from kalc.misc.script_generator import move_pod_with_deployment_script_simple
 
 class KubernetesModel(ProblemTemplate):
     def register_goal(self, lambda_fun):
@@ -429,6 +430,8 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.amountOfActivePods += 1
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
+
+        self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
 
         # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
         #     podStarted.memRequest = podStarted.memLimit
