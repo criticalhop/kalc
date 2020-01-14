@@ -45,7 +45,9 @@ def print_objects(objectList):
         ", calc_cantmatch_antiaffinity: " + str(poditem.antiaffinity_set._get_value()) + \
         ", antiaffinity_preferred_set:" + str(poditem.antiaffinity_preferred_set._get_value()) + \
         ", target_number_of_antiaffinity_pods: "+ str(poditem.target_number_of_antiaffinity_pods._get_value()) +\
-        ", nodesThatCantAllocateThisPod_length: "+ str(poditem.nodesThatCantAllocateThisPod_length._get_value()))
+        ", nodesThatCantAllocateThisPod_length: "+ str(poditem.nodesThatCantAllocateThisPod_length._get_value())+\
+        ", amount_of_deployment_pod_on_node: "+ str(poditem.amount_of_deployment_pod_on_node._get_value())+\
+        ", calc_currently_processed_amount_of_deployment_pod_on_node: "+ str(poditem.calc_currently_processed_amount_of_deployment_pod_on_node._get_value()))
     
     
 

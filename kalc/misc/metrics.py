@@ -30,13 +30,18 @@ def calculate_maxNumberOfPodsOnSameNode_metrics(self, object_space):
             for pod in node.allocatedPodList:
                 if pod in deploymentController.podList:
                     amount_of_deployment_pod_on_node += 1
+            for pod in node.allocatedPodList:
+                if pod in deploymentController.podList:
+                    pod.amount_of_deployment_pod_on_node = amount_of_deployment_pod_on_node
             node_amount_of_pods_list.append(amount_of_deployment_pod_on_node)
         if len(node_amount_of_pods_list) == 0:
-            deploymentController.NumberOfPodsOnSameNodeForDeployment = 1
+            pass
         else:
             deploymentController.NumberOfPodsOnSameNodeForDeployment = max(node_amount_of_pods_list)
         deploymentController_max_node_amount_of_pods_list.append(deploymentController.NumberOfPodsOnSameNodeForDeployment)
     if len(deploymentController_max_node_amount_of_pods_list) == 0:
-        globalVar.maxNumberOfPodsOnSameNodeForDeployment = 1
+        pass
     else:
         globalVar.maxNumberOfPodsOnSameNodeForDeployment = max(deploymentController_max_node_amount_of_pods_list)
+    for pod in pods:
+        pod.calc_currently_processed_amount_of_deployment_pod_on_node = globalVar.maxNumberOfPodsOnSameNodeForDeployment
