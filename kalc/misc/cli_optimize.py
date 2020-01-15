@@ -19,10 +19,6 @@ def optimize_cluster(clusterData):
         for pod in deployment.podList: # actually, for i in range(len(..podList))
             update(clusterData) # To reload from scratch...
 
-            import sys
-            sys.path.append('./tests/')
-            import test_util
-            test_util.print_objects(kalc_state_objects)
             p = Balance_pods_and_drain_node(kalc_state_objects)
             deployments = filter(lambda x: isinstance(x, Deployment), kalc_state_objects)
             globalVar = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
@@ -34,27 +30,26 @@ def optimize_cluster(clusterData):
             drain_node_counter += 1
             if drain_node_counter % drain_node_frequency == 0:
                 print("-----------------------------------------------------------------------------------")
-                print("--- Solving case for deployment_amount = ",deployment_amount,", pod_amount =  ", pod_amount, ", drain nodes = 1 ---")
+                print("--- Solving case for deployment_amount =", deployment_amount, ", pod_amount =", pod_amount, ", drain nodes = 1 ---")
                 print("-----------------------------------------------------------------------------------")
                 globalVar.target_NodesDrained_length = 1
-            if drain_node_counter % twice_drain_node_frequency == 0:
+            elif drain_node_counter % twice_drain_node_frequency == 0:
                 print("-----------------------------------------------------------------------------------")
-                print("--- Solving case for deployment_amount = ",deployment_amount,", pod_amount =  ", pod_amount, ", drain nodes = 2 ---")
+                print("--- Solving case for deployment_amount =", deployment_amount,", pod_amount =", pod_amount, ", drain nodes = 2 ---")
                 print("-----------------------------------------------------------------------------------")
                 globalVar.target_NodesDrained_length = 2
-            print("-----------------------------------------------------------------------------------")
-            print("--- Solving case for deployment_amount = ",deployment_amount,", pod_amount =  ", pod_amount, "---")
-            print("-----------------------------------------------------------------------------------")
+            else:
+                print("-----------------------------------------------------------------------------------")
+                print("--- Solving case for deployment_amount =", deployment_amount, ", pod_amount =", pod_amount, "---")
+                print("-----------------------------------------------------------------------------------")
             # print_objects(k2.state_objects)
             p.xrun()
             move_script = '\n'.join(p.script)
             full_script = generate_compat_header() + move_script
-            print("####### CUT HERE 8-< ---------------------------------------------------")
-            print(full_script)
-            print("####### CUT HERE 8-< ---------------------------------------------------")
-
-
-
+            scritpt_file = f"./kalc_optimize_{deployment_amount}_{pod_amount}.sh"
+            print("Generated optimization script at", scritpt_file)
+            with open(scritpt_file, "w+") as fd:
+                fd.write(full_script)
 
 def run():
     optimize_cluster(None)

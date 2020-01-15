@@ -55,28 +55,28 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
 
     move_pod = f"""
     echo "Moving pod '{pod_original_name}'..."
-    echo "Disabling relevant controllers by backing up and temporarily deleting them..."
+    echo " -- Disabling relevant controllers by backing up and temporarily deleting them..."
     kubectl get deployment/{deployment_name} -o=yaml > ./deployment_{deployment_name}.yaml &&
     kubectl delete --cascade=false deployment/{deployment_name} &&
     kubectl get replicaset/{replicaset_name} -o=yaml > ./replicaset_{replicaset_name}.yaml &&
     kubectl delete --cascade=false replicaset/{replicaset_name} &&
-    echo "Storing current version of pod config of the pod-to-be-moved..." &&
+    echo " -- Storing current version of pod config of the pod-to-be-moved..." &&
     kubectl get pod/{pod_original_name} -o=yaml > ./pod_new.yaml &&
-    echo "Renaming pod template..." &&
+    echo "  --- Renaming pod template..." &&
     yq '.metadata += {{name: "{pod_new_name}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-    echo "Deleting status from dump..." &&
+    echo "  --- Deleting status from dump..." &&
     yq 'del(.status)' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-    echo "Inserting nodeSelector..." &&
+    echo "  --- Inserting nodeSelector..." &&
     yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-    echo "Running new pod..." &&
+    echo " -- Running new pod..." &&
     kubectl apply -f ./pod_new.yaml &&
-    echo "Waiting for new pod to become ready..." &&
+    echo " -- Waiting for new pod to become ready..." &&
     kubectl wait --for condition=ready -f ./pod_new.yaml &&
-    echo "Deleting original pod..." &&
+    echo " -- Deleting original pod..." &&
     kubectl delete pod/{pod_original_name}
-    echo "Re-applying ReplicaSet..." &&
+    echo " -- Re-applying ReplicaSet..." &&
     kubectl apply -f ./replicaset_{replicaset_name}.yaml &&
-    echo "Re-applying Deployment..." &&
+    echo " -- Re-applying Deployment..." &&
     kubectl apply -f ./deployment_{deployment_name}.yaml &&
     echo "Done moving pod '{pod_original_name}'!"
     """

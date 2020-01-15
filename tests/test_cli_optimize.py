@@ -268,6 +268,6 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
 def test_optimmize_cluster():
     k, p, test_case = prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods()
     yaml_dump = convert_space_to_yaml_dump(k.state_objects)
-    print("Running with", yaml_dump)
+    # print("Running with", yaml_dump)
     optimize_cluster(yaml_dump)
 
