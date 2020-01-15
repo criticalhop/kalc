@@ -41,23 +41,3 @@ class Metric():
                 faultToleranceGeom += float(node) / float(len(deployment.pod_list))
             self.faultToleranceSquare = math.sqrt(faultTolerance)
             self.faultToleranceGeom = math.pow(faultToleranceGeom, len(node))
-
-
-    deploymentController_max_node_amount_of_pods_list = []
-    for deploymentController in deployments:
-        node_amount_of_pods_list = []
-        for node in nodes:
-            amount_of_deployment_pod_on_node = 0
-            for pod in node.allocatedPodList:
-                if pod in deploymentController.podList:
-                    amount_of_deployment_pod_on_node += 1
-            node_amount_of_pods_list.append(amount_of_deployment_pod_on_node)
-        if len(node_amount_of_pods_list) == 0:
-            deploymentController.NumberOfPodsOnSameNodeForDeployment = 1
-        else:
-            deploymentController.NumberOfPodsOnSameNodeForDeployment = max(node_amount_of_pods_list)
-        deploymentController_max_node_amount_of_pods_list.append(deploymentController.NumberOfPodsOnSameNodeForDeployment)
-    if len(deploymentController_max_node_amount_of_pods_list) == 0:
-        globalVar.maxNumberOfPodsOnSameNodeForDeployment = 1
-    else:
-        globalVar.maxNumberOfPodsOnSameNodeForDeployment = max(deploymentController_max_node_amount_of_pods_list)
