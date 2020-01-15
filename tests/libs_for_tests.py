@@ -281,6 +281,14 @@ def convert_space_to_yaml(space, wrap_items=False, load_logic_support=True):
         ret.append(yaml.dump(x))
     return ret
 
+def convert_space_to_yaml_dump(space):
+    """convert object space to YAML that can be loaded with help of split_yamldumps
+        this is the same method that you get if you do multiple kubectl get <object> >> file.yaml
+    """
+    return 'kind: List\n'.join(convert_space_to_yaml(space, True, True))
+
+
+
 def print_objects_from_yaml(k2):
     for y in convert_space_to_yaml(k2.state_objects, wrap_items=True):
         print(y)
