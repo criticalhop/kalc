@@ -632,8 +632,6 @@ class Antiaffinity_check_basis(KubernetesModel):
                 target_pod.calc_antiaffinity_pods_list.add(antiaffinity_pod)
                 target_pod.calc_antiaffinity_pods_list_length += 1
         assert antiaffinity_pod in target_pod.podsMatchedByAntiaffinity
-        assert target_pod.calc_currently_processed_amount_of_deployment_pod_on_node <= target_pod.amount_of_deployment_pod_on_node
-        assert antiaffinity_pod.calc_currently_processed_amount_of_deployment_pod_on_node <= antiaffinity_pod.amount_of_deployment_pod_on_node
         assert globalVar.deploymentsWithAntiaffinityBalanced == True 
         assert antiaffinity_pod.atNode == antiaffinity_pod_node
         assert antiaffinity_pod_node.isNull == False
@@ -680,8 +678,6 @@ class Antiaffinity_check_basis(KubernetesModel):
         assert pod2 in deployment.podList
         assert pod1.antiaffinity_set == True 
         assert pod2.antiaffinity_set == True
-        assert pod1.calc_currently_processed_amount_of_deployment_pod_on_node <= pod1.amount_of_deployment_pod_on_node
-        assert pod2.calc_currently_processed_amount_of_deployment_pod_on_node <= pod2.amount_of_deployment_pod_on_node
         assert pod2 in pod1.podsMatchedByAntiaffinity
         assert pod1 in pod2.podsMatchedByAntiaffinity
         if pod2 not in pod1.calc_antiaffinity_pods_list and \
@@ -713,9 +709,6 @@ class Antiaffinity_check_basis(KubernetesModel):
         assert pod1.antiaffinity_set == True 
         assert pod2.antiaffinity_set == True
         assert pod3.antiaffinity_set == True
-        assert pod1.calc_currently_processed_amount_of_deployment_pod_on_node <= pod1.amount_of_deployment_pod_on_node
-        assert pod2.calc_currently_processed_amount_of_deployment_pod_on_node <= pod2.amount_of_deployment_pod_on_node
-        assert pod3.calc_currently_processed_amount_of_deployment_pod_on_node <= pod3.amount_of_deployment_pod_on_node
         assert pod2 in pod1.podsMatchedByAntiaffinity
         assert pod1 in pod2.podsMatchedByAntiaffinity
         assert pod2 in pod3.podsMatchedByAntiaffinity
@@ -775,9 +768,7 @@ class Antiaffinity_check_basis(KubernetesModel):
     #     assert pod2.antiaffinity_set == True
     #     assert pod3.antiaffinity_set == True
     #     assert pod4.antiaffinity_set == True
-    #     assert pod1.calc_currently_processed_amount_of_deployment_pod_on_node <= pod1.amount_of_deployment_pod_on_node
-    #     assert pod2.calc_currently_processed_amount_of_deployment_pod_on_node <= pod2.amount_of_deployment_pod_on_node
-    #     assert pod3.calc_currently_processed_amount_of_deployment_pod_on_node <= pod3.amount_of_deployment_pod_on_node
+
     #     assert pod1 in pod2.podsMatchedByAntiaffinity
     #     assert pod1 in pod3.podsMatchedByAntiaffinity
     #     assert pod1 in pod4.podsMatchedByAntiaffinity
@@ -868,13 +859,7 @@ class Antiaffinity_check_basis(KubernetesModel):
     #     assert pod3.antiaffinity_set == True
     #     assert pod4.antiaffinity_set == True
     #     assert pod5.antiaffinity_set == True
-    
-        # assert pod1.calc_currently_processed_amount_of_deployment_pod_on_node <= pod1.amount_of_deployment_pod_on_node
-        # assert pod2.calc_currently_processed_amount_of_deployment_pod_on_node <= pod2.amount_of_deployment_pod_on_node
-        # assert pod3.calc_currently_processed_amount_of_deployment_pod_on_node <= pod3.amount_of_deployment_pod_on_node
-        # assert pod4.calc_currently_processed_amount_of_deployment_pod_on_node <= pod4.amount_of_deployment_pod_on_node
-        # assert pod5.calc_currently_processed_amount_of_deployment_pod_on_node <= pod5.amount_of_deployment_pod_on_node
-        
+
     #     assert pod1 in pod2.podsMatchedByAntiaffinity
     #     assert pod1 in pod3.podsMatchedByAntiaffinity
     #     assert pod1 in pod4.podsMatchedByAntiaffinity
