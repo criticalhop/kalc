@@ -14,7 +14,6 @@ from logzero import logger
 import kalc.misc.util as util
 import random
 import yaml, copy, jsonpatch, difflib
-from kalc.misc.metrics import calculate_maxNumberOfPodsOnSameNode_metrics
 
 class YAMLable():
     yaml_orig: {}

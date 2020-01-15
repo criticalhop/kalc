@@ -1,6 +1,6 @@
-from kalc.model.kinds.Pod import 
-from kalc.model.kinds.Node import
-from kalc.model.kinds.Deployment import Deployment
+import kalc.model.kinds.Pod as mpod
+import kalc.model.kinds.Node as mnode
+import kalc.model.kinds.Deployment as mdeployment
 from logzero import logger
 import math
 
@@ -10,7 +10,7 @@ class Metric():
         self.deployments = filter(lambda x: isinstance(x, mdeployment.Deployment), object_space)
         self.pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
         self.nodes = filter(lambda x: isinstance(x,mnode.Node), object_space)
-        self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
+        # self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
         self.setUnusedRes()
 
     def setUnusedRes(self):
@@ -19,7 +19,7 @@ class Metric():
         self.memUsed = 0 
         self.memTotal = 0
         for node in self.nodes:
-            self.cpuTotal += node.cpuCapacity
+            self.cpuTotal = self.cpuTotal + node.cpuCapacity
             self.memTotal += node.memCapacity
         for pod in self.pods:
             self.cpuUsed += podcurrentRealCpuConsumption

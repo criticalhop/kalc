@@ -6,7 +6,6 @@ from kalc.model.system.primitives import Label, StatusNode
 from kalc.model.system.base import HasLabel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from kalc.misc.const import STATUS_NODE
-from kalc.model.scenario import ScenarioStep, describe
 from kalc.model.system.globals import GlobalVar
 
 
