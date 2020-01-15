@@ -5,8 +5,6 @@ from logzero import logger
 import math
 
 class Metric():
-    maxNumberOfPodsOnSameNodeForDeployment: int
-    meanPercentageOnTheSameNode: int
 
     def __init__(self, object_space):
         self.deployments = filter(lambda x: isinstance(x, mdeployment.Deployment), object_space)
@@ -30,7 +28,8 @@ class Metric():
         self.cpuFree = self.cpuTotal - self.cpuUsed 
 
     def faultTolerance(self):
-        self.faultTolerance = {}
+        self.faultToleranceSquare = {}
+        self.faultToleranceGeom = {}
         faultTolerance = 0
         nodes = {}
         for deployment in self.deployments:
@@ -38,6 +37,6 @@ class Metric():
                 nodes[id(pod.atNode)] = nodes.get(id(pod.atNode), 0.0) + 1.0
             for node in nodes:
                 faultToleranceSquare += (float(node) / float(len(deployment.pod_list))) ** 2
-                faultToleranceGeom += float(node) / float(len(deployment.pod_list))
-            self.faultToleranceSquare = math.sqrt(faultTolerance)
-            self.faultToleranceGeom = math.pow(faultToleranceGeom, len(node))
+                faultToleranceGeom *= float(node) / float(len(deployment.pod_list))
+            self.faultToleranceSquare[id(deployment)] = math.sqrt(faultTolerance)
+            self.faultToleranceGeom[id(deployment)] = math.pow(faultToleranceGeom, len(node))
