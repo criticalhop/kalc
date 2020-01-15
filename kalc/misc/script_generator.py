@@ -54,31 +54,31 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     # TODO: paranoid checks: that deployment does not get re-created
 
     move_pod = f"""
-    echo "Moving pod '{pod_original_name}'..."
-    echo " -- Disabling relevant controllers by backing up and temporarily deleting them..."
-    kubectl get deployment/{deployment_name} -o=yaml > ./deployment_{deployment_name}.yaml &&
-    kubectl delete --cascade=false deployment/{deployment_name} &&
-    kubectl get replicaset/{replicaset_name} -o=yaml > ./replicaset_{replicaset_name}.yaml &&
-    kubectl delete --cascade=false replicaset/{replicaset_name} &&
-    echo " -- Storing current version of pod config of the pod-to-be-moved..." &&
-    kubectl get pod/{pod_original_name} -o=yaml > ./pod_new.yaml &&
-    echo "  --- Renaming pod template..." &&
-    yq '.metadata += {{name: "{pod_new_name}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-    echo "  --- Deleting status from dump..." &&
-    yq 'del(.status)' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-    echo "  --- Inserting nodeSelector..." &&
-    yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-    echo " -- Running new pod..." &&
-    kubectl apply -f ./pod_new.yaml &&
-    echo " -- Waiting for new pod to become ready..." &&
-    kubectl wait --for condition=ready -f ./pod_new.yaml &&
-    echo " -- Deleting original pod..." &&
-    kubectl delete pod/{pod_original_name}
-    echo " -- Re-applying ReplicaSet..." &&
-    kubectl apply -f ./replicaset_{replicaset_name}.yaml &&
-    echo " -- Re-applying Deployment..." &&
-    kubectl apply -f ./deployment_{deployment_name}.yaml &&
-    echo "Done moving pod '{pod_original_name}'!"
+echo "Moving pod '{pod_original_name}'..."
+echo " -- Disabling relevant controllers by backing up and temporarily deleting them..."
+kubectl get deployment/{deployment_name} -o=yaml > ./deployment_{deployment_name}.yaml &&
+kubectl delete --cascade=false deployment/{deployment_name} &&
+kubectl get replicaset/{replicaset_name} -o=yaml > ./replicaset_{replicaset_name}.yaml &&
+kubectl delete --cascade=false replicaset/{replicaset_name} &&
+echo " -- Storing current version of pod config of the pod-to-be-moved..." &&
+kubectl get pod/{pod_original_name} -o=yaml > ./pod_new.yaml &&
+echo "  --- Renaming pod template..." &&
+yq '.metadata += {{name: "{pod_new_name}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+echo "  --- Deleting status from dump..." &&
+yq 'del(.status)' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+echo "  --- Inserting nodeSelector..." &&
+yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+echo " -- Running new pod..." &&
+kubectl apply -f ./pod_new.yaml &&
+echo " -- Waiting for new pod to become ready..." &&
+kubectl wait --for condition=ready -f ./pod_new.yaml &&
+echo " -- Deleting original pod..." &&
+kubectl delete pod/{pod_original_name}
+echo " -- Re-applying ReplicaSet..." &&
+kubectl apply -f ./replicaset_{replicaset_name}.yaml &&
+echo " -- Re-applying Deployment..." &&
+kubectl apply -f ./deployment_{deployment_name}.yaml &&
+echo "Done moving pod '{pod_original_name}'!"
     """
     return move_pod
 
@@ -91,17 +91,17 @@ def generate_compat_header():
 #!/bin/bash
 die() { echo "$*" 1>&2 ; exit 1; }
 
-    # Checking for tools
-    echo "Checking for kubectl..." && kubectl > /dev/null || die "sed not found" 
-    echo "Checking for jq..." && jq --version | grep -q jq- || die "jq not found or not compatible. Install with 'apt install jq'" 
-    echo "Checking for yq..." && yq --version 2>&1 | grep -q "yq 2" || die "yq not found or not compatible" 
-    echo "Checking for sed..." && sed --version >/dev/null 2> /dev/null || die "sed not found"
-    echo -n "Checking for kubectl get permission for deployment... " && kubectl auth can-i get deployment || die "kubectl does not have permission to get deployments" 
-    echo -n "Checking for kubectl get permission for replicaset... " && kubectl auth can-i get replicaset || die "kubectl does not have permission to get replicaset" 
-    echo -n "Checking for kubectl get permission for pod... " && kubectl auth can-i get pod || die "kubectl does not have permission to get pod" 
-    echo -n "Checking for kubectl apply permission for deployment... " && kubectl auth can-i apply deployment || die "kubectl does not have permission to apply deployments" 
-    echo -n "Checking for kubectl apply permission for replicaset... " && kubectl auth can-i apply replicaset || die "kubectl does not have permission to apply replicaset" 
-    echo -n "Checking for kubectl apply permission for pod... " && kubectl auth can-i apply pod || (echo "kubectl does not have permission to apply pod" && exit 1)
+# Checking for tools
+echo "Checking for kubectl..." && kubectl > /dev/null || die "sed not found" 
+echo "Checking for jq..." && jq --version | grep -q jq- || die "jq not found or not compatible. Install with 'apt install jq'" 
+echo "Checking for yq..." && yq --version 2>&1 | grep -q "yq 2" || die "yq not found or not compatible" 
+echo "Checking for sed..." && sed --version >/dev/null 2> /dev/null || die "sed not found"
+echo -n "Checking for kubectl get permission for deployment... " && kubectl auth can-i get deployment || die "kubectl does not have permission to get deployments" 
+echo -n "Checking for kubectl get permission for replicaset... " && kubectl auth can-i get replicaset || die "kubectl does not have permission to get replicaset" 
+echo -n "Checking for kubectl get permission for pod... " && kubectl auth can-i get pod || die "kubectl does not have permission to get pod" 
+echo -n "Checking for kubectl apply permission for deployment... " && kubectl auth can-i apply deployment || die "kubectl does not have permission to apply deployments" 
+echo -n "Checking for kubectl apply permission for replicaset... " && kubectl auth can-i apply replicaset || die "kubectl does not have permission to apply replicaset" 
+echo -n "Checking for kubectl apply permission for pod... " && kubectl auth can-i apply pod || (echo "kubectl does not have permission to apply pod" && exit 1)
     """
 
     return compat
