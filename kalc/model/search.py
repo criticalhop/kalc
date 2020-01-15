@@ -742,84 +742,84 @@ class Antiaffinity_check_basis(KubernetesModel):
 
 
 # THis can't be used yet because of  BUG 131
-    @planned(cost=1)
-    def mark_4_pods_of_deployment_as_not_at_same_node(self,
-            pod1: Pod,
-            pod2: Pod,
-            pod3: Pod,
-            pod4: Pod,
-            node_of_pod1: Node,
-            node_of_pod2: Node,
-            node_of_pod3: Node,
-            node_of_pod4: Node,
-            deployment: Deployment):
+    # @planned(cost=1)
+    # def mark_4_pods_of_deployment_as_not_at_same_node(self,
+    #         pod1: Pod,
+    #         pod2: Pod,
+    #         pod3: Pod,
+    #         pod4: Pod,
+    #         node_of_pod1: Node,
+    #         node_of_pod2: Node,
+    #         node_of_pod3: Node,
+    #         node_of_pod4: Node,
+    #         deployment: Deployment):
         
-        assert node_of_pod1 == pod1.atNode
-        assert node_of_pod2 == pod2.atNode
-        assert node_of_pod3 == pod3.atNode
-        assert node_of_pod4 == pod4.atNode
-        assert node_of_pod1 in node_of_pod2.different_than
-        assert node_of_pod1 in node_of_pod3.different_than
-        assert node_of_pod1 in node_of_pod4.different_than
-        assert node_of_pod2 in node_of_pod3.different_than
-        assert node_of_pod2 in node_of_pod4.different_than
-        assert node_of_pod3 in node_of_pod4.different_than
-        assert node_of_pod4 in node_of_pod1.different_than
-        assert node_of_pod4 in node_of_pod2.different_than
-        assert node_of_pod4 in node_of_pod3.different_than
-        assert pod1 in deployment.podList
-        assert pod2 in deployment.podList
-        assert pod3 in deployment.podList
-        assert pod4 in deployment.podList
-        assert pod1.antiaffinity_set == True 
-        assert pod2.antiaffinity_set == True
-        assert pod3.antiaffinity_set == True
-        assert pod4.antiaffinity_set == True
-        assert pod1.calc_currently_processed_amount_of_deployment_pod_on_node <= pod1.amount_of_deployment_pod_on_node
-        assert pod2.calc_currently_processed_amount_of_deployment_pod_on_node <= pod2.amount_of_deployment_pod_on_node
-        assert pod3.calc_currently_processed_amount_of_deployment_pod_on_node <= pod3.amount_of_deployment_pod_on_node
-        assert pod1 in pod2.podsMatchedByAntiaffinity
-        assert pod1 in pod3.podsMatchedByAntiaffinity
-        assert pod1 in pod4.podsMatchedByAntiaffinity
-        assert pod2 in pod1.podsMatchedByAntiaffinity
-        assert pod2 in pod3.podsMatchedByAntiaffinity
-        assert pod2 in pod4.podsMatchedByAntiaffinity
-        assert pod3 in pod1.podsMatchedByAntiaffinity
-        assert pod3 in pod2.podsMatchedByAntiaffinity
-        assert pod3 in pod4.podsMatchedByAntiaffinity
-        assert pod4 in pod1.podsMatchedByAntiaffinity
-        assert pod4 in pod2.podsMatchedByAntiaffinity
-        assert pod4 in pod3.podsMatchedByAntiaffinity
+    #     assert node_of_pod1 == pod1.atNode
+    #     assert node_of_pod2 == pod2.atNode
+    #     assert node_of_pod3 == pod3.atNode
+    #     assert node_of_pod4 == pod4.atNode
+    #     assert node_of_pod1 in node_of_pod2.different_than
+    #     assert node_of_pod1 in node_of_pod3.different_than
+    #     assert node_of_pod1 in node_of_pod4.different_than
+    #     assert node_of_pod2 in node_of_pod3.different_than
+    #     assert node_of_pod2 in node_of_pod4.different_than
+    #     assert node_of_pod3 in node_of_pod4.different_than
+    #     assert node_of_pod4 in node_of_pod1.different_than
+    #     assert node_of_pod4 in node_of_pod2.different_than
+    #     assert node_of_pod4 in node_of_pod3.different_than
+    #     assert pod1 in deployment.podList
+    #     assert pod2 in deployment.podList
+    #     assert pod3 in deployment.podList
+    #     assert pod4 in deployment.podList
+    #     assert pod1.antiaffinity_set == True 
+    #     assert pod2.antiaffinity_set == True
+    #     assert pod3.antiaffinity_set == True
+    #     assert pod4.antiaffinity_set == True
+    #     assert pod1.calc_currently_processed_amount_of_deployment_pod_on_node <= pod1.amount_of_deployment_pod_on_node
+    #     assert pod2.calc_currently_processed_amount_of_deployment_pod_on_node <= pod2.amount_of_deployment_pod_on_node
+    #     assert pod3.calc_currently_processed_amount_of_deployment_pod_on_node <= pod3.amount_of_deployment_pod_on_node
+    #     assert pod1 in pod2.podsMatchedByAntiaffinity
+    #     assert pod1 in pod3.podsMatchedByAntiaffinity
+    #     assert pod1 in pod4.podsMatchedByAntiaffinity
+    #     assert pod2 in pod1.podsMatchedByAntiaffinity
+    #     assert pod2 in pod3.podsMatchedByAntiaffinity
+    #     assert pod2 in pod4.podsMatchedByAntiaffinity
+    #     assert pod3 in pod1.podsMatchedByAntiaffinity
+    #     assert pod3 in pod2.podsMatchedByAntiaffinity
+    #     assert pod3 in pod4.podsMatchedByAntiaffinity
+    #     assert pod4 in pod1.podsMatchedByAntiaffinity
+    #     assert pod4 in pod2.podsMatchedByAntiaffinity
+    #     assert pod4 in pod3.podsMatchedByAntiaffinity
         
-        if pod1 not in pod2.calc_antiaffinity_pods_list and \
-            pod1 not in pod3.calc_antiaffinity_pods_list and \
-            pod1 not in pod4.calc_antiaffinity_pods_list and \
-            pod2 not in pod1.calc_antiaffinity_pods_list and \
-            pod2 not in pod3.calc_antiaffinity_pods_list and \
-            pod2 not in pod4.calc_antiaffinity_pods_list and \
-            pod3 not in pod1.calc_antiaffinity_pods_list and \
-            pod3 not in pod2.calc_antiaffinity_pods_list and \
-            pod3 not in pod4.calc_antiaffinity_pods_list and \
-            pod4 not in pod1.calc_antiaffinity_pods_list and \
-            pod4 not in pod2.calc_antiaffinity_pods_list and \
-            pod4 not in pod3.calc_antiaffinity_pods_list:
+    #     if pod1 not in pod2.calc_antiaffinity_pods_list and \
+    #         pod1 not in pod3.calc_antiaffinity_pods_list and \
+    #         pod1 not in pod4.calc_antiaffinity_pods_list and \
+    #         pod2 not in pod1.calc_antiaffinity_pods_list and \
+    #         pod2 not in pod3.calc_antiaffinity_pods_list and \
+    #         pod2 not in pod4.calc_antiaffinity_pods_list and \
+    #         pod3 not in pod1.calc_antiaffinity_pods_list and \
+    #         pod3 not in pod2.calc_antiaffinity_pods_list and \
+    #         pod3 not in pod4.calc_antiaffinity_pods_list and \
+    #         pod4 not in pod1.calc_antiaffinity_pods_list and \
+    #         pod4 not in pod2.calc_antiaffinity_pods_list and \
+    #         pod4 not in pod3.calc_antiaffinity_pods_list:
 
-            pod1.calc_antiaffinity_pods_list.add(pod2)
-            pod1.calc_antiaffinity_pods_list.add(pod3)
-            pod1.calc_antiaffinity_pods_list.add(pod4)
-            pod1.calc_antiaffinity_pods_list_length += 3
-            pod2.calc_antiaffinity_pods_list.add(pod1)
-            pod2.calc_antiaffinity_pods_list.add(pod3)
-            pod2.calc_antiaffinity_pods_list.add(pod4)
-            pod2.calc_antiaffinity_pods_list_length += 3
-            pod3.calc_antiaffinity_pods_list.add(pod1)
-            pod3.calc_antiaffinity_pods_list.add(pod2)
-            pod3.calc_antiaffinity_pods_list.add(pod4)
-            pod3.calc_antiaffinity_pods_list_length += 3
-            pod4.calc_antiaffinity_pods_list.add(pod1)
-            pod4.calc_antiaffinity_pods_list.add(pod2)
-            pod4.calc_antiaffinity_pods_list.add(pod3)
-            pod4.calc_antiaffinity_pods_list_length += 3
+    #         pod1.calc_antiaffinity_pods_list.add(pod2)
+    #         pod1.calc_antiaffinity_pods_list.add(pod3)
+    #         pod1.calc_antiaffinity_pods_list.add(pod4)
+    #         pod1.calc_antiaffinity_pods_list_length += 3
+    #         pod2.calc_antiaffinity_pods_list.add(pod1)
+    #         pod2.calc_antiaffinity_pods_list.add(pod3)
+    #         pod2.calc_antiaffinity_pods_list.add(pod4)
+    #         pod2.calc_antiaffinity_pods_list_length += 3
+    #         pod3.calc_antiaffinity_pods_list.add(pod1)
+    #         pod3.calc_antiaffinity_pods_list.add(pod2)
+    #         pod3.calc_antiaffinity_pods_list.add(pod4)
+    #         pod3.calc_antiaffinity_pods_list_length += 3
+    #         pod4.calc_antiaffinity_pods_list.add(pod1)
+    #         pod4.calc_antiaffinity_pods_list.add(pod2)
+    #         pod4.calc_antiaffinity_pods_list.add(pod3)
+    #         pod4.calc_antiaffinity_pods_list_length += 3
 
 
 # THis can't be used yet because of  BUG 131
