@@ -43,6 +43,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     hasService: bool
     hasDaemonset: bool
     not_on_same_node: Set["Pod"]
+    searchable: bool
     
 
     nodesSelectorSet: bool
@@ -103,6 +104,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.memRequest = -1
         self.status = STATUS_POD["Pending"]
         self.isNull = False
+        self.searchable = False
         self.realInitialMemConsumption = 0
         self.realInitialCpuConsumption = 0
         self.currentFormalMemConsumption = 0

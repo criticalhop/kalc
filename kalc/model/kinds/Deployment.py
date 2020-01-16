@@ -69,7 +69,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         # self.metadata_name = "model-default-name"
         self.hash = ''.join(random.choice("0123456789abcdef") for i in range(8))
         self.amountOfActivePods = 0
-        self.searchable = True
+        self.searchable = False
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
         self.spec_replicas = 0

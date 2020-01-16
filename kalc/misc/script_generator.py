@@ -3,6 +3,7 @@ import json
 from kalc.model.kinds.Node import Node
 import kalc.model.kinds.ReplicaSet as rs
 import kalc.model.kinds.Deployment as d
+import time
 
 def script_remove_node(node):
     if hasattr(node, "_variable_mode") and node._variable_mode: 
@@ -40,7 +41,7 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     deployment_name = str(deployment.metadata_name)
     replicaset_name = str(replicaset.metadata_name)
     pod_original_name = str(pod.metadata_name)
-    pod_new_name = f"{pod_original_name}-kalcmoved"
+    pod_new_name = f"{pod_original_name}-kalcmoved-" + str(int(time.time()))
     all_node_labels = {}
     for label in node_to.metadata_labels:
         all_node_labels[label.key] = label.value
@@ -72,7 +73,8 @@ yq '.metadata += {{name: "{pod_new_name}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ 
 echo "  --- Deleting status from dump..." &&
 yq 'del(.status)' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo "  --- Inserting nodeSelector..." &&
-yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+# yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+yq '.spec += {{nodeName: {str(node.metadata_name)}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo " -- Running new pod..." &&
 kubectl apply -f ./pod_new.yaml &&
 echo " -- Waiting for new pod to become ready..." &&
