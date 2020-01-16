@@ -50,7 +50,7 @@ def optimize_cluster(clusterData=None):
         searchable_deployments.add(str(deployment_x_s_pods[D_DEPLOYMENT].metadata_name))
     
         searchable_pods |= set([str(p.metadata_name) for p in deployment_x_s_pods[D_UNBALANCED_PODS]]) # add all unbalanced pods immediately
-        user_cases = combinations([range(0,len(nodes)),range(0,len(searchable_pods)])        
+        user_cases = combinations([range(0,len(nodes)),range(0,len(searchable_pods)]))        
         print(user_cases)
         for pod in deployment_x_s_pods[D_DEPLOYMENT].podList: # actually, for i in range(len(..podList))
             update(clusterData) # To reload from scratch...
