@@ -4,6 +4,7 @@ from kalc.model.kinds.Deployment import Deployment
 from kalc.misc.script_generator import generate_compat_header
 from collections import defaultdict
 from poodle.schedule import SchedulingError
+from itertools import combinations
 
 D_RANK = 0
 D_DEPLOYMENT = 1
@@ -40,17 +41,23 @@ def optimize_cluster(clusterData=None):
     searchable_deployments = set()
     searchable_pods = set()
 
+    user_cases =[]
+    nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     for deployment_x_s_pods in deployments_maxpods:
         deployment_amount += 1
         pod_amount = 1
         drain_node_counter = 0
         searchable_deployments.add(str(deployment_x_s_pods[D_DEPLOYMENT].metadata_name))
+    
         searchable_pods |= set([str(p.metadata_name) for p in deployment_x_s_pods[D_UNBALANCED_PODS]]) # add all unbalanced pods immediately
+        user_cases = combinations([range(0,len(nodes)),range(0,len(searchable_pods)])        
+        print(user_cases)
         for pod in deployment_x_s_pods[D_DEPLOYMENT].podList: # actually, for i in range(len(..podList))
             update(clusterData) # To reload from scratch...
 
+
             problem = Balance_pods_and_drain_node(kalc_state_objects)
-            deployments = filter(lambda x: isinstance(x, Deployment), kalc_state_objects)
+
             globalVar = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
             pods = filter(lambda x: isinstance(x, Pod), kalc_state_objects)
 
