@@ -74,10 +74,10 @@ echo "  --- Deleting status from dump..." &&
 yq 'del(.status)' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo "  --- Inserting nodeSelector..." &&
 # yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-yq '.spec += {{nodeName: {str(node.metadata_name)}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+yq '.spec += {{nodeName: {str(node_to.metadata_name)}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo " -- Running new pod..." &&
 kubectl apply -f ./pod_new.yaml &&
-echo " -- Waiting for new pod to become ready..." &&
+echo " -- Waiting 30s for new pod to become ready..." &&
 kubectl wait --for condition=ready -f ./pod_new.yaml &&
 echo " -- Deleting original pod..." &&
 kubectl delete pod/{pod_original_name}
