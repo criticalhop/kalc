@@ -1199,6 +1199,7 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
         globalVar: GlobalVar):
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Active"]
+        assert node.isNull == False
         globalVar.NodesDrained_length += 1
         globalVar.NodesDrained.add(node)
         node.status = STATUS_NODE["Inactive"]
