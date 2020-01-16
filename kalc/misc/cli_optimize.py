@@ -32,7 +32,7 @@ def optimize_cluster(clusterData=None):
     deployments_maxpods = sorted(deployments_maxpods, key=lambda x: x[0], reverse=True) 
     print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
 
-    drain_node_counter = 0 
+     
     drain_node_frequency = 2
     twice_drain_node_frequency = 3
     deployment_amount = 0
@@ -43,6 +43,7 @@ def optimize_cluster(clusterData=None):
     for deployment_x_s_pods in deployments_maxpods:
         deployment_amount += 1
         pod_amount = 1
+        drain_node_counter = 0
         searchable_deployments.add(str(deployment_x_s_pods[D_DEPLOYMENT].metadata_name))
         searchable_pods |= set([str(p.metadata_name) for p in deployment_x_s_pods[D_UNBALANCED_PODS]]) # add all unbalanced pods immediately
         for pod in deployment_x_s_pods[D_DEPLOYMENT].podList: # actually, for i in range(len(..podList))
