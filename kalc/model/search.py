@@ -1010,26 +1010,26 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
         for what1, what2 in self.generated_goal_eq:
             assert what1 == what2
 
-    @planned(cost=1)
-    def Set_antiaffinity_between_pods_of_deployment(self,
-        pod1: Pod,
-        pod2: Pod,
-        deployment: Deployment,
-        globalVar: GlobalVar):
-        assert pod1.searchable == True
-        assert pod2.searchable == True
-        if pod1 not in pod2.podsMatchedByAntiaffinity and pod2 not in pod1.podsMatchedByAntiaffinity and pod1 != pod2:
-            assert pod1 in deployment.podList
-            assert pod2 in deployment.podList
-            assert deployment.amountOfActivePods > 1
-            assert deployment.NumberOfPodsOnSameNodeForDeployment == globalVar.maxNumberOfPodsOnSameNodeForDeployment
-            pod1.antiaffinity_set = True
-            pod1.podsMatchedByAntiaffinity.add(pod2)
-            pod1.podsMatchedByAntiaffinity_length += 1
-            pod2.antiaffinity_set = True
-            pod2.podsMatchedByAntiaffinity.add(pod1)
-            pod2.podsMatchedByAntiaffinity_length += 1
-            deployment.podsMatchedByAntiaffinity_length += 2
+    # @planned(cost=1)
+    # def Set_antiaffinity_between_pods_of_deployment(self,
+    #     pod1: Pod,
+    #     pod2: Pod,
+    #     deployment: Deployment,
+    #     globalVar: GlobalVar):
+    #     assert pod1.searchable == True
+    #     assert pod2.searchable == True
+    #     if pod1 not in pod2.podsMatchedByAntiaffinity and pod2 not in pod1.podsMatchedByAntiaffinity and pod1 != pod2:
+    #         assert pod1 in deployment.podList
+    #         assert pod2 in deployment.podList
+    #         assert deployment.amountOfActivePods > 1
+    #         assert deployment.NumberOfPodsOnSameNodeForDeployment == globalVar.maxNumberOfPodsOnSameNodeForDeployment
+    #         pod1.antiaffinity_set = True
+    #         pod1.podsMatchedByAntiaffinity.add(pod2)
+    #         pod1.podsMatchedByAntiaffinity_length += 1
+    #         pod2.antiaffinity_set = True
+    #         pod2.podsMatchedByAntiaffinity.add(pod1)
+    #         pod2.podsMatchedByAntiaffinity_length += 1
+    #         deployment.podsMatchedByAntiaffinity_length += 2
     @planned(cost=1)
     def Set_antiaffinity_between_2_pods_of_deployment(self,
         pod1: Pod,

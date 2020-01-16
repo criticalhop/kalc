@@ -40,6 +40,7 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
     pod_running_1.hasDaemonset = False
+    pod_running_1.searchable = True
     atNode.currentFormalCpuConsumption += cpuRequest
     atNode.currentFormalMemConsumption += memRequest
     atNode.amountOfActivePods += 1
@@ -117,10 +118,12 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     
     # create Deploymnent that we're going to detect failure of...
     d = Deployment()
+    d.searchable = True 
     d.spec_replicas = 6    
     d.NumberOfPodsOnSameNodeForDeployment = 4
     deployments.append(d)
     d2 = Deployment()
+    d2.searchable = True
     d2.spec_replicas = 2    
     d2.NumberOfPodsOnSameNodeForDeployment = 2
     deployments.append(d2)
