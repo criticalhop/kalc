@@ -41,7 +41,7 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     deployment_name = str(deployment.metadata_name)
     replicaset_name = str(replicaset.metadata_name)
     pod_original_name = str(pod.metadata_name)
-    pod_new_name = f"{pod_original_name}-kalcmoved-" + str(int(time.time()))
+    pod_new_name = f"{pod_original_name}-kalcmoved-" + str(time.time())
     all_node_labels = {}
     for label in node_to.metadata_labels:
         all_node_labels[label.key] = label.value
