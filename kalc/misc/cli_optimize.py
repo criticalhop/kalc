@@ -2,21 +2,34 @@ from kalc.interactive import *
 from kalc.model.search import Balance_pods_and_drain_node
 from kalc.model.kinds.Deployment import Deployment
 from kalc.misc.script_generator import generate_compat_header
+from collections import defaultdict
 
 
-def optimize_cluster(clusterData):
+def optimize_cluster(clusterData=None):
+    print("WARNING! Not taking into account service SLOs")
     update(clusterData) # To reload from scratch...
     deployments = filter(lambda x: isinstance(x, Deployment), kalc_state_objects) # to get amount of deployments
+
+    # Find how many pods are on same node for every deployment
+    deployments_maxpods = []
+    for d in deployments:
+        pod_node = defaultdict(lambda: 0)
+        for pod in d.podList:
+            pods_node = pod.atNode._property_value # Poodle bug. https://github.com/criticalhop/poodle/issues/122
+            pod_node[str(pods_node.metadata_name)] += 1 # str: poodle bug
+        deployments_maxpods.append([max(pod_node.values()), d])
+    deployments_maxpods = sorted(deployments_maxpods, key=lambda x: x[0]) 
+    print(f"Worst case deployment {str(deployments_maxpods[0][1])}, with {deployments_maxpods[0][0]} pods on same node")
 
     drain_node_counter = 0 
     drain_node_frequency = 2
     twice_drain_node_frequency = 3
     deployment_amount = 0
 
-    for deployment in deployments:
+    for deployment in deployments_maxpods:
         deployment_amount += 1
         pod_amount = 1
-        for pod in deployment.podList: # actually, for i in range(len(..podList))
+        for pod in deployment[1].podList: # actually, for i in range(len(..podList))
             update(clusterData) # To reload from scratch...
 
             p = Balance_pods_and_drain_node(kalc_state_objects)

@@ -4,6 +4,11 @@ from kalc.model.kinds.Node import Node
 import kalc.model.kinds.ReplicaSet as rs
 import kalc.model.kinds.Deployment as d
 
+def script_remove_node(node):
+    if hasattr(node, "_variable_mode") and node._variable_mode: 
+        return "" # FIX for https://github.com/criticalhop/poodle/issues/59
+    return f'echo "Please remove node \'{str(node.metadata_name)}\'"' 
+
 
 def get_rs_from_deployment(deployment, object_space):
     replicasets = filter(lambda x: isinstance(x, rs.ReplicaSet), object_space)
@@ -78,8 +83,7 @@ echo " -- Re-applying ReplicaSet..." &&
 kubectl apply -f ./replicaset_{replicaset_name}.yaml &&
 echo " -- Re-applying Deployment..." &&
 kubectl apply -f ./deployment_{deployment_name}.yaml &&
-echo "Done moving pod '{pod_original_name}'!"
-    """
+echo "Done moving pod '{pod_original_name}'!" """
     return move_pod
 
 def generate_compat_header():
@@ -101,7 +105,6 @@ echo -n "Checking for kubectl get permission for replicaset... " && kubectl auth
 echo -n "Checking for kubectl get permission for pod... " && kubectl auth can-i get pod || die "kubectl does not have permission to get pod" 
 echo -n "Checking for kubectl apply permission for deployment... " && kubectl auth can-i apply deployment || die "kubectl does not have permission to apply deployments" 
 echo -n "Checking for kubectl apply permission for replicaset... " && kubectl auth can-i apply replicaset || die "kubectl does not have permission to apply replicaset" 
-echo -n "Checking for kubectl apply permission for pod... " && kubectl auth can-i apply pod || (echo "kubectl does not have permission to apply pod" && exit 1)
-    """
+echo -n "Checking for kubectl apply permission for pod... " && kubectl auth can-i apply pod || (echo "kubectl does not have permission to apply pod" && exit 1) """
 
     return compat

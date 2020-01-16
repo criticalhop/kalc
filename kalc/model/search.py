@@ -18,6 +18,7 @@ from kalc.misc.const import *
 from kalc.model.kubeactions import KubernetesModel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from kalc.misc.const import STATUS_SCHED
+from kalc.misc.script_generator import script_remove_node
 import re
 import itertools
 
@@ -1194,6 +1195,8 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
         globalVar.NodesDrained_length += 1
         globalVar.NodesDrained.add(node)
         node.status = STATUS_NODE["Inactive"]
+
+        self.script.append(script_remove_node(node))
     
     @planned(cost=1)
     def Reqested_amount_of_nodes_drained(self,
