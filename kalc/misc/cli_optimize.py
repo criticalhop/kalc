@@ -30,7 +30,6 @@ def optimize_cluster(clusterData=None):
         unbalanced_pods = [item for sublist in unbalanced_pods for item in sublist] # flatten
         deployments_maxpods.append([max([x[0] for x in unbalanced_pods_indexed]), d, unbalanced_pods, only_unbalanced])
     deployments_maxpods = sorted(deployments_maxpods, key=lambda x: x[0], reverse=True) 
-    print("AAA", deployments_maxpods)
     print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
 
     drain_node_counter = 0 
