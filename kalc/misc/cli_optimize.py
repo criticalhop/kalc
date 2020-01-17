@@ -52,7 +52,7 @@ def optimize_cluster(clusterData=None):
         searchable_pods |= set([str(p.metadata_name) for p in deployment_x_s_pods[D_UNBALANCED_PODS]]) # add all unbalanced pods immediately
         list_for_comb = []
         # list_nodes = list(range(0,len(nodes)+1))
-        list_nodes = list(range(0,1))
+        list_nodes = list(range(0,2))
         list_for_comb.append(list_nodes)
         list_pods = list(range(2,len(searchable_pods)+1))
         list_for_comb.append(list_pods)
