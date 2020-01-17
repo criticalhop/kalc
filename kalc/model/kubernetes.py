@@ -156,7 +156,6 @@ class KubernetesCluster:
             for item in v:
                 self._build_item(item)
         self._check()
-        self.state_objects = [x for x in self.state_objects if not isinstance(x, ReplicaSet)]
 
     def _check(self):
         "Run internal checks"

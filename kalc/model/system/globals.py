@@ -28,7 +28,7 @@ class GlobalVar(ModularKind):
     block_node_outage_in_progress: bool
     block_policy_calculated : bool
     nodeSelectorsEnabled: bool
-    # deploymentsWithAntiaffinityBalanced: bool
+    deploymentsWithAntiaffinityBalanced: bool
     maxNumberOfPodsOnSameNodeForDeployment: int
     DeploymentsWithAntiaffinity: Set["mdeployment.Deployment"]
     DeploymentsWithAntiaffinity_length: int

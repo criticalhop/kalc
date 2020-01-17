@@ -22,6 +22,9 @@ pandas = "^0.25.3"
 Pygments = "^2.5"
 jsonpatch = "^1.24"
 
+[tool.poetry.scripts]
+kalc-optimize = "kalc.misc.cli_optimize:optimize_cluster"
+
 [tool.poetry.dev-dependencies]
 
 [build-system]

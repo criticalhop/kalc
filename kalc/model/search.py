@@ -18,6 +18,7 @@ from kalc.misc.const import *
 from kalc.model.kubeactions import KubernetesModel
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem
 from kalc.misc.const import STATUS_SCHED
+from kalc.misc.script_generator import script_remove_node
 import re
 import itertools
 
@@ -1009,30 +1010,34 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
         for what1, what2 in self.generated_goal_eq:
             assert what1 == what2
 
-    @planned(cost=1)
-    def Set_antiaffinity_between_pods_of_deployment(self,
-        pod1: Pod,
-        pod2: Pod,
-        deployment: Deployment,
-        globalVar: GlobalVar):
-        if pod1 not in pod2.podsMatchedByAntiaffinity and pod2 not in pod1.podsMatchedByAntiaffinity and pod1 != pod2:
-            assert pod1 in deployment.podList
-            assert pod2 in deployment.podList
-            assert deployment.amountOfActivePods > 1
-            assert deployment.NumberOfPodsOnSameNodeForDeployment == globalVar.maxNumberOfPodsOnSameNodeForDeployment
-            pod1.antiaffinity_set = True
-            pod1.podsMatchedByAntiaffinity.add(pod2)
-            pod1.podsMatchedByAntiaffinity_length += 1
-            pod2.antiaffinity_set = True
-            pod2.podsMatchedByAntiaffinity.add(pod1)
-            pod2.podsMatchedByAntiaffinity_length += 1
-            deployment.podsMatchedByAntiaffinity_length += 2
+    # @planned(cost=1)
+    # def Set_antiaffinity_between_pods_of_deployment(self,
+    #     pod1: Pod,
+    #     pod2: Pod,
+    #     deployment: Deployment,
+    #     globalVar: GlobalVar):
+    #     assert pod1.searchable == True
+    #     assert pod2.searchable == True
+    #     if pod1 not in pod2.podsMatchedByAntiaffinity and pod2 not in pod1.podsMatchedByAntiaffinity and pod1 != pod2:
+    #         assert pod1 in deployment.podList
+    #         assert pod2 in deployment.podList
+    #         assert deployment.amountOfActivePods > 1
+    #         assert deployment.NumberOfPodsOnSameNodeForDeployment == globalVar.maxNumberOfPodsOnSameNodeForDeployment
+    #         pod1.antiaffinity_set = True
+    #         pod1.podsMatchedByAntiaffinity.add(pod2)
+    #         pod1.podsMatchedByAntiaffinity_length += 1
+    #         pod2.antiaffinity_set = True
+    #         pod2.podsMatchedByAntiaffinity.add(pod1)
+    #         pod2.podsMatchedByAntiaffinity_length += 1
+    #         deployment.podsMatchedByAntiaffinity_length += 2
     @planned(cost=1)
     def Set_antiaffinity_between_2_pods_of_deployment(self,
         pod1: Pod,
         pod2: Pod,
         deployment: Deployment,
         globalVar: GlobalVar):
+        assert pod1.searchable == True
+        assert pod2.searchable == True
         if  pod1 != pod2:
             assert pod1 in deployment.podList
             assert pod2 in deployment.podList
@@ -1053,6 +1058,9 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
         pod3: Pod,
         deployment: Deployment,
         globalVar: GlobalVar):
+        assert pod1.searchable == True
+        assert pod2.searchable == True
+        assert pod3.searchable == True
         if pod1 not in pod2.podsMatchedByAntiaffinity and \
             pod2 not in pod1.podsMatchedByAntiaffinity and \
             pod1 not in pod3.podsMatchedByAntiaffinity and \
@@ -1191,9 +1199,12 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
         globalVar: GlobalVar):
         assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Active"]
+        assert node.isNull == False
         globalVar.NodesDrained_length += 1
         globalVar.NodesDrained.add(node)
         node.status = STATUS_NODE["Inactive"]
+
+        self.script.append(script_remove_node(node))
     
     @planned(cost=1)
     def Reqested_amount_of_nodes_drained(self,
