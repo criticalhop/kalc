@@ -42,11 +42,6 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     replicaset_name = str(replicaset.metadata_name)
     pod_original_name = str(pod.metadata_name)
     pod_new_name = f"{pod_original_name}-kalcmoved-" + str(time.time())
-    all_node_labels = {}
-    for label in node_to.metadata_labels:
-        all_node_labels[label.key] = label.value
-
-    nodeSelector_json = json.dumps(all_node_labels)
 
     # TODO: check that pod that we are deleting had a full green-light status (alive&ready)
     # TODO: check if state has diverged too far and we can not continue
@@ -72,8 +67,7 @@ echo "  --- Renaming pod template..." &&
 yq '.metadata += {{name: "{pod_new_name}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo "  --- Deleting status from dump..." &&
 yq 'del(.status)' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
-echo "  --- Inserting nodeSelector..." &&
-# yq '.spec += {{nodeSelector: {nodeSelector_json}}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
+echo "  --- Inserting nodeName..." &&
 yq '.spec += {{nodeName: "{str(node_to.metadata_name)}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo " -- Running new pod..." &&
 kubectl apply -f ./pod_new.yaml &&
