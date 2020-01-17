@@ -4,7 +4,7 @@ from kalc.model.kinds.Deployment import Deployment
 from kalc.misc.script_generator import generate_compat_header
 from collections import defaultdict
 from poodle.schedule import SchedulingError
-from itertools import combinations
+from itertools import combinations, product
 
 D_RANK = 0
 D_DEPLOYMENT = 1
@@ -51,15 +51,15 @@ def optimize_cluster(clusterData=None):
     
         searchable_pods |= set([str(p.metadata_name) for p in deployment_x_s_pods[D_UNBALANCED_PODS]]) # add all unbalanced pods immediately
         list_for_comb = []
-        list_for_comb.extend(range(0,len(nodes)))
-        list_for_comb.extend(range(0,len(searchable_pods)))
-
-        user_cases = combinations(list_for_comb,2)        
-        
-        print(user_cases)
-        for pod in deployment_x_s_pods[D_DEPLOYMENT].podList: # actually, for i in range(len(..podList))
+        # list_nodes = list(range(0,len(nodes)+1))
+        list_nodes = list(range(0,1))
+        list_for_comb.append(list_nodes)
+        list_pods = list(range(2,len(searchable_pods)+1))
+        list_for_comb.append(list_pods)
+        res = list(product(*list_for_comb))
+        print(res)
+        for node_amount, pod_amount in res:
             update(clusterData) # To reload from scratch...
-
 
             problem = Balance_pods_and_drain_node(kalc_state_objects)
 
@@ -87,38 +87,25 @@ def optimize_cluster(clusterData=None):
 
             # add one more pod from the list
             searchable_pods.add(str(pod.metadata_name))
-
             globalVar.target_DeploymentsWithAntiaffinity_length = deployment_amount
-            pod_amount += 1
             globalVar.target_amountOfPodsWithAntiaffinity = pod_amount
-            drain_node_counter += 1
+
             print("Deployment candidates:", ', '.join(d_cand))
             print("Pod candidates:", ", ".join(p_cand))
-            if drain_node_counter % drain_node_frequency == 0:
-                print("-----------------------------------------------------------------------------------")
-                print("--- Solving case for deployment_amount =", deployment_amount, ", pod_amount =", pod_amount, ", drain nodes = 1 ---")
-                print("-----------------------------------------------------------------------------------")
-                globalVar.target_NodesDrained_length = 1
-            elif drain_node_counter % twice_drain_node_frequency == 0:
-                print("-----------------------------------------------------------------------------------")
-                print("--- Solving case for deployment_amount =", deployment_amount,", pod_amount =", pod_amount, ", drain nodes = 2 ---")
-                print("-----------------------------------------------------------------------------------")
-                globalVar.target_NodesDrained_length = 2
-            else:
-                print("-----------------------------------------------------------------------------------")
-                print("--- Solving case for deployment_amount =", deployment_amount, ", pod_amount =", pod_amount, "---")
-                print("-----------------------------------------------------------------------------------")
-            # print_objects(k2.state_objects)
-            try:
-                problem.xrun()
-            except SchedulingError:
-                print("Could not solve in this configuration, trying next...")
-            move_script = '\n'.join(problem.script)
-            full_script = generate_compat_header() + move_script
-            scritpt_file = f"./kalc_optimize_{deployment_amount}_{pod_amount}.sh"
-            print("Generated optimization script at", scritpt_file)
-            with open(scritpt_file, "w+") as fd:
-                fd.write(full_script)
+            print("-----------------------------------------------------------------------------------")
+            print("--- Solving case for deployment_amount =", deployment_amount, ", pod_amount =", pod_amount, ", drain nodes = ", node_amount, " ---")
+            print("-----------------------------------------------------------------------------------")
+            globalVar.target_NodesDrained_length = node_amount
+            # try:
+            #     problem.xrun()
+            # except SchedulingError:
+            #     print("Could not solve in this configuration, trying next...")
+            # move_script = '\n'.join(problem.script)
+            # full_script = generate_compat_header() + move_script
+            # scritpt_file = f"./kalc_optimize_{deployment_amount}_{pod_amount}.sh"
+            # print("Generated optimization script at", scritpt_file)
+            # with open(scritpt_file, "w+") as fd:
+            #     fd.write(full_script)
 
 def run():
     optimize_cluster(None)
