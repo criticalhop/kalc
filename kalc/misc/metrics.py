@@ -51,4 +51,12 @@ class Metric():
         for d in self.deployments:
             self.deployment_metric = d.metric
         self.deployment_metric = self.deployment_metric / (len(self.deployments))
-    
+
+    def faultTolerance(self):
+        node_oversubscribe_cpu = 0
+        node_oversubscribe_mem = 0
+        for node in self.nodes:
+           node_oversubscribe_cpu += node.currentFormalCpuConsumption / node.cpuCapacity
+           node_oversubscribe_mem += node.currentFormalMemConsumption / node.memCapacity
+        self.node_oversubscribe_cpu = node_oversubscribe_cpu / (len(self.nodes))
+        self.node_oversubscribe_mem = node_oversubscribe_mem / (len(self.nodes))
