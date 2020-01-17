@@ -1,0 +1,288 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: guestbook
+      tier: frontend
+    name: frontend
+    namespace: default
+    resourceVersion: "9417148"
+    selfLink: /api/v1/namespaces/default/services/frontend
+    uid: 1fc62248-ae52-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.0.8.96
+    externalTrafficPolicy: Cluster
+    ports:
+    - nodePort: 32297
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: guestbook
+      tier: frontend
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 34.66.209.227
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-06-18T22:21:51Z
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "16"
+    selfLink: /api/v1/namespaces/default/services/kubernetes
+    uid: 785f5181-9217-11e9-a049-42010a8000d3
+  spec:
+    clusterIP: 10.0.0.1
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: master
+      tier: backend
+    name: redis-master
+    namespace: default
+    resourceVersion: "9416863"
+    selfLink: /api/v1/namespaces/default/services/redis-master
+    uid: 1fb431db-ae52-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.0.5.82
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-09-04T21:24:52Z
+    labels:
+      app: redis-evict
+      role: master
+      tier: backend
+    name: redis-master-evict
+    namespace: default
+    resourceVersion: "20774605"
+    selfLink: /api/v1/namespaces/default/services/redis-master-evict
+    uid: 6ee8b5c7-cf5a-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.0.13.148
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis-evict
+      role: master
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave
+      tier: backend
+    name: redis-slave
+    namespace: default
+    resourceVersion: "9416869"
+    selfLink: /api/v1/namespaces/default/services/redis-slave
+    uid: 1fb9a12c-ae52-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.0.15.103
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis
+      role: slave
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: 2019-07-24T20:32:15Z
+    labels:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    name: redis-slave-unlimit
+    namespace: default
+    resourceVersion: "9416896"
+    selfLink: /api/v1/namespaces/default/services/redis-slave-unlimit
+    uid: 1fd2c61c-ae52-11e9-98f3-42010a8000c4
+  spec:
+    clusterIP: 10.0.2.135
+    ports:
+    - port: 6366
+      protocol: TCP
+      targetPort: 6366
+    selector:
+      app: redis
+      role: slave-unlimit
+      tier: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"glbc","kubernetes.io/cluster-service":"true","kubernetes.io/name":"GLBCDefaultBackend"},"name":"default-http-backend","namespace":"kube-system"},"spec":{"ports":[{"name":"http","port":80,"protocol":"TCP","targetPort":8080}],"selector":{"k8s-app":"glbc"},"type":"NodePort"}}
+    creationTimestamp: 2019-06-18T22:22:13Z
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: glbc
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: GLBCDefaultBackend
+    name: default-http-backend
+    namespace: kube-system
+    resourceVersion: "301"
+    selfLink: /api/v1/namespaces/kube-system/services/default-http-backend
+    uid: 85c65302-9217-11e9-a049-42010a8000d3
+  spec:
+    clusterIP: 10.0.13.226
+    externalTrafficPolicy: Cluster
+    ports:
+    - name: http
+      nodePort: 32064
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      k8s-app: glbc
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/cluster-service":"true","kubernetes.io/name":"Heapster"},"name":"heapster","namespace":"kube-system"},"spec":{"ports":[{"port":80,"targetPort":8082}],"selector":{"k8s-app":"heapster"}}}
+    creationTimestamp: 2019-06-18T22:22:14Z
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Heapster
+    name: heapster
+    namespace: kube-system
+    resourceVersion: "320"
+    selfLink: /api/v1/namespaces/kube-system/services/heapster
+    uid: 86138bdd-9217-11e9-a049-42010a8000d3
+  spec:
+    clusterIP: 10.0.6.216
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8082
+    selector:
+      k8s-app: heapster
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","k8s-app":"kube-dns","kubernetes.io/cluster-service":"true","kubernetes.io/name":"KubeDNS"},"name":"kube-dns","namespace":"kube-system"},"spec":{"clusterIP":"10.0.0.10","ports":[{"name":"dns","port":53,"protocol":"UDP"},{"name":"dns-tcp","port":53,"protocol":"TCP"}],"selector":{"k8s-app":"kube-dns"}}}
+    creationTimestamp: 2019-06-18T22:22:14Z
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: kube-dns
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: KubeDNS
+    name: kube-dns
+    namespace: kube-system
+    resourceVersion: "324"
+    selfLink: /api/v1/namespaces/kube-system/services/kube-dns
+    uid: 861c8257-9217-11e9-a049-42010a8000d3
+  spec:
+    clusterIP: 10.0.0.10
+    ports:
+    - name: dns
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 53
+    selector:
+      k8s-app: kube-dns
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"addonmanager.kubernetes.io/mode":"Reconcile","kubernetes.io/cluster-service":"true","kubernetes.io/name":"Metrics-server"},"name":"metrics-server","namespace":"kube-system"},"spec":{"ports":[{"port":443,"protocol":"TCP","targetPort":"https"}],"selector":{"k8s-app":"metrics-server"}}}
+    creationTimestamp: 2019-06-18T22:22:17Z
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Metrics-server
+    name: metrics-server
+    namespace: kube-system
+    resourceVersion: "404"
+    selfLink: /api/v1/namespaces/kube-system/services/metrics-server
+    uid: 87b5c60f-9217-11e9-a049-42010a8000d3
+  spec:
+    clusterIP: 10.0.9.3
+    ports:
+    - port: 443
+      protocol: TCP
+      targetPort: https
+    selector:
+      k8s-app: metrics-server
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

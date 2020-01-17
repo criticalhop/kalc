@@ -1,0 +1,506 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-16T23:39:10Z"
+    generateName: deployment3-5-100-100-h-54bd6c75f-
+    labels:
+      app: deployment3
+      pod-template-hash: 54bd6c75f
+      role: master
+      tier: backend
+    name: pods15_5_100_100_z_d3_2n2_3n3-1
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: deployment3-5-100-100-h-54bd6c75f
+      uid: 27224cbe-f06e-11e9-9e6f-42010a800082
+    resourceVersion: "8456998"
+    selfLink: /api/v1/namespaces/default/pods/deployment3-5-100-100-h-54bd6c75f-7xwlp
+    uid: 272f2856-f06e-11e9-9e6f-42010a800082
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-node3-3000-3000
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:14Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:14Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://7935504ddb43e8c03b091838af3681c6f2e29b8c70165763f4a0ea50d6546227
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-16T23:39:12Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.198
+    qosClass: Burstable
+    startTime: "2019-10-16T23:39:10Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-16T23:39:10Z"
+    generateName: deployment3-5-100-100-h-54bd6c75f-
+    labels:
+      app: deployment3
+      pod-template-hash: 54bd6c75f
+      role: master
+      tier: backend
+    name: pods15_5_100_100_z_d3_2n2_3n3-2
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: deployment3-5-100-100-h-54bd6c75f
+      uid: 27224cbe-f06e-11e9-9e6f-42010a800082
+    resourceVersion: "8457001"
+    selfLink: /api/v1/namespaces/default/pods/deployment3-5-100-100-h-54bd6c75f-8mzxt
+    uid: 27453b14-f06e-11e9-9e6f-42010a800082
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-node3-3000-3000
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:14Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:14Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://68f5c292dbb3aba972c18187d1267520e4ff3d047710a09017bcbaa5229389da
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-16T23:39:13Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.199
+    qosClass: Burstable
+    startTime: "2019-10-16T23:39:10Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-16T23:39:10Z"
+    generateName: deployment3-5-100-100-h-54bd6c75f-
+    labels:
+      app: deployment3
+      pod-template-hash: 54bd6c75f
+      role: master
+      tier: backend
+    name: pods15_5_100_100_z_d3_2n2_3n3-3
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: deployment3-5-100-100-h-54bd6c75f
+      uid: 27224cbe-f06e-11e9-9e6f-42010a800082
+    resourceVersion: "8456995"
+    selfLink: /api/v1/namespaces/default/pods/deployment3-5-100-100-h-54bd6c75f-lc9wq
+    uid: 27417e6e-f06e-11e9-9e6f-42010a800082
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-node3-3000-3000
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:14Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:14Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://7a63534215e3a58470c68f88cbf9d10384ed7ec097adf5d827ea09fc847807f4
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-16T23:39:13Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.200
+    qosClass: Burstable
+    startTime: "2019-10-16T23:39:10Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-16T23:39:10Z"
+    generateName: deployment3-5-100-100-h-54bd6c75f-
+    labels:
+      app: deployment3
+      pod-template-hash: 54bd6c75f
+      role: master
+      tier: backend
+    name: pods15_5_100_100_z_d3_2n2_3n3-4
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: deployment3-5-100-100-h-54bd6c75f
+      uid: 27224cbe-f06e-11e9-9e6f-42010a800082
+    resourceVersion: "8456985"
+    selfLink: /api/v1/namespaces/default/pods/deployment3-5-100-100-h-54bd6c75f-nf9rl
+    uid: 2733abef-f06e-11e9-9e6f-42010a800082
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-node2-3200-3200
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:12Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:12Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://a324d4e9d37c5b5fe82d497fde5eedcc39a712a6c60c7dd79f63879681f913bd
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-16T23:39:12Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.195
+    qosClass: Burstable
+    startTime: "2019-10-16T23:39:10Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-16T23:39:10Z"
+    generateName: deployment3-5-100-100-h-54bd6c75f-
+    labels:
+      app: deployment3
+      pod-template-hash: 54bd6c75f
+      role: master
+      tier: backend
+    name: pods15_5_100_100_z_d3_2n2_3n3-5
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: deployment3-5-100-100-h-54bd6c75f
+      uid: 27224cbe-f06e-11e9-9e6f-42010a800082
+    resourceVersion: "8456988"
+    selfLink: /api/v1/namespaces/default/pods/deployment3-5-100-100-h-54bd6c75f-qk7gz
+    uid: 272970ed-f06e-11e9-9e6f-42010a800082
+  spec:
+    containers:
+    - image: k8s.gcr.io/redis:e2e
+      imagePullPolicy: IfNotPresent
+      name: master
+      ports:
+      - containerPort: 6379
+        protocol: TCP
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-node2-3200-3200
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:12Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:12Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-16T23:39:10Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://44c0b0af5ddb61a1eb900bac10603fde59dae226e224595bd058a542257a9fc7
+      image: k8s.gcr.io/redis:e2e
+      imageID: docker-pullable://k8s.gcr.io/redis@sha256:f066bcf26497fbc55b9bf0769cb13a35c0afa2aa42e737cc46b7fb04b23a2f25
+      lastState: {}
+      name: master
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-16T23:39:12Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.194
+    qosClass: Burstable
+    startTime: "2019-10-16T23:39:10Z"
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

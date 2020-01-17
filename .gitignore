@@ -5,6 +5,7 @@ build/
 *.egg-info/
 
 .tox/
+.vscode/.ropeproject/
 .coverage
 
 Session.vim
@@ -13,3 +14,26 @@ test.log
 keypack.pyu
 pyu-data/
 pyu.log
+tests/NOT_for_Repo/
+log*
+*.swp
+venv/
+*.exe.spec
+tests/NOTforRepo/
+*.pddl
+*.out
+*-checkpoint*
+README.rst
+setup.pyc
+.ipynb_checkpoints/
+*.vscode/
+pytest_*
+*.yaml
+*.ipynb
+setup.py
+*DELETEME*
+*.ipynb
+*.prof
+LOG
+*.log
+*.sh

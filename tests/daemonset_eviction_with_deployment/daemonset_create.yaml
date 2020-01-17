@@ -84,7 +84,7 @@ items:
           resources:
             requests:
               cpu: 100m
-              memory: 500Mi
+              memory: 2000Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
