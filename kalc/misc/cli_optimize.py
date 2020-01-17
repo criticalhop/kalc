@@ -96,16 +96,16 @@ def optimize_cluster(clusterData=None):
             print("--- Solving case for deployment_amount =", deployment_amount, ", pod_amount =", pod_amount, ", drain nodes = ", node_amount, " ---")
             print("-----------------------------------------------------------------------------------")
             globalVar.target_NodesDrained_length = node_amount
-            # try:
-            #     problem.xrun()
-            # except SchedulingError:
-            #     print("Could not solve in this configuration, trying next...")
-            # move_script = '\n'.join(problem.script)
-            # full_script = generate_compat_header() + move_script
-            # scritpt_file = f"./kalc_optimize_{deployment_amount}_{pod_amount}.sh"
-            # print("Generated optimization script at", scritpt_file)
-            # with open(scritpt_file, "w+") as fd:
-            #     fd.write(full_script)
+            try:
+                problem.xrun()
+            except SchedulingError:
+                print("Could not solve in this configuration, trying next...")
+            move_script = '\n'.join(problem.script)
+            full_script = generate_compat_header() + move_script
+            scritpt_file = f"./kalc_optimize_{deployment_amount}_{pod_amount}.sh"
+            print("Generated optimization script at", scritpt_file)
+            with open(scritpt_file, "w+") as fd:
+                fd.write(full_script)
 
 def run():
     optimize_cluster(None)
