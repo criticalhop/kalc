@@ -47,3 +47,8 @@ class Metric():
             self.faultToleranceSquare[deployment] = math.sqrt(faultToleranceSquare)
             self.faultToleranceGeom[deployment] = math.pow(faultToleranceGeom, len(pods_at_node))
             deployment.metric = self.faultToleranceSquare[id(deployment)]
+        self.deployment_metric = 0
+        for d in self.deployments:
+            self.deployment_metric = d.metric
+        self.deployment_metric = self.deployment_metric / (len(self.deployments))
+    
