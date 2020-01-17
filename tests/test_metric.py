@@ -5,42 +5,58 @@ from kalc.model.kinds.Node import Node
 from kalc.model.kinds.Deployment import Deployment
 from kalc.misc.metrics import Metric
 
-def test_fault_toleranse():
+def test_faultTolerance():
     k = KubernetesCluster()
     nodes = []
-    rangeMax = 100
-    for n in range(rangeMax):
+    nodeRange = 20
+    deploymentRange = 10
+    for n in range(nodeRange):
         node = Node()
+        node.memCapacity = 10
+        node.cpuCapacity = 10
         nodes.append(node)
         k.state_objects.append(node)
+        print(node.metadata_name)
 
-    for d in range(rangeMax):
+    for d in range(1, deploymentRange):
         deployment = Deployment()
         k.state_objects.append(deployment)
+        print("d num ", d)
         for p in range(d):
             pod = Pod()
+            pod.currentRealCpuConsumption = 1
+            pod.currentRealMemConsumption = 1
             k.state_objects.append(pod)
             pod.atNode = nodes[p]
             deployment.podList.add(pod)
-        for p in range(d, rangeMax):
-            pod = Pod() 
+            print("ff",d, nodes[p],id(nodes[p]))
+
+        for p in range(10):
+            pod = Pod()
+            pod.currentRealCpuConsumption = 1
+            pod.currentRealMemConsumption = 1
             k.state_objects.append(pod)
-            pod.atNode = nodes[d]
+            pod.atNode = nodes[5]
+            print("ff",d, nodes[5],id(nodes[5]),pod.atNode._value().metadata_name)
+
             deployment.podList.add(pod)
+        for i in deployment.podList._get_value():
+            print("id ", i.atNode)
 
     metric = Metric(k.state_objects)
     metric.faultTolerance()
 
+    deployments = filter(lambda x: isinstance(x, Deployment), k.state_objects)
     idx = 0
-    print("\nfaultToleranceSquare\n")
-    for mS in metric.faultToleranceSquare:
-        print("{0} - {1} : ".format(idx,mS))
-        idx +=1
-    
-    idx = 0
-    print("\nfaultToleranceGeom\n") 
-    for mS in metric.faultToleranceGeom:
-        print("{0} - {1} : ".format(idx,mS))
+    print("\nfaultTolerancesquare\n") 
+    for mS in deployments:
+        print("{0} - {1}".format(idx,mS.metric))
         idx +=1 
     
     print("\n")
+    raise "ff"
+
+
+    
+
+

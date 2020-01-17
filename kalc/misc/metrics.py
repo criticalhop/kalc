@@ -11,7 +11,7 @@ class Metric():
         self.pods = filter(lambda x: isinstance(x, mpod.Pod), object_space)
         self.nodes = filter(lambda x: isinstance(x,mnode.Node), object_space)
         # self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
-        self.setUnusedRes()
+        # self.setUnusedRes()
 
     def setUnusedRes(self):
         self.cpuUsed = 0
@@ -19,24 +19,31 @@ class Metric():
         self.memUsed = 0 
         self.memTotal = 0
         for node in self.nodes:
-            self.cpuTotal = self.cpuTotal + node.cpuCapacity
+            self.cpuTotal += node.cpuCapacity
             self.memTotal += node.memCapacity
         for pod in self.pods:
-            self.cpuUsed += podcurrentRealCpuConsumption
-            self.memUsed += podcurrentRealCpuConsumption
+            self.cpuUsed += pod.currentRealCpuConsumption
+            self.memUsed += pod.currentRealMemConsumption
         self.memFree = self.cpuTotal - self.cpuUsed
         self.cpuFree = self.cpuTotal - self.cpuUsed 
 
     def faultTolerance(self):
         self.faultToleranceSquare = {}
+
         self.faultToleranceGeom = {}
-        faultTolerance = 0
-        nodes = {}
+        pods_at_node = {}
         for deployment in self.deployments:
-            for pod in deployment.pod_list:
-                nodes[id(pod.atNode)] = nodes.get(id(pod.atNode), 0.0) + 1.0
-            for node in nodes:
-                faultToleranceSquare += (float(node) / float(len(deployment.pod_list))) ** 2
-                faultToleranceGeom *= float(node) / float(len(deployment.pod_list))
-            self.faultToleranceSquare[id(deployment)] = math.sqrt(faultTolerance)
-            self.faultToleranceGeom[id(deployment)] = math.pow(faultToleranceGeom, len(node))
+            faultToleranceSquare = 0
+            faultToleranceGeom = 1
+            podAmount = float(len(deployment.podList._get_value()))
+            print(podAmount)
+            for pod in deployment.podList._get_value():
+                pods_at_node[pod.atNode] = pods_at_node.get(pod.atNode, 0.0) + 1.0
+            print(pods_at_node)
+            for nodeId in pods_at_node:
+                # print("pod on node ", pods_at_node[nodeId])
+                faultToleranceSquare += (float(pods_at_node[nodeId]) / podAmount) ** 2
+                faultToleranceGeom *= float(pods_at_node[nodeId]) / podAmount
+            self.faultToleranceSquare[deployment] = math.sqrt(faultToleranceSquare)
+            self.faultToleranceGeom[deployment] = math.pow(faultToleranceGeom, len(pods_at_node))
+            deployment.metric = self.faultToleranceSquare[id(deployment)]

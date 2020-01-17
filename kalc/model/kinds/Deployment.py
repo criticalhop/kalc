@@ -58,8 +58,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     calc_PodsWithAntiaffinitySet_length: int
     podsMatchedByAntiaffinity_length: int
     
-
-
+    # metric: float
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
@@ -76,6 +75,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.amountOfPodsWithAntiaffinity = 5
         self.calc_PodsWithAntiaffinitySet_length = 0
         self.podsMatchedByAntiaffinity_length = 0
+        self.metric = 0.0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
