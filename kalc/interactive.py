@@ -13,6 +13,8 @@ from pygments.formatters.terminal import TerminalFormatter
 import random
 import io
 import kalc.misc.util
+import pkg_resources
+__version__ = pkg_resources.get_distribution("kalc").version
 
 kalc_state_objects = []
 kind = KindPlaceholder
