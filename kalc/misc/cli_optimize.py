@@ -19,6 +19,8 @@ def optimize_cluster(clusterData=None):
     deployments_maxpods = []
     for d in deployments:
         pod_node = defaultdict(list)
+        if len(d.podList._get_value()) == 0:
+            continue
         for pod in d.podList:
             pods_node = pod.atNode._property_value # Poodle bug. https://github.com/criticalhop/poodle/issues/122
             pod_node[str(pods_node.metadata_name)].append(pod) # str: poodle bug
