@@ -1,10 +1,14 @@
 import kalc.model.kinds.Pod as mpod
 import kalc.model.kinds.Node as mnode
 import kalc.model.kinds.Deployment as mdeployment
+from kalc.misc.const import *
 from logzero import logger
 import math
 
 class Metric():
+    mem_free: int
+    cpu_free: int
+    deployment_fault_tolerance_metric: float
 
     def __init__(self, object_space):
         self.deployments = list(filter(lambda x: isinstance(x, mdeployment.Deployment), object_space))
@@ -14,20 +18,24 @@ class Metric():
         # self.setUnusedRes()
 
     def setUnusedRes(self):
-        self.cpuUsed = 0
-        self.cpuTotal = 0
-        self.memUsed = 0 
-        self.memTotal = 0
+        self.cpu_used = 0
+        self.cpu_total = 0
+        self.mem_used = 0 
+        self.mem_total = 0
         for node in self.nodes:
-            self.cpuTotal += node.cpuCapacity
-            self.memTotal += node.memCapacity
+            if not node.status == STATUS_NODE["Active"]:
+                continue
+            self.cpu_total = self.cpu_total + node.cpuCapacity._get_value()
+            self.mem_total = self.mem_total + node.memCapacity._get_value()
         for pod in self.pods:
-            self.cpuUsed += pod.currentRealCpuConsumption
-            self.memUsed += pod.currentRealMemConsumption
-        self.memFree = self.cpuTotal - self.cpuUsed
-        self.cpuFree = self.cpuTotal - self.cpuUsed 
+            if not pod.status == STATUS_POD["Pending"]:
+                continue
+            self.cpu_used = self.cpu_used + pod.currentFormalCpuConsumption._get_value()
+            self.mem_used = self.mem_used + pod.currentFormalMemConsumption._get_value()
+        self.mem_free = self.cpu_total - self.cpu_used
+        self.cpu_free = self.cpu_total - self.cpu_used 
 
-    def faultTolerance(self):
+    def fault_tolerance(self):
         self.faultToleranceSquare = {}
 
         self.faultToleranceGeom = {}
@@ -38,7 +46,7 @@ class Metric():
             podAmount = float(len(deployment.podList._get_value()))
             # print(podAmount)
             for pod in deployment.podList._get_value():
-                pods_at_node[pod.atNode._property_value] = pods_at_node.get(pod.atNode._property_value, 0.0) + 1.0
+                pods_at_node[str(pod.atNode._property_value.metadata_name)] = pods_at_node.get(str(pod.atNode._property_value.metadata_name), 0.0) + 1.0
             # print(pods_at_node)
             for nodeId in pods_at_node:
                 print("pod on node ",nodeId, " ", pods_at_node[nodeId])
@@ -47,10 +55,10 @@ class Metric():
             self.faultToleranceSquare[deployment._get_value()] = math.sqrt(faultToleranceSquare)
             self.faultToleranceGeom[deployment._get_value()] = math.pow(faultToleranceGeom, len(pods_at_node))
             deployment.metric = self.faultToleranceSquare[deployment._get_value()]
-        self.deployment_metric = 0
+        self.deployment_fault_tolerance_metric = 0
         for d in self.deployments:
-            self.deployment_metric = d.metric
-        self.deployment_metric = self.deployment_metric / (len(self.deployments))
+            self.deployment_fault_tolerance_metric = d.metric
+        self.deployment_fault_tolerance_metric = self.deployment_fault_tolerance_metric / (len(self.deployments))
 
     def nodeOverSubscribe(self):
         node_oversubscribe_cpu = 0

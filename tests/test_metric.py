@@ -44,6 +44,7 @@ def test_faultTolerance():
         #     print("id ", i.atNode._property_value)
 
     metric = Metric(k.state_objects)
+    metric.setUnusedRes()
     metric.faultTolerance()
 
     deployments = filter(lambda x: isinstance(x, Deployment), k.state_objects)
@@ -53,7 +54,8 @@ def test_faultTolerance():
     for idx, mS in enumerate(deployments):
         print("{0} - {1}".format(idx,mS.metric))
         assert mS.metric == testMetric[idx]
-        
+    
+    # metric.nodeOverSubscribe()
 
 
     
