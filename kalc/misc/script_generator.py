@@ -87,8 +87,7 @@ def generate_compat_header():
 
     # Compatibility and installed utilities part
 
-    compat = """
-#!/bin/bash
+    compat = """#!/bin/bash
 die() { echo "$*" 1>&2 ; exit 1; }
 
 # Checking for tools
