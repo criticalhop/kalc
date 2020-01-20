@@ -84,21 +84,22 @@ def optimize_cluster(clusterData=None):
         update(clusterData) # To reload from scratch...
         problem = Balance_pods_and_drain_node(kalc_state_objects)
         deployments_local = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects))
-        globalVar = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
-        pods = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects))
+        globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
+        pods_local = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects))
         d_cand = []
         p_cand = []
         for d in deployments_local:
             if str(d.metadata_name) in combination[L_DEPLOYMENTS]:
                 d.searchable = True
                 d_cand.append(str(d.metadata_name))
-                for spod in d.podList:
-                    spod.searchable = True
-                    p_cand.append(str(spod.metadata_name))
-
-        globalVar.target_DeploymentsWithAntiaffinity_length = combination[L_TARGETS]
-        globalVar.target_amountOfPodsWithAntiaffinity = combination[L_PODS]
-        globalVar.target_NodesDrained_length = combination[L_NODES]
+                for spod in pods_local:
+                    if spod in d.podList:
+                        spod.searchable = True
+                        p_cand.append(str(spod.metadata_name))
+        print("combination = ", combination)
+        globalVar_local.target_DeploymentsWithAntiaffinity_length = combination[L_TARGETS]
+        globalVar_local.target_amountOfPodsWithAntiaffinity = combination[L_PODS]
+        globalVar_local.target_NodesDrained_length = combination[L_NODES]
 
         print("Deployment candidates:", ', '.join(d_cand))
         print("Pod candidates:", ", ".join(p_cand))
