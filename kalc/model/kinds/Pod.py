@@ -24,6 +24,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     spec_nodeSelector: Set[Label]
     metadata_name: str
 
+    metadata_namespace: str
     # internal model attributes
     ownerReferences: Controller
     # TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
