@@ -39,10 +39,17 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     "Move the pod when the pod is part of Deployment"
     # 1. Dump full original Deployment
     deployment_name = str(deployment.metadata_name)
+    deployment_namespace =  str(deployment.metadata_namespace)
     replicaset_name = str(replicaset.metadata_name)
+    replicaset_namespace =  str(replicaset.metadata_namespace)
     pod_original_name = str(pod.metadata_name)
+    pod_namespace =  str(pod.metadata_namespace)
     pod_new_name = f"{pod_original_name}-kalcmoved-" + str(time.time())
 
+    assert pod_namespace == deployment_namespace
+    assert pod_namespace == replicaset_namespace
+    namespace = pod_namespace
+    
     # TODO: check that pod that we are deleting had a full green-light status (alive&ready)
     # TODO: check if state has diverged too far and we can not continue
     # TODO: explicily prohibit moving singleton pods... except allowed explicitly
@@ -57,12 +64,12 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     move_pod = f"""
 echo "Moving pod '{pod_original_name}'..."
 echo " -- Disabling relevant controllers by backing up and temporarily deleting them..."
-kubectl get deployment/{deployment_name} -o=yaml > ./deployment_{deployment_name}.yaml &&
-kubectl delete --cascade=false deployment/{deployment_name} &&
-kubectl get replicaset/{replicaset_name} -o=yaml > ./replicaset_{replicaset_name}.yaml &&
-kubectl delete --cascade=false replicaset/{replicaset_name} &&
+kubectl get deployment/{deployment_name} --namespace={namespace} -o=yaml > ./deployment_{deployment_name}.yaml &&
+kubectl delete --cascade=false deployment/{deployment_name} --namespace={namespace} &&
+kubectl get replicaset/{replicaset_name} --namespace={namespace} -o=yaml > ./replicaset_{replicaset_name}.yaml &&
+kubectl delete --cascade=false replicaset/{replicaset_name} --namespace={namespace} &&
 echo " -- Storing current version of pod config of the pod-to-be-moved..." &&
-kubectl get pod/{pod_original_name} -o=yaml > ./pod_new.yaml &&
+kubectl get pod/{pod_original_name} --namespace={namespace} -o=yaml > ./pod_new.yaml &&
 echo "  --- Renaming pod template..." &&
 yq '.metadata += {{name: "{pod_new_name}"}}' ./pod_new.yaml > ./pod_new.yaml.$$ && mv ./pod_new.yaml.$$ pod_new.yaml &&
 echo "  --- Deleting status from dump..." &&
@@ -72,9 +79,9 @@ yq '.spec += {{nodeName: "{str(node_to.metadata_name)}"}}' ./pod_new.yaml > ./po
 echo " -- Running new pod..." &&
 kubectl apply -f ./pod_new.yaml &&
 echo " -- Waiting 30s for new pod to become ready..." &&
-kubectl wait --for condition=ready -f ./pod_new.yaml &&
+kubectl wait --for condition=ready --namespace={namespace} -f ./pod_new.yaml &&
 echo " -- Deleting original pod..." &&
-kubectl delete pod/{pod_original_name}
+kubectl delete pod/{pod_original_name} --namespace={namespace}
 echo " -- Re-applying ReplicaSet..." &&
 kubectl apply -f ./replicaset_{replicaset_name}.yaml &&
 echo " -- Re-applying Deployment..." &&
