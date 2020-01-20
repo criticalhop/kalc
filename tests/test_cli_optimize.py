@@ -19,7 +19,6 @@ import inspect
 from kalc.model.search import *
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
 from poodle import planned
 from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 import kalc.misc.util
