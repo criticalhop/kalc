@@ -50,13 +50,11 @@ def generate_hypothesys_combination(deployments, nodes):
             if d[0] == processed_rank:
                 deployments_current_rank.append(d[1])
         if deployments_current_rank:
-            deployments_by_ranks.append([processed_rank,deployments_current_rank])
             deployments_current_rank.extend(prev_deployments_current_rank)
             list_of_deployments_sorted.append(deployments_current_rank)
-
             prev_deployments_current_rank = deployments_current_rank
     print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
-    list_deployments_targets = list(range(1,deployment_amount))
+    list_deployments_targets = list(range(1,deployment_amount+1))
     list_nodes = list(range(0,2))
     list_pods = list(range(2,max_pod_number+1))
 
@@ -65,6 +63,7 @@ def generate_hypothesys_combination(deployments, nodes):
     list_for_comb.append(list_nodes)
     list_for_comb.append(list_pods)
     comb_nodes_pods = list(product(*list_for_comb))
+    # print("comb_nodes_pods = ", comb_nodes_pods)
     #TODO: Exclude combinations when number of serachable deployments is less than list of deployments 
     # for comb in comb_nodes_pods:
     #     if len(comb[1]) >= comb[0]:
@@ -74,14 +73,14 @@ def generate_hypothesys_combination(deployments, nodes):
 def optimize_cluster(clusterData=None):
     print("WARNING! Not taking into account service SLOs")
     update(clusterData) # To reload from scratch...
-    deployments = filter(lambda x: isinstance(x, Deployment), kalc_state_objects) # to get amount of deployments
+    deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
     for combination in comb_nodes_pods:
         update(clusterData) # To reload from scratch...
         problem = Balance_pods_and_drain_node(kalc_state_objects)
         globalVar = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
-        pods = filter(lambda x: isinstance(x, Pod), kalc_state_objects)
+        pods = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects))
         d_cand = []
         p_cand = []
         # if len(searchable_pods) < pod_amount: 
@@ -89,11 +88,10 @@ def optimize_cluster(clusterData=None):
         #     continue
         # mark all deployments as isSearchable from searchable_deployments
         for d in deployments:
-            if str(d.metadata_name) in combination[0]:
+            if d in combination[1]:
                 d.searchable = True
                 d_cand.append(str(d.metadata_name))
-            for spod in pods:
-                if spod in d.podList:
+                for spod in d.podList:
                     spod.searchable = True
                     p_cand.append(str(spod.metadata_name))
 
@@ -110,6 +108,7 @@ def optimize_cluster(clusterData=None):
             problem.xrun()
         except SchedulingError:
             print("Could not solve in this configuration, trying next...")
+            continue
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
         scritpt_file = f"./kalc_optimize_{combination[0]}_{combination[3]}.sh"
