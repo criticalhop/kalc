@@ -14,6 +14,8 @@ test.log
 keypack.pyu
 pyu-data/
 pyu.log
+.pyupdater/
+README.rst
 tests/NOT_for_Repo/
 log*
 *.swp
@@ -37,3 +39,4 @@ setup.py
 LOG
 *.log
 *.sh
+
