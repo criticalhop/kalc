@@ -1,4 +1,4 @@
-from guardctl.misc.util import objwalk, find_property
+from kalc.misc.util import objwalk, find_property
 from poodle import Object
 import yaml
 from typing import Set
