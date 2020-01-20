@@ -11,12 +11,28 @@ from kalc.misc.const import *
 from kalc.model.search import K8ServiceInterruptSearch
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
+import guardctl.misc.util as util
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/test-deployment/deployment.yaml"
 TEST_DEPLOYMENT1 = "./tests/test-deployment/deployment1.yaml"
 
 TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"
+
+TEST_TARGET_DUMP = "./tests/daemonset_eviction_with_deployment/cluster_dump"
+TEST_TARGET_CREATE = "./tests/daemonset_eviction_with_deployment/daemonset_create.yaml" #TODO rename file to deployment_create.yaml
+
+def test_pod_target_attached():
+    k = KubernetesCluster()
+    k.load_dir(TEST_TARGET_DUMP)
+    k.create_resource(open(TEST_TARGET_CREATE).read())
+    k._build_state()
+    deployments = filter(lambda x: isinstance(x, Deployment), k.state_objects)
+    for deployment in deployments:
+        if deployment.metadata_name._get_value() == "redis-master-create":
+            for pod in util.objDeduplicatorByName(deployment.podList._get_value()):
+                assert pod.targetService._get_value() != None
+    
 
 def test_load_twise_exeption():
     k = KubernetesCluster()
