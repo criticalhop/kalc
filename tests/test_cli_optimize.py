@@ -76,7 +76,7 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds, s):
     if d is not None:
         d.podList.add(p)
         p.hasDeployment = True
-        ds.metadata_namespace = "myNamespace" 
+        d.metadata_namespace = "myNamespace" 
     if ds is not None:
         ds.podList.add(p)
         p.hasDaemonset = True
@@ -125,11 +125,13 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     
     # create Deploymnent that we're going to detect failure of...
     d = Deployment()
+    d.metadata_namespace = "myNamespace" 
     d.searchable = True 
     d.spec_replicas = 6    
     d.NumberOfPodsOnSameNodeForDeployment = 4
     deployments.append(d)
     d2 = Deployment()
+    d2.metadata_namespace = "myNamespace" 
     d2.searchable = True
     d2.spec_replicas = 2    
     d2.NumberOfPodsOnSameNodeForDeployment = 2
@@ -251,6 +253,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     k.state_objects.extend(deployments)
     create_objects = []
     k._build_state()
+
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     globalVar.target_DeploymentsWithAntiaffinity_length = 1

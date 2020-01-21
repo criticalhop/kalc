@@ -306,6 +306,8 @@ def render_object(ob, load_logic_support=True):
             "name": str(ob.metadata_name)
         }
     }
+    if hasattr(ob, 'metadata_namespace'):
+        d["metadata"]["namespace"] = ob.metadata_namespace._get_value()
     # Pod
     if str(type(ob).__name__) == "Pod":
         # TODO: add hasDeployment to annotations
