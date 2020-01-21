@@ -1038,7 +1038,9 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
         globalVar: GlobalVar):
         assert pod1.searchable == True
         assert pod2.searchable == True
-        if  pod1 != pod2:
+        if  pod1 not in pod2.podsMatchedByAntiaffinity and \
+            pod2 not in pod1.podsMatchedByAntiaffinity and \
+            pod1 != pod2:
             assert pod1 in deployment.podList
             assert pod2 in deployment.podList
             pod1.antiaffinity_set = True
