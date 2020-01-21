@@ -1,12 +1,12 @@
 from poodle import schedule, xschedule
 from poodle.schedule import SchedulingError
-from kalc.model.system.math import permutation_list
+from kalc.model.system.math import combinations_list
 
 class ProblemTemplate:
     def __init__(self, objectList=None):
         if objectList is None: self.objectList = []
         else: self.objectList = objectList
-        self.objectList.extend(permutation_list)
+        self.objectList.extend(combinations_list)
         self.plan = None
         self.pod = []
         self.node = []
