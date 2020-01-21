@@ -53,6 +53,8 @@ def generate_hypothesys_combination(deployments, nodes):
         for d in deployments_maxpods:
             if d[0] == processed_rank:
                 deployments_current_rank.append(d[1])
+            if processed_rank == 0:
+                deployments_current_rank.append(d[1])
         if deployments_current_rank:
             deployments_current_rank.extend(prev_deployments_current_rank)
             list_of_deployments_sorted.append(str(deployments_current_rank[0].metadata_name))
