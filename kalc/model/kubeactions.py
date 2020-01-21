@@ -405,8 +405,10 @@ class KubernetesModel(ProblemTemplate):
         nodeFrom: "Node",
         nodeTo: "Node",
         scheduler: "Scheduler",
-        globalVar: GlobalVar
-        ):
+        globalVar: GlobalVar,
+        deployment: Deployment):
+        assert pod in deployment.podList # Only pods with deployments can be moved by kalc 
+        assert deployment.amountOfActivePods > 1
         # assert globalVar.block_policy_calculated == False
         assert pod.atNode == nodeFrom
         assert pod.status == STATUS_POD["Running"]
