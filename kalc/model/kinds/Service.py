@@ -16,6 +16,7 @@ class Service(ModularKind, HasLabel):
     targetAmountOfPodsOnDifferentNodes: int
     status: StatusServ
     metadata_name: str
+    metadata_namespace: str
     searchable: bool
     isNull: bool
     isSearched: bool

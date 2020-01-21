@@ -30,6 +30,7 @@ DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml
 def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, pods):
     pod_running_1 = Pod()
     pod_running_1.metadata_name = "pod"+str(podName)
+    pod_running_1.metadata_namespace = "myNamespace"
     pod_running_1.cpuRequest = cpuRequest
     pod_running_1.memRequest = memRequest
     pod_running_1.cpuLimit = 1
@@ -48,15 +49,18 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
         d.podList.add(pod_running_1)
         d.amountOfActivePods += 1
         pod_running_1.hasDeployment = True
+        d.metadata_namespace = "myNamespace"
     if ds is not None:
         ds.podList.add(pod_running_1)
         ds.amountOfActivePods += 1
         pod_running_1.hasDaemonset = True
+        ds.metadata_namespace = "myNamespace"
     if s is not None:
         pod_running_1.hasService = True
         s.podList.add(pod_running_1)
         s.amountOfActivePods += 1
         s.status = STATUS_SERV["Started"]
+        s.metadata_namespace = "myNamespace"
     return pod_running_1
  
 def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds, s):
@@ -68,16 +72,20 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds, s):
     p.hasDeployment = False
     p.hasService = False
     p.hasDaemonset = False
+    p.metadata_namespace = "myNamespace"
     if d is not None:
         d.podList.add(p)
         p.hasDeployment = True
+        ds.metadata_namespace = "myNamespace" 
     if ds is not None:
         ds.podList.add(p)
         p.hasDaemonset = True
         p.toNode = toNode
+        ds.metadata_namespace = "myNamespace" 
     if s is not None:
         p.hasService = True
         s.podList.add(p)
+        s.metadata_namespace = "myNamespace" 
     return p
 
 class StateSet():
@@ -273,3 +281,5 @@ def test_optimmize_cluster():
     # print("Running with", yaml_dump)
     optimize_cluster(yaml_dump)
 
+def test_optimmize_cluster_load():
+    optimize_cluster(None)
