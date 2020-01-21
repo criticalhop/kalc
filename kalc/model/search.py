@@ -5,7 +5,7 @@ from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.system.primitives import TypeServ
-from kalc.model.system.math import Combinations, combinations_list
+from kalc.model.system.math import Permutations, permutation_list
 from kalc.model.system.Controller import Controller
 from kalc.model.system.primitives import Label
 from kalc.model.kinds.Service import Service
@@ -257,7 +257,7 @@ class HypothesisysNode(HypothesisysClean):
 #         self.generated_goal_in = []
 #         self.generaged_goal_eq = []
 #         for service in filter(lambda s: isinstance(s, Service) and s.antiaffinity == True , self.objectList):
-#             for pod1, pod2 in itertools.combinations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
+#             for pod1, pod2 in itertools.permutations(filter(lambda x: isinstance(x, Pod) and x in service.podList, self.objectList),2):
 #                 self.generated_goal_in.append([pod1, pod2.not_on_same_node])
 
 #     def goal(self):
@@ -1038,7 +1038,9 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
         globalVar: GlobalVar):
         assert pod1.searchable == True
         assert pod2.searchable == True
-        if  pod1 != pod2:
+        if  pod1 not in pod2.podsMatchedByAntiaffinity and \
+            pod2 not in pod1.podsMatchedByAntiaffinity and \
+            pod1 != pod2:
             assert pod1 in deployment.podList
             assert pod2 in deployment.podList
             pod1.antiaffinity_set = True
@@ -1144,36 +1146,36 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
     def Calculate_fulfilled_antiaffinity_pods_of_deployment(self,
         pod: Pod,
         deployment: Deployment,
-        combinations_of_amountOfActivePods: Combinations,
+        permutations_of_amountOfActivePods: Permutations,
         globalVar: GlobalVar):
         if deployment not in globalVar.DeploymentsWithAntiaffinity: 
             assert deployment.amountOfActivePods > 1
-            assert combinations_of_amountOfActivePods.number == deployment.amountOfActivePods
-            assert deployment.podsMatchedByAntiaffinity_length >= combinations_of_amountOfActivePods.combinations
+            assert permutations_of_amountOfActivePods.number == deployment.amountOfActivePods
+            assert deployment.podsMatchedByAntiaffinity_length >= permutations_of_amountOfActivePods.permutations
 
             # if deployment.amountOfActivePods > 10:
             #     assert pod.podsMatchedByAntiaffinity_length == 45 
             # else:    
-            #     assert combinations_of_amountOfActivePods.number == deployment.amountOfActivePods
-            #     assert pod.podsMatchedByAntiaffinity_length == combinations_of_amountOfActivePods.combinations - 1
+            #     assert permutations_of_amountOfActivePods.number == deployment.amountOfActivePods
+            #     assert pod.podsMatchedByAntiaffinity_length == permutations_of_amountOfActivePods.permutations - 1
             globalVar.DeploymentsWithAntiaffinity.add(deployment)
             globalVar.DeploymentsWithAntiaffinity_length += 1
 
     @planned(cost=1)
     def Calculate_fulfilled_antiaffinity_pods_of_deployment_with_pod_limit(self,
         deployment: Deployment,
-        combinations_of_target_amountOfPodsWithAntiaffinity: Combinations,
+        permutations_of_target_amountOfPodsWithAntiaffinity: Permutations,
         globalVar: GlobalVar):
         if deployment not in globalVar.DeploymentsWithAntiaffinity: 
             assert deployment.amountOfActivePods > 1
             assert globalVar.target_amountOfPodsWithAntiaffinity > 0
-            assert combinations_of_target_amountOfPodsWithAntiaffinity.number == globalVar.target_amountOfPodsWithAntiaffinity
-            assert deployment.podsMatchedByAntiaffinity_length >= combinations_of_target_amountOfPodsWithAntiaffinity.combinations
+            assert permutations_of_target_amountOfPodsWithAntiaffinity.number == globalVar.target_amountOfPodsWithAntiaffinity
+            assert deployment.podsMatchedByAntiaffinity_length >= permutations_of_target_amountOfPodsWithAntiaffinity.permutations
             # if globalVar.target_amountOfPodsWithAntiaffinity > 10:
             #     assert pod.podsMatchedByAntiaffinity_length == 45 
             # else:    
-            #     assert combinations_of_target_amountOfPodsWithAntiaffinity.number == globalVar.target_amountOfPodsWithAntiaffinity
-            #     assert pod.podsMatchedByAntiaffinity_length == combinations_of_target_amountOfPodsWithAntiaffinity.combinations - 1
+            #     assert permutations_of_target_amountOfPodsWithAntiaffinity.number == globalVar.target_amountOfPodsWithAntiaffinity
+            #     assert pod.podsMatchedByAntiaffinity_length == permutations_of_target_amountOfPodsWithAntiaffinity.permutations - 1
             globalVar.DeploymentsWithAntiaffinity.add(deployment)
             globalVar.DeploymentsWithAntiaffinity_length += 1
 
