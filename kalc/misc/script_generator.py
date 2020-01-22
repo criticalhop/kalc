@@ -69,7 +69,7 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     move_pod = f"""
 CLUSTER_MD5={md5_cluster}
 CLUSTER_MD5_current=`{cluster_md5_sh}`
-if [ "CLUSTER_MD5" !=  "CLUSTER_MD5_current" ] ;
+if [ "$CLUSTER_MD5" !=  "$CLUSTER_MD5_current" ] ;
 then
  echo "WARNING: CLUSTER STATE DIVERGED - USE AT YOUR OWN RISK"
  echo  -n "Are you going to continue?  [yes/no]? "
