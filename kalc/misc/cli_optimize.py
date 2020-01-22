@@ -100,7 +100,6 @@ def optimize_cluster(clusterData=None):
                     if spod in d.podList:
                         spod.searchable = True
                         p_cand.append(str(spod.metadata_name))
-        print("combination = ", combination)
         globalVar_local.target_DeploymentsWithAntiaffinity_length = combination[L_TARGETS]
         globalVar_local.target_amountOfPodsWithAntiaffinity = combination[L_PODS]
         globalVar_local.target_NodesDrained_length = combination[L_NODES]
@@ -117,7 +116,7 @@ def optimize_cluster(clusterData=None):
             continue
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
-        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}.sh"
+        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}.sh"
         print("Generated optimization script at", scritpt_file)
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
