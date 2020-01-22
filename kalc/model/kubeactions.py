@@ -411,7 +411,7 @@ class KubernetesModel(ProblemTemplate):
         assert deployment.amountOfActivePods > 1
         # assert globalVar.block_policy_calculated == False
         assert pod.atNode == nodeFrom
-        assert pod.status == STATUS_POD["Running"]
+        # assert pod.status == STATUS_POD["Running"]
         assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert nodeTo in pod.nodeSelectorList
