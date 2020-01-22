@@ -58,14 +58,10 @@ def generate_hypothesys_combination(deployments, nodes):
             if processed_rank == 0:
                 deployments_current_rank.append(d[1])
         if deployments_current_rank:
-            print("deployments_current_rank = ", deployments_current_rank)
             deployments_current_rank.extend(prev_deployments_current_rank)
-            print("deployments_current_rank- changed = ", deployments_current_rank)
             list_of_deployments_sorted.append(deployments_current_rank)
-            print("list_of_deployments_sorted = ", list_of_deployments_sorted)
             prev_deployments_current_rank = deployments_current_rank
     print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
-    print("list_of_deployments_sorted = ", list_of_deployments_sorted)
     list_deployments_targets = list(range(1,deployment_amount+1))
     list_nodes = list(range(0,2))
     list_pods = list(range(2,max_pod_number+1))
@@ -74,14 +70,13 @@ def generate_hypothesys_combination(deployments, nodes):
     list_for_comb.append(list_of_deployments_sorted)
     list_for_comb.append(list_nodes)
     list_for_comb.append(list_pods)
-    print("list_for_comb = ", list_for_comb)
     comb_nodes_pods = list(product(*list_for_comb))
-    print("comb_nodes_pods = ", comb_nodes_pods)
     #TODO: Exclude combinations when number of serachable deployments is less than list of deployments 
-    # for comb in comb_nodes_pods:
-    #     if len(comb[1]) >= comb[0]:
-    #         comb_nodes_pods_fitered.append(list_for_comb)
-    return comb_nodes_pods
+    comb_nodes_pods_fitered = []
+    for comb in comb_nodes_pods:
+        if len(comb[1]) >= comb[0]:
+            comb_nodes_pods_fitered.append(comb)
+    return comb_nodes_pods_fitered
 
 def optimize_cluster(clusterData=None):
     print("WARNING! Not taking into account service SLOs")
