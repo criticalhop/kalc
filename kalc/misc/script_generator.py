@@ -123,10 +123,9 @@ CLUSTER_MD5_current=`{cluster_md5_sh} | awk ' {{printf $1}} ' `
 if [ "$CLUSTER_MD5" !=  "$CLUSTER_MD5_current" ] ;
 then
  echo "WARNING: CLUSTER STATE DIVERGED - USE AT YOUR OWN RISK"
-  if [ "$1" = "-y" ];
+  finish="1"
+  if [ "$1" != "-y" ];
   then
-    finish = 1
-  else
     echo  -n "Are you going to continue?  [yes/no]? "
     read answer
     finish="-1"
