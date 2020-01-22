@@ -1050,9 +1050,9 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
             pod2.podsMatchedByAntiaffinity.add(pod1)
             pod2.podsMatchedByAntiaffinity_length += 1
             deployment.podsMatchedByAntiaffinity_length += 2
-            if globalVar.target_amountOfPodsWithAntiaffinity == 2 and deployment not in globalVar.DeploymentsWithAntiaffinity:
-                globalVar.DeploymentsWithAntiaffinity.add(deployment)
-                globalVar.DeploymentsWithAntiaffinity_length += 1
+            # if globalVar.target_amountOfPodsWithAntiaffinity == 2 and deployment not in globalVar.DeploymentsWithAntiaffinity:
+            #     globalVar.DeploymentsWithAntiaffinity.add(deployment)
+            #     globalVar.DeploymentsWithAntiaffinity_length += 1
     @planned(cost=1)
     def Set_antiaffinity_between_3_pods_of_deployment(self,
         pod1: Pod,
@@ -1086,9 +1086,9 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
             pod3.podsMatchedByAntiaffinity.add(pod2)
             pod3.podsMatchedByAntiaffinity_length += 2
             deployment.podsMatchedByAntiaffinity_length += 6
-            if globalVar.target_amountOfPodsWithAntiaffinity == 3 and deployment not in globalVar.DeploymentsWithAntiaffinity:
-                globalVar.DeploymentsWithAntiaffinity.add(deployment)
-                globalVar.DeploymentsWithAntiaffinity_length += 1
+            # if globalVar.target_amountOfPodsWithAntiaffinity == 3 and deployment not in globalVar.DeploymentsWithAntiaffinity:
+            #     globalVar.DeploymentsWithAntiaffinity.add(deployment)
+            #     globalVar.DeploymentsWithAntiaffinity_length += 1
     # @planned(cost=1)
     # def Set_antiaffinity_between_4_pods_of_deployment(self,
     #     pod1: Pod,
