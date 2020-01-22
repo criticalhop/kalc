@@ -14,7 +14,6 @@ def optimize_cluster(clusterData=None):
     print("WARNING! Not taking into account service SLOs")
     update(clusterData) # To reload from scratch...
     deployments = filter(lambda x: isinstance(x, Deployment), kalc_state_objects) # to get amount of deployments
-    from kalc.interactive import cluster_md5_sh, md5_cluster
 
     # Find how many pods are on same node for every deployment
     deployments_maxpods = []
