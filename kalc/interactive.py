@@ -41,7 +41,6 @@ def update(data=None):
         global md5_cluster
         result = subprocess.Popen(cluster_md5_sh, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
         md5_cluster = result.stdout.read().decode('ascii').split()[0]
-        print("md5_cluster",md5_cluster)
         assert len(md5_cluster) == 32, "md5_cluster sum wrong len({0}) not is 32".format(md5_cluster)
 
         result = subprocess.run(['kubectl', 'get', 'all', '--all-namespaces', '-o=json'], stdout=subprocess.PIPE)
