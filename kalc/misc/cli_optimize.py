@@ -59,7 +59,7 @@ def generate_hypothesys_combination(deployments, nodes):
                 deployments_current_rank.append(d[1])
         if deployments_current_rank:
             deployments_current_rank.extend(prev_deployments_current_rank)
-            list_of_deployments_sorted.append(str(deployments_current_rank[0].metadata_name))
+            list_of_deployments_sorted.append(deployments_current_rank)
             prev_deployments_current_rank = deployments_current_rank
     print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
     list_deployments_targets = list(range(1,deployment_amount+1))
@@ -71,12 +71,12 @@ def generate_hypothesys_combination(deployments, nodes):
     list_for_comb.append(list_nodes)
     list_for_comb.append(list_pods)
     comb_nodes_pods = list(product(*list_for_comb))
-    # print("comb_nodes_pods = ", comb_nodes_pods)
     #TODO: Exclude combinations when number of serachable deployments is less than list of deployments 
-    # for comb in comb_nodes_pods:
-    #     if len(comb[1]) >= comb[0]:
-    #         comb_nodes_pods_fitered.append(list_for_comb)
-    return comb_nodes_pods
+    comb_nodes_pods_fitered = []
+    for comb in comb_nodes_pods:
+        if len(comb[1]) >= comb[0]:
+            comb_nodes_pods_fitered.append(comb)
+    return comb_nodes_pods_fitered
 
 def optimize_cluster(clusterData=None):
     print("WARNING! Not taking into account service SLOs")
@@ -93,14 +93,16 @@ def optimize_cluster(clusterData=None):
         d_cand = []
         p_cand = []
         for d in deployments_local:
-            if str(d.metadata_name) in combination[L_DEPLOYMENTS]:
+            combination_metadatanames = []
+            for c in  combination[L_DEPLOYMENTS]:
+                combination_metadatanames.append(c.metadata_name)
+            if str(d.metadata_name) in  combination_metadatanames:
                 d.searchable = True
                 d_cand.append(str(d.metadata_name))
                 for spod in pods_local:
                     if spod in d.podList:
                         spod.searchable = True
                         p_cand.append(str(spod.metadata_name))
-        print("combination = ", combination)
         globalVar_local.target_DeploymentsWithAntiaffinity_length = combination[L_TARGETS]
         globalVar_local.target_amountOfPodsWithAntiaffinity = combination[L_PODS]
         globalVar_local.target_NodesDrained_length = combination[L_NODES]
@@ -117,7 +119,7 @@ def optimize_cluster(clusterData=None):
             continue
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
-        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}.sh"
+        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}.sh"
         print("Generated optimization script at", scritpt_file)
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
