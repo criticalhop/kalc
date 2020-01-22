@@ -34,14 +34,21 @@ def update(data=None):
         data = data.read()
     k = KubernetesCluster()
     if not data:
-        result = subprocess.run(['kubectl', 'get', 'all', '-o=json'], stdout=subprocess.PIPE)
+        result = subprocess.run(['kubectl', 'get', 'all', '--all-namespaces', '-o=json'], stdout=subprocess.PIPE)
         if len(result.stdout) < 100:
+            print(result.stdout)
             raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
         data = json.loads(result.stdout.decode("utf-8"))
         for item in data["items"]:
             k.load_item(item)
 
         result = subprocess.run(['kubectl', 'get', 'node', '-o=json'], stdout=subprocess.PIPE)
+        if len(result.stdout) < 100:
+            raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+        data = json.loads(result.stdout.decode("utf-8"))
+        for item in data["items"]:
+            k.load_item(item)
+        result = subprocess.run(['kubectl', 'get', 'pc', '-o=json'], stdout=subprocess.PIPE)
         if len(result.stdout) < 100:
             raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
         data = json.loads(result.stdout.decode("utf-8"))

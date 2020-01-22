@@ -19,7 +19,6 @@ import inspect
 from kalc.model.search import *
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
 from poodle import planned
 from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 import kalc.misc.util
@@ -31,6 +30,7 @@ DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml
 def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, pods):
     pod_running_1 = Pod()
     pod_running_1.metadata_name = "pod"+str(podName)
+    pod_running_1.metadata_namespace = "myNamespace"
     pod_running_1.cpuRequest = cpuRequest
     pod_running_1.memRequest = memRequest
     pod_running_1.cpuLimit = 1
@@ -49,15 +49,18 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
         d.podList.add(pod_running_1)
         d.amountOfActivePods += 1
         pod_running_1.hasDeployment = True
+        d.metadata_namespace = "myNamespace"
     if ds is not None:
         ds.podList.add(pod_running_1)
         ds.amountOfActivePods += 1
         pod_running_1.hasDaemonset = True
+        ds.metadata_namespace = "myNamespace"
     if s is not None:
         pod_running_1.hasService = True
         s.podList.add(pod_running_1)
         s.amountOfActivePods += 1
         s.status = STATUS_SERV["Started"]
+        s.metadata_namespace = "myNamespace"
     return pod_running_1
  
 def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds, s):
@@ -69,16 +72,20 @@ def build_pending_pod_with_d(podName, cpuRequest, memRequest, toNode, d, ds, s):
     p.hasDeployment = False
     p.hasService = False
     p.hasDaemonset = False
+    p.metadata_namespace = "myNamespace"
     if d is not None:
         d.podList.add(p)
         p.hasDeployment = True
+        d.metadata_namespace = "myNamespace" 
     if ds is not None:
         ds.podList.add(p)
         p.hasDaemonset = True
         p.toNode = toNode
+        ds.metadata_namespace = "myNamespace" 
     if s is not None:
         p.hasService = True
         s.podList.add(p)
+        s.metadata_namespace = "myNamespace" 
     return p
 
 class StateSet():
@@ -118,11 +125,13 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     
     # create Deploymnent that we're going to detect failure of...
     d = Deployment()
+    d.metadata_namespace = "myNamespace" 
     d.searchable = True 
     d.spec_replicas = 6    
     d.NumberOfPodsOnSameNodeForDeployment = 4
     deployments.append(d)
     d2 = Deployment()
+    d2.metadata_namespace = "myNamespace" 
     d2.searchable = True
     d2.spec_replicas = 2    
     d2.NumberOfPodsOnSameNodeForDeployment = 2
@@ -244,6 +253,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     k.state_objects.extend(deployments)
     create_objects = []
     k._build_state()
+
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     globalVar.target_DeploymentsWithAntiaffinity_length = 1
@@ -274,3 +284,5 @@ def test_optimmize_cluster():
     # print("Running with", yaml_dump)
     optimize_cluster(yaml_dump)
 
+def test_optimmize_cluster_load():
+    optimize_cluster(None)
