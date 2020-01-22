@@ -63,8 +63,35 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     # TODO: move smth unimportant
     # TODO: execute mode
     # TODO: paranoid checks: that deployment does not get re-created
+    
+    from kalc.interactive import cluster_md5_sh, md5_cluster
 
     move_pod = f"""
+CLUSTER_MD5={md5_cluster}
+CLUSTER_MD5_current=`{cluster_md5_sh}`
+if [ "CLUSTER_MD5" !=  "CLUSTER_MD5_current" ] ;
+then
+ echo "WARNING: CLUSTER STATE DIVERGED - USE AT YOUR OWN RISK"
+ echo  -n "Are you going to continue?  [yes/no]? "
+  read answer
+  finish="-1"
+  while [ "$finish" = '-1' ]
+  do
+    finish="1"
+    if [ "$answer" = '' ];
+    then
+      answer=""
+    else
+      case $answer in
+        yes | YES ) answer="y";;
+        no | NO ) exit 0 ;;
+        *) finish="-1";
+           echo -n 'Invalid !!! Please enter "yes" or "no" :';
+           read answer;;
+       esac
+    fi
+  done
+fi
 echo "Moving pod '{pod_original_name}'..."
 echo " -- Disabling relevant controllers by backing up and temporarily deleting them..."
 kubectl get deployment/{deployment_name} --namespace={namespace} -o=yaml > ./deployment_{deployment_name}.yaml &&
