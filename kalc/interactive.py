@@ -16,7 +16,7 @@ import kalc.misc.util
 import pkg_resources
 __version__ = pkg_resources.get_distribution("kalc").version
 
-cluster_md5_sh = "kubectl get pods -o wide --sort-by=\"{.spec.nodeName}\" | awk ' {print $1,$2,$3,$6,$7} ' | md5sum | awk ' {printf $1} ' "
+cluster_md5_sh = 'kubectl get pods -o wide --all-namespaces -o=custom-columns=NAME:.metadata.name,NODE:.spec.nodeName --sort-by="{.metadata.name}" | md5sum'
 
 kalc_state_objects = []
 kind = KindPlaceholder
@@ -40,8 +40,8 @@ def update(data=None):
     if not data:
         global md5_cluster
         result = subprocess.Popen(cluster_md5_sh, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
-        md5_cluster = result.stdout.read().decode('ascii')
-
+        md5_cluster = result.stdout.read().decode('ascii').split()[0]
+        print("md5_cluster",md5_cluster)
         assert len(md5_cluster) == 32, "md5_cluster sum wrong len({0}) not is 32".format(md5_cluster)
 
         result = subprocess.run(['kubectl', 'get', 'all', '--all-namespaces', '-o=json'], stdout=subprocess.PIPE)
