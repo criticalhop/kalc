@@ -16,9 +16,13 @@ import kalc.misc.util
 import pkg_resources
 __version__ = pkg_resources.get_distribution("kalc").version
 
+cluster_md5_sh = 'kubectl get pods -o wide --all-namespaces -o=custom-columns=NAME:.metadata.name,NODE:.spec.nodeName --sort-by="{.metadata.name}" | md5sum'
+
 kalc_state_objects = []
 kind = KindPlaceholder
 cluster = None
+
+md5_cluster = ""
 
 kalc.policy.policy_engine.register_state_objects(kalc_state_objects)
 
@@ -34,6 +38,11 @@ def update(data=None):
         data = data.read()
     k = KubernetesCluster()
     if not data:
+        global md5_cluster
+        result = subprocess.Popen(cluster_md5_sh, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
+        md5_cluster = result.stdout.read().decode('ascii').split()[0]
+        assert len(md5_cluster) == 32, "md5_cluster sum wrong len({0}) not is 32".format(md5_cluster)
+
         result = subprocess.run(['kubectl', 'get', 'all', '--all-namespaces', '-o=json'], stdout=subprocess.PIPE)
         if len(result.stdout) < 100:
             print(result.stdout)
