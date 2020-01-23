@@ -12,14 +12,13 @@ from kalc.misc.const import *
 from kalc.misc.object_factory import labelFactory
 from poodle import debug_plan
 from poodle.schedule import EmptyPlanError
-from kalc.model.scenario import Scenario
 import kalc.model.kinds.Service as mservice
 try: 
     from tests.test_util import print_objects
 except:
     from test_util import print_objects
 import kalc.model.kinds.Pod as mpod
-from kalc.cli import run
+from kalc.interactive import run
 import click
 from click.testing import CliRunner
 from poodle import planned
@@ -169,8 +168,7 @@ def run_wo_cli_step1(DUMP_local,CHANGE_local):
     p.run(timeout=999000, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    print("##### Scenario:")
-    print(Scenario(p.plan).asyaml())
+
     print("#### print_objects after run: ####")
     print(print_objects(k.state_objects))
 
@@ -191,8 +189,7 @@ def run_wo_cli(DUMP_local,CHANGE_local):
     p.run(timeout=999000, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    print("#### Scenario:")
-    print(Scenario(p.plan).asyaml())
+
     print("#### print_objects after run: ######")
     print(print_objects(k.state_objects))
 
@@ -213,8 +210,7 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
     p.run(timeout=999000, sessionName="test_OptimisticRun")
     if not p.plan:
          raise Exception("Could not solve %s" % p.__class__.__name__)
-    print("####  Scenario:")
-    print(Scenario(p.plan).asyaml())
+
     print("#### print_objects after run: ######")
     print(print_objects(k.state_objects))
 
@@ -310,6 +306,8 @@ def render_object(ob, load_logic_support=True):
             "name": str(ob.metadata_name)
         }
     }
+    if hasattr(ob, 'metadata_namespace'):
+        d["metadata"]["namespace"] = ob.metadata_namespace._get_value()
     # Pod
     if str(type(ob).__name__) == "Pod":
         # TODO: add hasDeployment to annotations

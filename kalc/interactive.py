@@ -16,9 +16,13 @@ import kalc.misc.util
 import pkg_resources
 __version__ = pkg_resources.get_distribution("kalc").version
 
+cluster_md5_sh = 'kubectl get pods -o wide --all-namespaces -o=custom-columns=NAME:.metadata.name,NODE:.spec.nodeName --sort-by="{.metadata.name}" | md5sum'
+
 kalc_state_objects = []
 kind = KindPlaceholder
 cluster = None
+
+md5_cluster = ""
 
 kalc.policy.policy_engine.register_state_objects(kalc_state_objects)
 
@@ -34,14 +38,26 @@ def update(data=None):
         data = data.read()
     k = KubernetesCluster()
     if not data:
-        result = subprocess.run(['kubectl', 'get', 'all', '-o=json'], stdout=subprocess.PIPE)
+        global md5_cluster
+        result = subprocess.Popen(cluster_md5_sh, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
+        md5_cluster = result.stdout.read().decode('ascii').split()[0]
+        assert len(md5_cluster) == 32, "md5_cluster sum wrong len({0}) not is 32".format(md5_cluster)
+
+        result = subprocess.run(['kubectl', 'get', 'all', '--all-namespaces', '-o=json'], stdout=subprocess.PIPE)
         if len(result.stdout) < 100:
+            print(result.stdout)
             raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
         data = json.loads(result.stdout.decode("utf-8"))
         for item in data["items"]:
             k.load_item(item)
 
         result = subprocess.run(['kubectl', 'get', 'node', '-o=json'], stdout=subprocess.PIPE)
+        if len(result.stdout) < 100:
+            raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
+        data = json.loads(result.stdout.decode("utf-8"))
+        for item in data["items"]:
+            k.load_item(item)
+        result = subprocess.run(['kubectl', 'get', 'pc', '-o=json'], stdout=subprocess.PIPE)
         if len(result.stdout) < 100:
             raise SystemError("Error using kubectl. Make sure `kubectl get pods` is working.")
         data = json.loads(result.stdout.decode("utf-8"))

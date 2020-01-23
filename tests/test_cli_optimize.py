@@ -19,7 +19,6 @@ import inspect
 from kalc.model.search import *
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
 from poodle import planned
 from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 import kalc.misc.util
@@ -244,6 +243,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     k.state_objects.extend(deployments)
     create_objects = []
     k._build_state()
+
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
     globalVar.target_DeploymentsWithAntiaffinity_length = 1
@@ -274,3 +274,5 @@ def test_optimmize_cluster():
     # print("Running with", yaml_dump)
     optimize_cluster(yaml_dump)
 
+def test_optimmize_cluster_load():
+    optimize_cluster(None)
