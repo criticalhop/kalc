@@ -579,7 +579,7 @@ class Antiaffinity_check_basis(KubernetesModel):
             node_of_pod1: Node,
             node_of_pod2: Node,
             deployment: Deployment):
-        # assert node_of_pod2 == pod2.atNode
+        assert node_of_pod2 == pod2.atNode
         assert pod1.atNode in node_of_pod2.different_than
         assert pod1 in deployment.podList
         assert pod2 in deployment.podList
