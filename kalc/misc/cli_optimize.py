@@ -15,6 +15,8 @@ L_TARGETS = 0
 L_DEPLOYMENTS = 1
 L_NODES = 2
 L_PODS = 3
+
+
 def generate_hypothesys_combination(deployments, nodes):
     deployments_maxpods = []
     drain_node_frequency = 2
@@ -78,6 +80,7 @@ def generate_hypothesys_combination(deployments, nodes):
             comb_nodes_pods_fitered.append(comb)
     return comb_nodes_pods_fitered
 
+
 def optimize_cluster(clusterData=None):
     print("WARNING! Not taking into account service SLOs")
     update(clusterData) # To reload from scratch...
@@ -123,6 +126,7 @@ def optimize_cluster(clusterData=None):
         print("Generated optimization script at", scritpt_file)
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
+            
             
 def run():
     optimize_cluster(None)
