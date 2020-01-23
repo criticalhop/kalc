@@ -1,6 +1,9 @@
 from poodle import schedule, xschedule
 from poodle.schedule import SchedulingError
 from kalc.model.system.math import permutation_list
+import sys
+sys.path.append('./tests/')
+from test_util import print_objects
 
 class ProblemTemplate:
     def __init__(self, objectList=None):
@@ -78,6 +81,14 @@ class ProblemTemplate:
     def xrun(self, timeout=999000, sessionName=None):
         "Run and execute plan"
         self.run(timeout, sessionName, schedule=xschedule, raise_=True)
+        # print("Plan:")
+        
+        # if self.plan:
+        #     for a in self.plan:
+        #         print(a)
+        # else:
+        #     print("Search stopped without finding a solution.") 
+        # print_objects(self.objectList)
 
     def goal(self):
         pass
