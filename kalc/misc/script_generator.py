@@ -44,7 +44,7 @@ def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     replicaset_namespace =  replicaset.metadata_namespace._get_value()
     pod_original_name = str(pod.metadata_name)
     pod_namespace =  pod.metadata_namespace._get_value()
-    pod_new_name = f"{pod_original_name}-kalcmoved-" + str(time.time()).replace(".", "-")
+    pod_new_name = f"{pod_original_name}-kalcmoved-" + str(int(time.time()))
 
     assert str(pod_namespace) == str(deployment_namespace), "{0}({1}) == {2}({3})".format(pod_namespace, pod_original_name, deployment_namespace, deployment_name)
     assert str(pod_namespace) == str(replicaset_namespace), "{0}({1}) == {2}({3})".format(pod_namespace, pod_original_name, replicaset_namespace, replicaset_name)
