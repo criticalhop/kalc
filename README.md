@@ -32,7 +32,7 @@ Currently, `kalc` provides a single command, `kalc-optimize` to do automatic clu
 
 ## Autopilot
 
-`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and recucing cost by freeing nodes with low utilization.
+`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and reducing cost by freeing nodes with low utilization.
 
 # Architecture
 
