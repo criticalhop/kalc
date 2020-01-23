@@ -1,0 +1,262 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-02T12:11:40Z"
+    generateName: fluentd-elasticsearch-
+    labels:
+      controller-revision-hash: 5d7694c866
+      name: fluentd-elasticsearch
+      pod-template-generation: "1"
+    name: fluentd-elasticsearch-c5rfc
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: fluentd-elasticsearch
+      uid: ca465ce4-e50d-11e9-bb74-42010a8001fc
+    resourceVersion: "4250993"
+    selfLink: /api/v1/namespaces/default/pods/fluentd-elasticsearch-c5rfc
+    uid: ca4b9a59-e50d-11e9-bb74-42010a8001fc
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - gke-testspace-default-pool-72d9c2b5-n5cj
+    containers:
+    - image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+      imagePullPolicy: IfNotPresent
+      name: fluentd-elasticsearch
+      resources:
+        limits:
+          memory: 400Mi
+        requests:
+          cpu: 400m
+          memory: 400Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/log
+        name: varlog
+      - mountPath: /var/lib/docker/containers
+        name: varlibdockercontainers
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-n5cj
+    priority: 1000000
+    priorityClassName: high-priority
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /var/log
+        type: ""
+      name: varlog
+    - hostPath:
+        path: /var/lib/docker/containers
+        type: ""
+      name: varlibdockercontainers
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:40Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:42Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:42Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:40Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://f66b41fa6f79f8ede0c7a2d7ece520cd4072ce7d9601ea6b0dca7746bb6164f5
+      image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+      imageID: docker-pullable://gcr.io/google-containers/fluentd-elasticsearch@sha256:5a704c386f66bb3c24e3bcf2e94269c426f1473100fcd37b31579ca8b709c558
+      lastState: {}
+      name: fluentd-elasticsearch
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-02T12:11:41Z"
+    hostIP: 10.128.0.27
+    phase: Running
+    podIP: 10.4.0.190
+    qosClass: Burstable
+    startTime: "2019-10-02T12:11:40Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-10-02T12:11:40Z"
+    generateName: fluentd-elasticsearch-
+    labels:
+      controller-revision-hash: 5d7694c866
+      name: fluentd-elasticsearch
+      pod-template-generation: "1"
+    name: fluentd-elasticsearch-xpdg6
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DaemonSet
+      name: fluentd-elasticsearch
+      uid: ca465ce4-e50d-11e9-bb74-42010a8001fc
+    resourceVersion: "4250991"
+    selfLink: /api/v1/namespaces/default/pods/fluentd-elasticsearch-xpdg6
+    uid: ca49a93b-e50d-11e9-bb74-42010a8001fc
+  spec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchFields:
+            - key: metadata.name
+              operator: In
+              values:
+              - gke-testspace-default-pool-72d9c2b5-562n
+    containers:
+    - image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+      imagePullPolicy: IfNotPresent
+      name: fluentd-elasticsearch
+      resources:
+        limits:
+          memory: 400Mi
+        requests:
+          cpu: 400m
+          memory: 400Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/log
+        name: varlog
+      - mountPath: /var/lib/docker/containers
+        name: varlibdockercontainers
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-4n9dn
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: gke-testspace-default-pool-72d9c2b5-562n
+    priority: 1000000
+    priorityClassName: high-priority
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/disk-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    - effect: NoSchedule
+      key: node.kubernetes.io/unschedulable
+      operator: Exists
+    volumes:
+    - hostPath:
+        path: /var/log
+        type: ""
+      name: varlog
+    - hostPath:
+        path: /var/lib/docker/containers
+        type: ""
+      name: varlibdockercontainers
+    - name: default-token-4n9dn
+      secret:
+        defaultMode: 420
+        secretName: default-token-4n9dn
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:40Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:41Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:41Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-10-02T12:11:40Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://e8871858ac958fff3b7fa5cc90e337bb54202059ca016bbdbf18a716a6041d1c
+      image: gcr.io/google-containers/fluentd-elasticsearch:v2.4.0
+      imageID: docker-pullable://gcr.io/google-containers/fluentd-elasticsearch@sha256:5a704c386f66bb3c24e3bcf2e94269c426f1473100fcd37b31579ca8b709c558
+      lastState: {}
+      name: fluentd-elasticsearch
+      ready: true
+      restartCount: 0
+      state:
+        running:
+          startedAt: "2019-10-02T12:11:41Z"
+    hostIP: 10.128.0.29
+    phase: Running
+    podIP: 10.4.1.185
+    qosClass: Burstable
+    startTime: "2019-10-02T12:11:40Z"
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
