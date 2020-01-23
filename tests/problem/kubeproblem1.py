@@ -1,21 +1,21 @@
 import sys
 from poodle import *
-from guardctl.misc.problem import ProblemTemplate
-from guardctl.model.kinds.PriorityClass import *
-from guardctl.model.kinds.DaemonSet import *
-from guardctl.model.kinds.LoadBalancer import *
-import guardctl.model.kinds.Service as mservice
-import guardctl.model.kinds.Pod as mpod
-import guardctl.model.kinds.Node as mnode
-import guardctl.model.system.globals as mglobals
-import guardctl.model.system.Scheduler as mscheduler
-from guardctl.misc.const import *
-from guardctl.misc.object_factory import labelFactory
-from guardctl.model.kinds.Pod import Pod
-from guardctl.model.kinds.Node import Node
-from guardctl.model.kinds.Service import Service
-from guardctl.model.kinds.PriorityClass import PriorityClass
-from guardctl.model.system.Scheduler import Scheduler
+from kalc.misc.problem import ProblemTemplate
+from kalc.model.kinds.PriorityClass import *
+from kalc.model.kinds.DaemonSet import *
+from kalc.model.kinds.LoadBalancer import *
+import kalc.model.kinds.Service as mservice
+import kalc.model.kinds.Pod as mpod
+import kalc.model.kinds.Node as mnode
+import kalc.model.system.globals as mglobals
+import kalc.model.system.Scheduler as mscheduler
+from kalc.misc.const import *
+from kalc.misc.object_factory import labelFactory
+from kalc.model.kinds.Pod import Pod
+from kalc.model.kinds.Node import Node
+from kalc.model.kinds.Service import Service
+from kalc.model.kinds.PriorityClass import PriorityClass
+from kalc.model.system.Scheduler import Scheduler
 
 class Problem2(ProblemTemplate):
     def problem(self):
@@ -60,16 +60,16 @@ class Problem2(ProblemTemplate):
         self.service3.status = STATUS_SERV["Pending"]
 
 
-        self.node1 = self.addObject(mnode.Node('node1'))
-        self.node1.status = STATUS_NODE["Active"] ##TODO - make Node activation mechanism
-        self.node1.cpuCapacity = 3
-        self.node1.memCapacity = 3
-        self.node1.currentFormalCpuConsumption = 2
-        self.node1.currentFormalMemConsumption = 2
-        self.node1.currentRealMemConsumption =0
-        self.node1.currentRealCpuConsumption =0
-        self.node1.AmountOfPodsOverwhelmingMemLimits =0
-        self.node.append(self.node1)
+        self.node = self.addObject(mnode.Node('node'))
+        self.node.status = STATUS_NODE["Active"] ##TODO - make Node activation mechanism
+        self.node.cpuCapacity = 3
+        self.node.memCapacity = 3
+        self.node.currentFormalCpuConsumption = 2
+        self.node.currentFormalMemConsumption = 2
+        self.node.currentRealMemConsumption =0
+        self.node.currentRealCpuConsumption =0
+        self.node.AmountOfPodsOverwhelmingMemLimits =0
+        self.node.append(self.node)
 
 
         self.node2 = self.addObject(mnode.Node('node2'))
@@ -84,8 +84,8 @@ class Problem2(ProblemTemplate):
         self.node2.AmountOfPodsOverwhelmingMemLimits =0
         self.node.append(self.node2)
 
-        self.node2.prevNode = self.node1
-        self.node1.prevNode = self.node2
+        self.node2.prevNode = self.node
+        self.node.prevNode = self.node2
 
         self.pod1 = self.addObject(mpod.Pod('pod1'))
         self.pod1.currentRealCpuConsumption =0
@@ -139,7 +139,7 @@ class Problem2(ProblemTemplate):
         self.pod3.realInitialCpuConsumption =0
         self.pod3.memLimit =  2
         self.pod3.cpuLimit =  2
-        self.pod3.atNode = self.node1
+        self.pod3.atNode = self.node
         self.pod3.toNode =  mnode.Node.NODE_NULL
         self.pod3.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod3.amountOfActiveRequests =0
@@ -160,7 +160,7 @@ class Problem2(ProblemTemplate):
         self.pod4.realInitialCpuConsumption =0
         self.pod4.memLimit =  1
         self.pod4.cpuLimit =   1
-        self.pod4.atNode = self.node1
+        self.pod4.atNode = self.node
         self.pod4.toNode =  mnode.Node.NODE_NULL
         self.pod4.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod4.amountOfActiveRequests =0
@@ -201,7 +201,7 @@ class Problem2(ProblemTemplate):
         self.pod6.memLimit =   1
         self.pod6.cpuLimit =   1
         self.pod6.atNode =  mnode.Node.NODE_NULL
-        self.pod6.toNode = self.node1
+        self.pod6.toNode = self.node
         self.pod6.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod6.amountOfActiveRequests =0
         self.pod6.targetService = self.service3
@@ -256,12 +256,12 @@ class Problem2(ProblemTemplate):
         self.globalVar1.queueLength =0
         self.globalVar1.amountOfPods = 5
 
-        self.scheduler1 = self.addObject(mscheduler.Scheduler('scheduler1'))
-        self.scheduler1.podQueue.add(self.pod5)
-        self.scheduler1.podQueue.add(self.pod6)
-        self.scheduler1.podQueue.add(self.pod7)
-        self.scheduler1.status = STATUS_SCHED["Changed"]
-        self.scheduler1.queueLength = 3
+        self.scheduler = self.addObject(mscheduler.Scheduler('scheduler'))
+        self.scheduler.podQueue.add(self.pod5)
+        self.scheduler.podQueue.add(self.pod6)
+        self.scheduler.podQueue.add(self.pod7)
+        self.scheduler.status = STATUS_SCHED["Changed"]
+        self.scheduler.queueLength = 3
 
 
 class ProblemAutoLink(ProblemTemplate):
@@ -310,16 +310,16 @@ class ProblemAutoLink(ProblemTemplate):
         self.service3.status = STATUS_SERV["Pending"]
 
 
-        self.node1 = self.addObject(mnode.Node('node1'))
-        self.node1.status = STATUS_NODE["Active"] ##TODO - make Node activation mechanism
-        self.node1.cpuCapacity = 3
-        self.node1.memCapacity = 3
-        self.node1.currentFormalCpuConsumption = 2
-        self.node1.currentFormalMemConsumption = 2
-        self.node1.currentRealMemConsumption =0
-        self.node1.currentRealCpuConsumption =0
-        self.node1.AmountOfPodsOverwhelmingMemLimits =0
-        self.node.append(self.node1)
+        self.node = self.addObject(mnode.Node('node'))
+        self.node.status = STATUS_NODE["Active"] ##TODO - make Node activation mechanism
+        self.node.cpuCapacity = 3
+        self.node.memCapacity = 3
+        self.node.currentFormalCpuConsumption = 2
+        self.node.currentFormalMemConsumption = 2
+        self.node.currentRealMemConsumption =0
+        self.node.currentRealCpuConsumption =0
+        self.node.AmountOfPodsOverwhelmingMemLimits =0
+        self.node.append(self.node)
 
 
         self.node2 = self.addObject(mnode.Node('node2'))
@@ -334,8 +334,8 @@ class ProblemAutoLink(ProblemTemplate):
         self.node2.AmountOfPodsOverwhelmingMemLimits =0
         self.node.append(self.node2)
 
-        self.node2.prevNode = self.node1
-        self.node1.prevNode = self.node2
+        self.node2.prevNode = self.node
+        self.node.prevNode = self.node2
 
         self.pod1 = self.addObject(mpod.Pod('pod1'))
         self.pod1.currentRealCpuConsumption =0
@@ -391,7 +391,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod3.realInitialCpuConsumption =0
         self.pod3.memLimit =  2
         self.pod3.cpuLimit =  2
-        self.pod3.atNode = self.node1
+        self.pod3.atNode = self.node
         self.pod3.toNode =  mnode.Node.NODE_NULL
         self.pod3.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod3.amountOfActiveRequests =0
@@ -413,7 +413,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod4.realInitialCpuConsumption =0
         self.pod4.memLimit =  1
         self.pod4.cpuLimit =   1
-        self.pod4.atNode = self.node1
+        self.pod4.atNode = self.node
         self.pod4.toNode =  mnode.Node.NODE_NULL
         self.pod4.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod4.amountOfActiveRequests =0
@@ -456,7 +456,7 @@ class ProblemAutoLink(ProblemTemplate):
         self.pod6.memLimit =   1
         self.pod6.cpuLimit =   1
         self.pod6.atNode =  mnode.Node.NODE_NULL
-        self.pod6.toNode = self.node1
+        self.pod6.toNode = self.node
         self.pod6.memLimitsStatus = STATUS_LIM["Limit Met"]
         self.pod6.amountOfActiveRequests =0
         # self.pod6.targetService = self.service3
@@ -513,9 +513,9 @@ class ProblemAutoLink(ProblemTemplate):
         #self.globalVar1.queueLength =0
         #self.globalVar1.amountOfPods = 5
 
-        self.scheduler1 = self.addObject(mscheduler.Scheduler('scheduler1'))
-        self.scheduler1.podQueue.add(self.pod5)
-        self.scheduler1.podQueue.add(self.pod6)
-        self.scheduler1.podQueue.add(self.pod7)
-        self.scheduler1.status = STATUS_SCHED["Changed"]
-        self.scheduler1.queueLength = 3
+        self.scheduler = self.addObject(mscheduler.Scheduler('scheduler'))
+        self.scheduler.podQueue.add(self.pod5)
+        self.scheduler.podQueue.add(self.pod6)
+        self.scheduler.podQueue.add(self.pod7)
+        self.scheduler.status = STATUS_SCHED["Changed"]
+        self.scheduler.queueLength = 3

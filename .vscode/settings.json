@@ -3,6 +3,8 @@
     "python.testing.nosetestsEnabled": false,
     "python.testing.pytestEnabled": false, // vscode bug
     "python.venvFolders": [
+        "${workspaceFolder}/.tox/.package",
+        "${workspaceFolder}/.tox/poodledev",
         "${workspaceFolder}/.tox"
     ],
     "python.pythonPath": "/usr/bin/python3.7"
