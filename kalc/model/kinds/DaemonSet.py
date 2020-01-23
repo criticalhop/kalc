@@ -17,6 +17,7 @@ import kalc.misc.util as util
 class DaemonSet(ModularKind, Controller, HasLimitsRequests):
     metadata_name: str
     metadata_uid: str
+    metadata_namespace: str
     amountOfActivePods: int
     status: StatusDaemonSet
     podList: Set["mpod.Pod"]
