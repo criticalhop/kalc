@@ -46,9 +46,13 @@ def generate_hypothesys_combination(deployments, nodes):
         unbalanced_pods = [item for sublist in unbalanced_pods for item in sublist] # flatten
         if deployment_max_pod_number > max_pod_number:
             max_pod_number = deployment_max_pod_number
-        deployments_maxpods.append([max([x[0] for x in unbalanced_pods_indexed]), d, unbalanced_pods, only_unbalanced])
+        if unbalanced_pods_indexed:
+            deployments_maxpods.append([max([x[0] for x in unbalanced_pods_indexed]), d, unbalanced_pods, only_unbalanced])
     deployments_maxpods = sorted(deployments_maxpods, key=lambda x: x[0], reverse=True) 
-    highest_max_pods_deployment = max(x[0] for x in deployments_maxpods)
+    if deployments_maxpods:
+        highest_max_pods_deployment = max(x[0] for x in deployments_maxpods)
+    else:
+        highest_max_pods_deployment = 0
     list_of_deployments_sorted = []
     prev_deployments_current_rank=[]
     list_deployments_targets = []
@@ -63,12 +67,14 @@ def generate_hypothesys_combination(deployments, nodes):
             deployments_current_rank.extend(prev_deployments_current_rank)
             list_of_deployments_sorted.append(deployments_current_rank)
             prev_deployments_current_rank = deployments_current_rank
-    print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
+    if deployments_maxpods:
+        print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
     list_deployments_targets = list(range(1,deployment_amount+1))
     list_nodes = list(range(0,2))
     list_pods = list(range(2,max_pod_number+1))
-
-    list_for_comb.append(list_deployments_targets)
+    list_for_comb = []
+    if list_deployments_targets:
+        list_for_comb.append(list_deployments_targets)
     list_for_comb.append(list_of_deployments_sorted)
     list_for_comb.append(list_nodes)
     list_for_comb.append(list_pods)
