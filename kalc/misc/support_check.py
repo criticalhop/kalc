@@ -4,12 +4,12 @@ import re
 class SupportCheckResult:
     def __init__(self, check_name, value, state: bool, description=""):
         self.name = check_name
-        self.check_calue = value
+        self.check_value = value
         self.support_status = state
         self.description = description
     
     def __str__(self):
-        return f"{self.name}, {self.value}, {self.support_status}, {self.description}"
+        return f"{self.name}, {self.check_value}, {self.support_status}, {self.description}"
 
     def isOK(self):
         return self.support_status
@@ -24,7 +24,7 @@ class SupportChecker:
             self.ok = None
             self.value = None
             self.description = None
-            getattr(self, c)(self.yaml_str)
+            getattr(self, c)()
             assert not self.ok is None 
             assert not self.value is None
             assert not self.description is None
