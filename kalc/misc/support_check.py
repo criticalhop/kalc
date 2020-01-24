@@ -137,11 +137,65 @@ class YAMLStrSupportChecker(SupportChecker):
         self.description = ""
         self.value = val
 
+    def check_topologyKey(self):
+        val = len(re.findall("topologyKey", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
 
+    def check_taints(self):
+        val = len(re.findall("taints", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
 
+    def check_PodDisruptionBudget(self):
+        val = len(re.findall("PodDisruptionBudget", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
 
+    def check_AdmissionConfiguration(self):
+        val = len(re.findall("AdmissionConfiguration", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
+    
+    def check_nodeSelector(self):
+        val = len(re.findall("nodeSelector", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
+    
+    def check_custom_scheduler(self):
+        val = len(re.findall("schedulerName", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
 
+    def check_HorizontalPodAutoscaler(self):
+        val = len(re.findall("HorizontalPodAutoscaler", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
 
+    def check_StatefulSet(self):
+        val = len(re.findall("StatefulSet", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
+
+    def check_terminationGracePeriodSeconds(self):
+        val = len(re.findall("terminationGracePeriodSeconds", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
+
+    def check_unschedulable_nodes(self):
+        val = len(re.findall("unschedulable", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = ""
+        self.value = val
 
 
 
