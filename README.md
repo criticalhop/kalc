@@ -32,7 +32,7 @@ Currently, `kalc` provides a single command, `kalc-optimize` to do automatic clu
 
 ## Autopilot
 
-`kalc` can optimize your cluster in background, gradually increasing reliability and cost.
+`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and reducing cost by freeing nodes with low utilization.
 
 # Architecture
 
@@ -46,6 +46,6 @@ Currently, `kalc` provides a single command, `kalc-optimize` to do automatic clu
 
 `kalc` is a developer preview and currently supports a subset of Kubernetes resources and behaviour model.
 
-We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [Twitter](https://twitter.com/criticalhop) and to chat with the team at `#kalc` on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kalc/issues) or contact andrew@criticalhop.com directly.
+We invite you to follow [@criticalhop](https://twitter.com/criticalhop) on [Twitter](https://twitter.com/criticalhop) and to chat with the team at `#kalc` on [freenode](https://freenode.net/). If you have any questions or suggestions - feel free to open a [github issue](https://github.com/criticalhop/kalc/issues) or contact andrew@kalc.io directly.
 
 For enterprise enquiries, use the form on our website: [kalc.io](https://kalc.io) or write us an email at info@kalc.io
