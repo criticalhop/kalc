@@ -1206,23 +1206,23 @@ class Antiaffinity_check_with_limited_number_of_pods_with_add_node(Antiaffinity_
         globalVar.amountOfNodes += 1
 
 class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods):
-    @planned(cost=1)
-    def calculate_daemonset_pods(self,
-        daemonset: DaemonSet,
-        node: Node,
-        pod: Pod):
-        if pod not in node.daemonset_podList:
-            assert pod in daemonset.podList
-            assert pod.atNode == node
-            node.daemonset_podList.add(pod)
-            node.daemonset_podList_length += 1
+    # @planned(cost=1)
+    # def calculate_daemonset_pods(self,
+    #     daemonset: DaemonSet,
+    #     node: Node,
+    #     pod: Pod):
+    #     if pod not in node.daemonset_podList:
+    #         assert pod in daemonset.podList
+    #         assert pod.atNode == node
+    #         node.daemonset_podList.add(pod)
+    #         node.daemonset_podList_length += 1
 
 
     @planned(cost=1)
     def DrainNode(self,
         node: "Node",
         globalVar: GlobalVar):
-        assert node.amountOfActivePods - node.daemonset_podList_length == 0
+        assert node.amountOfActivePods == 0
         assert node.status == STATUS_NODE["Active"]
         assert node.isNull == False
         globalVar.NodesDrained_length += 1
