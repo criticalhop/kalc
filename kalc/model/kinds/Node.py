@@ -15,7 +15,6 @@ class Node(ModularKind, HasLabel):
     metadata_name: str
     spec_priorityClassName: str
     labels: Set[Label]
-    # pods: Set[mpod.Pod]
     cpuCapacity: int
     memCapacity: int
     currentFormalCpuConsumption: int
@@ -34,7 +33,7 @@ class Node(ModularKind, HasLabel):
     directedPodList: Set["Pod"]
     directedPodList_length: int
     daemonset_podList: Set["Pod"]
-    daemonset_podList_lenght: int
+    daemonset_podList_length: int
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -54,7 +53,7 @@ class Node(ModularKind, HasLabel):
         self.isSearched = False
         self.allocatedPodList_length = 0
         self.directedPodList_length = 0
-        self.daemonset_podList_lenght = 0
+        self.daemonset_podList_length = 0
         
     def hook_after_create(self, object_space):
         globalVar = next(filter(lambda x: isinstance(x, GlobalVar), object_space))

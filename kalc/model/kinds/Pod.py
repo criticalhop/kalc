@@ -133,6 +133,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length = 0
         self.calc_cantmatch_antiaffinity = False
         self.calc_cantmatch_affinity = False
+        self.spec_nodeName = ''
 
 
 
@@ -143,7 +144,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                 self.priorityClass = next(filter(lambda x: isinstance(x, PriorityClass) and \
                             str(x.metadata_name) == str(controller.spec_template_spec_priorityClassName), object_space))
             except StopIteration:
-                logger.warning("Could not reference priority class %s %s" % (str(controller.spec_template_spec_priorityClassName), str(self.metadata_name)))
+                print("Could not reference priority class %s %s" % (str(controller.spec_template_spec_priorityClassName), str(self.metadata_name)))
 
     def hook_after_load(self, object_space, _ignore_orphan=False):
         pods = list(filter(lambda x: isinstance(x, Pod), object_space))
@@ -167,7 +168,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                 found = True
             if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
         if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
-            logger.warning("Orphan Pod loaded %s" % str(self.metadata_name))
+            print("Orphan Pod loaded %s" % str(self.metadata_name))
         
         # link service <> pod
         
@@ -178,7 +179,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                         .issubset(set(self.metadata_labels._get_value())):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 service.podList.add(self)
-                target_service_of_pod_localVar = service
                 self.hasService = True
                 if list(service.metadata_labels._get_value()):
                     if self.status._property_value == STATUS_POD["Running"]:
@@ -194,7 +194,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(scheduler.queueLength), POODLE_MAXLIN)
             scheduler.podQueue.add(self)
             scheduler.status = STATUS_SCHED["Changed"]
-            target_service_of_pod_localVar.amountOfPodsInQueue += 1
+            # target_service_of_pod_localVar.amountOfPodsInQueue += 1
 
         nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
         for node in nodes:

@@ -1206,23 +1206,23 @@ class Antiaffinity_check_with_limited_number_of_pods_with_add_node(Antiaffinity_
         globalVar.amountOfNodes += 1
 
 class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods):
-    # @planned(cost=1)
-    # def calculate_daemonset_pods(self,
-    #     daemonset: DaemonSet,
-    #     node: Node,
-    #     pod: Pod):
-    #     if pod not in node.daemonset_podList:
-    #         assert pod in daemonset.podList
-    #         assert pod.atNode == node
-    #         node.daemonset_podList.add(pod)
-    #         node.daemonset_podList_length += 1
-
+    @planned(cost=1)
+    def calculate_daemonset_pods(self,
+        # daemonset: DaemonSet,
+        node: Node,
+        pod: Pod):
+        assert pod.status == STATUS_POD["Running"]
+        assert pod.hasDaemonset == True
+        assert pod.atNode == node
+        node.daemonset_podList.add(pod)
+        node.daemonset_podList_length += 1
+        pod.status = STATUS_POD["Outaged"]
 
     @planned(cost=1)
-    def DrainNode(self,
+    def drainNode(self,
         node: "Node",
         globalVar: GlobalVar):
-        assert node.amountOfActivePods == 0
+        assert node.amountOfActivePods - node.daemonset_podList_length== 0
         assert node.status == STATUS_NODE["Active"]
         assert node.isNull == False
         globalVar.NodesDrained_length += 1
@@ -1232,7 +1232,7 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
         self.script.append(script_remove_node(node))
     
     @planned(cost=1)
-    def Reqested_amount_of_nodes_drained(self,
+    def reqested_amount_of_nodes_drained(self,
         globalVar: GlobalVar):
         assert globalVar.NodesDrained_length == globalVar.target_NodesDrained_length
         globalVar.target_NodesDrained_length_reached = True
@@ -1242,12 +1242,12 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
         self.generated_goal_eq = []
         for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
                 self.generated_goal_eq.append([globalVar.deploymentsWithAntiaffinityBalanced, True])
-        for pod1 in filter(lambda p: isinstance(p, Pod), self.objectList):
+        for pod1 in filter(lambda p: isinstance(p, Pod) and p.searchable == True, self.objectList):
                 self.generated_goal_eq.append([pod1.antiaffinity_met, True])
         for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
             self.generated_goal_eq.append([globalVar.target_NodesDrained_length_reached, True])
-        scheduler = next(filter(lambda x: isinstance(x, Scheduler),self.objectList))
-        self.generated_goal_eq.append([scheduler.status, STATUS_SCHED["Clean"]])
+        # scheduler = next(filter(lambda x: isinstance(x, Scheduler),self.objectList))
+        # self.generated_goal_eq.append([scheduler.status, STATUS_SCHED["Clean"]])
 
     # def goal(self):
     #     for what, where in self.generated_goal_in:
