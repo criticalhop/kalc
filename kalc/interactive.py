@@ -50,7 +50,7 @@ def update(data=None):
         md5_cluster = result.stdout.read().decode('ascii').split()[0]
         assert len(md5_cluster) == 32, "md5_cluster sum wrong len({0}) not is 32".format(md5_cluster)
 
-        ALL_RESOURCES = [ "all", "node", "pc" "limitranges", "resourcequotas", "poddisruptionbudgets", "hpa"]
+        ALL_RESOURCES = [ "all", "node", "pc", "limitranges", "resourcequotas", "poddisruptionbudgets", "hpa"]
 
         for res in ALL_RESOURCES:
             result = subprocess.run(['kubectl', 'get', res, '--all-namespaces', '-o=json'], stdout=subprocess.PIPE)
