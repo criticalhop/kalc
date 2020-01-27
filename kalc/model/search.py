@@ -1255,4 +1255,20 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
     #     for what1, what2 in self.generated_goal_eq:
     #         assert what1 == what2
 
-    
+# class Calculate_metrics(Balance_pods_and_drain_node):
+#     @planned(cost=1)
+#     def add_node(self,
+#             node : Node,
+#             globalVar: GlobalVar):
+#         assert node.status == STATUS_NODE["New"]
+#         node.status = STATUS_NODE["Active"]
+#         globalVar.amountOfNodes += 1
+
+#     @planned(cost=1)
+#     def calc_reduce_metric_1_node_usage(self,
+#         globalVar: GlobalVar,
+#         node: Node):
+#         assert (node.memCapacity - node.currentFormalMemConsumption) * 10 / node.memCapacity < globalVar. 
+#         assert 
+
+#         assert globalVar.
