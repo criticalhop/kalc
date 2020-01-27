@@ -132,6 +132,9 @@ def optimize_cluster(clusterData=None):
         except SchedulingError:
             print("Could not solve in this configuration, trying next...")
             continue
+        metric2 = Metric(kalc_state_objects)
+        metric2.calc()
+        print("Initial metric ", metric2.deployment_fault_tolerance_metric)
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
