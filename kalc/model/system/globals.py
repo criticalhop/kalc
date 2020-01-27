@@ -20,6 +20,9 @@ class GlobalVar(ModularKind):
     amountOfPodsWithAntiaffinity: int
     target_amountOfPodsWithAntiaffinity: int
 
+    target_amount_of_recomendations: int
+    target_amount_of_recomendations_reached: bool
+
 
     is_node_disruption_searchable: bool
     is_daemonset_disrupted: bool
@@ -34,8 +37,11 @@ class GlobalVar(ModularKind):
     DeploymentsWithAntiaffinity_length: int
     NodesDrained: Set["mnode.Node"]
     NodesDrained_length: int
+
     target_NodesDrained_length: int
     target_NodesDrained_length_reached: bool
+    found_amount_of_recomendations: int
+    pod_movement_is_in_progress_flag: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,5 +70,9 @@ class GlobalVar(ModularKind):
         self.NodesDrained_length = 0
         self.target_NodesDrained_length = 0
         self.target_NodesDrained_length_reached = False
+        self.target_amount_of_recomendations = 0
+        self.target_amount_of_recomendations_reached = False
+        self.found_amount_of_recomendations = 0
+        self.pod_movement_is_in_progress_flag = Flase
         
     def __str__(self): return str(self._get_value())

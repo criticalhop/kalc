@@ -454,6 +454,78 @@ class KubernetesModel(ProblemTemplate):
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False
 
+    @planned(cost=1)
+    def move_pod_recomendation_step_1_initiation(self,
+        pod: "Pod",
+        nodeFrom: "Node",
+        nodeTo: "Node",
+        scheduler: "Scheduler",
+        globalVar: GlobalVar,
+        deployment: Deployment):
+        if pod not in nodeto.pods_not_allowed_because_of_antiaffinity:
+            assert pod in deployment.podList # Only pods with deployments can be moved by kalc 
+            assert globalVar.pod_movement_is_in_progress_flag == False
+            assert deployment.amountOfActivePods > 1
+            assert pod.atNode == nodeFrom
+            assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+            assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+            assert nodeTo in pod.nodeSelectorList
+            assert nodeTo.status == STATUS_NODE["Active"]
+            assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
+            assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
+            globalVar.pod_movement_is_in_progress_flag = True
+            nodeFrom.currentFormalMemConsumption -= pod.memRequest
+            nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
+            nodeFrom.amountOfActivePods -= 1
+            nodeFrom.allocatedPodList.remove(pod)
+            nodeFrom.allocatedPodList_length -= 1
+            nodeTo.currentFormalCpuConsumption += pod.cpuRequest
+            nodeTo.currentFormalMemConsumption += pod.memRequest
+            pod.atNode = nodeTo
+            nodeTo.amountOfActivePods += 1
+            nodeTo.allocatedPodList.add(pod)
+            nodeTo.allocatedPodList_length += 1
+
+        self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
+
+        # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
+        #     podStarted.memRequest = podStarted.memLimit
+        # if podStarted.cpuRequest == -1 and podStarted.cpuLimit > -1:
+        #     podStarted.cpuRequest = podStarted.cpuLimit
+
+        # if podStarted.memRequest > -1 and podStarted.memLimit == -1:
+        #     podStarted.memLimit = node.memCapacity
+        # if podStarted.cpuRequest > -1 and podStarted.cpuLimit == -1:
+        #     podStarted.cpuLimit = node.cpuCapacity
+
+        # if podStarted.memRequest == -1 and podStarted.memLimit == -1:
+        #     podStarted.memLimit = node.memCapacity
+        #     podStarted.memRequest = 0
+        # if podStarted.cpuRequest == -1 and podStarted.cpuLimit == -1:
+        #     podStarted.cpuLimit = node.cpuCapacity
+        #     podStarted.cpuRequest = 0
+        #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
+            # assert globalVar.block_node_outage_in_progress == False   
+    
+    @planned(cost=1)
+    def move_pod_recomendation_step_2_check_antiaffinity_with_another_pods(self,
+        pod: "Pod",
+        pod2:"Pod"
+        nodeTo: "Node",
+        scheduler: "Scheduler",
+        globalVar: GlobalVar,
+        deployment: Deployment):
+
+
+    @planned(cost=1)
+    def move_pod_recomendation_step_3_finish_pod_movement(self,
+        pod: "Pod",
+        nodeFrom: "Node",
+        nodeTo: "Node",
+        scheduler: "Scheduler",
+        globalVar: GlobalVar,
+        deployment: Deployment):
+        found_amount_of_recomendations += 1
 
 
     @planned(cost=1)
