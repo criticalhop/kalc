@@ -24,6 +24,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     spec_nodeSelector: Set[Label]
     metadata_name: str
 
+    metadata_namespace: str
     # internal model attributes
     ownerReferences: Controller
     # TARGET_SERVICE_NULL = mservice.Service.SERVICE_NULL
@@ -152,7 +153,9 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
                 node.allocatedPodList.add(self)
+                node.allocatedPodList_length += 1
                 node.directedPodList.add(self)
+                node.directedPodList_length += 1
                 node.amountOfActivePods += 1
                 assert getint(node.amountOfActivePods) < POODLE_MAXLIN, "Pods amount exceeded max %s > %s" % (getint(node.amountOfActivePods), POODLE_MAXLIN) 
                 if self.cpuRequest > 0:

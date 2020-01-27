@@ -19,6 +19,7 @@ import inspect
 from kalc.model.search import *
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
+from kalc.model.scenario import Scenario
 from poodle import planned
 from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 import kalc.misc.util
@@ -102,6 +103,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     pods = []
     services = []
     deployments = []
+    daemonsets = []
     
     # Service to detecte eviction
     s1 = Service()
@@ -126,6 +128,9 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     d2.spec_replicas = 2    
     d2.NumberOfPodsOnSameNodeForDeployment = 2
     deployments.append(d2)
+    ds = DaemonSet()
+    daemonsets.append(ds)
+
     node_item = Node()
     node_item.metadata_name = "node 1"
     node_item.cpuCapacity = 25
@@ -135,11 +140,11 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     nodes.append(node_item)
 
     pod = build_running_pod_with_d(0,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(1,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(2,2,2,node_item,d,None,None,pods)
+    pod = build_running_pod_with_d(1,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(2,2,2,node_item,None,None,None,pods)
     pod = build_running_pod_with_d(3,2,2,node_item,None,None,None,pods)
-    pod = build_running_pod_with_d(4,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(5,2,2,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(4,2,2,node_item,None,ds,s1,pods)
+    pod = build_running_pod_with_d(5,2,2,node_item,None,ds,s1,pods)
 
 
          
@@ -151,8 +156,8 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(12,2,2,node_item,d2,None,s1,pods)
-    pod = build_running_pod_with_d(13,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(12,2,2,node_item,None,ds,s1,pods)
+    pod = build_running_pod_with_d(13,2,2,node_item,d,ds,s1,pods)
 
     
     node_item = Node()
@@ -163,14 +168,14 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(16,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(16,2,2,node_item,None,ds,None,pods)
 
     node_item = Node()
     node_item.metadata_name = "node 4"
     node_item.cpuCapacity = 8
     node_item.memCapacity = 8
     node_item.isNull = False
-    node_item.status = STATUS_NODE["Active"]
+    node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     
 
@@ -180,7 +185,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.cpuCapacity = 8
     node_item.memCapacity = 8
     node_item.isNull = False
-    node_item.status = STATUS_NODE["Active"]
+    node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     
 
@@ -241,17 +246,18 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     k.state_objects.extend(pods)
     k.state_objects.extend([pc, s1, s2 ])
     k.state_objects.extend(deployments)
+    k.state_objects.extend(daemonsets)
     create_objects = []
     k._build_state()
-
     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
-    globalVar.target_DeploymentsWithAntiaffinity_length = 1
+    globalVar.target_DeploymentsWithAntiaffinity_length = 0
     globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
-    globalVar.target_amountOfPodsWithAntiaffinity = 3
+    globalVar.target_amountOfPodsWithAntiaffinity = 0
+    globalVar.target_NodesDrained_length = 1
     
     
-    class Antiaffinity_check_k1(Antiaffinity_check_with_limited_number_of_pods_with_add_node):
+    class Antiaffinity_check_k1(Balance_pods_and_drain_node):
         pass
 
     p = Antiaffinity_check_k1(k.state_objects)
@@ -273,6 +279,6 @@ def test_optimmize_cluster():
     yaml_dump = convert_space_to_yaml_dump(k.state_objects)
     # print("Running with", yaml_dump)
     optimize_cluster(yaml_dump)
+    print_plan(p)
 
-def test_optimmize_cluster_load():
-    optimize_cluster(None)
+test_optimmize_cluster()
