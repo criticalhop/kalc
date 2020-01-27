@@ -89,7 +89,11 @@ def generate_hypothesys_combination(deployments, nodes):
 
 def optimize_cluster(clusterData=None):
     print("WARNING! Not taking into account service SLOs")
-    update(clusterData) # To reload from scratch...
+    update(clusterData)  # To reload from scratch...
+
+    metric = Metric(kalc_state_objects)
+    metric.calc()
+    print("Initial metric ", metric.deployment_fault_tolerance_metric)
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)

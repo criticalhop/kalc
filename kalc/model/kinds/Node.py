@@ -55,7 +55,10 @@ class Node(ModularKind, HasLabel):
         self.allocatedPodList_length = 0
         self.directedPodList_length = 0
         self.daemonset_podList_lenght = 0
-        
+        self.oversubscribe = 0
+        self.oversubscribe_mem = 0
+        self.oversubscribe_cpu = 0
+
     def hook_after_create(self, object_space):
         globalVar = next(filter(lambda x: isinstance(x, GlobalVar), object_space))
         globalVar.amountOfNodes += 1
