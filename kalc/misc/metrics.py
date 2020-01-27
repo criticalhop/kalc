@@ -30,8 +30,8 @@ class Metric():
         for pod in self.pods:
             if not pod.status == STATUS_POD["Pending"]:
                 continue
-            self.cpu_used = self.cpu_used + pod.currentFormalCpuConsumption._get_value()
-            self.mem_used = self.mem_used + pod.currentFormalMemConsumption._get_value()
+            self.cpu_used = self.cpu_used + pod.currentFormalCpuConsumption
+            self.mem_used = self.mem_used + pod.currentFormalMemConsumption
         self.mem_free = self.cpu_total - self.cpu_used
         self.cpu_free = self.cpu_total - self.cpu_used 
 

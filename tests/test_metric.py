@@ -45,7 +45,7 @@ def test_faultTolerance():
 
     metric = Metric(k.state_objects)
     metric.setUnusedRes()
-    metric.faultTolerance()
+    metric.fault_tolerance()
 
     deployments = filter(lambda x: isinstance(x, Deployment), k.state_objects)
     idx = 0
