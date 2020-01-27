@@ -14,6 +14,7 @@ from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProb
 # import kalc.cli as cli
 import sys
 import random
+from logzero import logger
 from typing import Set
 
 
@@ -133,7 +134,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length = 0
         self.calc_cantmatch_antiaffinity = False
         self.calc_cantmatch_affinity = False
-
+        self.spec_nodeName = ''
 
 
 
@@ -178,7 +179,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                         .issubset(set(self.metadata_labels._get_value())):
                 # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
                 service.podList.add(self)
-                target_service_of_pod_localVar = service
                 self.hasService = True
                 if list(service.metadata_labels._get_value()):
                     if self.status._property_value == STATUS_POD["Running"]:
@@ -194,7 +194,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
             assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(scheduler.queueLength), POODLE_MAXLIN)
             scheduler.podQueue.add(self)
             scheduler.status = STATUS_SCHED["Changed"]
-            target_service_of_pod_localVar.amountOfPodsInQueue += 1
 
         nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
         for node in nodes:
