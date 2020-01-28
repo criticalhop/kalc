@@ -148,3 +148,16 @@ def optimize_cluster(clusterData=None):
             
 def run():
     optimize_cluster(None)
+
+
+def tryrun():
+    import os, sys
+    kalc_debug = os.getenv('KALC_DEBUG', "0")
+    if kalc_debug == "1":
+        optimize_cluster(None)
+    else:
+        try:
+            optimize_cluster(None)
+        except KeyboardInterrupt:
+            print('You pressed Ctrl+C!')
+            sys.exit(0)
