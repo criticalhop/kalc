@@ -453,38 +453,109 @@ class KubernetesModel(ProblemTemplate):
         #     podStarted.cpuRequest = 0
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False
+    
+    @planned(cost=1)
+    def restart_move_pod(self,
+        pod: "Pod",
+        ):
+        assert pod.
 
     @planned(cost=1)
-    def move_pod_recomendation_step_1_initiation(self,
+    def clear_node_of_pod(self, 
+        pod: "Pod",
+        selectedNode: "Node",
+        globalVar: GlobalVar):
+        assert pod.nodes_acceptable_by_antiaffinity_length == 0
+        pod.toNode == Node.NODE_NULL
+
+    @planned(cost=1)
+    def clean_lists_for_pod_move(self,
+        pod:"Pod",
+        node:"Node"):
+        assert node in pod.nodes_acceptable_by_antiaffinity
+        pod.nodes_acceptable_by_antiaffinity.remove(node)
+        pod.nodes_acceptable_by_antiaffinity_lenght -= 1
+
+    @planned(cost=1)
+    def check_toNode_for_pod_move_for_this_pod(self,
+        this_pod:"Pod",
+        pod_a: "Pod"):
+        if pod_a not in this_pod.calc_checked_pods_from_point_of_this_pod and\
+            pod_a.atNode != this_pod.toNode:
+            assert pod_a in this_pod.podsMatchedByAntiaffinity
+            pod calc_checked_pods_from_point_of_this_pod.add(pod_a)
+            pod.calc_checked_pods_from_point_of_this_pod_lenght += 1
+    
+    @planned(cost=1)
+    def check_toNode_for_pod_move_for_that_pod_with_antiaffinity(self,
+        this_pod:"Pod",
+        pod_a: "Pod"):
+        if pod_a not in this_pod.calc_checked_pods_from_point_of_that_pod and \
+            this_pod not in pod_a.podsMatchedByAntiaffinity:
+            assert pod_a.atNode == this_pod.toNode
+            pod calc_checked_pods_from_point_of_that_pod.add(pod_a)
+            pod.calc_checked_pods_from_point_of_that_pod_length += 1
+    
+    @planned(cost=1)
+    def check_toNode_for_pod_move_for_that_pod_without_antiaffinity(self,
+        this_pod:"Pod",
+        pod_a: "Pod"):
+        if pod_a not in this_pod.calc_checked_pods_from_point_of_that_pod:
+            assert pod_a.affinity_set == False
+            assert pod_a.atNode == this_pod.toNode
+            pod calc_checked_pods_from_point_of_that_pod.add(pod_a)
+            pod.calc_checked_pods_from_point_of_that_pod_length += 1
+
+
+    @planned(cost=1)
+    def check_node_for_pod_move_finished(self,
+        pod:"Pod",
+        node:"Node"):
+        assert pod.calc_checked_pods_from_point_of_this_pod_lenght == pod.podsMatchedByAntiaffinity_length
+        assert pod.calc_checked_pods_from_point_of_that_pod == node.amountOfActivePods
+        pod.nodes_acceptable_by_antiaffinity.add(node)
+        pod.nodes_acceptable_by_antiaffinity_lenght += 1
+
+    @planned(cost=1)
+    def move_pod_recomendation_reason_antiaffinity(self,
         pod: "Pod",
         nodeFrom: "Node",
         nodeTo: "Node",
         scheduler: "Scheduler",
         globalVar: GlobalVar,
-        deployment: Deployment):
-        if pod not in nodeto.pods_not_allowed_because_of_antiaffinity:
-            assert pod in deployment.podList # Only pods with deployments can be moved by kalc 
-            assert globalVar.pod_movement_is_in_progress_flag == False
-            assert deployment.amountOfActivePods > 1
-            assert pod.atNode == nodeFrom
-            assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
-            assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
-            assert nodeTo in pod.nodeSelectorList
-            assert nodeTo.status == STATUS_NODE["Active"]
-            assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
-            assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
-            globalVar.pod_movement_is_in_progress_flag = True
-            nodeFrom.currentFormalMemConsumption -= pod.memRequest
-            nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
-            nodeFrom.amountOfActivePods -= 1
-            nodeFrom.allocatedPodList.remove(pod)
-            nodeFrom.allocatedPodList_length -= 1
-            nodeTo.currentFormalCpuConsumption += pod.cpuRequest
-            nodeTo.currentFormalMemConsumption += pod.memRequest
-            pod.atNode = nodeTo
-            nodeTo.amountOfActivePods += 1
-            nodeTo.allocatedPodList.add(pod)
-            nodeTo.allocatedPodList_length += 1
+        deployment: Deployment): 
+
+        assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+
+        ## pod  violates antiaffinity of pod_a on nodeFrom:
+        assert nodeFrom == pod.atNode
+        assert pod_a.atNode == nodeFrom
+        assert pod_a in pod.podsMatchedByAffinity
+
+        ## nodeTo is node that is marked as acceptable for pod
+        assert nodeTo in pod.nodes_acceptable_by_antiaffinity
+        assert nodeTo == pod.toNode
+
+        assert nodeTo in pod.nodeSelectorList
+        assert nodeTo.status == STATUS_NODE["Active"]
+        assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
+        assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
+
+        assert pod in deployment.podList # Only pods with deployments can be moved by kalc 
+        assert deployment.amountOfActivePods > 1
+
+        nodeFrom.currentFormalMemConsumption -= pod.memRequest
+        nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
+        nodeFrom.amountOfActivePods -= 1
+        nodeFrom.allocatedPodList.remove(pod)
+        nodeFrom.allocatedPodList_length -= 1
+        nodeTo.currentFormalCpuConsumption += pod.cpuRequest
+        nodeTo.currentFormalMemConsumption += pod.memRequest
+        pod.atNode = nodeTo
+        nodeTo.amountOfActivePods += 1
+        nodeTo.allocatedPodList.add(pod)
+        nodeTo.allocatedPodList_length += 1
 
         self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
 
@@ -508,13 +579,16 @@ class KubernetesModel(ProblemTemplate):
             # assert globalVar.block_node_outage_in_progress == False   
     
     @planned(cost=1)
-    def move_pod_recomendation_step_2_check_antiaffinity_with_another_pods(self,
-        pod: "Pod",
-        pod2:"Pod"
-        nodeTo: "Node",
+    def mark_node_as_acceptable_for_pod(self,
+        pod_a: "Pod",
+        pod_at_nodeB:"Pod"
+        node_b: "Node",
         scheduler: "Scheduler",
         globalVar: GlobalVar,
         deployment: Deployment):
+        assert pod_at_nodeB.atNode == node_b
+        pod_a.nodes
+
 
 
     @planned(cost=1)

@@ -91,7 +91,8 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     affinity_labels_length: int
     is_checked_as_source_for_labels: bool
     is_checked_as_target_for_labels: bool
-
+    nodes_acceptable_by_antiaffinity: Set["Node"]
+    nodes_acceptable_by_antiaffinity_length int
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -133,6 +134,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length = 0
         self.calc_cantmatch_antiaffinity = False
         self.calc_cantmatch_affinity = False
+        self.nodes_acceptable_by_antiaffinity_length = 0
 
 
 

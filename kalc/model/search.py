@@ -495,14 +495,14 @@ class Antiaffinity_met(KubernetesModel):
             pod2: Pod,
             node_of_pod2: Node,
             scheduler: Scheduler):
-        assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
-        assert pod2 not in pod1.calc_antiaffinity_preferred_pods_list
-        assert node_of_pod2 == pod2.atNode
-        assert pod1.atNode in node_of_pod2.different_than
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        pod1.not_on_same_node.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list_length += 1
+        if pod2 not in pod1.calc_antiaffinity_preferred_pods_list:
+            assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
+            assert node_of_pod2 == pod2.atNode
+            assert pod1.atNode in node_of_pod2.different_than
+            assert scheduler.status == STATUS_SCHED["Clean"]
+            pod1.not_on_same_node.add(pod2)
+            pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
+            pod1.calc_antiaffinity_preferred_pods_list_length += 1
         
 class Antiaffinity_check_basis(KubernetesModel):
     # @planned(cost=1)
