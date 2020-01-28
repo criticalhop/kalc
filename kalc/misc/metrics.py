@@ -19,6 +19,7 @@ class Metric():
             filter(lambda x: isinstance(x, mnode.Node), object_space))
         self.moved_pod_set = set([])
         self.drained_node_set = set([])
+        self.touched_node_set = set([])
         # self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
         # self.setUnusedRes()
 

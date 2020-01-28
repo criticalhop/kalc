@@ -6,9 +6,12 @@ import kalc.model.kinds.Deployment as d
 from kalc.misc.metrics import Metric
 import time
 
-def script_remove_node(node):
+
+def script_remove_node(node, object_space):
     if hasattr(node, "_variable_mode") and node._variable_mode: 
-        return "" # FIX for https://github.com/criticalhop/poodle/issues/59
+        return ""  # FIX for https://github.com/criticalhop/poodle/issues/59
+    metric = next(filter(lambda x: isinstance(x, Metric), object_space))
+    metric.drained_node_set.add(node)
     return f'echo "Please remove node \'{str(node.metadata_name)}\'"' 
 
 
@@ -34,8 +37,8 @@ def move_pod_with_deployment_script_simple(pod, node_from: Node, node_to: Node, 
     d = get_deployment_from_pod(pod, object_space)
     metric = next(filter(lambda x: isinstance(x, Metric), object_space))
     metric.moved_pod_set.add(pod)
-    metric.drained_node_set.add(node_to)
-    metric.drained_node_set.add(node_from)
+    metric.touched_node_set.add(node_to)
+    metric.touched_node_set.add(node_from)
     return move_pod_with_deployment_script(pod, node_to, d,
         get_rs_from_deployment(d, object_space))
 
