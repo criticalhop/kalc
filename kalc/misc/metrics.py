@@ -21,6 +21,7 @@ class Metric():
         # self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
         # self.setUnusedRes()
 
+    # todo repair
     def setUnusedRes(self):
         self.cpu_used = 0
         self.cpu_total = 0
@@ -69,8 +70,11 @@ class Metric():
             deployment.metric = self.faultToleranceSquare[deployment._get_value(
             )]
         self.deployment_fault_tolerance_metric = 0
+        self.deployment_fault_tolerance_metric_bad = 0  # the worst case
         for d in self.deployments:
             self.deployment_fault_tolerance_metric += d.metric
+            if self.deployment_fault_tolerance_metric_bad < d.metric:
+                self.deployment_fault_tolerance_metric_bad = d.metric
         self.deployment_fault_tolerance_metric = self.deployment_fault_tolerance_metric / \
             (len(self.deployments))
 
@@ -84,7 +88,12 @@ class Metric():
         self.cpu_used = 0
         self.mem_total = 0
         self.cpu_total = 0
+        self.RMSD = 0 #root-mean-square deviation(RMSD)
+        self.RMSD_cpu = 0
+        self.RMSD_mem = 0
+        self.MD = 0  # maximum deviation
 
+        # Mean node over subscribe per resouces
         for node in self.nodes:
             node.oversubscribe_cpu = node.currentFormalCpuConsumption._get_value() / \
                 node.cpuCapacity._get_value()
@@ -107,10 +116,29 @@ class Metric():
             (len(self.nodes))
         self.node_oversubscribe = node_oversubscribe / (len(self.nodes))
 
+        # root-mean-square deviation(RMSD)
+        for node in self.nodes:
+            self.RMSD_cpu += (self.node_oversubscribe_cpu - node.oversubscribe_cpu) ** 2
+            self.RMSD_mem += (self.node_oversubscribe_mem - node.oversubscribe_mem) ** 2
+            if self.MD < abs(self.node_oversubscribe_cpu - node.oversubscribe_cpu):
+                self.MD = abs(self.node_oversubscribe_cpu -
+                              node.oversubscribe_cpu)
+            if self.MD < abs(self.node_oversubscribe_mem - node.oversubscribe_mem):
+                self.MD = abs(self.node_oversubscribe_mem -
+                              node.oversubscribe_mem)
+
+        self.RMSD_cpu = self.RMSD_cpu / (len(self.nodes))
+        self.RMSD_mem = self.RMSD_mem / (len(self.nodes))
+        self.RMSD = (self.RMSD_cpu + self.RMSD_mem) / 2
+
         self.mem_free = self.mem_total - self.mem_used
         self.cpu_free = self.cpu_total - self.cpu_used
+
+    def total_metric(self):
+        self.metric = (self.RMSD + self.MD + self.node_oversubscribe + self.deployment_fault_tolerance_metric + self.deployment_fault_tolerance_metric_bad)/5
 
     def calc(self):
         # self.setUnusedRes()
         self.fault_tolerance()
         self.nodeOverSubscribe()
+        self.total_metric()

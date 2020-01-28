@@ -93,7 +93,7 @@ def optimize_cluster(clusterData=None):
 
     metric = Metric(kalc_state_objects)
     metric.calc()
-    print("Initial metric ", metric.deployment_fault_tolerance_metric)
+    print("Initial metric ", metric.metric)
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
@@ -134,7 +134,8 @@ def optimize_cluster(clusterData=None):
             continue
         metric2 = Metric(kalc_state_objects)
         metric2.calc()
-        print("Initial metric ", metric2.deployment_fault_tolerance_metric)
+        print("Initial metric ", metric2.metric,
+              " result metric ", metric2.metric)
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
