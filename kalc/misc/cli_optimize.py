@@ -149,5 +149,4 @@ def tryrun():
         try:
             optimize_cluster(None)
         except KeyboardInterrupt:
-            print('You pressed Ctrl+C!')
             sys.exit(0)
