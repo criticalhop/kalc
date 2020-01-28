@@ -93,7 +93,9 @@ def optimize_cluster(clusterData=None):
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
+    index = 0
     for combination in comb_nodes_pods:
+        index += 1
         update(clusterData) # To reload from scratch...
         problem = Balance_pods_and_drain_node(kalc_state_objects)
         deployments_local = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects))
@@ -128,7 +130,7 @@ def optimize_cluster(clusterData=None):
             continue
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
-        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}.sh"
+        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         print("Generated optimization script at", scritpt_file)
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
@@ -136,3 +138,15 @@ def optimize_cluster(clusterData=None):
             
 def run():
     optimize_cluster(None)
+
+
+def tryrun():
+    import os, sys
+    kalc_debug = os.getenv('KALC_DEBUG', "0")
+    if kalc_debug == "1":
+        optimize_cluster(None)
+    else:
+        try:
+            optimize_cluster(None)
+        except KeyboardInterrupt:
+            sys.exit(0)
