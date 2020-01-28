@@ -16,6 +16,7 @@ import kalc.misc.util
 import pkg_resources
 import yaml
 import kalc.misc.support_check
+from kalc.misc.metrics import Metric
 
 
 __version__ = pkg_resources.get_distribution("kalc").version
