@@ -1274,8 +1274,7 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
 #         assert globalVar.
 
 class Optimize_directly(Balance_pods_and_drain_node):
-       @planned(cost=1)
-        def generate_goal(self):
+    def generate_goal(self):
         self.generated_goal_in = []
         self.generated_goal_eq = []
         for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
@@ -1284,4 +1283,4 @@ class Optimize_directly(Balance_pods_and_drain_node):
     def reached_reqested_amount_of_recomendations(self,
         globalVar: GlobalVar):
         assert globalVar.target_amount_of_recomendations == globalVar.found_amount_of_recomendations
-        globalVar.target_amount_of_recomendations_reacыhed = True
+        globalVar.target_amount_of_recomendations_reached = True

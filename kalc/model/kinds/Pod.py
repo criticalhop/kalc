@@ -93,7 +93,12 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     is_checked_as_source_for_labels: bool
     is_checked_as_target_for_labels: bool
     nodes_acceptable_by_antiaffinity: Set["Node"]
-    nodes_acceptable_by_antiaffinity_length int
+    nodes_acceptable_by_antiaffinity_length: int
+    calc_checked_pods_from_point_of_this_pod: Set["Pod"]
+    calc_checked_pods_from_point_of_this_pod_length: int
+    calc_checked_pods_from_point_of_that_pod: Set["Pod"]
+    calc_checked_pods_from_point_of_that_pod_length: int
+    toNode_is_checked: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -136,8 +141,10 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.calc_cantmatch_antiaffinity = False
         self.calc_cantmatch_affinity = False
         self.nodes_acceptable_by_antiaffinity_length = 0
-
+        self.calc_checked_pods_from_point_of_this_pod_length = 0
+        self.calc_checked_pods_from_point_of_that_pod_length = 0
         self.spec_nodeName = ''
+        self.toNode_is_checked = False
 
 
 

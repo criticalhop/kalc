@@ -73,6 +73,6 @@ class GlobalVar(ModularKind):
         self.target_amount_of_recomendations = 0
         self.target_amount_of_recomendations_reached = False
         self.found_amount_of_recomendations = 0
-        self.pod_movement_is_in_progress_flag = Flase
+        self.pod_movement_is_in_progress_flag = False
         
     def __str__(self): return str(self._get_value())
