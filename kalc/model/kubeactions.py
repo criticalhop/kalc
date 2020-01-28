@@ -453,12 +453,6 @@ class KubernetesModel(ProblemTemplate):
         #     podStarted.cpuRequest = 0
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False
-    
-    @planned(cost=1)
-    def restart_move_pod(self,
-        pod: "Pod",
-        ):
-        assert pod.
 
     @planned(cost=1)
     def clear_node_of_pod(self, 
@@ -556,6 +550,7 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.amountOfActivePods += 1
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
+        globalVar.found_amount_of_recomendations += 1
 
         self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
 
@@ -578,29 +573,6 @@ class KubernetesModel(ProblemTemplate):
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False   
     
-    @planned(cost=1)
-    def mark_node_as_acceptable_for_pod(self,
-        pod_a: "Pod",
-        pod_at_nodeB:"Pod"
-        node_b: "Node",
-        scheduler: "Scheduler",
-        globalVar: GlobalVar,
-        deployment: Deployment):
-        assert pod_at_nodeB.atNode == node_b
-        pod_a.nodes
-
-
-
-    @planned(cost=1)
-    def move_pod_recomendation_step_3_finish_pod_movement(self,
-        pod: "Pod",
-        nodeFrom: "Node",
-        nodeTo: "Node",
-        scheduler: "Scheduler",
-        globalVar: GlobalVar,
-        deployment: Deployment):
-        found_amount_of_recomendations += 1
-
 
     @planned(cost=1)
     def SchedulerCleaned(self, 
