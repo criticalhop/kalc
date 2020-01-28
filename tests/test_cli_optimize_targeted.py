@@ -35,6 +35,7 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
     pod_running_1.cpuLimit = 1
     pod_running_1.memLimit = 1
     pod_running_1.atNode = atNode
+    pod_running_1.toNode = atNode
     pod_running_1.status = STATUS_POD["Running"]
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
@@ -170,7 +171,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.cpuCapacity = 8
     node_item.memCapacity = 8
     node_item.isNull = False
-    node_item.status = STATUS_NODE["Active"]
+    node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     
 
@@ -180,7 +181,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.cpuCapacity = 8
     node_item.memCapacity = 8
     node_item.isNull = False
-    node_item.status = STATUS_NODE["Active"]
+    node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     
 
@@ -276,19 +277,19 @@ def test_optimmize_cluster():
                      "MoveRunningPodToAnotherNode"]
     not_assert_conditions = []
     
-    p.clear_node_of_pod(test_case.pods[0])
-    p.SelectNode(test_case.pods[0],test_case.nodes[1],test_case.globalVar)
+    # p.clear_node_of_pod(test_case.pods[0])
+    # p.SelectNode(test_case.pods[0],test_case.nodes[1],test_case.globalVar)
     
-    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[1])
-    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[2])
-    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[8])
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[1])
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[2])
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[8])
 
-    p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[6])
-    p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[7])
+    # p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[6])
+    # p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[7])
 
-    p.check_node_for_pod_move_finished(test_case.pods[0],test_case.nodes[1])
+    # p.check_node_for_pod_move_finished(test_case.pods[0],test_case.nodes[1])
 
-    p.move_pod_recomendation_reason_antiaffinity(test_case.pods[0],test_case.pods[1],test_case.nodes[0],test_case.nodes[1],test_case.scheduler, test_case.globalVar,test_case.deployments[0])
-    p.reached_reqested_amount_of_recomendations(test_case.globalVar)
+    # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[0],test_case.pods[1],test_case.nodes[0],test_case.nodes[1],test_case.scheduler, test_case.globalVar,test_case.deployments[0])
+    # p.reached_reqested_amount_of_recomendations(test_case.globalVar)
 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)

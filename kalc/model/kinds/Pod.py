@@ -163,6 +163,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
+                self.toNode = node
                 node.allocatedPodList.add(self)
                 node.allocatedPodList_length += 1
                 node.directedPodList.add(self)

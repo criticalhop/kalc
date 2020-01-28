@@ -484,9 +484,13 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=1)
     def check_toNode_for_pod_move_for_this_pod(self,
         this_pod:"Pod",
-        pod_a: "Pod"):
+        pod_a: "Pod",
+        node_of_this_pod: "Node",
+        node_pod_a: "Node"):
+        assert node_of_this_pod == this_pod.toNode
+        assert node_pod_a == pod_a.atNode
         if pod_a not in this_pod.calc_checked_pods_from_point_of_this_pod and\
-            pod_a.atNode != this_pod.toNode:
+            node_pod_a != node_of_this_pod:
             assert pod_a in this_pod.podsMatchedByAntiaffinity
             this_pod.calc_checked_pods_from_point_of_this_pod.add(pod_a)
             this_pod.calc_checked_pods_from_point_of_this_pod_length += 1
