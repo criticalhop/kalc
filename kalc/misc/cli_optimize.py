@@ -127,17 +127,19 @@ def optimize_cluster(clusterData=None):
         print("-----------------------------------------------------------------------------------")
         print("--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---")
         print("-----------------------------------------------------------------------------------")
+        metric_new = Metric(kalc_state_objects)
+        kalc_state_objects.append(metric_new)
         try:
             problem.xrun()
         except SchedulingError:
             print("Could not solve in this configuration, trying next...")
             continue
-        metric2 = Metric(kalc_state_objects)
-        metric2.calc()
-        print("Initial metric ", metric2.metric,
-              " result metric ", metric2.metric)
+        metric_new.calc()
+        print("Initial metric ", metric_new.metric,
+              " result metric ", metric_new.metric)
         move_script = '\n'.join(problem.script)
-        full_script = generate_compat_header() + move_script
+        full_script = generate_compat_header() + print_metric(metric, "before") + \
+            print_metric(metric_new, "after") + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         print("Generated optimization script at", scritpt_file)
         with open(scritpt_file, "w+") as fd:

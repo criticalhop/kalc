@@ -5,7 +5,6 @@ from kalc.misc.const import *
 from logzero import logger
 import math
 
-
 class Metric():
     mem_free: int
     cpu_free: int
@@ -18,6 +17,8 @@ class Metric():
             filter(lambda x: isinstance(x, mpod.Pod), object_space))
         self.nodes = list(
             filter(lambda x: isinstance(x, mnode.Node), object_space))
+        self.moved_pod_set = set([])
+        self.drained_node_set = set([])
         # self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
         # self.setUnusedRes()
 
