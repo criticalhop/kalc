@@ -1,7 +1,7 @@
 from kalc.interactive import *
 from kalc.model.search import Balance_pods_and_drain_node
 from kalc.model.kinds.Deployment import Deployment
-from kalc.misc.script_generator import generate_compat_header
+from kalc.misc.script_generator import generate_compat_header, print_metric
 from collections import defaultdict
 from poodle.schedule import SchedulingError
 from itertools import combinations, product

@@ -34,24 +34,24 @@ def move_pod_with_deployment_script_simple(pod, node_from: Node, node_to: Node, 
     d = get_deployment_from_pod(pod, object_space)
     metric = next(filter(lambda x: isinstance(x, Metric), object_space))
     metric.moved_pod_set.add(pod)
-    metric.drained_node_set(node_to)
-    metric.drained_node_set(node_from)
+    metric.drained_node_set.add(node_to)
+    metric.drained_node_set.add(node_from)
     return move_pod_with_deployment_script(pod, node_to, d,
         get_rs_from_deployment(d, object_space))
 
 
 def print_metric(metric: Metric, metric_name: str):
+    utilisation = metric.node_utilisation * 100
     metric_info = f"""
-        echo Metric {metric_name} {metric.metric}
-    """
+
+echo {metric_name} {utilisation:.1f}%
+"""
     if len(metric.drained_node_set) > 0:
-        metric_info += f"""
-        echo Node moved {len(metric.drained_node_set)}
-        """
+        metric_info += f"""echo Node drained {len(metric.drained_node_set)}
+"""
     if len(metric.moved_pod_set) > 0:
-        metric_info += f"""
-        echo Pod moved {len(metric.moved_pod_set)}
-        """
+        metric_info += f"""echo Pod moved {len(metric.moved_pod_set)}
+"""
     return metric_info
 
 def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):

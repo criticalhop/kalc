@@ -131,9 +131,13 @@ class Metric():
         self.RMSD_cpu = self.RMSD_cpu / (len(self.nodes))
         self.RMSD_mem = self.RMSD_mem / (len(self.nodes))
         self.RMSD = (self.RMSD_cpu + self.RMSD_mem) / 2
-
+        
         self.mem_free = self.mem_total - self.mem_used
         self.cpu_free = self.cpu_total - self.cpu_used
+
+        self.mem_utilisation = float(self.mem_used) / float(self.mem_total)
+        self.cpu_utilisation = float(self.cpu_used) / float(self.cpu_total)
+        self.node_utilisation = (self.mem_utilisation + self.cpu_utilisation) / 2.0
 
     def total_metric(self):
         self.metric = (self.RMSD + self.MD + self.node_oversubscribe + self.deployment_fault_tolerance_metric + self.deployment_fault_tolerance_metric_bad)/5
