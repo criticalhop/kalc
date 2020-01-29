@@ -97,6 +97,8 @@ class Metric():
 
         # Mean node over subscribe per resouces
         for node in self.nodes:
+            if str(node.status._get_value()) == str(STATUS_NODE["Inactive"]):
+                continue
             node.oversubscribe_cpu = node.currentFormalCpuConsumption._get_value() / \
                 node.cpuCapacity._get_value()
             node.oversubscribe_mem = node.currentFormalMemConsumption._get_value() / \
@@ -120,6 +122,8 @@ class Metric():
 
         # root-mean-square deviation(RMSD)
         for node in self.nodes:
+            if str(node.status._get_value()) == str(STATUS_NODE["Inactive"]):
+                continue
             self.RMSD_cpu += (self.node_oversubscribe_cpu - node.oversubscribe_cpu) ** 2
             self.RMSD_mem += (self.node_oversubscribe_mem - node.oversubscribe_mem) ** 2
             if self.MD < abs(self.node_oversubscribe_cpu - node.oversubscribe_cpu):

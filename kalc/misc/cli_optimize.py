@@ -93,7 +93,7 @@ def optimize_cluster(clusterData=None):
 
     metric = Metric(kalc_state_objects)
     metric.calc()
-    print("Initial metric ", metric.metric)
+    print("Initial utilisation {0:.1f}%".format(metric.node_utilisation*100))
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
@@ -135,11 +135,10 @@ def optimize_cluster(clusterData=None):
             print("Could not solve in this configuration, trying next...")
             continue
         metric_new.calc()
-        print("Initial metric ", metric_new.metric,
-              " result metric ", metric_new.metric)
+        print("Initial utilisation {0:.1f}%\nResult utilisation {1:.1f}%".format(metric.node_utilisation * 100, metric_new.node_utilisation * 100))
         move_script = '\n'.join(problem.script)
-        full_script = generate_compat_header() + print_metric(metric, "before") + \
-            print_metric(metric_new, "after") + move_script
+        full_script = generate_compat_header() + print_metric(metric, "Initial utilisation") + \
+            print_metric(metric_new, "Result utilisation") + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         print("Generated optimization script at", scritpt_file)
         with open(scritpt_file, "w+") as fd:
