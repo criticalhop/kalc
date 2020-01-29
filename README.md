@@ -23,6 +23,10 @@ Currently, `kalc` provides a single command, `kalc-optimize` to do automatic clu
 ## Installation
 
     pip install kalc
+    
+    If your Linux host has other versions of Python installed you will recieve an error regarding "Could not find a version that satisfies the requirement kalc (from versions: )No matching distribution found for kalc"...If you recieve this type the following to install kalc
+    
+    python3.7 -m pip install kalc
 
 ## Basic usage
 
