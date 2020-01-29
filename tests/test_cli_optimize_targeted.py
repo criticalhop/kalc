@@ -25,7 +25,7 @@ import kalc.misc.util
 from typing import Set
 
 DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
-
+TEST_CLUSTER_FOLDER = "/home/vasily/CLIENT_DATA/test1"
 
 def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, pods):
     pod_running_1 = Pod()
@@ -44,6 +44,13 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
     atNode.currentFormalCpuConsumption += cpuRequest
     atNode.currentFormalMemConsumption += memRequest
     atNode.amountOfActivePods += 1
+    atNode.allocatedPodList.add(pod_running_1)
+    atNode.allocatedPodList_length += 1
+    atNode.directedPodList.add(pod_running_1)
+    atNode.directedPodList_length += 1
+    pod_running_1.toNode = Node.NODE_NULL
+
+    
     pods.append(pod_running_1)
     if d is not None:
         d.podList.add(pod_running_1)
@@ -230,6 +237,16 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     pods[8].podsMatchedByAntiaffinity.add(pods[0])
     pods[8].podsMatchedByAntiaffinity_length = 3
     pods[8].target_number_of_antiaffinity_pods = 3
+
+    pods[6].antiaffinity_set = True
+    pods[6].podsMatchedByAntiaffinity.add(pods[7])
+    pods[6].podsMatchedByAntiaffinity_length = 1
+    pods[6].target_number_of_antiaffinity_pods = 1
+
+    pods[7].antiaffinity_set = True
+    pods[7].podsMatchedByAntiaffinity.add(pods[6])
+    pods[7].podsMatchedByAntiaffinity_length = 1
+    pods[7].target_number_of_antiaffinity_pods = 1
     
 #     nodes[2].isSearched = True
     # priority for pod-to-evict
@@ -250,8 +267,8 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     globalVar.target_DeploymentsWithAntiaffinity_length = 1
     globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
     globalVar.target_amountOfPodsWithAntiaffinity = 3
-    globalVar.target_amount_of_recomendations = 1
-    
+    # globalVar.target_NodesDrained_length = 1
+    globalVar.target_amount_of_recomendations = 4
     
     class Antiaffinity_check_k1(Optimize_directly):
         pass
@@ -290,6 +307,28 @@ def test_optimmize_cluster():
     # p.check_node_for_pod_move_finished(test_case.pods[0],test_case.nodes[1])
 
     # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[0],test_case.pods[1],test_case.nodes[0],test_case.nodes[1],test_case.scheduler, test_case.globalVar,test_case.deployments[0])
+    # p.clear_node_of_pod(test_case.pods[7])
+    # p.SelectNode(test_case.pods[7],test_case.nodes[2],test_case.globalVar)
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[7],test_case.pods[6])
+    # p.check_toNode_for_pod_move_for_that_pod_with_antiaffinity(test_case.pods[7],test_case.pods[8])
+    # p.check_node_for_pod_move_finished(test_case.pods[7],test_case.nodes[2])
+    # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[7],test_case.pods[6],test_case.nodes[1],test_case.nodes[2],test_case.scheduler, test_case.globalVar,test_case.deployments[1])
+
+
     # p.reached_reqested_amount_of_recomendations(test_case.globalVar)
 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
+def test_vu():
+    k = KubernetesCluster()
+    k.load_dir(TEST_CLUSTER_FOLDER)
+    k._build_state()
+    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    globalVar.target_amount_of_recomendations = 1
+    class NewGoal(Optimize_directly):
+        pass
+    p = NewGoal(k.state_objects)
+    p.run(timeout=200)
+    for a in p.plan:
+        print(a)
+    print_objects(k.state_objects)

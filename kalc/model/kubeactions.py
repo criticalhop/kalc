@@ -325,16 +325,15 @@ class KubernetesModel(ProblemTemplate):
         pod1.nodeSelectorList.add(selectedNode) 
 
     @planned(cost=1)
-    def SelectNode(self, 
-        pod1: "Pod",
+    def SelectNode(self,
+        pod: "Pod",
         selectedNode: "Node",
-        globalVar: GlobalVar
-         ):
+        globalVar: GlobalVar):
         assert globalVar.block_policy_calculated == False
         assert globalVar.block_node_outage_in_progress == False
-        assert pod1.toNode == Node.NODE_NULL
-        assert selectedNode in pod1.nodeSelectorList
-        pod1.toNode = selectedNode    
+        assert pod.toNode == Node.NODE_NULL
+        assert selectedNode in pod.nodeSelectorList
+        pod.toNode = selectedNode
 
     @planned(cost=1) # TODO
     def StartPod(self, 
@@ -399,7 +398,7 @@ class KubernetesModel(ProblemTemplate):
         node.allocatedPodList_length += 1
         podStarted.status = STATUS_POD["Running"]      
 
-    @planned(cost=1)
+    #@planned(cost=1)
     def MoveRunningPodToAnotherNode(self,
         pod: "Pod",
         nodeFrom: "Node",
@@ -459,7 +458,7 @@ class KubernetesModel(ProblemTemplate):
         pod: "Pod"):
         assert pod.calc_checked_pods_from_point_of_this_pod_length == 0
         assert pod.calc_checked_pods_from_point_of_that_pod_length == 0
-        pod.toNode == Node.NODE_NULL
+        pod.toNode = Node.NODE_NULL
         pod.toNode_is_checked = False
 
     @planned(cost=1)
@@ -469,8 +468,6 @@ class KubernetesModel(ProblemTemplate):
         assert pod_c in pod.calc_checked_pods_from_point_of_this_pod
         pod.calc_checked_pods_from_point_of_this_pod.remove(pod_c)
         pod.calc_checked_pods_from_point_of_this_pod_length -= 1
-        pod.toNode_is_checked = False
-
 
     @planned(cost=1)
     def clean_lists_for_pod_move(self,
@@ -479,18 +476,13 @@ class KubernetesModel(ProblemTemplate):
         assert pod_c in pod.calc_checked_pods_from_point_of_that_pod
         pod.calc_checked_pods_from_point_of_that_pod.remove(pod_c)
         pod.calc_checked_pods_from_point_of_that_pod_length -= 1
-        pod.toNode_is_checked = False
 
     @planned(cost=1)
     def check_toNode_for_pod_move_for_this_pod(self,
         this_pod:"Pod",
-        pod_a: "Pod",
-        node_of_this_pod: "Node",
-        node_pod_a: "Node"):
-        assert node_of_this_pod == this_pod.toNode
-        assert node_pod_a == pod_a.atNode
+        pod_a: "Pod"):
         if pod_a not in this_pod.calc_checked_pods_from_point_of_this_pod and\
-            node_pod_a != node_of_this_pod:
+            pod_a.atNode != this_pod.toNode:
             assert pod_a in this_pod.podsMatchedByAntiaffinity
             this_pod.calc_checked_pods_from_point_of_this_pod.add(pod_a)
             this_pod.calc_checked_pods_from_point_of_this_pod_length += 1
@@ -519,10 +511,10 @@ class KubernetesModel(ProblemTemplate):
     @planned(cost=1)
     def check_node_for_pod_move_finished(self,
         pod:"Pod",
-        node:"Node"):
+        to_node:"Node"):
         assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
-        assert pod.calc_checked_pods_from_point_of_that_pod_length == node.amountOfActivePods
-        assert node == pod.toNode
+        assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+        assert to_node == pod.toNode
         pod.toNode_is_checked = True
 
     @planned(cost=1)
@@ -534,6 +526,8 @@ class KubernetesModel(ProblemTemplate):
         scheduler: "Scheduler",
         globalVar: GlobalVar,
         deployment: Deployment): 
+
+        assert nodeTo in nodeFrom.different_than
 
         assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
