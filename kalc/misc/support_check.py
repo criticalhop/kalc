@@ -197,7 +197,17 @@ class YAMLStrSupportChecker(SupportChecker):
         self.description = ""
         self.value = val
 
+    def check_Pending_pods(self):
+        val = len(re.findall("Pending", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = "Pods in Pending state not supported"
+        self.value = val
 
+    def check_OutOfcpu_pod_status(self):
+        val = len(re.findall("OutOfcpu", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = "Pods in OutOfCpu state not supported"
+        self.value = val
 
 
 
