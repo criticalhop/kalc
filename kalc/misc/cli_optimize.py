@@ -151,13 +151,13 @@ def optimize_cluster(clusterData=None):
         move_script = '\n'.join(problem.script)
         full_script = (
             generate_compat_header() + 
-            "=================================" +
+            "####################################\n" +
             print_metric(metric.node_utilization * 100, "Initial utilization") + 
             print_metric(metric_new.node_utilization * 100, "Result utilization") + 
             print_metric(metric.deployment_fault_tolerance_metric * 100, "Initial availability") + 
             print_metric(metric_new.deployment_fault_tolerance_metric * 100, "Result availability") + 
             print_stats(metric, "Stats") +
-            "=================================" +
+            "####################################\n" +
             move_script)
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         logger.info("📜 Generated optimization script at %s" % scritpt_file)
