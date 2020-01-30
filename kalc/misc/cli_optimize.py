@@ -7,6 +7,8 @@ from poodle.schedule import SchedulingError
 from itertools import combinations, product
 from logzero import logger
 import logzero
+logzero.logfile("./kalc-optimize.log")
+logzero.loglevel(20)
 
 D_RANK = 0
 D_DEPLOYMENT = 1
@@ -135,7 +137,7 @@ def optimize_cluster(clusterData=None):
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
-        logger.info("Generated optimization script at", scritpt_file)
+        logger.info("📜 Generated optimization script at %s" % scritpt_file)
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
             

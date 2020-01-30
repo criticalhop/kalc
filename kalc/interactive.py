@@ -66,6 +66,7 @@ def update(data=None):
         
         for result in all_support_checks:
             if not result.isOK(): logger.warning("Unsupported feature: %s" % str(result))
+            else: logger.debug(str(result))
         
         for d in all_data:
             for item in d["items"]:
