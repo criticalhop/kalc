@@ -45,7 +45,7 @@ def move_pod_with_deployment_script_simple(pod, node_from: Node, node_to: Node, 
 
 def print_metric(value: float, metric_name: str):
     utilisation = value 
-    metric_info = f"""echo {metric_name} {utilisation:.1f}%
+    metric_info = f"""echo {metric_name} {utilisation:.1f}
 """
     return metric_info
 
