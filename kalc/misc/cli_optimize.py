@@ -5,6 +5,10 @@ from kalc.misc.script_generator import generate_compat_header
 from collections import defaultdict
 from poodle.schedule import SchedulingError
 from itertools import combinations, product
+from logzero import logger
+import logzero
+logzero.logfile("./kalc-optimize.log")
+logzero.loglevel(20)
 
 D_RANK = 0
 D_DEPLOYMENT = 1
@@ -68,7 +72,7 @@ def generate_hypothesys_combination(deployments, nodes):
             list_of_deployments_sorted.append(deployments_current_rank)
             prev_deployments_current_rank = deployments_current_rank
     if deployments_maxpods:
-        print(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
+        logger.info(f"Worst case deployment {str(deployments_maxpods[0][D_DEPLOYMENT])}, with {deployments_maxpods[0][D_RANK]} pods on same node")
     list_deployments_targets = list(range(1,deployment_amount+1))
     list_nodes = list(range(0,2))
     list_pods = list(range(2,max_pod_number+1))
@@ -88,7 +92,7 @@ def generate_hypothesys_combination(deployments, nodes):
 
 
 def optimize_cluster(clusterData=None):
-    print("WARNING! Not taking into account service SLOs")
+    logger.warning("WARNING! Not taking into account service SLOs")
     update(clusterData) # To reload from scratch...
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
@@ -96,7 +100,9 @@ def optimize_cluster(clusterData=None):
     index = 0
     for combination in comb_nodes_pods:
         index += 1
+        logzero.loglevel(40)
         update(clusterData) # To reload from scratch...
+        logzero.loglevel(20)
         problem = Balance_pods_and_drain_node(kalc_state_objects)
         deployments_local = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects))
         globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
@@ -118,20 +124,20 @@ def optimize_cluster(clusterData=None):
         globalVar_local.target_amountOfPodsWithAntiaffinity = combination[L_PODS]
         globalVar_local.target_NodesDrained_length = combination[L_NODES]
 
-        print("Deployment candidates:", ', '.join(d_cand))
-        print("Pod candidates:", ", ".join(p_cand))
-        print("-----------------------------------------------------------------------------------")
-        print("--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---")
-        print("-----------------------------------------------------------------------------------")
+        logger.info("Deployment candidates: %s" % ', '.join(d_cand))
+        logger.info("Pod candidates: {}".format(", ".join(p_cand)))
+        logger.info("-----------------------------------------------------------------------------------")
+        logger.info(" ".join([str(x) for x in ["--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---"]]))
+        logger.info("-----------------------------------------------------------------------------------")
         try:
             problem.xrun()
         except SchedulingError:
-            print("Could not solve in this configuration, trying next...")
+            logger.warning("Could not solve in this configuration, trying next...")
             continue
         move_script = '\n'.join(problem.script)
         full_script = generate_compat_header() + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
-        print("Generated optimization script at", scritpt_file)
+        logger.info("📜 Generated optimization script at %s" % scritpt_file)
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
             
