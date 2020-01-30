@@ -6,9 +6,8 @@ from kalc.model.kubernetes import KubernetesCluster
 pod_str="""apiVersion: v1
 items:
 - apiVersion: v1
-kind: Pod
+  kind: Pod
   metadata:
-    generateName: redis-master-57fc67768d-
     labels:
       app: redis
       pod-template-hash: 57fc67768d
@@ -18,16 +17,15 @@ kind: Pod
     namespace: default
   spec:
     containers:
-    - image: k8s.gcr.io/redis: e2e
-    resources:
+    - image: k8s.gcr.io/redis:e2e
+      resources:
         requests:
           cpu: 100m
           memory: 100Mi
     nodeName: gke-tesg1-default-pool-ff7a1295-7kwg
 - apiVersion: v1
-kind: Pod
+  kind: Pod
   metadata:
-    generateName: redis-master-57fc67768d-bad
     labels:
       app: redis-bad
       pod-template-hash: 57fc67768d
@@ -37,8 +35,8 @@ kind: Pod
     namespace: default
   spec:
     containers:
-    - image: k8s.gcr.io/redis: e2e
-    resources:
+    - image: k8s.gcr.io/redis:e2e
+      resources:
         requests:
           cpu: 100m
           memory: 100Mi
@@ -51,7 +49,7 @@ metadata:
 service_str="""apiVersion: v1
 items:
 - apiVersion: v1
-kind: Service
+  kind: Service
   metadata:
     labels:
       service: myservice
@@ -63,7 +61,7 @@ kind: Service
       role: master
     sessionAffinity: None
 - apiVersion: v1
-kind: Service
+  kind: Service
   metadata:
     labels:
       service: broken-service
@@ -85,7 +83,6 @@ def test_native_selector_service_to_pod():
     k._build_state()
 
     for s in filter(lambda x: isinstance(x, Service), k.state_objects):
-        print(len(p.podList._get_value()))
         if str(s.metadata_name._get_value()) == "redis-master":
             assert len(s.podList._get_value()) == 1 
         else:
