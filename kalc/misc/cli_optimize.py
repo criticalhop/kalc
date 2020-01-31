@@ -151,6 +151,10 @@ def optimize_cluster(clusterData=None, runs=999999):
             logger.warning("Could not solve in this configuration, trying next...")
             success = False
             continue
+        if len(problem.script) == 0:
+            logger.error("Generated solution contains no actions")
+            success = False
+            continue
         metric_new.calc()
         logger.info("Result utilization {0:.1f}%".format(metric_new.node_utilization * 100))
         logger.info("Result availabilty metric {0:.1f} v.u.".format(metric_new.deployment_fault_tolerance_metric * 100))
