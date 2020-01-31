@@ -3,7 +3,6 @@ import sys
 sys.path.append('./tests/')
 from test_util import print_objects
 from libs_for_tests import prepare_yamllist_for_diff
-from kalc.model.search import HypothesisysNode, OptimisticRun
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.kinds.Service import Service

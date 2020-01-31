@@ -155,12 +155,6 @@ class YAMLStrSupportChecker(SupportChecker):
         self.description = ""
         self.value = val
 
-    def check_AdmissionConfiguration(self):
-        val = len(re.findall("AdmissionConfiguration", self.yaml_str))
-        self.ok = (val == 0)
-        self.description = ""
-        self.value = val
-    
     def check_nodeSelector(self):
         val = len(re.findall("nodeSelector", self.yaml_str))
         self.ok = (val == 0)

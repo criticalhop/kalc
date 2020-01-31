@@ -11,7 +11,7 @@ from kalc.misc.const import *
 from kalc.model.search import K8ServiceInterruptSearch
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-import guardctl.misc.util as util
+import kalc.misc.util as util
 
 TEST_CLUSTER_FOLDER = "./tests/daemonset_eviction/cluster_dump"
 TEST_DEPLOYMENT = "./tests/test-deployment/deployment.yaml"

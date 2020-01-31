@@ -47,7 +47,7 @@ class PreferredSelfAntiAffinityPolicy(BasePolicy):
                 self.target_object.targetAmountOfPodsOnDifferentNodes = pods_count
                 self.register_goal(self.target_object.antiaffinity_prefered_policy_met, "==", True)
             
-            self.register_hypothesis("All pods required done", hypothesis_1)
+            self.register_hypothesis("All pods required done", hypothesis_existing_match_group)
         else:
             # disable
             pass

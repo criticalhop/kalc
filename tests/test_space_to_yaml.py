@@ -14,7 +14,7 @@ import pytest
 from kalc.model.search import K8ServiceInterruptSearch
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
+pass
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml
 

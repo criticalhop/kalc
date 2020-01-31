@@ -89,7 +89,7 @@ def update(data=None):
     kalc_state_objects.clear()
     kalc_state_objects.extend(k.state_objects)
     global cluster
-    cluster = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+    cluster = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects)) # pylint: disable=undefined-variable
 
 def run():
     # TODO HERE: copy state_objects!
@@ -133,7 +133,7 @@ def apply():
 def print_objects(objectList):
     print("<==== Domain Object List =====>")
 
-    pod_loaded_list = filter(lambda x: isinstance(x, Pod), objectList)
+    pod_loaded_list = filter(lambda x: isinstance(x, Pod), objectList) # pylint: disable=undefined-variable
     print("----------Pods---------------")
     for poditem in pod_loaded_list:
         print("## Pod:"+ str(poditem.metadata_name._get_value()) + \
@@ -150,7 +150,7 @@ def print_objects(objectList):
         ", hasDeployment: " + str(poditem.hasDeployment._get_value()) + \
         ", hasDaemonset: " + str(poditem.hasDaemonset._get_value()))
     
-    node_loaded_list = filter(lambda x: isinstance(x, Node), objectList)
+    node_loaded_list = filter(lambda x: isinstance(x, Node), objectList) # pylint: disable=undefined-variable
     print("----------Nodes---------------")
     for nodeitem in node_loaded_list:
         print("## Node:"+ str(nodeitem.metadata_name._get_value()) + \
@@ -166,7 +166,7 @@ def print_objects(objectList):
         ", Searchable: " + str(nodeitem.searchable._get_value())+\
         ", IsSearched: ", str(nodeitem.isSearched._get_value())+\
         ", different_than: ", str([str(x) for x in nodeitem.different_than._get_value()]))
-    services = filter(lambda x: isinstance(x, Service), objectList)
+    services = filter(lambda x: isinstance(x, Service), objectList) # pylint: disable=undefined-variable
     print("----------Services---------------")
     for service in services:
         print("## Service: "+str(service.metadata_name)+\
@@ -177,13 +177,13 @@ def print_objects(objectList):
         ", IsSearched: ", str(service.isSearched._get_value()))
 
 
-    prios = filter(lambda x: isinstance(x, PriorityClass), objectList)
+    prios = filter(lambda x: isinstance(x, PriorityClass), objectList) # pylint: disable=undefined-variable
     print("----------PriorityClasses---------------")
     for prio in prios:
         print("## PriorityClass: "+str(prio.metadata_name) +" " + str(prio.priority._get_value()))
 
 
-    scheduler = next(filter(lambda x: isinstance(x, Scheduler), objectList))
+    scheduler = next(filter(lambda x: isinstance(x, Scheduler), objectList)) # pylint: disable=undefined-variable
     print("----------Shedulers---------------")
     print("## Sheduler: "+str(scheduler.status._get_value()) +\
         " PodList: "+str([str(x) for x in scheduler.podQueue._get_value()]) +\
@@ -202,7 +202,7 @@ def print_objects(objectList):
         " Searchable:" + str(deployment.searchable))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
     
-    daemonsets_loaded_list = filter(lambda x: isinstance(x, DaemonSet), objectList)
+    daemonsets_loaded_list = filter(lambda x: isinstance(x, DaemonSet), objectList) # pylint: disable=undefined-variable
     print("----------DaemonSets------------")
     for daemonset in daemonsets_loaded_list:
         print("## DaemonSet: "+str(daemonset.metadata_name._get_value()) +\
@@ -213,7 +213,7 @@ def print_objects(objectList):
         " Searchable:" + str(daemonset.searchable))
         # " Metadata_labels: " + str([str(x) for x in deployment.template_metadata_labels._property_value]))
 
-    replicasets_loaded_list = filter(lambda x: isinstance(x, ReplicaSet), objectList)
+    replicasets_loaded_list = filter(lambda x: isinstance(x, ReplicaSet), objectList) # pylint: disable=undefined-variable
     print("----------ReplicaSets------------")
     for replicaset in replicasets_loaded_list:
         print("## Replicaset: "+str(replicaset.metadata_name._get_value()) +\
@@ -222,7 +222,7 @@ def print_objects(objectList):
         " metadata_ownerReferences__kind: " + str(replicaset.metadata_ownerReferences__name._property_value)+\
         " metadata_ownerReferences__name: " + str(replicaset.metadata_ownerReferences__name._property_value))
 
-    globalvar_loaded_list = filter(lambda x: isinstance(x, GlobalVar), objectList)
+    globalvar_loaded_list = filter(lambda x: isinstance(x, GlobalVar), objectList) # pylint: disable=undefined-variable
     print("----------GlobalVar------------")
     list_of_objects_output =['']
     for globalvar_item in globalvar_loaded_list:

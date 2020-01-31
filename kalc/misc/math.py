@@ -45,7 +45,7 @@ def fact(n):
   
 def nPr(n, r):  
     
-    return math.floor(fact(n) /
+    return math.floor(fact(n) / # pylint: disable=no-member
                 fact(n - r))  
       
 permutation_list = []

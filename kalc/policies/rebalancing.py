@@ -224,7 +224,7 @@ class BalancedClusterPolicy(BasePolicy):
     
 
     @planned(cost=1)
-    def mark_finalization_of_antiaffinity_setting_for_pods_of_deployment(self,
+    def mark_finalization_of_antiaffinity_setting_for_pods_of_deployment2(self,
         deployment: Deployment,
         globalVar: GlobalVar):
         assert globalVar.amountOfDeploymentsWithAntiaffinity == globalVar.target_amountOfDeploymentsWithAntiaffinity
