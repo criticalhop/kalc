@@ -37,6 +37,8 @@ class GlobalVar(ModularKind):
     DeploymentsWithAntiaffinity_length: int
     NodesDrained: Set["mnode.Node"]
     NodesDrained_length: int
+    calc_NodesDrained: Set["mnode.Node"]
+    calc_NodesDrained_length: int
 
     target_NodesDrained_length: int
     target_NodesDrained_length_reached: bool
@@ -81,5 +83,6 @@ class GlobalVar(ModularKind):
         # self.toNodes_are_checked = False
         # self.pods_toNode_cleared = False
         # self.pods_toNode_checked = False
+        self.calc_NodesDrained_length = 0
         
     def __str__(self): return str(self._get_value())

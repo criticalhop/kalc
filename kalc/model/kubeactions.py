@@ -398,8 +398,8 @@ class KubernetesModel(ProblemTemplate):
         node.allocatedPodList_length += 1
         podStarted.status = STATUS_POD["Running"]      
 
-    #@planned(cost=1)
-    def MoveRunningPodToAnotherNode(self,
+    # @planned(cost=1)
+    def Move_pod_without_affinity_check(self,
         pod: "Pod",
         nodeFrom: "Node",
         nodeTo: "Node",
@@ -586,6 +586,17 @@ class KubernetesModel(ProblemTemplate):
     #     pod.toNode_is_checked = True
 
     @planned(cost=1)
+    def mark_node_as_being_drained(self,
+        node: "Node",
+        globalVar: "GlobalVar"):
+        if node not in globalVar.calc_NodesDrained:
+            assert node.drain_started == False
+            assert globalVar.calc_NodesDrained_length <= globalVar.target_NodesDrained_length
+            globalVar.calc_NodesDrained.add(node)
+            globalVar.calc_NodesDrained_length += 1
+            node.drain_started = True
+
+    @planned(cost=1)
     def move_pod_recomendation_reason_antiaffinity(self,
         pod: "Pod",
         pod_a: "Pod",
@@ -595,15 +606,16 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar,
         deployment: Deployment): 
 
+        ## pod  violates antiaffinity of pod_a on nodeFrom:
+        assert nodeFrom == pod.atNode
+        if nodeFrom.drain_started == False :
+            assert pod_a.atNode == nodeFrom
+            assert pod_a in pod.podsMatchedByAntiaffinity
+
         assert nodeTo in nodeFrom.different_than
 
         assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
-
-        ## pod  violates antiaffinity of pod_a on nodeFrom:
-        assert nodeFrom == pod.atNode
-        assert pod_a.atNode == nodeFrom
-        assert pod_a in pod.podsMatchedByAntiaffinity
 
         ## nodeTo is node that is marked as acceptable for pod
         assert pod.toNode_is_checked == True

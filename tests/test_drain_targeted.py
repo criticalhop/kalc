@@ -289,13 +289,11 @@ def prepare_synthetic_data():
     return k, p, test_case
 
 
-def test_synthetic_rebalance_3_pods():
+
+
+def test_synthetic_drain_1_node():
     k, p, test_case = prepare_synthetic_data()
 
-    assert_conditions = ["move_pod_recomendation_reason_antiaffinity",\
-                     "reached_reqested_amount_of_recomendations"]
-    not_assert_conditions = []
-    
     # p.clear_node_of_pod(test_case.pods[0])
     # p.SelectNode(test_case.pods[0],test_case.nodes[1],test_case.globalVar)
     
@@ -319,8 +317,13 @@ def test_synthetic_rebalance_3_pods():
 
     # p.reached_reqested_amount_of_recomendations(test_case.globalVar)
     
-
+    assert_conditions = ["Reqested_amount_of_nodes_drained",\
+                     "DrainNode"]
+    not_assert_conditions = []  
+    test_case.globalVar.target_amount_of_recomendations = 1
+    test_case.globalVar.target_NodesDrained_length = 1 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+
     brake = False
     if p.plan:
         for a in assert_conditions:
@@ -331,12 +334,15 @@ def test_synthetic_rebalance_3_pods():
                 brake = True
     if not p.plan:
         brake = True
+    if p.plan:
+        for a in p.plan:
+            print(a)
+    else:
+        print("Search stopped without finding a solution.") 
+        
     assert brake == False
-    # if p.plan:
-    #     for a in p.plan:
-    #         print(a)
-    # else:
-    #     print('No solution')
+
+
 
 ######################
 #### next test works , but for test one need to have folder with yamls of demo cluster  in variable TEST_CLUSTER_FOLDER ####
