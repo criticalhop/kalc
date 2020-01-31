@@ -4,11 +4,7 @@
 
 # Overview
 
-`kalc` is a Kubernetes operations automation system built on pure [AI planning](https://github.com/criticalhop/poodle).
-
-Currently, `kalc` provides a single command, `kalc-optimize` to do automatic cluster rebalancing and optimization.
-
-`kalc` can also be used with [Jupyter Lab](https://jupyter.org/) in interactive mode.
+`kalc` is application aware Kubernetes rebalancing tool built on pure [AI planning](https://github.com/criticalhop/poodle).
 
 # Quick Start
 
