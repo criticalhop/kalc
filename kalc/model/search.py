@@ -1281,7 +1281,11 @@ class Optimize_directly(Balance_pods_and_drain_node):
                 self.generated_goal_eq.append([globalVar.target_amount_of_recomendations_reached, True])
         for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
             self.generated_goal_eq.append([globalVar.target_NodesDrained_length_reached, True])
-
+        # for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+        #     self.generated_goal_eq.append([globalVar.pods_toNode_cleared, True])
+        # for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+        #     self.generated_goal_eq.append([globalVar.pods_toNode_checked, True])
+            
     @planned(cost=1)
     def reached_reqested_amount_of_recomendations(self,
         globalVar: GlobalVar):

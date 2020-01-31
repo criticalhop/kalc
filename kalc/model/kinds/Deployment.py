@@ -3,6 +3,7 @@ from kalc.model.system.Controller import Controller
 from kalc.model.system.base import HasLimitsRequests
 from kalc.model.kinds.PriorityClass import PriorityClass, zeroPriorityClass
 from kalc.model.system.Scheduler import Scheduler
+# import kalc.model.system.globals as  mglobals
 import kalc.model.kinds.Pod as mpod
 from kalc.model.kinds.ReplicaSet import ReplicaSet
 from kalc.model.system.primitives import Status, Label
@@ -134,7 +135,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
                         br = True
                         break
             if br: break
-
+        podList_local = []
         for pod in pods:
             br = False
             # look for right pod-template-hash
@@ -143,10 +144,29 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
                     self.podList.add(pod)
                     pod.hasDeployment = True
                     br = True
+                    podList_local.append(pod)
             if br and pod.status._get_value() == "Running":
                 self.amountOfActivePods += 1
                     # self.check_pod(pod, object_space)
         calculate_maxNumberOfPodsOnSameNode_metrics(self,object_space)
+
+        for podList_item_level1 in self.podList:
+            for podList_item_level2 in self.podList:
+                if podList_item_level1 != podList_item_level2:
+                    podList_item_level1.podsMatchedByAntiaffinity.add(podList_item_level2)
+                    podList_item_level1.podsMatchedByAntiaffinity_length += 1
+                    podList_item_level1.antiaffinity_set = True
+        # globalVar = next(filter(lambda x: isinstance(x, mglobals.GlobalVar), object_space))
+        # pod_index = 0
+        # for pod in pods:
+        #     if pod_index == 0:
+        #         pod.is_first = True
+        #         prev_pod = pod
+        #         globalVar.current_pod = pod
+        #     else:
+        #         prev_pod.next_pod = pod
+        #     if pod_index == len(pods):
+        #         pod.is_last = True
 
     def hook_scale_before_create(self, object_space, new_replicas):
         self.spec_replicas = new_replicas

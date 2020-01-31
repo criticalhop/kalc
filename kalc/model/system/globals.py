@@ -42,6 +42,10 @@ class GlobalVar(ModularKind):
     target_NodesDrained_length_reached: bool
     found_amount_of_recomendations: int
     pod_movement_is_in_progress_flag: bool
+    # toNodes_are_checked: bool
+    # current_pod: "Pod"
+    # pods_toNode_cleared: bool
+    # pods_toNode_checked: bool
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -74,5 +78,8 @@ class GlobalVar(ModularKind):
         self.target_amount_of_recomendations_reached = False
         self.found_amount_of_recomendations = 0
         self.pod_movement_is_in_progress_flag = False
+        # self.toNodes_are_checked = False
+        # self.pods_toNode_cleared = False
+        # self.pods_toNode_checked = False
         
     def __str__(self): return str(self._get_value())

@@ -99,6 +99,9 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     calc_checked_pods_from_point_of_that_pod: Set["Pod"]
     calc_checked_pods_from_point_of_that_pod_length: int
     toNode_is_checked: bool
+    # is_first: bool
+    # is_last: bool
+    # next_pod: "Pod"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -163,7 +166,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
-                self.toNode = node
+                # self.toNode = node
                 node.allocatedPodList.add(self)
                 node.allocatedPodList_length += 1
                 node.directedPodList.add(self)

@@ -453,6 +453,35 @@ class KubernetesModel(ProblemTemplate):
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
             # assert globalVar.block_node_outage_in_progress == False
 
+    # @planned(cost=1)
+    # def next_pod_cleared_toNode(self,
+    #     pod:"Pod",
+    #     next_pod: "Pod",
+    #     globalVar: GlobalVar):
+    #     assert globalVar.pods_toNode_cleared == False
+    #     assert globalVar.current_pod == pod
+    #     assert pod.calc_checked_pods_from_point_of_this_pod_length == 0
+    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == 0
+    #     assert next_pod == pod.next_pod
+    #     pod.toNode = Node.NODE_NULL
+    #     pod.toNode_is_checked = False
+    #     globalVar.current_pod = next_pod
+
+    # @planned(cost=1)
+    # def last_pod_cleared_toNode(self,
+    #     pod:"Pod",
+    #     first_pod: "Pod",
+    #     globalVar: GlobalVar):
+    #     assert globalVar.current_pod == pod
+    #     assert pod.is_last == True
+    #     assert pod.calc_checked_pods_from_point_of_this_pod_length == 0
+    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == 0
+    #     assert first_pod.is_first == True 
+    #     pod.toNode = Node.NODE_NULL
+    #     pod.toNode_is_checked = False
+    #     globalVar.current_pod = first_pod
+    #     globalVar.pods_toNode_cleared = True
+
     @planned(cost=1)
     def clear_node_of_pod(self, 
         pod: "Pod"):
@@ -517,6 +546,45 @@ class KubernetesModel(ProblemTemplate):
         assert to_node == pod.toNode
         pod.toNode_is_checked = True
 
+    # @planned(cost=1)
+    # def next_pod_checked_toNode(self,
+    #     globalVar: GlobalVar,
+    #     pod:"Pod",
+    #     to_node:"Node",
+    #     next_pod: "Pod"):
+    #     assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
+    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+    #     assert to_node == pod.toNode
+    #     assert globalVar.pods_toNode_checked == False
+    #     assert globalVar.current_pod == pod
+    #     assert next_pod == pod.next_pod
+    #     globalVar.current_pod = next_pod
+    #     pod.toNode_is_checked = True
+
+    # @planned(cost=1)
+    # def last_pod_checked_toNode(self,
+    #     pod:"Pod",
+    #     first_pod: "Pod",
+    #     globalVar: GlobalVar,
+    #     to_node:"Node"):
+    #     assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
+    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+    #     assert to_node == pod.toNode
+    #     pod.toNode_is_checked = True
+    #     assert globalVar.current_pod == pod
+    #     assert pod.is_last == True
+    #     globalVar.current_pod = first_pod
+    #     globalVar.pods_toNode_checked = True
+
+    # @planned(cost=1)
+    # def check_node_for_pod_move_finished(self,
+    #     pod:"Pod",
+    #     to_node:"Node"):
+    #     assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
+    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+    #     assert to_node == pod.toNode
+    #     pod.toNode_is_checked = True
+
     @planned(cost=1)
     def move_pod_recomendation_reason_antiaffinity(self,
         pod: "Pod",
@@ -561,6 +629,8 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
         globalVar.found_amount_of_recomendations += 1
+        # globalVar.pods_toNode_checked = False
+        # globalVar.pods_toNode_cleared = False
 
         # self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
 

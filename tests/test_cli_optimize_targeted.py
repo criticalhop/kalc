@@ -24,8 +24,10 @@ from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,pr
 import kalc.misc.util
 from typing import Set
 
-DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
-TEST_CLUSTER_FOLDER = "/home/vasily/CLIENT_DATA/test1"
+DEBUG_MODE = 0 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
+TEST_VU = "/home/vasily/CLIENT_DATA/test1"
+TEST_DEMO = "./cluster_dump2"
+TEST_CLUSTER_FOLDER = TEST_DEMO
 
 def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, pods):
     pod_running_1 = Pod()
@@ -97,7 +99,7 @@ class StateSet():
     deployments: []
 
 
-def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
+def prepare_synthetic_data():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -268,7 +270,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
     globalVar.target_amountOfPodsWithAntiaffinity = 3
     # globalVar.target_NodesDrained_length = 1
-    globalVar.target_amount_of_recomendations = 4
+    globalVar.target_amount_of_recomendations = 3
     
     class Antiaffinity_check_k1(Optimize_directly):
         pass
@@ -283,15 +285,15 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     services = [s1,s2]
     test_case.services = services
     test_case.deployments = deployments
-    print_objects(k.state_objects)
+    # print_objects(k.state_objects)
     return k, p, test_case
 
 
-def test_optimmize_cluster():
-    k, p, test_case = prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods()
+def test_synthetic():
+    k, p, test_case = prepare_synthetic_data()
 
-    assert_conditions = ["mark_checked_pod_as_antiaffinity_checked_for_target_pod",\
-                     "MoveRunningPodToAnotherNode"]
+    assert_conditions = ["move_pod_recomendation_reason_antiaffinity",\
+                     "reached_reqested_amount_of_recomendations"]
     not_assert_conditions = []
     
     # p.clear_node_of_pod(test_case.pods[0])
@@ -316,19 +318,51 @@ def test_optimmize_cluster():
 
 
     # p.reached_reqested_amount_of_recomendations(test_case.globalVar)
+    
 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+    brake = False
+    if p.plan:
+        for a in assert_conditions:
+            if not a in "\n".join([repr(x) for x in p.plan]):
+                brake = True
+        for a in not_assert_conditions:
+            if a in "\n".join([repr(x) for x in p.plan]):
+                brake = True
+    if not p.plan:
+        brake = True
+    assert brake == False
+    # if p.plan:
+    #     for a in p.plan:
+    #         print(a)
+    # else:
+    #     print('No solution')
 
-def test_vu():
-    k = KubernetesCluster()
-    k.load_dir(TEST_CLUSTER_FOLDER)
-    k._build_state()
-    globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
-    globalVar.target_amount_of_recomendations = 1
-    class NewGoal(Optimize_directly):
-        pass
-    p = NewGoal(k.state_objects)
-    p.run(timeout=200)
-    for a in p.plan:
-        print(a)
-    print_objects(k.state_objects)
+######################
+#### next test works , but for test one need to have folder with yamls of demo cluster  in variable TEST_CLUSTER_FOLDER ####
+#####################
+# def test_cluster_dump():
+#     k = KubernetesCluster()
+#     k.load_dir(TEST_CLUSTER_FOLDER)
+#     k._build_state()
+#     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     globalVar.target_amount_of_recomendations = 2
+#     class NewGoal(Optimize_directly):
+#         pass
+#     p = NewGoal(k.state_objects)
+#     # print_objects(k.state_objects)
+#     p.run(timeout=9000)
+#     assert_conditions = ["move_pod_recomendation_reason_antiaffinity",\
+#                      "check_node_for_pod_move_finished"]
+#     not_assert_conditions = []
+#     brake = False
+#     if p.plan:
+#         for a in assert_conditions:
+#             if not a in "\n".join([repr(x) for x in p.plan]):
+#                 brake = True
+#         for a in not_assert_conditions:
+#             if a in "\n".join([repr(x) for x in p.plan]):
+#                 brake = True
+#     if not p.plan:
+#         brake = True
+#     assert brake == False
