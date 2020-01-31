@@ -1229,7 +1229,7 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
         globalVar.NodesDrained.add(node)
         node.status = STATUS_NODE["Inactive"]
 
-        self.script.append(script_remove_node(node))
+        self.script.append(script_remove_node(node, self.objectList))
     
     @planned(cost=1)
     def Reqested_amount_of_nodes_drained(self,

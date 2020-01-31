@@ -15,7 +15,6 @@ from logzero import logger
 import kalc.misc.util as util
 import random
 import yaml, copy, jsonpatch, difflib
-from kalc.misc.metrics import calculate_maxNumberOfPodsOnSameNode_metrics
 
 class YAMLable():
     yaml_orig: {}
@@ -60,8 +59,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
     calc_PodsWithAntiaffinitySet_length: int
     podsMatchedByAntiaffinity_length: int
     
-
-
+    # metric: float
 
     def __init__(self, *args, **kwargs):
         super().__init__( *args, **kwargs)
@@ -74,10 +72,11 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
         self.spec_replicas = 0
-        self.NumberOfPodsOnSameNodeForDeployment = 1
+        self.NumberOfPodsOnSameNodeForDeployment = 10
         self.amountOfPodsWithAntiaffinity = 5
         self.calc_PodsWithAntiaffinitySet_length = 0
         self.podsMatchedByAntiaffinity_length = 0
+        self.metric = 0.0
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)
@@ -87,10 +86,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
                 logger.error(message)
                 raise AssertionError(message)
         self.create_pods(object_space, self.spec_replicas._get_value())
-        calculate_maxNumberOfPodsOnSameNode_metrics(self,object_space)
 
-
-    
 
     def create_pods(self, object_space, replicas, start_from=0):
         scheduler = next(filter(lambda x: isinstance(x, Scheduler), object_space))
@@ -148,7 +144,6 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
             if br and pod.status._get_value() == "Running":
                 self.amountOfActivePods += 1
                     # self.check_pod(pod, object_space)
-        calculate_maxNumberOfPodsOnSameNode_metrics(self,object_space)
 
         for podList_item_level1 in self.podList:
             for podList_item_level2 in self.podList:

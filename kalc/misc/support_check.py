@@ -169,9 +169,10 @@ class YAMLStrSupportChecker(SupportChecker):
     
     def check_custom_scheduler(self):
         val = len(re.findall("schedulerName", self.yaml_str))
-        self.ok = (val == 0)
-        self.description = ""
-        self.value = val
+        val2 = len(re.findall("default-scheduler", self.yaml_str))
+        self.ok = (val - val2 == 0)
+        self.description = "Custom schedulers detected, they are not supported"
+        self.value = val - val2
 
     def check_HorizontalPodAutoscaler(self):
         val = len(re.findall("HorizontalPodAutoscaler", self.yaml_str))
@@ -197,7 +198,17 @@ class YAMLStrSupportChecker(SupportChecker):
         self.description = ""
         self.value = val
 
+    def check_Pending_pods(self):
+        val = len(re.findall("Pending", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = "Pods in Pending state not supported"
+        self.value = val
 
+    def check_OutOfcpu_pod_status(self):
+        val = len(re.findall("OutOfcpu", self.yaml_str))
+        self.ok = (val == 0)
+        self.description = "Pods in OutOfCpu state not supported"
+        self.value = val
 
 
 

@@ -16,6 +16,8 @@ import kalc.misc.util
 import pkg_resources
 import yaml
 import kalc.misc.support_check
+from kalc.misc.metrics import Metric
+from logzero import logger
 
 
 __version__ = pkg_resources.get_distribution("kalc").version
@@ -64,7 +66,8 @@ def update(data=None):
             all_data.append(data)
         
         for result in all_support_checks:
-            print("CHECK:", str(result))
+            if not result.isOK(): logger.warning("Unsupported feature: %s" % str(result))
+            else: logger.debug(str(result))
         
         for d in all_data:
             for item in d["items"]:
