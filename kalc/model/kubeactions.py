@@ -433,7 +433,7 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
 
-        self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
+        self.script.append(move_pod_with_deployment_script_simple(pod, nodeFrom, nodeTo, self.objectList))
 
         # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
         #     podStarted.memRequest = podStarted.memLimit
