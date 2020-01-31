@@ -25,6 +25,7 @@ setuptools = "^45.0.0"
 
 [tool.poetry.scripts]
 kalc-optimize = "kalc.misc.cli_optimize:tryrun"
+kalc-dump = "kalc.misc.cluster_dump:run"
 
 [tool.poetry.dev-dependencies]
 
