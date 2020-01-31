@@ -1,14 +1,16 @@
 from kalc.interactive import *
 from kalc.model.search import Balance_pods_and_drain_node
 from kalc.model.kinds.Deployment import Deployment
-from kalc.misc.script_generator import generate_compat_header, print_metric
+from kalc.misc.script_generator import generate_compat_header, print_metric, print_stats
 from collections import defaultdict
 from poodle.schedule import SchedulingError
 from itertools import combinations, product
 from logzero import logger
 import logzero
+import os
 logzero.logfile("./kalc-optimize.log")
-logzero.loglevel(20)
+kalc_debug = os.getenv('KALC_DEBUG', "0")
+if kalc_debug == "0": logzero.loglevel(20)
 
 D_RANK = 0
 D_DEPLOYMENT = 1
@@ -97,7 +99,6 @@ def optimize_cluster(clusterData=None):
 
     metric = Metric(kalc_state_objects)
     metric.calc()
-    print("Initial utilisation {0:.1f}%".format(metric.node_utilisation*100))
 
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
@@ -129,8 +130,10 @@ def optimize_cluster(clusterData=None):
         globalVar_local.target_amountOfPodsWithAntiaffinity = combination[L_PODS]
         globalVar_local.target_NodesDrained_length = combination[L_NODES]
 
-        logger.info("Deployment candidates: %s" % ', '.join(d_cand))
-        logger.info("Pod candidates: {}".format(", ".join(p_cand)))
+        logger.debug("Deployment candidates: %s" % ', '.join(d_cand))
+        logger.debug("Pod candidates: {}".format(", ".join(p_cand)))
+        logger.info("Initial utilization {0:.1f}%".format(metric.node_utilization*100))
+        logger.info("Initial availabilty metric {0:.1f} v.u.".format(metric.deployment_fault_tolerance_metric * 100))
         logger.info("-----------------------------------------------------------------------------------")
         logger.info(" ".join([str(x) for x in ["--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---"]]))
         logger.info("-----------------------------------------------------------------------------------")
@@ -143,10 +146,19 @@ def optimize_cluster(clusterData=None):
             logger.warning("Could not solve in this configuration, trying next...")
             continue
         metric_new.calc()
-        print("Initial utilisation {0:.1f}%\nResult utilisation {1:.1f}%".format(metric.node_utilisation * 100, metric_new.node_utilisation * 100))
+        logger.info("Result utilization {0:.1f}%".format(metric_new.node_utilization * 100))
+        logger.info("Result availabilty metric {0:.1f} v.u.".format(metric_new.deployment_fault_tolerance_metric * 100))
         move_script = '\n'.join(problem.script)
-        full_script = generate_compat_header() + print_metric(metric, "Initial utilisation") + \
-            print_metric(metric_new, "Result utilisation") + move_script
+        full_script = (
+            generate_compat_header() + 
+            "####################################\n" +
+            print_metric(metric.node_utilization * 100, "Initial utilization") + 
+            print_metric(metric_new.node_utilization * 100, "Result utilization") + 
+            print_metric(metric.deployment_fault_tolerance_metric * 100, "Initial availability") + 
+            print_metric(metric_new.deployment_fault_tolerance_metric * 100, "Result availability") + 
+            print_stats(metric, "Stats") +
+            "####################################\n" +
+            move_script)
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         logger.info("📜 Generated optimization script at %s" % scritpt_file)
         with open(scritpt_file, "w+") as fd:
@@ -159,7 +171,6 @@ def run():
 
 def tryrun():
     import os, sys
-    kalc_debug = os.getenv('KALC_DEBUG', "0")
     if kalc_debug == "1":
         optimize_cluster(None)
     else:
