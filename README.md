@@ -32,7 +32,7 @@ If your Linux host has other versions of Python installed you will recieve an er
 
 ## Autopilot
 
-`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and reducing cost by freeing nodes with low utilization.
+`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and reducing cost by freeing nodes with low utilization. You can run `kalc-optimize` as a cron job, wait for X minutes and then run the most recent generated script file.
 
 # Architecture
 
