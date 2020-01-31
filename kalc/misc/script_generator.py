@@ -43,12 +43,14 @@ def move_pod_with_deployment_script_simple(pod, node_from: Node, node_to: Node, 
         get_rs_from_deployment(d, object_space))
 
 
-def print_metric(metric: Metric, metric_name: str):
-    utilisation = metric.node_utilisation * 100
-    metric_info = f"""
-
-echo {metric_name} {utilisation:.1f}%
+def print_metric(value: float, metric_name: str):
+    utilisation = value 
+    metric_info = f"""echo {metric_name} {utilisation:.1f}
 """
+    return metric_info
+
+def print_stats(metric: Metric, metric_name: str):
+    metric_info = ""
     if len(metric.drained_node_set) > 0:
         metric_info += f"""echo Node drained {len(metric.drained_node_set)}
 """
@@ -56,6 +58,7 @@ echo {metric_name} {utilisation:.1f}%
         metric_info += f"""echo Pod moved {len(metric.moved_pod_set)}
 """
     return metric_info
+
 
 def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     "Move the pod when the pod is part of Deployment"
