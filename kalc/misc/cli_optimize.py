@@ -103,7 +103,7 @@ def optimize_cluster(clusterData=None, runs=999999):
 
 
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
-    nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
+    nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects)) # pylint: disable=undefined-variable
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
     index = 0
     for combination in comb_nodes_pods:
@@ -116,8 +116,8 @@ def optimize_cluster(clusterData=None, runs=999999):
         logzero.loglevel(20)
         problem = Balance_pods_and_drain_node(kalc_state_objects)
         deployments_local = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects))
-        globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
-        pods_local = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects))
+        globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects)) # pylint: disable=undefined-variable
+        pods_local = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects)) # pylint: disable=undefined-variable
         d_cand = []
         p_cand = []
         for d in deployments_local:
@@ -172,7 +172,7 @@ def optimize_cluster(clusterData=None, runs=999999):
             fd.write(full_script)
             
             
-def run():
+def run():  # pylint: disable=function-redefined
     optimize_cluster(None)
 
 
