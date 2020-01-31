@@ -272,7 +272,7 @@ def test_optimmize_cluster():
     k, p, test_case = prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods()
     yaml_dump = convert_space_to_yaml_dump(k.state_objects)
     # print("Running with", yaml_dump)
-    optimize_cluster(yaml_dump)
+    assert optimize_cluster(yaml_dump, runs=1)
 
-def test_optimmize_cluster_load():
-    optimize_cluster(None)
+# def test_optimmize_cluster_load():
+#     assert optimize_cluster(None, runs=1)

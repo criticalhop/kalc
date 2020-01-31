@@ -77,7 +77,8 @@ def update(data=None):
         # TODO: make sure "data" is in YAML format
         sc = kalc.misc.support_check.YAMLStrSupportChecker(yaml_str=data)
         for result in sc.check():
-            print("CHECK:", str(result))
+            if not result.isOK(): logger.warning("Unsupported feature: %s" % str(result))
+            else: logger.debug(str(result))
 
         for ys in kalc.misc.util.split_yamldumps(data):
             k.load(ys)
