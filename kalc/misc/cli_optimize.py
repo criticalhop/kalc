@@ -108,7 +108,6 @@ def optimize_cluster(clusterData=None, runs=999999):
     index = 0
     for combination in comb_nodes_pods:
         index += 1
-        print("AAA indec", index, runs)
         if index > runs: return success
         success = False
         logzero.loglevel(40)
