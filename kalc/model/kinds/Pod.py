@@ -14,9 +14,8 @@ from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProb
 # import kalc.cli as cli
 import sys
 import random
-from logzero import logger
 from typing import Set
-
+from logzero import logger
 
 class Pod(ModularKind, HasLabel, HasLimitsRequests):
     # k8s attributes

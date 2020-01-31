@@ -1,7 +1,7 @@
 from kalc.interactive import *
 from kalc.model.search import Balance_pods_and_drain_node
 from kalc.model.kinds.Deployment import Deployment
-from kalc.misc.script_generator import generate_compat_header
+from kalc.misc.script_generator import generate_compat_header, print_metric
 from collections import defaultdict
 from poodle.schedule import SchedulingError
 from itertools import combinations, product
@@ -93,7 +93,12 @@ def generate_hypothesys_combination(deployments, nodes):
 
 def optimize_cluster(clusterData=None):
     logger.warning("WARNING! Not taking into account service SLOs")
-    update(clusterData) # To reload from scratch...
+    update(clusterData)  # To reload from scratch...
+
+    metric = Metric(kalc_state_objects)
+    metric.calc()
+    print("Initial utilisation {0:.1f}%".format(metric.node_utilisation*100))
+
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
@@ -129,13 +134,19 @@ def optimize_cluster(clusterData=None):
         logger.info("-----------------------------------------------------------------------------------")
         logger.info(" ".join([str(x) for x in ["--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---"]]))
         logger.info("-----------------------------------------------------------------------------------")
+        metric_new = Metric(kalc_state_objects)
+        kalc_state_objects.append(metric_new)
+
         try:
             problem.xrun()
         except SchedulingError:
             logger.warning("Could not solve in this configuration, trying next...")
             continue
+        metric_new.calc()
+        print("Initial utilisation {0:.1f}%\nResult utilisation {1:.1f}%".format(metric.node_utilisation * 100, metric_new.node_utilisation * 100))
         move_script = '\n'.join(problem.script)
-        full_script = generate_compat_header() + move_script
+        full_script = generate_compat_header() + print_metric(metric, "Initial utilisation") + \
+            print_metric(metric_new, "Result utilisation") + move_script
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         logger.info("📜 Generated optimization script at %s" % scritpt_file)
         with open(scritpt_file, "w+") as fd:
