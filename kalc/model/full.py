@@ -16,12 +16,12 @@ for importer, modname, ispkg in pkgutil.iter_modules(
         if inspect.isclass(c) and issubclass(c, Object) and not c is Object:
             kinds_collection[c.__name__] = c
 
-Node.Node.NODE_NULL = Node.Node("NULL")
-Node.Node.NODE_NULL.isNull = True
-Node.Node.NODE_NULL.metadata_name = "Null-Node"
-Node.Node.NODE_NULL.searchable = False
+Node.Node.NODE_NULL = Node.Node("NULL") # pylint: disable=undefined-variable
+Node.Node.NODE_NULL.isNull = True # pylint: disable=undefined-variable
+Node.Node.NODE_NULL.metadata_name = "Null-Node" # pylint: disable=undefined-variable
+Node.Node.NODE_NULL.searchable = False # pylint: disable=undefined-variable
 
-Pod.Pod.POD_NULL = Pod.Pod("NULL")
-Pod.Pod.POD_NULL.isNull = True
+Pod.Pod.POD_NULL = Pod.Pod("NULL") # pylint: disable=undefined-variable
+Pod.Pod.POD_NULL.isNull = True # pylint: disable=undefined-variable
 
     

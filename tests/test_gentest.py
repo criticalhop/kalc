@@ -12,10 +12,9 @@ from kalc.model.kinds.PriorityClass import PriorityClass
 from kalc.model.kubernetes import KubernetesCluster
 from kalc.misc.const import *
 import pytest
-from kalc.model.search import K8ServiceInterruptSearch, HypothesisysNodeAndService, HypothesisysNode
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
+pass
 from poodle import planned
 from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 from tests.test_scenarios_synthetic import build_running_pod_with_d, build_running_pod, build_pending_pod
@@ -27,6 +26,8 @@ import os,time,csv
 sha = git.Repo(search_parent_directories=True).head.object.hexsha
 LIN_COUNT = int(os.getenv("POODLE_LIN_COUNT", "99"))
 
+
+@pytest.mark.skip(reason="big test")  
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
     node_amount_range =       range(2,     5,     2)

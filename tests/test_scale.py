@@ -11,7 +11,6 @@ from kalc.misc.const import *
 from kalc.model.search import K8ServiceInterruptSearch
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.cli import run
 
 
 TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"

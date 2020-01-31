@@ -214,12 +214,12 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
     print("#### print_objects after run: ######")
     print(print_objects(k.state_objects))
 
-def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
-    k = KubernetesCluster()
-    args = []
-    args.extend(calculate_variable_dump(DUMP_with_command_local))
-    args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
-    run(args) # pylint: disable=no-value-for-parameter
+# def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
+#     k = KubernetesCluster()
+#     args = []
+#     args.extend(calculate_variable_dump(DUMP_with_command_local))
+#     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
+#     run(args) # pylint: disable=no-value-for-parameter
 
 def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     runner = CliRunner()

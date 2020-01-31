@@ -3,7 +3,6 @@ import sys
 sys.path.append('./tests/')
 from test_util import print_objects
 from libs_for_tests import prepare_yamllist_for_diff
-from kalc.model.search import HypothesisysNode, OptimisticRun
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.kinds.Service import Service
@@ -19,7 +18,7 @@ import inspect
 from kalc.model.search import *
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
+pass
 from poodle import planned
 from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 import kalc.misc.util
@@ -280,5 +279,3 @@ def test_optimmize_cluster():
     # print("Running with", yaml_dump)
     optimize_cluster(yaml_dump)
     print_plan(p)
-
-test_optimmize_cluster()
