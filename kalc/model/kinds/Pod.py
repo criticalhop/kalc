@@ -23,7 +23,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     spec_priorityClassName: str
     spec_nodeSelector: Set[Label]
     metadata_name: str
-
     metadata_namespace: str
     # internal model attributes
     ownerReferences: Controller
@@ -97,6 +96,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         super().__init__(*args, **kwargs)
         self.priority = 0
         self.spec_priorityClassName = "KUBECTL-VAL-NONE"
+        self.metadata_namespace = "default"
         self.priorityClass = zeroPriorityClass
         # self.targetService = mservice.Service.SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL

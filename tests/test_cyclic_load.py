@@ -88,7 +88,9 @@ def test_cyclic_load_1():
     ys1 = ''.join([i for i in repr(yamlState) if not i.isdigit()])
     ys2 = ''.join([i for i in repr(yamlState2) if not i.isdigit()])
 
-    assert ys1 == ys2
+    # assert ys1 == ys2
+    assert prepare_yamllist_for_diff(yamlState, ignore_names=True) == \
+                    prepare_yamllist_for_diff(yamlState2, ignore_names=True) 
 
     # assert yamlState == yamlState2 # TODO: this does not entirely match, but close...
     
