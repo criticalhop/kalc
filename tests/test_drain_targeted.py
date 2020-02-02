@@ -334,25 +334,26 @@ def test_synthetic_drain_1_node():
                 brake = True
     if not p.plan:
         brake = True
-    if p.plan:
-        for a in p.plan:
-            print(a)
-    else:
-        print("Search stopped without finding a solution.") 
+    # if p.plan:
+    #     for a in p.plan:
+    #         print(a)
+    # else:
+    #     print("Search stopped without finding a solution.") 
         
     assert brake == False
 
 
 
-######################
-#### next test works , but for test one need to have folder with yamls of demo cluster  in variable TEST_CLUSTER_FOLDER ####
-#####################
-# def test_cluster_dump_rebalance_2_pods():
+# ######################
+# #### next test works , but for test one need to have folder with yamls of demo cluster  in variable TEST_CLUSTER_FOLDER ####
+# #####################
+# def test_cluster_dump_drain_node():
 #     k = KubernetesCluster()
 #     k.load_dir(TEST_CLUSTER_FOLDER)
 #     k._build_state()
 #     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
 #     globalVar.target_amount_of_recomendations = 2
+#     globalVar.target_NodesDrained_length = 1 
 #     class NewGoal(Optimize_directly):
 #         pass
 #     p = NewGoal(k.state_objects)
@@ -372,3 +373,8 @@ def test_synthetic_drain_1_node():
 #     if not p.plan:
 #         brake = True
 #     assert brake == False
+#     # if not p.plan:
+#     #     brake = True
+#     # if p.plan:
+#     #     for a in p.plan:
+#     #         print(a)
