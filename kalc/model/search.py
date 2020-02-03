@@ -1222,14 +1222,14 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
     def DrainNode(self,
         node: "Node",
         globalVar: GlobalVar):
-        assert node.amountOfActivePods == 0
+        assert node.amountOfActivePods - node.daemonset_pod_list_length == 0
         assert node.status == STATUS_NODE["Active"]
         assert node.isNull == False
         globalVar.NodesDrained_length += 1
         globalVar.NodesDrained.add(node)
         node.status = STATUS_NODE["Inactive"]
 
-        self.script.append(script_remove_node(node, self.objectList))
+        # self.script.append(script_remove_node(node, self.objectList))
     
     @planned(cost=1)
     def Reqested_amount_of_nodes_drained(self,

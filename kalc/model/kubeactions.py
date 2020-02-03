@@ -536,14 +536,24 @@ class KubernetesModel(ProblemTemplate):
             this_pod.calc_checked_pods_from_point_of_that_pod.add(pod_a)
             this_pod.calc_checked_pods_from_point_of_that_pod_length += 1
 
+    @planned(cost=1)
+    def calc_enumerate_daemonset_at_node(self,
+        pod:"Pod",
+        node: "Node"):
+        if pod not in node.daemonset_pod_list:
+            assert pod.atNode == node
+            assert pod.hasDaemonset == True
+            node.daemonset_pod_list.add(pod)
+            node.daemonset_pod_list_length += 1
 
     @planned(cost=1)
     def check_node_for_pod_move_finished(self,
         pod:"Pod",
         to_node:"Node"):
         assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
-        assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+        assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods - to_node.daemonset_pod_list_length
         assert to_node == pod.toNode
+        assert to_node.isNull == False
         pod.toNode_is_checked = True
 
     # @planned(cost=1)
@@ -585,16 +595,16 @@ class KubernetesModel(ProblemTemplate):
     #     assert to_node == pod.toNode
     #     pod.toNode_is_checked = True
 
-    @planned(cost=1)
-    def mark_node_as_being_drained(self,
-        node: "Node",
-        globalVar: "GlobalVar"):
-        if node not in globalVar.calc_NodesDrained:
-            assert node.drain_started == False
-            assert globalVar.calc_NodesDrained_length <= globalVar.target_NodesDrained_length
-            globalVar.calc_NodesDrained.add(node)
-            globalVar.calc_NodesDrained_length += 1
-            node.drain_started = True
+    # @planned(cost=1)
+    # def mark_node_as_being_drained(self,
+    #     node: "Node",
+    #     globalVar: "GlobalVar"):
+    #     if node not in globalVar.calc_NodesDrained:
+    #         assert node.drain_started == False
+    #         assert globalVar.calc_NodesDrained_length < globalVar.target_NodesDrained_length
+    #         globalVar.calc_NodesDrained.add(node)
+    #         globalVar.calc_NodesDrained_length += 1
+    #         node.drain_started = True
 
     @planned(cost=1)
     def move_pod_recomendation_reason_antiaffinity(self,
@@ -608,11 +618,8 @@ class KubernetesModel(ProblemTemplate):
 
         ## pod  violates antiaffinity of pod_a on nodeFrom:
         assert nodeFrom == pod.atNode
-        if nodeFrom.drain_started == False :
-            assert pod_a.atNode == nodeFrom
-            assert pod_a in pod.podsMatchedByAntiaffinity
-
-        assert nodeTo in nodeFrom.different_than
+        assert pod_a.atNode == nodeFrom
+        assert pod_a in pod.podsMatchedByAntiaffinity
 
         assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
         assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
@@ -620,7 +627,7 @@ class KubernetesModel(ProblemTemplate):
         ## nodeTo is node that is marked as acceptable for pod
         assert pod.toNode_is_checked == True
         assert nodeTo == pod.toNode
-
+        assert nodeTo in nodeFrom.different_than
         assert nodeTo in pod.nodeSelectorList
         assert nodeTo.status == STATUS_NODE["Active"]
         assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
@@ -641,6 +648,7 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
         globalVar.found_amount_of_recomendations += 1
+
         # globalVar.pods_toNode_checked = False
         # globalVar.pods_toNode_cleared = False
 
@@ -663,8 +671,74 @@ class KubernetesModel(ProblemTemplate):
         #     podStarted.cpuLimit = node.cpuCapacity
         #     podStarted.cpuRequest = 0
         #todo: Soft conditions are not supported yet ( prioritization of nodes :  for example healthy  nodes are selected  rather then non healthy if pod  requests such behavior 
-            # assert globalVar.block_node_outage_in_progress == False   
-    
+        # if podStarted.cpuRequest > -1 and podStarted.cpuLimit == -1:  
+            
+    @planned(cost=1)
+    def move_pod_for_transaction(self,
+        pod: "Pod",
+        nodeFrom: "Node",
+        nodeTo: "Node",
+        deployment: Deployment): 
+
+        ## pod  violates antiaffinity of pod_a on nodeFrom:
+        assert nodeFrom == pod.atNode
+        assert nodeTo in nodeFrom.different_than
+        assert nodeTo in pod.nodeSelectorList
+        assert nodeTo.status == STATUS_NODE["Active"]
+        assert nodeTo.currentFormalCpuConsumption + pod.cpuRequest <= nodeTo.cpuCapacity
+        assert nodeTo.currentFormalMemConsumption + pod.memRequest <= nodeTo.memCapacity
+
+        assert pod.cpuRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert pod.memRequest > -1 #TODO: check that number  should be moved to ariphmetics module from functional module
+        assert pod in deployment.podList # Only pods with deployments can be moved by kalc 
+        assert deployment.amountOfActivePods > 1
+
+        nodeFrom.currentFormalMemConsumption -= pod.memRequest
+        nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
+        nodeFrom.amountOfActivePods -= 1
+        nodeFrom.allocatedPodList.remove(pod)
+        nodeFrom.allocatedPodList_length -= 1
+        nodeTo.currentFormalCpuConsumption += pod.cpuRequest
+        nodeTo.currentFormalMemConsumption += pod.memRequest
+        pod.atNode = nodeTo
+        nodeTo.amountOfActivePods += 1
+        nodeTo.allocatedPodList.add(pod)
+        nodeTo.allocatedPodList_length += 1
+ 
+    # @planned(cost=1)
+    # def remove_one_daemonset_pod_from_drained_node(self,
+    #     pod: "Pod",
+    #     nodeFrom: "Node",
+    #     globalVar: GlobalVar,
+    #     daemonset: DaemonSet): 
+    #     # if nodeFrom not in globalVar.calc_NodesDrained:
+    #     assert pod in daemonset.podList
+    #     assert nodeFrom == pod.atNode
+    #     nodeFrom.currentFormalMemConsumption -= pod.memRequest
+    #     nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
+    #     nodeFrom.amountOfActivePods -= 1
+    #     nodeFrom.allocatedPodList.remove(pod)
+    #     nodeFrom.allocatedPodList_length -= 1
+    #     pod.status = STATUS_POD["Outaged"]
+    #     pod.atNode = Node.NODE_NULL
+
+
+    # @planned(cost=1)
+    # def remove_one_more_daemonset_pod_from_drained_node(self,
+    #     pod: "Pod",
+    #     nodeFrom: "Node",
+    #     globalVar: GlobalVar,
+    #     daemonset: DaemonSet): 
+    #     assert pod in daemonset.podList
+    #     assert nodeFrom == pod.atNode
+    #     assert nodeFrom in globalVar.calc_NodesDrained     
+    #     nodeFrom.currentFormalMemConsumption -= pod.memRequest
+    #     nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest
+    #     nodeFrom.amountOfActivePods -= 1
+    #     nodeFrom.allocatedPodList.remove(pod)
+    #     nodeFrom.allocatedPodList_length -= 1
+    #     pod.status = STATUS_POD["Outaged"]
+    #     pod.atNode = Node.NODE_NULL
 
     @planned(cost=1)
     def SchedulerCleaned(self, 
