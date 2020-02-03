@@ -1,3 +1,4 @@
+import timeit
 from kalc.interactive import *
 from kalc.model.search import Balance_pods_and_drain_node
 from kalc.model.kinds.Deployment import Deployment
@@ -22,6 +23,7 @@ L_DEPLOYMENTS = 1
 L_NODES = 2
 L_PODS = 3
 
+start_time = timeit.default_timer()
 
 def generate_hypothesys_combination(deployments, nodes):
     deployments_maxpods = []
@@ -97,8 +99,8 @@ def optimize_cluster(clusterData=None):
     logger.warning("WARNING! Not taking into account service SLOs")
     update(clusterData)  # To reload from scratch...
 
-    metric = Metric(kalc_state_objects)
-    metric.calc()
+    metric_start = Metric(kalc_state_objects)
+    metric_start.calc()
 
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
     nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
@@ -132,30 +134,36 @@ def optimize_cluster(clusterData=None):
 
         logger.debug("Deployment candidates: %s" % ', '.join(d_cand))
         logger.debug("Pod candidates: {}".format(", ".join(p_cand)))
-        logger.info("Initial utilization {0:.1f}%".format(metric.node_utilization*100))
-        logger.info("Initial availabilty metric {0:.1f} v.u.".format(metric.deployment_fault_tolerance_metric * 100))
+        logger.info("Initial utilization {0:.1f}%".format(metric_start.node_utilization*100))
+        logger.info("Initial availabilty metric {0:.1f} v.u.".format(metric_start.deployment_fault_tolerance_metric * 100))
         logger.info("-----------------------------------------------------------------------------------")
         logger.info(" ".join([str(x) for x in ["--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---"]]))
         logger.info("-----------------------------------------------------------------------------------")
-        metric_new = Metric(kalc_state_objects)
-        kalc_state_objects.append(metric_new)
+        metric = Metric(kalc_state_objects)
+        kalc_state_objects.append(metric)
 
         try:
             problem.xrun()
         except SchedulingError:
             logger.warning("Could not solve in this configuration, trying next...")
             continue
-        metric_new.calc()
-        logger.info("Result utilization {0:.1f}%".format(metric_new.node_utilization * 100))
-        logger.info("Result availabilty metric {0:.1f} v.u.".format(metric_new.deployment_fault_tolerance_metric * 100))
+        metric.calc()
+        metric.run_time = timeit.default_timer() - start_time
+        logger.info("Result utilization {0:.1f}%".format(metric.node_utilization * 100))
+        logger.info("Result availabilty metric {0:.1f} v.u.".format(metric.deployment_fault_tolerance_metric * 100))
+        logger.info("Pod moved {0}} ".format(len(metric.moved_pod_set)))
+        logger.info("Node drained {0}} ".format(len(metric.drained_node_set)))
+        logger.info("Run time {0} ".format(metric.run_time)
+        logger.info(f"Pod amount {len(metric.pods)}")
+        logger.info(f"Node amount {len(metric.nodes)}")
         move_script = '\n'.join(problem.script)
         full_script = (
             generate_compat_header() + 
             "####################################\n" +
-            print_metric(metric.node_utilization * 100, "Initial utilization") + 
-            print_metric(metric_new.node_utilization * 100, "Result utilization") + 
-            print_metric(metric.deployment_fault_tolerance_metric * 100, "Initial availability") + 
-            print_metric(metric_new.deployment_fault_tolerance_metric * 100, "Result availability") + 
+            print_metric(metric_start.node_utilization * 100, "Initial utilization") + 
+            print_metric(metric.node_utilization * 100, "Result utilization") + 
+            print_metric(metric_start.deployment_fault_tolerance_metric * 100, "Initial availability") + 
+            print_metric(metric.deployment_fault_tolerance_metric * 100, "Result availability") + 
             print_stats(metric, "Stats") +
             "####################################\n" +
             move_script)
