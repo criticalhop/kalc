@@ -105,12 +105,17 @@ class Metric():
         for node in self.nodes:
             if str(node.status._get_value()) == str(STATUS_NODE["Inactive"]):
                 continue
-            node.oversubscribe_cpu = node.currentFormalCpuConsumption._get_value() / \
-                node.cpuCapacity._get_value()
-            node.oversubscribe_mem = node.currentFormalMemConsumption._get_value() / \
-                node.memCapacity._get_value()
+            node.oversubscribe_cpu = float(node.currentFormalCpuConsumption._get_value()) / float(node.cpuCapacity._get_value())
+            print("node.oversubscribe cpu",  node.oversubscribe_cpu ," ", node.currentFormalCpuConsumption._get_value(), float(node.cpuCapacity._get_value()))
+            node.oversubscribe_mem = float(node.currentFormalMemConsumption._get_value())/float(node.memCapacity._get_value())
+            
+            print("node.oversubscribe mem ", node.oversubscribe_mem, " ",
+                  node.currentFormalMemConsumption._get_value(), float(node.memCapacity._get_value()))
+            
+
             node.oversubscribe = (
                 node.oversubscribe_cpu + node.oversubscribe_mem) / 2
+            print("node.oversubscribe", node.oversubscribe)
             node_oversubscribe += node.oversubscribe
             node_oversubscribe_mem += node.oversubscribe_mem
             node_oversubscribe_cpu += node.oversubscribe_cpu

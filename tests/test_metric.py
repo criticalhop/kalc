@@ -5,6 +5,7 @@ from kalc.model.kinds.Node import Node
 from kalc.model.kinds.Deployment import Deployment
 from kalc.misc.metrics import Metric
 from kalc.misc.cli_optimize import optimize_cluster
+from kalc.misc.const import *
 
 def test_faultTolerance():
     k = KubernetesCluster()
@@ -13,11 +14,12 @@ def test_faultTolerance():
     deploymentRange = 10
     for n in range(nodeRange):
         node = Node()
-        node.memCapacity = 20
-        node.cpuCapacity = 20
+        node.memCapacity = 50
+        print("cpu cap ", node.memCapacity._get_value())
+        node.cpuCapacity = 50
         nodes.append(node)
+        node.status = STATUS_NODE["Active"]
         k.state_objects.append(node)
-        # print(node.metadata_name)
 
     for d in range(1, deploymentRange):
         deployment = Deployment()
@@ -91,6 +93,7 @@ def test_metric_pod_progressive_sum():
         node.memCapacity = 20
         node.cpuCapacity = 20
         nodes.append(node)
+        node.status = STATUS_NODE["Active"]
         k.state_objects.append(node)
  
     deployment = Deployment()
