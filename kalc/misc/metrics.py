@@ -23,6 +23,9 @@ class Metric():
         # self.globalVar = next(filter(lambda x: isinstance(x, mGlobalVar.GlobalVar), object_space))
         # self.setUnusedRes()
 
+    def progressive_sum(self, n):
+        return n*(n+1)/2
+
     # todo repair
     def setUnusedRes(self):
         self.cpu_used = 0
@@ -46,6 +49,8 @@ class Metric():
         self.faultToleranceSquare = {}
 
         self.faultToleranceGeom = {}
+        self.progressive_pod_sum = 0
+
         for deployment in self.deployments:
             pods_at_node = {}
             faultToleranceSquare = 0
@@ -63,7 +68,8 @@ class Metric():
                     float(pods_at_node[nodeId]) / podAmount) ** 2
                 faultToleranceSquareHalfProgressive += (float(pods_at_node[nodeId]) / podAmount +
                                                         float(pods_at_node[nodeId]) / podAmount) ** 2
-
+                for i in range(int(pods_at_node[nodeId])):
+                    self.progressive_pod_sum += i + 1
                 faultToleranceGeom *= float(pods_at_node[nodeId]) / podAmount
             self.faultToleranceSquare[deployment._get_value()] = math.sqrt(
                 faultToleranceSquare)
