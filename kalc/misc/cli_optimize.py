@@ -23,7 +23,6 @@ L_DEPLOYMENTS = 1
 L_NODES = 2
 L_PODS = 3
 
-start_time = timeit.default_timer()
 
 def generate_hypothesys_combination(deployments, nodes):
     deployments_maxpods = []
@@ -96,6 +95,7 @@ def generate_hypothesys_combination(deployments, nodes):
 
 
 def optimize_cluster(clusterData=None):
+    start_time = timeit.default_timer()
     logger.warning("WARNING! Not taking into account service SLOs")
     update(clusterData)  # To reload from scratch...
 
@@ -149,11 +149,12 @@ def optimize_cluster(clusterData=None):
             continue
         metric.calc()
         metric.run_time = timeit.default_timer() - start_time
+        start_time = timeit.default_timer()
         logger.info("Result utilization {0:.1f}%".format(metric.node_utilization * 100))
         logger.info("Result availabilty metric {0:.1f} v.u.".format(metric.deployment_fault_tolerance_metric * 100))
-        logger.info("Pod moved {0}} ".format(len(metric.moved_pod_set)))
-        logger.info("Node drained {0}} ".format(len(metric.drained_node_set)))
-        logger.info("Run time {0} ".format(metric.run_time)
+        logger.info("Pod moved {0}".format(len(metric.moved_pod_set)))
+        logger.info("Node drained {0}".format(len(metric.drained_node_set)))
+        logger.info("Run time 🕐 {0:.0f}s".format(metric.run_time))
         logger.info(f"Pod amount {len(metric.pods)}")
         logger.info(f"Node amount {len(metric.nodes)}")
         move_script = '\n'.join(problem.script)
