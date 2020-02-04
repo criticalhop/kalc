@@ -76,6 +76,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.calc_PodsWithAntiaffinitySet_length = 0
         self.podsMatchedByAntiaffinity_length = 0
         self.metric = 0.0
+        self.metadata_namespace = "default"
 
     def hook_after_create(self, object_space):
         deployments = filter(lambda x: isinstance(x, Deployment), object_space)

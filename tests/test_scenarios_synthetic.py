@@ -22,7 +22,6 @@ import pytest
 from kalc.model.search import K8ServiceInterruptSearch
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
 from poodle import planned
 try:
     from tests.libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
@@ -134,6 +133,8 @@ def prepare_test_0_run_pods_no_eviction():
     k.state_objects.extend(create_objects)
     k._build_state()
     return k, k2
+
+"""
 
 @pytest.mark.debug(reason="this test is for debug perspective")
 def test_0_run_pods_no_eviction():
@@ -2644,3 +2645,5 @@ def test_48():
 #                 "Mark_node_outage_event"]
 #             not_assert_conditions = []
 #             assert_brake = checks_assert_conditions(k,k2,p,p2,assert_conditions,not_assert_conditions,DEBUG_MODE)
+
+"""
