@@ -1,6 +1,6 @@
 from poodle import schedule, xschedule
 from poodle.schedule import SchedulingError
-from kalc.model.system.math import permutation_list
+from kalc.misc.math import permutation_list
 
 class ProblemTemplate:
     def __init__(self, objectList=None):

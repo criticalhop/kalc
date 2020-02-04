@@ -71,9 +71,9 @@ class Metric():
                 for i in range(int(pods_at_node[nodeId])):
                     self.progressive_pod_sum += i + 1
                 faultToleranceGeom *= float(pods_at_node[nodeId]) / podAmount
-            self.faultToleranceSquare[deployment._get_value()] = math.sqrt(
+            self.faultToleranceSquare[deployment._get_value()] = math.sqrt( # pylint: disable=no-member
                 faultToleranceSquare)
-            self.faultToleranceGeom[deployment._get_value()] = math.pow(
+            self.faultToleranceGeom[deployment._get_value()] = math.pow( # pylint: disable=no-member
                 faultToleranceGeom, len(pods_at_node))
             deployment.metric = self.faultToleranceSquare[deployment._get_value(
             )]
