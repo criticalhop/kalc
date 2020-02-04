@@ -28,6 +28,7 @@ class ReplicaSet(ModularKind, Controller, HasLimitsRequests):
         self.spec_replicas = 0
         self.metadata_ownerReferences__kind = "NONE"
         self.metadata_ownerReferences__name = "NONE"
+        self.metadata_namespace = "default"
 
 
     def hook_after_create(self, object_space):

@@ -3,7 +3,7 @@ from kalc.misc.object_factory import labelFactory
 import string
 
 CPU_DIVISOR = 65
-MEM_DIVISOR = 200
+MEM_DIVISOR = 50 # 200
 
 from poodle.arithmetic import logSparseIntegerFactory
 for n in range(1,10000):

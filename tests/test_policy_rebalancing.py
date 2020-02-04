@@ -3,7 +3,6 @@ from libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_p
 
 from test_util import print_objects
 from libs_for_tests import prepare_yamllist_for_diff
-from kalc.model.search import HypothesisysNode, OptimisticRun
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.kinds.Service import Service
@@ -19,7 +18,7 @@ import inspect
 from kalc.model.search import *
 from kalc.misc.object_factory import labelFactory
 from click.testing import CliRunner
-from kalc.model.scenario import Scenario
+pass
 from poodle import planned
 from libs_for_tests import convert_space_to_yaml,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 from typing import Set
@@ -116,8 +115,8 @@ def test_stub_completion():
     d2.NumberOfPodsOnSameNodeForDeployment = 1
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 25
-    node_item.memCapacity = 25
+    node_item.cpuCapacity = 13
+    node_item.memCapacity = 13
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
@@ -130,10 +129,10 @@ def test_stub_completion():
     pod = build_running_pod_with_d(6,2,2,node_item,None,None,s1,pods)
     pod = build_running_pod_with_d(7,2,2,node_item,None,None,s2,pods)
     pod = build_running_pod_with_d(8,2,2,node_item,None,None,s2,pods)
-    pod = build_running_pod_with_d(9,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(10,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(11,2,2,node_item,None,None,s2,pods)
-    pod = build_running_pod_with_d(12,2,2,node_item,None,None,s2,pods)
+    # pod = build_running_pod_with_d(9,2,2,node_item,None,None,s1,pods)
+    # pod = build_running_pod_with_d(10,2,2,node_item,None,None,s1,pods)
+    # pod = build_running_pod_with_d(11,2,2,node_item,None,None,s2,pods)
+    # pod = build_running_pod_with_d(12,2,2,node_item,None,None,s2,pods)
          
     node_item = Node()
     node_item.metadata_name = "node 2"

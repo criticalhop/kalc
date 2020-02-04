@@ -39,6 +39,7 @@ class Service(ModularKind, HasLabel):
         self.amountOfPodsOnDifferentNodes = 0
         self.targetAmountOfPodsOnDifferentNodes = 0
         self.policy_antiaffinity_prefered = False    
+        self.metadata_namespace = "default"
     def __str__(self): return str(self.metadata_name)
 
     # def __repr__(self):

@@ -20,7 +20,7 @@ def ncr(n, r):
     return numer / denom
 
 combinations_list = []
-for i in range(10):
+for i in range(5):
     combinations0 = Combinations(i)
     combinations0.number = i
     combinations0.combinations = int(ncr(i,2))
@@ -45,11 +45,11 @@ def fact(n):
   
 def nPr(n, r):  
     
-    return math.floor(fact(n) /
+    return math.floor(fact(n) / # pylint: disable=no-member
                 fact(n - r))  
       
 permutation_list = []
-for i in range(10):
+for i in range(5):
     permutation0 = Permutations(i)
     permutation0.number = i
     permutation0.permutations = int(nPr(i,2))

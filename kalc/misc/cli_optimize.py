@@ -101,20 +101,23 @@ def optimize_cluster(clusterData=None):
 
     metric_start = Metric(kalc_state_objects)
     metric_start.calc()
+    success = False
 
     deployments = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects)) # to get amount of deployments
-    nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects))
+    nodes = list(filter(lambda x: isinstance(x, Node), kalc_state_objects)) # pylint: disable=undefined-variable
     comb_nodes_pods = generate_hypothesys_combination(deployments,nodes)
     index = 0
     for combination in comb_nodes_pods:
         index += 1
+        if index > runs: return success
+        success = False
         logzero.loglevel(40)
         update(clusterData) # To reload from scratch...
         logzero.loglevel(20)
         problem = Balance_pods_and_drain_node(kalc_state_objects)
         deployments_local = list(filter(lambda x: isinstance(x, Deployment), kalc_state_objects))
-        globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects))
-        pods_local = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects))
+        globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects)) # pylint: disable=undefined-variable
+        pods_local = list(filter(lambda x: isinstance(x, Pod), kalc_state_objects)) # pylint: disable=undefined-variable
         d_cand = []
         p_cand = []
         for d in deployments_local:
@@ -146,6 +149,11 @@ def optimize_cluster(clusterData=None):
             problem.xrun()
         except SchedulingError:
             logger.warning("Could not solve in this configuration, trying next...")
+            success = False
+            continue
+        if len(problem.script) == 0:
+            logger.error("Generated solution contains no actions")
+            success = False
             continue
         metric.calc()
         metric.run_time = timeit.default_timer() - start_time
@@ -170,11 +178,12 @@ def optimize_cluster(clusterData=None):
             move_script)
         scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
         logger.info("📜 Generated optimization script at %s" % scritpt_file)
+        success = True
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
             
             
-def run():
+def run():  # pylint: disable=function-redefined
     optimize_cluster(None)
 
 
