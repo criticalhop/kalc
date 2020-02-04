@@ -72,8 +72,8 @@ def test_metric_pod_progressive_sum():
     nodes = []
     for n in range(2):
         node = Node()
-        node.memCapacity = 20
-        node.cpuCapacity = 20
+        node.memCapacity = 16
+        node.cpuCapacity = 16
         nodes.append(node)
         k.state_objects.append(node)
  
