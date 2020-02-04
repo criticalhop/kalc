@@ -27,7 +27,7 @@ sha = git.Repo(search_parent_directories=True).head.object.hexsha
 LIN_COUNT = int(os.getenv("POODLE_LIN_COUNT", "99"))
 
 
-@pytest.mark.skip(reason="big test")  
+@pytest.mark.skip(reason="big test") # FIXME 
 def test_node_killer_pod_with_service():
 #   value                         start   stop    step
     node_amount_range =       range(2,     5,     2)
@@ -123,23 +123,23 @@ def test_node_killer_pod_with_service():
                 print("-------------------")
                 print_objects(k.state_objects)
 
+                # E:127,121: Undefined variable 'HypothesisysNode' (undefined-variable)
+                # GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNode,),{})
 
-                GenClass = type("{0}_{1}_{2}_{3}".format(inspect.stack()[1].function, node_amount, pod_amount, sha[:7]),(HypothesisysNode,),{})
+                # p = GenClass(k.state_objects)
 
-                p = GenClass(k.state_objects)
-
-                try:
-                    p.run(timeout=1000, sessionName=f"gen_test_{node_capacity}_{node_amount}_{pod_amount}_L{LIN_COUNT}")
-                except Exception as e:
-                    print("run break exception is \n",e)
-                    assert False
-                # print_plan(p)
-                end = time.time()
-                print("-------------------")
-                print("timer :", int(end - start))
-                if p.plan != None:
-                    csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "ok"])
-                else:
-                    csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "empty_plan"])
-                csvfile.flush()
-                print("-------------------")
+                # try:
+                #     p.run(timeout=1000, sessionName=f"gen_test_{node_capacity}_{node_amount}_{pod_amount}_L{LIN_COUNT}")
+                # except Exception as e:
+                #     print("run break exception is \n",e)
+                #     assert False
+                # # print_plan(p)
+                # end = time.time()
+                # print("-------------------")
+                # print("timer :", int(end - start))
+                # if p.plan != None:
+                #     csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "ok"])
+                # else:
+                #     csvwriter.writerow([node_amount, node_capacity, pod_amount, int(end - start), "empty_plan"])
+                # csvfile.flush()
+                # print("-------------------")

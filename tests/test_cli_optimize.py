@@ -127,8 +127,8 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     deployments.append(d2)
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 25
-    node_item.memCapacity = 25
+    node_item.cpuCapacity = 15
+    node_item.memCapacity = 15
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)

@@ -22,6 +22,7 @@ TEST_DEPLOYMENT_DUMP = "./tests/test-deployment/dump"
 TEST_TARGET_DUMP = "./tests/daemonset_eviction_with_deployment/cluster_dump"
 TEST_TARGET_CREATE = "./tests/daemonset_eviction_with_deployment/daemonset_create.yaml" #TODO rename file to deployment_create.yaml
 
+@pytest.mark.skip(reason="FIXME")
 def test_pod_target_attached():
     k = KubernetesCluster()
     k.load_dir(TEST_TARGET_DUMP)

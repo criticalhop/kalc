@@ -56,6 +56,7 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
         s.status = STATUS_SERV["Started"]
     return pod_running_1
 
+@pytest.mark.skip(reason="FIXME")
 def test_stub_completion():
     # create elementary cluster
     # render cluster

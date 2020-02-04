@@ -34,8 +34,8 @@ def test_convert_cpu_toobig():
 
 
 def test_convert_mem_normal():
-    x = memConvertToAbstractProblem("1000Mi")
-    assert x == int(1000 / MEM_DIVISOR)
+    x = memConvertToAbstractProblem("500Mi")
+    assert x == int(500 / MEM_DIVISOR)
 
 def test_convert_mem_toosmall():
     try:
