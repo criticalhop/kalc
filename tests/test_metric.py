@@ -18,12 +18,12 @@ def test_faultTolerance():
         node.cpuCapacity = 10
         nodes.append(node)
         k.state_objects.append(node)
-        # print(node.metadata_name)
+        print(node.metadata_name._get_value())
 
     for d in range(1, deploymentRange):
         deployment = Deployment()
         k.state_objects.append(deployment)
-        # print("d num ", d)
+        print("d num ", d)
         for p in range(d):
             pod = Pod()
             pod.currentFormalCpuConsumption = 1
@@ -60,26 +60,12 @@ def test_faultTolerance():
     metric.nodeOverSubscribe()
 
     print("\nNode oversubscribe\n")
-    testMetric = [0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    # print("\nNode oversubscribe\n")
-    # TODO: fixme here >>>
-    # testMetric = [0.8, 0.7, 0.6] #, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    testMetric = [0.8, 0.7, 0.6]
     nodes = filter(lambda x: isinstance(x, Node), k.state_objects)
     for idx, mS in list(enumerate(nodes))[:3]:
-        print("{0} {2} - {1}".format(idx, mS.oversubscribe, mS.metadata_name._get_value()))
-        # assert mS.oversubscribe == testMetric[idx]
-
-    print("deployment total ", metric.deployment_fault_tolerance_metric)
-    print("nodes metric ", metric.node_oversubscribe)
-
-
-    print("cpu free", metric.cpu_free, " ", metric.cpu_total, " ", metric.cpu_used)
-    print("mem free", metric.mem_free, " ", metric.mem_total, " ", metric.mem_used)
-    # assert metric.deployment_fault_tolerance_metric == 0.7029209037250538
-    print("pod sum", metric.progressive_pod_sum)
-    # assert metric.node_oversubscribe == 0.3375
-    # assert metric.deployment_fault_tolerance_metric == 0.816091448406487
-    # assert metric.node_oversubscribe == 0.5000000000000001
+        # print("{0} {2} - {1}".format(idx, mS.oversubscribe, mS.metadata_name._get_value()))
+        assert mS.oversubscribe == testMetric[idx]
+    assert metric.deployment_fault_tolerance_metric == 0.816091448406487
 
 def test_metric_pod_progressive_sum():
     k = KubernetesCluster()
