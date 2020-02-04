@@ -36,6 +36,7 @@ class DaemonSet(ModularKind, Controller, HasLimitsRequests):
         self.priorityClass = zeroPriorityClass
         self.status = STATUS_DAEMONSET_PENDING
         self.metadata_uid = "undefined"
+        self.metadata_namespace = "default"
         #TODO make support for DAEMONSET start status while loading
 
     def hook_after_create(self, object_space):

@@ -65,9 +65,9 @@ class Metric():
                                                         float(pods_at_node[nodeId]) / podAmount) ** 2
 
                 faultToleranceGeom *= float(pods_at_node[nodeId]) / podAmount
-            self.faultToleranceSquare[deployment._get_value()] = math.sqrt(
+            self.faultToleranceSquare[deployment._get_value()] = math.sqrt( # pylint: disable=no-member
                 faultToleranceSquare)
-            self.faultToleranceGeom[deployment._get_value()] = math.pow(
+            self.faultToleranceGeom[deployment._get_value()] = math.pow( # pylint: disable=no-member
                 faultToleranceGeom, len(pods_at_node))
             deployment.metric = self.faultToleranceSquare[deployment._get_value(
             )]
@@ -140,9 +140,9 @@ class Metric():
         self.mem_free = self.mem_total - self.mem_used
         self.cpu_free = self.cpu_total - self.cpu_used
 
-        self.mem_utilisation = float(self.mem_used) / float(self.mem_total)
-        self.cpu_utilisation = float(self.cpu_used) / float(self.cpu_total)
-        self.node_utilisation = (self.mem_utilisation + self.cpu_utilisation) / 2.0
+        self.mem_utilization = float(self.mem_used) / float(self.mem_total)
+        self.cpu_utilization = float(self.cpu_used) / float(self.cpu_total)
+        self.node_utilization = (self.mem_utilization + self.cpu_utilization) / 2.0
 
     def total_metric(self):
         self.metric = (self.RMSD + self.MD + self.node_oversubscribe + self.deployment_fault_tolerance_metric + self.deployment_fault_tolerance_metric_bad)/5

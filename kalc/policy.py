@@ -23,10 +23,10 @@ class PolicyImplementer:
         return super().__setattr__(name, val)
     
     def __getattr__(self, name):
-        if name.startswith("_") or not self._sealed: return super().__getattr__(name)
+        if name.startswith("_") or not self._sealed: return super().__getattribute__(name)
         if name in self._instantiated_policies and self._instantiated_policies[name].TYPE == "property":
             self._instantiated_policies[name]._get()
-        return super().__getattr__(name)
+        return super().__getattribute__(name)
     
     def apply(self, kube: KubernetesModel):
         # TODO HERE: hypothesis must be added in some fashion to allow running combinations:
@@ -93,6 +93,12 @@ class BasePolicy:
         self.target_object = obj
         self.hypotheses = {}
         self.state_objects = state_objects
+
+    def register_goal(self, a, op, b):
+        raise NotImplementedError()
+    
+    def register(self):
+        raise NotImplementedError()
 
     def register_hypothesis(self, name, func, order=1):
         self.hypotheses[name] = [order, name, func]
