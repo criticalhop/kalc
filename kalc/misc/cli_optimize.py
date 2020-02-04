@@ -94,7 +94,7 @@ def generate_hypothesys_combination(deployments, nodes):
     return comb_nodes_pods_fitered
 
 
-def optimize_cluster(clusterData=None):
+def optimize_cluster(clusterData=None, runs=999999):
     start_time = timeit.default_timer()
     logger.warning("WARNING! Not taking into account service SLOs")
     update(clusterData)  # To reload from scratch...
