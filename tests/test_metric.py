@@ -18,12 +18,12 @@ def test_faultTolerance():
         node.cpuCapacity = 10
         nodes.append(node)
         k.state_objects.append(node)
-        print(node.metadata_name._get_value())
+        # print(node.metadata_name._get_value())
 
     for d in range(1, deploymentRange):
         deployment = Deployment()
         k.state_objects.append(deployment)
-        print("d num ", d)
+        # print("d num ", d)
         for p in range(d):
             pod = Pod()
             pod.currentFormalCpuConsumption = 1
@@ -59,7 +59,7 @@ def test_faultTolerance():
     
     metric.nodeOverSubscribe()
 
-    print("\nNode oversubscribe\n")
+    # print("\nNode oversubscribe\n")
     testMetric = [0.8, 0.7, 0.6]
     nodes = filter(lambda x: isinstance(x, Node), k.state_objects)
     for idx, mS in list(enumerate(nodes))[:3]:
