@@ -20,6 +20,10 @@ def test_convert_cpu_normal():
     x = cpuConvertToAbstractProblem("500m")
     assert x == int(500 / util.CPU_DIVISOR)
 
+def test_convert_mem_normal():
+    x = memConvertToAbstractProblem("500Mi")
+    assert x == int(500 / util.MEM_DIVISOR)
+
 def test_convert_cpu_toosmall():
     try:
         x = cpuConvertToAbstractProblem("-1")
@@ -31,11 +35,6 @@ def test_convert_cpu_toobig():
         x = cpuConvertToAbstractProblem("100000000000m")
     except AssertionError:
         pass
-
-
-def test_convert_mem_normal():
-    x = memConvertToAbstractProblem("500Mi")
-    assert x == int(500 / MEM_DIVISOR)
 
 def test_convert_mem_toosmall():
     try:
