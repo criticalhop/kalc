@@ -138,18 +138,18 @@ def prepare_synthetic_data():
     deployments.append(d2)
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 25
-    node_item.memCapacity = 25
+    node_item.cpuCapacity = 16
+    node_item.memCapacity = 16
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(0,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(1,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(2,2,2,node_item,d,None,None,pods)
-    pod = build_running_pod_with_d(3,2,2,node_item,None,None,None,pods)
-    pod = build_running_pod_with_d(4,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(5,2,2,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(0,1,1,node_item,d,None,s1,pods)
+    pod = build_running_pod_with_d(1,1,1,node_item,d,None,s1,pods)
+    pod = build_running_pod_with_d(2,1,1,node_item,d,None,None,pods)
+    pod = build_running_pod_with_d(3,1,1,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(4,1,1,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(5,1,1,node_item,None,None,s1,pods)
 
 
          
@@ -161,8 +161,8 @@ def prepare_synthetic_data():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(6,2,2,node_item,d2,None,s1,pods)
-    pod = build_running_pod_with_d(7,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(6,1,1,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(7,1,1,node_item,d2,None,s1,pods)
 
     
     node_item = Node()
@@ -173,7 +173,7 @@ def prepare_synthetic_data():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(8,2,2,node_item,d,None,None,pods)
+    pod = build_running_pod_with_d(8,1,1,node_item,d,None,None,pods)
 
     node_item = Node()
     node_item.metadata_name = "node 4"
@@ -320,7 +320,7 @@ def test_synthetic_drain_1_node():
     assert_conditions = ["Reqested_amount_of_nodes_drained",\
                      "DrainNode"]
     not_assert_conditions = []  
-    test_case.globalVar.target_amount_of_recomendations = 1
+    test_case.globalVar.target_amount_of_recomendations = 0
     test_case.globalVar.target_NodesDrained_length = 1 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
 

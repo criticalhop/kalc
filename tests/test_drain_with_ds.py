@@ -148,18 +148,18 @@ def prepare_synthetic_data():
 
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 25
-    node_item.memCapacity = 25
+    node_item.cpuCapacity =16
+    node_item.memCapacity = 16
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(0,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(1,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(2,2,2,node_item,d,None,None,pods)
-    pod = build_running_pod_with_d(3,2,2,node_item,None,None,None,pods)
-    pod = build_running_pod_with_d(4,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(5,2,2,node_item,None,ds,s1,pods)
+    pod = build_running_pod_with_d(0,1,1,node_item,d,None,s1,pods)
+    pod = build_running_pod_with_d(1,1,1,node_item,d,None,s1,pods)
+    pod = build_running_pod_with_d(2,1,1,node_item,d,None,None,pods)
+    pod = build_running_pod_with_d(3,1,1,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(4,1,1,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(5,1,1,node_item,None,ds,s1,pods)
 
 
          
@@ -171,8 +171,8 @@ def prepare_synthetic_data():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(6,2,2,node_item,d2,None,s1,pods)
-    pod = build_running_pod_with_d(7,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(6,1,1,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(7,1,1,node_item,d2,None,s1,pods)
     
     node_item = Node()
     node_item.metadata_name = "node 3"
@@ -182,8 +182,8 @@ def prepare_synthetic_data():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(8,2,2,node_item,d,None,None,pods)
-    pod = build_running_pod_with_d(9,2,2,node_item,None,ds,None,pods)
+    pod = build_running_pod_with_d(8,1,1,node_item,d,None,None,pods)
+    pod = build_running_pod_with_d(9,1,1,node_item,None,ds,None,pods)
     node_item = Node()
     node_item.metadata_name = "node 4"
     node_item.cpuCapacity = 8
@@ -212,7 +212,7 @@ def prepare_synthetic_data():
     node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(10,2,2,nodes[1],None,ds,s1,pods)
+    pod = build_running_pod_with_d(10,1,1,nodes[1],None,ds,s1,pods)
 
     for node in nodes:
         globalVar.amountOfNodes += 1

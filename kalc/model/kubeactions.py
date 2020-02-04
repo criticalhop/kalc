@@ -486,12 +486,12 @@ class KubernetesModel(ProblemTemplate):
     def clear_node_of_pod(self, 
         pod: "Pod"):
         assert pod.calc_checked_pods_from_point_of_this_pod_length == 0
-        assert pod.calc_checked_pods_from_point_of_that_pod_length == 0
+        assert pod.calc_checked_pods_from_point_of_other_pod_length == 0
         pod.toNode = Node.NODE_NULL
         pod.toNode_is_checked = False
 
     @planned(cost=1)
-    def clean_lists_for_pod_move(self,
+    def clean_lists_for_this_pod_move(self,
         pod:"Pod",
         pod_c: "Pod"):
         assert pod_c in pod.calc_checked_pods_from_point_of_this_pod
@@ -499,12 +499,12 @@ class KubernetesModel(ProblemTemplate):
         pod.calc_checked_pods_from_point_of_this_pod_length -= 1
 
     @planned(cost=1)
-    def clean_lists_for_pod_move(self,
+    def clean_lists_for_other_pod_move(self,
         pod:"Pod",
         pod_c: "Pod"):
-        assert pod_c in pod.calc_checked_pods_from_point_of_that_pod
-        pod.calc_checked_pods_from_point_of_that_pod.remove(pod_c)
-        pod.calc_checked_pods_from_point_of_that_pod_length -= 1
+        assert pod_c in pod.calc_checked_pods_from_point_of_other_pod
+        pod.calc_checked_pods_from_point_of_other_pod.remove(pod_c)
+        pod.calc_checked_pods_from_point_of_other_pod_length -= 1
 
     @planned(cost=1)
     def check_toNode_for_pod_move_for_this_pod(self,
@@ -517,24 +517,24 @@ class KubernetesModel(ProblemTemplate):
             this_pod.calc_checked_pods_from_point_of_this_pod_length += 1
     
     @planned(cost=1)
-    def check_toNode_for_pod_move_for_that_pod_with_antiaffinity(self,
+    def check_toNode_for_pod_move_for_other_pod_with_antiaffinity(self,
         this_pod:"Pod",
         pod_a: "Pod"):
-        if pod_a not in this_pod.calc_checked_pods_from_point_of_that_pod and \
+        if pod_a not in this_pod.calc_checked_pods_from_point_of_other_pod and \
             this_pod not in pod_a.podsMatchedByAntiaffinity:
             assert pod_a.atNode == this_pod.toNode
-            this_pod.calc_checked_pods_from_point_of_that_pod.add(pod_a)
-            this_pod.calc_checked_pods_from_point_of_that_pod_length += 1
+            this_pod.calc_checked_pods_from_point_of_other_pod.add(pod_a)
+            this_pod.calc_checked_pods_from_point_of_other_pod_length += 1
     
     @planned(cost=1)
-    def check_toNode_for_pod_move_for_that_pod_without_antiaffinity(self,
+    def check_toNode_for_pod_move_for_other_pod_without_antiaffinity(self,
         this_pod:"Pod",
         pod_a: "Pod"):
-        if pod_a not in this_pod.calc_checked_pods_from_point_of_that_pod:
+        if pod_a not in this_pod.calc_checked_pods_from_point_of_other_pod:
             assert pod_a.affinity_set == False
             assert pod_a.atNode == this_pod.toNode
-            this_pod.calc_checked_pods_from_point_of_that_pod.add(pod_a)
-            this_pod.calc_checked_pods_from_point_of_that_pod_length += 1
+            this_pod.calc_checked_pods_from_point_of_other_pod.add(pod_a)
+            this_pod.calc_checked_pods_from_point_of_other_pod_length += 1
 
     @planned(cost=1)
     def calc_enumerate_daemonset_at_node(self,
@@ -551,7 +551,7 @@ class KubernetesModel(ProblemTemplate):
         pod:"Pod",
         to_node:"Node"):
         assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
-        assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods - to_node.daemonset_pod_list_length
+        assert pod.calc_checked_pods_from_point_of_other_pod_length == to_node.amountOfActivePods - to_node.daemonset_pod_list_length
         assert to_node == pod.toNode
         assert to_node.isNull == False
         pod.toNode_is_checked = True
@@ -563,7 +563,7 @@ class KubernetesModel(ProblemTemplate):
     #     to_node:"Node",
     #     next_pod: "Pod"):
     #     assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
-    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+    #     assert pod.calc_checked_pods_from_point_of_other_pod_length == to_node.amountOfActivePods
     #     assert to_node == pod.toNode
     #     assert globalVar.pods_toNode_checked == False
     #     assert globalVar.current_pod == pod
@@ -578,7 +578,7 @@ class KubernetesModel(ProblemTemplate):
     #     globalVar: GlobalVar,
     #     to_node:"Node"):
     #     assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
-    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+    #     assert pod.calc_checked_pods_from_point_of_other_pod_length == to_node.amountOfActivePods
     #     assert to_node == pod.toNode
     #     pod.toNode_is_checked = True
     #     assert globalVar.current_pod == pod
@@ -591,7 +591,7 @@ class KubernetesModel(ProblemTemplate):
     #     pod:"Pod",
     #     to_node:"Node"):
     #     assert pod.calc_checked_pods_from_point_of_this_pod_length == pod.podsMatchedByAntiaffinity_length
-    #     assert pod.calc_checked_pods_from_point_of_that_pod_length == to_node.amountOfActivePods
+    #     assert pod.calc_checked_pods_from_point_of_other_pod_length == to_node.amountOfActivePods
     #     assert to_node == pod.toNode
     #     pod.toNode_is_checked = True
 
