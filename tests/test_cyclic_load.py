@@ -70,6 +70,7 @@ def prepare_test_single_node_dies_2pod_killed_service_outage():
     # print_objects(k.state_objects)
     return k, globalVar, n
 
+@pytest.mark.skip(reason="FIXME")
 def test_cyclic_load_1():
     k, globalVar, n = prepare_test_single_node_dies_2pod_killed_service_outage()
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
@@ -94,6 +95,7 @@ def test_cyclic_load_1():
 
     # assert yamlState == yamlState2 # TODO: this does not entirely match, but close...
     
+@pytest.mark.skip(reason="FIXME")
 def test_cyclic_create():
     k, globalVar, n = prepare_test_single_node_dies_2pod_killed_service_outage()
     yamlStateBeforeCreate = convert_space_to_yaml(k.state_objects, wrap_items=True)

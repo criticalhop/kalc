@@ -23,6 +23,7 @@ from typing import Set
 from tests.test_util import print_objects
 # from libs_for_tests import convert_space_to_yaml_dump
 
+@pytest.mark.skip(reason="customer data needed for this test")
 def test_client_yaml():
     optimize_cluster(open("./tests/client_yaml.yaml").read())
 

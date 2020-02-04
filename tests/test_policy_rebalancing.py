@@ -115,8 +115,8 @@ def test_stub_completion():
     d2.NumberOfPodsOnSameNodeForDeployment = 1
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 25
-    node_item.memCapacity = 25
+    node_item.cpuCapacity = 13
+    node_item.memCapacity = 13
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
@@ -129,10 +129,10 @@ def test_stub_completion():
     pod = build_running_pod_with_d(6,2,2,node_item,None,None,s1,pods)
     pod = build_running_pod_with_d(7,2,2,node_item,None,None,s2,pods)
     pod = build_running_pod_with_d(8,2,2,node_item,None,None,s2,pods)
-    pod = build_running_pod_with_d(9,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(10,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(11,2,2,node_item,None,None,s2,pods)
-    pod = build_running_pod_with_d(12,2,2,node_item,None,None,s2,pods)
+    # pod = build_running_pod_with_d(9,2,2,node_item,None,None,s1,pods)
+    # pod = build_running_pod_with_d(10,2,2,node_item,None,None,s1,pods)
+    # pod = build_running_pod_with_d(11,2,2,node_item,None,None,s2,pods)
+    # pod = build_running_pod_with_d(12,2,2,node_item,None,None,s2,pods)
          
     node_item = Node()
     node_item.metadata_name = "node 2"
