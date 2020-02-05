@@ -321,6 +321,7 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar
          ):
         assert globalVar.block_policy_calculated == False
+        # assert selectedNode.isNull == False
         # assert globalVar.block_node_outage_in_progress == False
         pod1.nodeSelectorList.add(selectedNode) 
 
@@ -652,7 +653,7 @@ class KubernetesModel(ProblemTemplate):
         # globalVar.pods_toNode_checked = False
         # globalVar.pods_toNode_cleared = False
 
-        # self.script.append(move_pod_with_deployment_script_simple(pod, nodeTo, self.objectList))
+        self.script.append(move_pod_with_deployment_script_simple(pod, nodeFrom, nodeTo, self.objectList))
 
         # if podStarted.memRequest == -1 and podStarted.memLimit > -1:
         #     podStarted.memRequest = podStarted.memLimit
@@ -722,7 +723,7 @@ class KubernetesModel(ProblemTemplate):
     #     pod.status = STATUS_POD["Outaged"]
     #     pod.atNode = Node.NODE_NULL
 
-
+        self.script.append(move_pod_with_deployment_script_simple(pod, nodeFrom, nodeTo, self.objectList))
     # @planned(cost=1)
     # def remove_one_more_daemonset_pod_from_drained_node(self,
     #     pod: "Pod",

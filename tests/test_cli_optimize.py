@@ -169,7 +169,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.cpuCapacity = 8
     node_item.memCapacity = 8
     node_item.isNull = False
-    node_item.status = STATUS_NODE["Active"]
+    node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     
 
@@ -179,7 +179,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.cpuCapacity = 8
     node_item.memCapacity = 8
     node_item.isNull = False
-    node_item.status = STATUS_NODE["Active"]
+    node_item.status = STATUS_NODE["New"]
     nodes.append(node_item)
     
 
@@ -271,7 +271,9 @@ def test_optimmize_cluster():
     k, p, test_case = prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods()
     yaml_dump = convert_space_to_yaml_dump(k.state_objects)
     # print("Running with", yaml_dump)
-    assert optimize_cluster(yaml_dump, runs=1)
+    optimize_cluster(yaml_dump, runs=2)
+    # print_objects(k.state_objects)
+    # print_plan(p)
 
 # def test_optimmize_cluster_load():
 #     assert optimize_cluster(None, runs=1)

@@ -1,5 +1,5 @@
 from kalc.interactive import *
-from kalc.model.search import Balance_pods_and_drain_node
+from kalc.model.search import Optimize_directly
 from kalc.model.kinds.Deployment import Deployment
 from kalc.misc.script_generator import generate_compat_header, print_metric, print_stats
 from collections import defaultdict
@@ -97,22 +97,21 @@ def generate_hypothesys_combination(deployments, nodes):
 def generate_combinations(move_bound,drain_bound,drain_step):
     recomendations_list = []
     move_list = []
-    for i in range(1,move_bound,1):
+    for i in range(move_bound):
         item = [i,'move']
         move_list.append(item)
 
     drain_list = []
-    for d in range(1,drain_bound,1):
+    for d in range(drain_bound):
         item = [d,'drain']
         drain_list.append(item)
 
     combinations_list = []
-    next_drain = 1
-    for i in range(0,move_bound,1):
-        combinations_list.append(move_list[i])
-        if i % drain_step == 0 and drain_bound > 0 and next_drain <= drain_bound:
-            print("next_drain = ", next_drain)
-            print("drain_list = ", drain_list)
+    next_drain = 0
+    for i in range(move_bound):
+        if i > 0:
+            combinations_list.append(move_list[i])
+        if i % drain_step == 0 and drain_bound > 0 and next_drain < drain_bound-1:
             combinations_list.append(drain_list[next_drain])
             next_drain += 1
     return combinations_list 
@@ -132,26 +131,24 @@ def optimize_cluster(clusterData=None, runs=999999):
     combinations_list = generate_combinations(recomendations_bound,drain_bound,drain_step)
     index = 0
     for combination in combinations_list:
-        print('combination = ', combination)
-        index += 1
-        if index > runs: return success
+        if index >= runs:  return success
         success = False
         logzero.loglevel(40)
         update(clusterData) # To reload from scratch...
         logzero.loglevel(20)
-        problem = Balance_pods_and_drain_node(kalc_state_objects)
+        problem = Optimize_directly(kalc_state_objects)
         globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects)) # pylint: disable=undefined-variable
         
         if combination[C_TYPE] == 'move':
             globalVar_local.target_amount_of_recomendations = combination[C_NUM] 
             globalVar_local.target_NodesDrained_length = 0
-            logger.debug("Recomendations : %s" % ', '.join(combination[C_NUM]))
-            logger.debug("Drained nodes: {}".format(", ".join(0)))
+            logger.debug("Recomendations : " + str(combination[C_NUM]))
+            logger.debug("Drained nodes : " + '0')
         if combination[C_TYPE] == 'drain':
             globalVar_local.target_amount_of_recomendations = 0 
             globalVar_local.target_NodesDrained_length = combination[C_NUM]
-            logger.debug("Recomendations : %s" % ', '.join(0))
-            logger.debug("Drained nodes: {}".format(", ".join(combination[C_NUM])))
+            logger.debug("Recomendations : " + '0')
+            logger.debug("Drained nodes : " + str(combination[C_NUM]))
         logger.info("-----------------------------------------------------------------------------------")
         metric_new = Metric(kalc_state_objects)
         kalc_state_objects.append(metric_new)
@@ -180,11 +177,12 @@ def optimize_cluster(clusterData=None, runs=999999):
             print_stats(metric, "Stats") +
             "####################################\n" +
             move_script)
-        scritpt_file = f"./kalc_optimize_{combination[L_TARGETS]}_{combination[L_PODS]}_{combination[L_NODES]}_{index}.sh"
+        scritpt_file = f"./kalc_optimize_{index}.sh"
         logger.info("📜 Generated optimization script at %s" % scritpt_file)
         success = True
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
+        index += 1
             
             
 def run():  # pylint: disable=function-redefined
