@@ -141,8 +141,6 @@ def optimize_cluster(clusterData=None, runs=999999):
         problem = Optimize_directly(kalc_state_objects)
         globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects)) # pylint: disable=undefined-variable
         
-        logger.debug("Deployment candidates: %s" % ', '.join(d_cand))
-        logger.debug("Pod candidates: {}".format(", ".join(p_cand)))
         logger.info("Initial utilization {0:.1f}%".format(metric_start.node_utilization*100))
         logger.info("Initial availabilty risk metric {0:.1f} v.u.".format(metric_start.progressive_pod_sum))
         if combination[C_TYPE] == 'move':
