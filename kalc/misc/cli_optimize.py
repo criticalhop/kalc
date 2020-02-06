@@ -138,7 +138,7 @@ def optimize_cluster(clusterData=None, runs=999999):
         logger.debug("Deployment candidates: %s" % ', '.join(d_cand))
         logger.debug("Pod candidates: {}".format(", ".join(p_cand)))
         logger.info("Initial utilization {0:.1f}%".format(metric_start.node_utilization*100))
-        logger.info("Initial availabilty metric {0:.1f} v.u.".format(metric_start.deployment_fault_tolerance_metric * 100))
+        logger.info("Initial availabilty risk metric {0:.1f} v.u.".format(metric_start.progressive_pod_sum))
         logger.info("-----------------------------------------------------------------------------------")
         logger.info(" ".join([str(x) for x in ["--- Solving case for deployment_amount =", combination[L_TARGETS], ", pod_amount =", combination[L_PODS], ", drain nodes = ", combination[L_NODES], " ---"]]))
         logger.info("-----------------------------------------------------------------------------------")
@@ -159,7 +159,7 @@ def optimize_cluster(clusterData=None, runs=999999):
         metric.run_time = timeit.default_timer() - start_time
         start_time = timeit.default_timer()
         logger.info("Result utilization {0:.1f}%".format(metric.node_utilization * 100))
-        logger.info("Result availabilty metric {0:.1f} v.u.".format(metric.deployment_fault_tolerance_metric * 100))
+        logger.info("Result availabilty risk metric {0:.1f} v.u.".format(metric.progressive_pod_sum))
         logger.info("Pod moved {0}".format(len(metric.moved_pod_set)))
         logger.info("Node drained {0}".format(len(metric.drained_node_set)))
         logger.info("Run time 🕐 {0:.0f}s".format(metric.run_time))
@@ -171,8 +171,8 @@ def optimize_cluster(clusterData=None, runs=999999):
             "####################################\n" +
             print_metric(metric_start.node_utilization * 100, "Initial utilization") + 
             print_metric(metric.node_utilization * 100, "Result utilization") + 
-            print_metric(metric_start.deployment_fault_tolerance_metric * 100, "Initial availability") + 
-            print_metric(metric.deployment_fault_tolerance_metric * 100, "Result availability") + 
+            print_metric(metric_start.progressive_pod_sum, "Initial availability risk") + 
+            print_metric(metric.progressive_pod_sum, "Result availability risk") + 
             print_stats(metric, "Stats") +
             "####################################\n" +
             move_script)

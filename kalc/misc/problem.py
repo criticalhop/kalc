@@ -66,7 +66,8 @@ class ProblemTemplate:
                 space=list(self.__dict__.values())+self.objectList,
                 goal=lambda:(self.goal()),
                 timeout=timeout,
-                sessionName=sessionName
+                sessionName=sessionName,
+                config="lmcount-alt5-simple"
                 #exit=self.exit
             )
         except SchedulingError:
