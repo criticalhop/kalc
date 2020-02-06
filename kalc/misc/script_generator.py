@@ -3,11 +3,15 @@ import json
 from kalc.model.kinds.Node import Node
 import kalc.model.kinds.ReplicaSet as rs
 import kalc.model.kinds.Deployment as d
+from kalc.misc.metrics import Metric
 import time
 
-def script_remove_node(node):
+
+def script_remove_node(node, object_space):
     if hasattr(node, "_variable_mode") and node._variable_mode: 
-        return "" # FIX for https://github.com/criticalhop/poodle/issues/59
+        return ""  # FIX for https://github.com/criticalhop/poodle/issues/59
+    metric = next(filter(lambda x: isinstance(x, Metric), object_space))
+    metric.drained_node_set.add(node)
     return f'echo "Please remove node \'{str(node.metadata_name)}\'"' 
 
 
@@ -27,23 +31,52 @@ def get_deployment_from_pod(pod, object_space):
     return None
 
 
-def move_pod_with_deployment_script_simple(pod, node_to: Node, object_space):
+def move_pod_with_deployment_script_simple(pod, node_from: Node, node_to: Node, object_space):
     if hasattr(pod, "_variable_mode") and pod._variable_mode: 
         return "" # FIX for https://github.com/criticalhop/poodle/issues/59
     d = get_deployment_from_pod(pod, object_space)
+    metric = next(filter(lambda x: isinstance(x, Metric), object_space))
+    metric.moved_pod_set.add(pod)
+    metric.touched_node_set.add(node_to)
+    metric.touched_node_set.add(node_from)
     return move_pod_with_deployment_script(pod, node_to, d,
         get_rs_from_deployment(d, object_space))
+
+
+def print_metric(value: float, metric_name: str):
+    utilisation = value 
+    metric_info = f"""echo {metric_name} {utilisation:.1f}
+"""
+    return metric_info
+
+def print_stats(metric: Metric, metric_name: str):
+    metric_info = ""
+    if len(metric.drained_node_set) > 0:
+        metric_info += f"""echo Node drained {len(metric.drained_node_set)}
+"""
+    if len(metric.moved_pod_set) > 0:
+        metric_info += f"""echo Pod moved {len(metric.moved_pod_set)}
+"""
+    if metric.run_time > 0:
+        metric_info += "echo Run time {0:.0f}s\n".format(metric.run_time)
+    if len(metric.pods) > 0:
+        metric_info += f"""echo Pod amount {len(metric.pods)}
+"""
+    if len(metric.nodes) > 0:
+        metric_info += f"""echo Node amount {len(metric.nodes)}
+"""
+    return metric_info
 
 
 def move_pod_with_deployment_script(pod, node_to: Node, deployment, replicaset):
     "Move the pod when the pod is part of Deployment"
     # 1. Dump full original Deployment
     deployment_name = str(deployment.metadata_name)
-    deployment_namespace = deployment.metadata_namespace._get_value()
+    deployment_namespace = str(deployment.metadata_namespace)
     replicaset_name = str(replicaset.metadata_name)
-    replicaset_namespace =  replicaset.metadata_namespace._get_value()
+    replicaset_namespace =  str(replicaset.metadata_namespace)
     pod_original_name = str(pod.metadata_name)
-    pod_namespace =  pod.metadata_namespace._get_value()
+    pod_namespace =  str(pod.metadata_namespace)
     pod_new_name = f"{pod_original_name}-kalcmoved-" + str(int(time.time()))
 
     assert str(pod_namespace) == str(deployment_namespace), "{0}({1}) == {2}({3})".format(pod_namespace, pod_original_name, deployment_namespace, deployment_name)

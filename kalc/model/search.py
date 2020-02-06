@@ -5,7 +5,7 @@ from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.system.primitives import TypeServ
-from kalc.model.system.math import Permutations, permutation_list
+from kalc.misc.math import Permutations, permutation_list
 from kalc.model.system.Controller import Controller
 from kalc.model.system.primitives import Label
 from kalc.model.kinds.Service import Service
@@ -207,49 +207,49 @@ class Check_node_outage_and_service_restart(Check_services_restart):
                                 self.globalVar.is_node_disrupted == True
 
 
-class HypothesisysClean(K8ServiceInterruptSearch):
-    def Remove_pod_common_part(self,
-        pod: Pod,
-        scheduler: Scheduler):
-        pod.status = STATUS_POD["Outaged"]
-        scheduler.podQueue.remove(pod)
-        scheduler.queueLength -= 1
-        scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
-        scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
+# class HypothesisysClean(K8ServiceInterruptSearch):
+#     def Remove_pod_common_part(self,
+#         pod: Pod,
+#         scheduler: Scheduler):
+#         pod.status = STATUS_POD["Outaged"]
+#         scheduler.podQueue.remove(pod)
+#         scheduler.queueLength -= 1
+#         scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
+#         scheduler.queueLength -= 0 #TODO: remove this once replaced with costs
 
-    @planned(cost=100)
-    def Remove_pod_from_the_cluster(self,
-                service : Service,
-                pod : Pod,
-                scheduler : Scheduler,
-                globalVar : GlobalVar
-            ):
-        # This action helps to remove pods from queue 
-        assert globalVar.block_node_outage_in_progress == False
-        assert pod.status == STATUS_POD["Pending"]
-        assert pod in scheduler.podQueue
-        if pod.hasService == True:
-            assert pod in service.podList
-            if service.amountOfActivePods + service.amountOfPodsInQueue == 1:
-                    service.status = STATUS_SERV["Interrupted"]
-                    globalVar.is_service_disrupted = True
-                    self.Remove_pod_common_part()
-            else:
-                assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
-                self.Remove_pod_common_part()
-        else:
-            assert pod.hasService == False
-            self.Remove_pod_common_part()
+#     @planned(cost=100)
+#     def Remove_pod_from_the_cluster(self,
+#                 service : Service,
+#                 pod : Pod,
+#                 scheduler : Scheduler,
+#                 globalVar : GlobalVar
+#             ):
+#         # This action helps to remove pods from queue 
+#         assert globalVar.block_node_outage_in_progress == False
+#         assert pod.status == STATUS_POD["Pending"]
+#         assert pod in scheduler.podQueue
+#         if pod.hasService == True:
+#             assert pod in service.podList
+#             if service.amountOfActivePods + service.amountOfPodsInQueue == 1:
+#                     service.status = STATUS_SERV["Interrupted"]
+#                     globalVar.is_service_disrupted = True
+#                     self.Remove_pod_common_part()
+#             else:
+#                 assert service.amountOfActivePods + service.amountOfPodsInQueue > 1
+#                 self.Remove_pod_common_part()
+#         else:
+#             assert pod.hasService == False
+#             self.Remove_pod_common_part()
     
-class HypothesisysNodeAndService(HypothesisysClean):
-    goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
-                        self.globalVar.is_node_disrupted == True and \
-                        self.globalVar.is_service_disrupted == True
+# class HypothesisysNodeAndService(HypothesisysClean):
+#     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
+#                         self.globalVar.is_node_disrupted == True and \
+#                         self.globalVar.is_service_disrupted == True
 
 
-class HypothesisysNode(HypothesisysClean):
-    goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
-                           self.globalVar.is_node_disrupted == True 
+# class HypothesisysNode(HypothesisysClean):
+#     goal = lambda self: self.scheduler.status == STATUS_SCHED["Clean"] and \
+#                            self.globalVar.is_node_disrupted == True 
 
 # class Antiaffinity_implement(KubernetesModel):
 
@@ -442,17 +442,17 @@ class HypothesisysNode(HypothesisysClean):
 #         assert node.status == STATUS_NODE["New"]
 #         node.status = STATUS_NODE["Active"]
 
-class Antiaffinity_set(KubernetesModel):
+# class Antiaffinity_set(KubernetesModel):
 
-    goal = lambda self: self.service.antiaffinity_prefered_policy_set == True
+#     goal = lambda self: self.service.antiaffinity_prefered_policy_set == True
 
-    @planned(cost=1)
-    def mark_antiaffinity_set(self,
-        pod1: Pod,
-        pod2: Pod):
-        assert pod2.isSearched == True
-        assert pod1 in pod2.podsMatchedByAntiaffinity
-        pod1.antiaffinity_set = True
+#     @planned(cost=1)
+#     def mark_antiaffinity_set(self,
+#         pod1: Pod,
+#         pod2: Pod):
+#         assert pod2.isSearched == True
+#         assert pod1 in pod2.podsMatchedByAntiaffinity
+#         pod1.antiaffinity_set = True
 
 class Antiaffinity_met(KubernetesModel):
     @planned(cost=1)
@@ -495,14 +495,14 @@ class Antiaffinity_met(KubernetesModel):
             pod2: Pod,
             node_of_pod2: Node,
             scheduler: Scheduler):
-        assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
-        assert pod2 not in pod1.calc_antiaffinity_preferred_pods_list
-        assert node_of_pod2 == pod2.atNode
-        assert pod1.atNode in node_of_pod2.different_than
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        pod1.not_on_same_node.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list_length += 1
+        if pod2 not in pod1.calc_antiaffinity_preferred_pods_list:
+            assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
+            assert node_of_pod2 == pod2.atNode
+            assert pod1.atNode in node_of_pod2.different_than
+            assert scheduler.status == STATUS_SCHED["Clean"]
+            pod1.not_on_same_node.add(pod2)
+            pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
+            pod1.calc_antiaffinity_preferred_pods_list_length += 1
         
 class Antiaffinity_check_basis(KubernetesModel):
     # @planned(cost=1)
@@ -1206,30 +1206,30 @@ class Antiaffinity_check_with_limited_number_of_pods_with_add_node(Antiaffinity_
         globalVar.amountOfNodes += 1
 
 class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods):
-    @planned(cost=1)
-    def calculate_daemonset_pods(self,
-        daemonset: DaemonSet,
-        node: Node,
-        pod: Pod):
-        if pod not in node.daemonset_podList:
-            assert pod in daemonset.podList
-            assert pod.atNode == node
-            node.daemonset_podList.add(pod)
-            node.daemonset_podList_length += 1
+    # @planned(cost=1)
+    # def calculate_daemonset_pods(self,
+    #     daemonset: DaemonSet,
+    #     node: Node,
+    #     pod: Pod):
+    #     if pod not in node.daemonset_podList:
+    #         assert pod in daemonset.podList
+    #         assert pod.atNode == node
+    #         node.daemonset_podList.add(pod)
+    #         node.daemonset_podList_length += 1
 
 
     @planned(cost=1)
     def DrainNode(self,
         node: "Node",
         globalVar: GlobalVar):
-        assert node.amountOfActivePods - node.daemonset_podList_length == 0
+        assert node.amountOfActivePods - node.daemonset_pod_list_length == 0
         assert node.status == STATUS_NODE["Active"]
         assert node.isNull == False
         globalVar.NodesDrained_length += 1
         globalVar.NodesDrained.add(node)
         node.status = STATUS_NODE["Inactive"]
 
-        self.script.append(script_remove_node(node))
+        self.script.append(script_remove_node(node, self.objectList))
     
     @planned(cost=1)
     def Reqested_amount_of_nodes_drained(self,
@@ -1255,4 +1255,49 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
     #     for what1, what2 in self.generated_goal_eq:
     #         assert what1 == what2
 
-    
+# class Calculate_metrics(Balance_pods_and_drain_node):
+#     @planned(cost=1)
+#     def add_node(self,
+#             node : Node,
+#             globalVar: GlobalVar):
+#         assert node.status == STATUS_NODE["New"]
+#         node.status = STATUS_NODE["Active"]
+#         globalVar.amountOfNodes += 1
+
+#     @planned(cost=1)
+#     def calc_reduce_metric_1_node_usage(self,
+#         globalVar: GlobalVar,
+#         node: Node):
+#         assert (node.memCapacity - node.currentFormalMemConsumption) * 10 / node.memCapacity < globalVar. 
+#         assert 
+
+#         assert globalVar.
+
+class Optimize_directly(Balance_pods_and_drain_node):
+    def generate_goal(self):
+        self.generated_goal_in = []
+        self.generated_goal_eq = []
+        for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+                self.generated_goal_eq.append([globalVar.target_amount_of_recomendations_reached, True])
+        for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+            self.generated_goal_eq.append([globalVar.target_NodesDrained_length_reached, True])
+        # for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+        #     self.generated_goal_eq.append([globalVar.pods_toNode_cleared, True])
+        # for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+        #     self.generated_goal_eq.append([globalVar.pods_toNode_checked, True])
+            
+    @planned(cost=1)
+    def reached_reqested_amount_of_recomendations(self,
+        globalVar: GlobalVar):
+        assert globalVar.target_amount_of_recomendations <= globalVar.found_amount_of_recomendations
+        globalVar.target_amount_of_recomendations_reached = True
+
+
+class Optimize_directly_with_add_node(Optimize_directly):
+    @planned(cost=1)
+    def Add_node(self,
+            node : Node,
+            globalVar: GlobalVar):
+        assert node.status == STATUS_NODE["New"]
+        node.status = STATUS_NODE["Active"]
+        globalVar.amountOfNodes += 1

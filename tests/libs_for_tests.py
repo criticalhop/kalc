@@ -214,12 +214,12 @@ def run_dir_wo_cli(DUMP_local,CHANGE_local):
     print("#### print_objects after run: ######")
     print(print_objects(k.state_objects))
 
-def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
-    k = KubernetesCluster()
-    args = []
-    args.extend(calculate_variable_dump(DUMP_with_command_local))
-    args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
-    run(args) # pylint: disable=no-value-for-parameter
+# def run_cli_directly(DUMP_with_command_local,CHANGE_with_command_local):
+#     k = KubernetesCluster()
+#     args = []
+#     args.extend(calculate_variable_dump(DUMP_with_command_local))
+#     args.extend(calculate_variable_change(CHANGE_DEPLOYMENT_HIGH))
+#     run(args) # pylint: disable=no-value-for-parameter
 
 def run_cli_invoke(DUMP_with_command_local,CHANGE_with_command_local):
     runner = CliRunner()
@@ -307,7 +307,7 @@ def render_object(ob, load_logic_support=True):
         }
     }
     if hasattr(ob, 'metadata_namespace'):
-        d["metadata"]["namespace"] = ob.metadata_namespace._get_value()
+        d["metadata"]["namespace"] = str(ob.metadata_namespace)
     # Pod
     if str(type(ob).__name__) == "Pod":
         # TODO: add hasDeployment to annotations
@@ -580,16 +580,19 @@ def render_object(ob, load_logic_support=True):
     ob.asdict = d
     return [d] + ret_obj
 
-def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_names=False):
+def prepare_yamllist_for_diff(ylist: List[str], ignore_replica_set=True, ignore_names=False, ignore_numbers=True):
     if ignore_replica_set: ylist = [x for x in ylist if not "ReplicaSet" in x ]
-    slist = ''.join([i if not i.isdigit() else "N" for i in repr(ylist).replace("\\n", "\\n\n")])
+    slist = repr(ylist).replace("\\n", "\\n\n")
+    if ignore_numbers:
+        slist = ''.join([i if not i.isdigit() else "N" for i in slist])
+    slist = re.sub(r'-\d{9}', '-XXX', slist)
     if ignore_names:
         slist = re.sub(r'name:.+', 'name: XXX', slist)
     return slist
 
 def checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,test_mode,debug_mode):
     p.run(timeout=999000)
-    print_plan(p)
+    # print_plan(p)
     return_brake = True
     brake = False
     if p.plan:

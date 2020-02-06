@@ -11,11 +11,12 @@ from kalc.model.system.primitives import Label
 from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.misc.const import *
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
+from kalc.misc.selector import nativeSelector
 # import kalc.cli as cli
 import sys
 import random
 from typing import Set
-
+from logzero import logger
 
 class Pod(ModularKind, HasLabel, HasLimitsRequests):
     # k8s attributes
@@ -23,7 +24,6 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     spec_priorityClassName: str
     spec_nodeSelector: Set[Label]
     metadata_name: str
-
     metadata_namespace: str
     # internal model attributes
     ownerReferences: Controller
@@ -91,12 +91,22 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     affinity_labels_length: int
     is_checked_as_source_for_labels: bool
     is_checked_as_target_for_labels: bool
-
+    nodes_acceptable_by_antiaffinity: Set["Node"]
+    nodes_acceptable_by_antiaffinity_length: int
+    calc_checked_pods_from_point_of_this_pod: Set["Pod"]
+    calc_checked_pods_from_point_of_this_pod_length: int
+    calc_checked_pods_from_point_of_other_pod: Set["Pod"]
+    calc_checked_pods_from_point_of_other_pod_length: int
+    toNode_is_checked: bool
+    # is_first: bool
+    # is_last: bool
+    # next_pod: "Pod"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.priority = 0
         self.spec_priorityClassName = "KUBECTL-VAL-NONE"
+        self.metadata_namespace = "default"
         self.priorityClass = zeroPriorityClass
         # self.targetService = mservice.Service.SERVICE_NULL
         self.toNode = mnode.Node.NODE_NULL
@@ -133,7 +143,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length = 0
         self.calc_cantmatch_antiaffinity = False
         self.calc_cantmatch_affinity = False
-
+        self.nodes_acceptable_by_antiaffinity_length = 0
+        self.calc_checked_pods_from_point_of_this_pod_length = 0
+        self.calc_checked_pods_from_point_of_other_pod_length = 0
+        self.spec_nodeName = ''
+        self.toNode_is_checked = False
 
 
 
@@ -152,6 +166,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
+                # self.toNode = node
                 node.allocatedPodList.add(self)
                 node.allocatedPodList_length += 1
                 node.directedPodList.add(self)
@@ -173,28 +188,31 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         
         services = filter(lambda x: isinstance(x, mservice.Service), object_space)
         for service in services:
-            if len(service.spec_selector._get_value()) and \
-                    set(service.spec_selector._get_value())\
-                        .issubset(set(self.metadata_labels._get_value())):
-                # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
-                service.podList.add(self)
-                target_service_of_pod_localVar = service
-                self.hasService = True
-                if list(service.metadata_labels._get_value()):
-                    if self.status._property_value == STATUS_POD["Running"]:
-                        service.amountOfActivePods += 1
-                        service.status = STATUS_SERV["Started"]
-                        assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
-                else:
-                    pass
-                    # cli.click.echo("    - WRN: no label for service %s" % str(service.metadata_name))
+            if hasattr(service, "yaml_orig") and hasattr(self, "yaml_orig"):
+                selector = ""
+                if (not 'selector' in service.yaml_orig["spec"]) or (not 'labels' in self.yaml_orig["metadata"]):
+                    continue
+                for key in service.yaml_orig["spec"]["selector"]:
+                    selector += "{0}={1},".format(key, service.yaml_orig["spec"]["selector"][key])
+                selector = selector[:-1]
+                if nativeSelector.match_label(selector, self.yaml_orig["metadata"]["labels"]):
+                    # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
+                    service.podList.add(self)
+                    self.hasService = True
+                    if list(service.metadata_labels._get_value()):
+                        if self.status._property_value == STATUS_POD["Running"]:
+                            service.amountOfActivePods += 1
+                            service.status = STATUS_SERV["Started"]
+                            assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
+                    else:
+                        pass
+                        # cli.click.echo("    - WRN: no label for service %s" % str(service.metadata_name))
         if self.status._property_value == STATUS_POD["Pending"]:
             scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
             scheduler.queueLength += 1
             assert getint(scheduler.queueLength) < POODLE_MAXLIN, "Queue length overflow {0} < {1}".format(getint(scheduler.queueLength), POODLE_MAXLIN)
             scheduler.podQueue.add(self)
             scheduler.status = STATUS_SCHED["Changed"]
-            target_service_of_pod_localVar.amountOfPodsInQueue += 1
 
         nodes = list(filter(lambda x: isinstance(x, mnode.Node), object_space))
         for node in nodes:

@@ -1,3 +1,4 @@
+# pylint: skip-file
 import sys
 from poodle import planned
 from logzero import logger
@@ -22,8 +23,8 @@ class LabelsModel(ProblemTemplate):
     def add_goal_eq(self, goal_entry):
         self.goals_eq.extend(goal_entry)
 
-    def generate_goal(self):
-        self.add_goal_in([[self.pod1, pod2.podsMatchedByAntiaffinity]])
+    # def generate_goal(self):
+    #     self.add_goal_in([[self.pod1, pod2.podsMatchedByAntiaffinity]])
 
     def goal(self):
         if self.goals_in:
