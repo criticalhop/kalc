@@ -91,7 +91,16 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
     affinity_labels_length: int
     is_checked_as_source_for_labels: bool
     is_checked_as_target_for_labels: bool
-
+    nodes_acceptable_by_antiaffinity: Set["Node"]
+    nodes_acceptable_by_antiaffinity_length: int
+    calc_checked_pods_from_point_of_this_pod: Set["Pod"]
+    calc_checked_pods_from_point_of_this_pod_length: int
+    calc_checked_pods_from_point_of_other_pod: Set["Pod"]
+    calc_checked_pods_from_point_of_other_pod_length: int
+    toNode_is_checked: bool
+    # is_first: bool
+    # is_last: bool
+    # next_pod: "Pod"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -134,7 +143,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         self.nodesThatHaveAllocatedPodsThatHaveAntiaffinityWithThisPod_length = 0
         self.calc_cantmatch_antiaffinity = False
         self.calc_cantmatch_affinity = False
+        self.nodes_acceptable_by_antiaffinity_length = 0
+        self.calc_checked_pods_from_point_of_this_pod_length = 0
+        self.calc_checked_pods_from_point_of_other_pod_length = 0
         self.spec_nodeName = ''
+        self.toNode_is_checked = False
 
 
 
@@ -153,6 +166,7 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         for node in nodes:
             if str(node.metadata_name) == str(self.spec_nodeName):
                 self.atNode = node
+                # self.toNode = node
                 node.allocatedPodList.add(self)
                 node.allocatedPodList_length += 1
                 node.directedPodList.add(self)

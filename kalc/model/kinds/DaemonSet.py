@@ -79,6 +79,8 @@ class DaemonSet(ModularKind, Controller, HasLimitsRequests):
                 for node in nodes:
                     if node.metadata_name._get_value() == pod.spec_nodeName._get_value():
                         pod.toNode = node
+                        node.daemonset_pod_list_length += 1
+                        node.daemonset_pod_list.add(pod)
                 # self.check_pod(pod, object_space)
 
     def hook_after_apply(self, object_space):
