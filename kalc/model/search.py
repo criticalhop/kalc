@@ -495,14 +495,14 @@ class Antiaffinity_met(KubernetesModel):
             pod2: Pod,
             node_of_pod2: Node,
             scheduler: Scheduler):
-        assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
-        assert pod2 not in pod1.calc_antiaffinity_preferred_pods_list
-        assert node_of_pod2 == pod2.atNode
-        assert pod1.atNode in node_of_pod2.different_than
-        assert scheduler.status == STATUS_SCHED["Clean"]
-        pod1.not_on_same_node.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
-        pod1.calc_antiaffinity_preferred_pods_list_length += 1
+        if pod2 not in pod1.calc_antiaffinity_preferred_pods_list:
+            assert pod2 in pod1.podsMatchedByAntiaffinityPrefered
+            assert node_of_pod2 == pod2.atNode
+            assert pod1.atNode in node_of_pod2.different_than
+            assert scheduler.status == STATUS_SCHED["Clean"]
+            pod1.not_on_same_node.add(pod2)
+            pod1.calc_antiaffinity_preferred_pods_list.add(pod2)
+            pod1.calc_antiaffinity_preferred_pods_list_length += 1
         
 class Antiaffinity_check_basis(KubernetesModel):
     # @planned(cost=1)
@@ -1222,7 +1222,7 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
     def DrainNode(self,
         node: "Node",
         globalVar: GlobalVar):
-        assert node.amountOfActivePods == 0
+        assert node.amountOfActivePods - node.daemonset_pod_list_length == 0
         assert node.status == STATUS_NODE["Active"]
         assert node.isNull == False
         globalVar.NodesDrained_length += 1
@@ -1255,4 +1255,49 @@ class Balance_pods_and_drain_node(Antiaffinity_check_with_limited_number_of_pods
     #     for what1, what2 in self.generated_goal_eq:
     #         assert what1 == what2
 
-    
+# class Calculate_metrics(Balance_pods_and_drain_node):
+#     @planned(cost=1)
+#     def add_node(self,
+#             node : Node,
+#             globalVar: GlobalVar):
+#         assert node.status == STATUS_NODE["New"]
+#         node.status = STATUS_NODE["Active"]
+#         globalVar.amountOfNodes += 1
+
+#     @planned(cost=1)
+#     def calc_reduce_metric_1_node_usage(self,
+#         globalVar: GlobalVar,
+#         node: Node):
+#         assert (node.memCapacity - node.currentFormalMemConsumption) * 10 / node.memCapacity < globalVar. 
+#         assert 
+
+#         assert globalVar.
+
+class Optimize_directly(Balance_pods_and_drain_node):
+    def generate_goal(self):
+        self.generated_goal_in = []
+        self.generated_goal_eq = []
+        for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+                self.generated_goal_eq.append([globalVar.target_amount_of_recomendations_reached, True])
+        for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+            self.generated_goal_eq.append([globalVar.target_NodesDrained_length_reached, True])
+        # for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+        #     self.generated_goal_eq.append([globalVar.pods_toNode_cleared, True])
+        # for globalVar in filter(lambda p: isinstance(p, GlobalVar), self.objectList):
+        #     self.generated_goal_eq.append([globalVar.pods_toNode_checked, True])
+            
+    @planned(cost=1)
+    def reached_reqested_amount_of_recomendations(self,
+        globalVar: GlobalVar):
+        assert globalVar.target_amount_of_recomendations <= globalVar.found_amount_of_recomendations
+        globalVar.target_amount_of_recomendations_reached = True
+
+
+class Optimize_directly_with_add_node(Optimize_directly):
+    @planned(cost=1)
+    def Add_node(self,
+            node : Node,
+            globalVar: GlobalVar):
+        assert node.status == STATUS_NODE["New"]
+        node.status = STATUS_NODE["Active"]
+        globalVar.amountOfNodes += 1

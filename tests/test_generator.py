@@ -72,6 +72,12 @@ def test_get_fullscript():
     p.metadata_name = "test-pod-1"
     p.cpuRequest = 2
     p.memRequest = 2
+    p_a = Pod()
+    p_a.status = STATUS_POD["Running"]
+    p_a.metadata_name = "test-pod-2"
+    p_a.cpuRequest = 2
+    p_a.memRequest = 2
+
     n_orig = Node("orgi")
     n = Node()
     p.nodeSelectorList.add(n)
@@ -93,8 +99,17 @@ def test_get_fullscript():
     d = Deployment()
     d.metadata_name = "dep-test1"
     d.podList.add(p)
+    d.podList.add(p_a)
     p.hasDeployment = True
+    p_a.hasDeployment = True
+    p.podsMatchedByAntiaffinity.add(p_a)
+    p.podsMatchedByAntiaffinity_length += 1
+    p_a.podsMatchedByAntiaffinity.add(p)
+    p_a.podsMatchedByAntiaffinity_length += 1
+    d.amountOfActivePods += 1
+    
     p.atNode = n_orig
+    p_a.atNode = n_orig
 
     rs = ReplicaSet()
     rs.metadata_name = "rs-test1"
@@ -102,12 +117,12 @@ def test_get_fullscript():
     # typically, you can find correct replicaSet by ownerReferences
     # TODO: create utililty function to do that 
 
-    k.state_objects.extend([d, n, p, rs])
+    k.state_objects.extend([d, n, p, p_a, rs, d])
 
     prob = Balance_pods_and_drain_node(k.state_objects)
     s = k.scheduler
     g = k.globalvar
-    prob.MoveRunningPodToAnotherNode(p, n_orig, n, s, g)
+    prob.move_pod_recomendation_reason_antiaffinity(p, p_a, n_orig, n, s, g, d)
 
     assert len(prob.script)
 

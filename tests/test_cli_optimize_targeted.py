@@ -3,6 +3,7 @@ import sys
 sys.path.append('./tests/')
 from test_util import print_objects
 from libs_for_tests import prepare_yamllist_for_diff
+from kalc.model.search import OptimisticRun, Optimize_directly
 from kalc.model.system.Scheduler import Scheduler
 from kalc.model.system.globals import GlobalVar
 from kalc.model.kinds.Service import Service
@@ -23,8 +24,10 @@ from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,pr
 import kalc.misc.util
 from typing import Set
 
-DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
-
+DEBUG_MODE = 0 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
+TEST_VU = "/home/vasily/CLIENT_DATA/test1"
+TEST_DEMO = "./cluster_dump2"
+TEST_CLUSTER_FOLDER = TEST_DEMO
 
 def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, pods):
     pod_running_1 = Pod()
@@ -34,6 +37,7 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
     pod_running_1.cpuLimit = 1
     pod_running_1.memLimit = 1
     pod_running_1.atNode = atNode
+    pod_running_1.toNode = atNode
     pod_running_1.status = STATUS_POD["Running"]
     pod_running_1.hasDeployment = False
     pod_running_1.hasService = False
@@ -42,6 +46,13 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
     atNode.currentFormalCpuConsumption += cpuRequest
     atNode.currentFormalMemConsumption += memRequest
     atNode.amountOfActivePods += 1
+    atNode.allocatedPodList.add(pod_running_1)
+    atNode.allocatedPodList_length += 1
+    atNode.directedPodList.add(pod_running_1)
+    atNode.directedPodList_length += 1
+    pod_running_1.toNode = Node.NODE_NULL
+
+    
     pods.append(pod_running_1)
     if d is not None:
         d.podList.add(pod_running_1)
@@ -88,7 +99,7 @@ class StateSet():
     deployments: []
 
 
-def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
+def prepare_synthetic_data():
     # Initialize scheduler, globalvar
     k = KubernetesCluster()
     scheduler = next(filter(lambda x: isinstance(x, Scheduler), k.state_objects))
@@ -127,18 +138,18 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     deployments.append(d2)
     node_item = Node()
     node_item.metadata_name = "node 1"
-    node_item.cpuCapacity = 15
-    node_item.memCapacity = 15
+    node_item.cpuCapacity = 17
+    node_item.memCapacity = 17
     node_item.isNull = False
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(0,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(1,2,2,node_item,d,None,s1,pods)
-    pod = build_running_pod_with_d(2,2,2,node_item,d,None,None,pods)
-    pod = build_running_pod_with_d(3,2,2,node_item,None,None,None,pods)
-    pod = build_running_pod_with_d(4,2,2,node_item,None,None,s1,pods)
-    pod = build_running_pod_with_d(5,2,2,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(0,1,1,node_item,d,None,s1,pods)
+    pod = build_running_pod_with_d(1,1,1,node_item,d,None,s1,pods)
+    pod = build_running_pod_with_d(2,1,1,node_item,d,None,None,pods)
+    pod = build_running_pod_with_d(3,1,1,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(4,1,1,node_item,None,None,s1,pods)
+    pod = build_running_pod_with_d(5,1,1,node_item,None,None,s1,pods)
 
 
          
@@ -150,8 +161,8 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(12,2,2,node_item,d2,None,s1,pods)
-    pod = build_running_pod_with_d(13,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(6,1,1,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(7,1,1,node_item,d2,None,s1,pods)
 
     
     node_item = Node()
@@ -162,7 +173,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(16,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(8,1,1,node_item,d,None,None,pods)
 
     node_item = Node()
     node_item.metadata_name = "node 4"
@@ -201,33 +212,43 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
             if node != node2:
                 node2.different_than.add(node)
 
-#     pods[0].antiaffinity_set = True
-#     pods[0].podsMatchedByAntiaffinity.add(pods[1])
-#     pods[0].podsMatchedByAntiaffinity.add(pods[2])
-#     pods[0].podsMatchedByAntiaffinity.add(pods[12])
-#     pods[0].podsMatchedByAntiaffinity_length = 3
-#     pods[0].target_number_of_antiaffinity_pods = 3
+    pods[0].antiaffinity_set = True
+    pods[0].podsMatchedByAntiaffinity.add(pods[1])
+    pods[0].podsMatchedByAntiaffinity.add(pods[2])
+    pods[0].podsMatchedByAntiaffinity.add(pods[8])
+    pods[0].podsMatchedByAntiaffinity_length = 3
+    pods[0].target_number_of_antiaffinity_pods = 3
 
-#     pods[1].antiaffinity_set = True
-#     pods[1].podsMatchedByAntiaffinity.add(pods[0])
-#     pods[1].podsMatchedByAntiaffinity.add(pods[2])
-#     pods[1].podsMatchedByAntiaffinity.add(pods[12])
-#     pods[1].podsMatchedByAntiaffinity_length = 3
-#     pods[1].target_number_of_antiaffinity_pods = 3
+    pods[1].antiaffinity_set = True
+    pods[1].podsMatchedByAntiaffinity.add(pods[0])
+    pods[1].podsMatchedByAntiaffinity.add(pods[2])
+    pods[1].podsMatchedByAntiaffinity.add(pods[6])
+    pods[1].podsMatchedByAntiaffinity_length = 3
+    pods[1].target_number_of_antiaffinity_pods = 3
 
-#     pods[2].antiaffinity_set = True
-#     pods[2].podsMatchedByAntiaffinity.add(pods[1])
-#     pods[2].podsMatchedByAntiaffinity.add(pods[0])
-#     pods[2].podsMatchedByAntiaffinity.add(pods[12])
-#     pods[2].podsMatchedByAntiaffinity_length = 3
-#     pods[2].target_number_of_antiaffinity_pods = 3
+    pods[2].antiaffinity_set = True
+    pods[2].podsMatchedByAntiaffinity.add(pods[1])
+    pods[2].podsMatchedByAntiaffinity.add(pods[0])
+    pods[2].podsMatchedByAntiaffinity.add(pods[8])
+    pods[2].podsMatchedByAntiaffinity_length = 3
+    pods[2].target_number_of_antiaffinity_pods = 3
 
-#     pods[12].antiaffinity_set = True
-#     pods[12].podsMatchedByAntiaffinity.add(pods[1])
-#     pods[12].podsMatchedByAntiaffinity.add(pods[2])
-#     pods[12].podsMatchedByAntiaffinity.add(pods[0])
-#     pods[12].podsMatchedByAntiaffinity_length = 3
-#     pods[12].target_number_of_antiaffinity_pods = 3
+    pods[8].antiaffinity_set = True
+    pods[8].podsMatchedByAntiaffinity.add(pods[1])
+    pods[8].podsMatchedByAntiaffinity.add(pods[2])
+    pods[8].podsMatchedByAntiaffinity.add(pods[0])
+    pods[8].podsMatchedByAntiaffinity_length = 3
+    pods[8].target_number_of_antiaffinity_pods = 3
+
+    pods[6].antiaffinity_set = True
+    pods[6].podsMatchedByAntiaffinity.add(pods[7])
+    pods[6].podsMatchedByAntiaffinity_length = 1
+    pods[6].target_number_of_antiaffinity_pods = 1
+
+    pods[7].antiaffinity_set = True
+    pods[7].podsMatchedByAntiaffinity.add(pods[6])
+    pods[7].podsMatchedByAntiaffinity_length = 1
+    pods[7].target_number_of_antiaffinity_pods = 1
     
 #     nodes[2].isSearched = True
     # priority for pod-to-evict
@@ -248,9 +269,10 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     globalVar.target_DeploymentsWithAntiaffinity_length = 1
     globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
     globalVar.target_amountOfPodsWithAntiaffinity = 3
+    # globalVar.target_NodesDrained_length = 1
+    globalVar.target_amount_of_recomendations = 3
     
-    
-    class Antiaffinity_check_k1(Antiaffinity_check_with_limited_number_of_pods_with_add_node):
+    class Antiaffinity_check_k1(Optimize_directly):
         pass
 
     p = Antiaffinity_check_k1(k.state_objects)
@@ -263,17 +285,84 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     services = [s1,s2]
     test_case.services = services
     test_case.deployments = deployments
-#     print_objects(k.state_objects)
+    # print_objects(k.state_objects)
     return k, p, test_case
 
 
-def test_optimmize_cluster():
-    k, p, test_case = prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods()
-    yaml_dump = convert_space_to_yaml_dump(k.state_objects)
-    # print("Running with", yaml_dump)
-    optimize_cluster(yaml_dump, runs=2)
-    # print_objects(k.state_objects)
-    # print_plan(p)
+def test_synthetic_rebalance_3_pods():
+    k, p, test_case = prepare_synthetic_data()
 
-# def test_optimmize_cluster_load():
-#     assert optimize_cluster(None, runs=1)
+    assert_conditions = ["move_pod_recomendation_reason_antiaffinity",\
+                     "reached_reqested_amount_of_recomendations"]
+    not_assert_conditions = []
+    
+    # p.clear_node_of_pod(test_case.pods[0])
+    # p.SelectNode(test_case.pods[0],test_case.nodes[1],test_case.globalVar)
+    
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[1])
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[2])
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[8])
+
+    # p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[6])
+    # p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[7])
+
+    # p.check_node_for_pod_move_finished(test_case.pods[0],test_case.nodes[1])
+
+    # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[0],test_case.pods[1],test_case.nodes[0],test_case.nodes[1],test_case.scheduler, test_case.globalVar,test_case.deployments[0])
+    # p.clear_node_of_pod(test_case.pods[7])
+    # p.SelectNode(test_case.pods[7],test_case.nodes[2],test_case.globalVar)
+    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[7],test_case.pods[6])
+    # p.check_toNode_for_pod_move_for_that_pod_with_antiaffinity(test_case.pods[7],test_case.pods[8])
+    # p.check_node_for_pod_move_finished(test_case.pods[7],test_case.nodes[2])
+    # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[7],test_case.pods[6],test_case.nodes[1],test_case.nodes[2],test_case.scheduler, test_case.globalVar,test_case.deployments[1])
+
+
+    # p.reached_reqested_amount_of_recomendations(test_case.globalVar)
+    
+
+    assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)
+    brake = False
+    if p.plan:
+        for a in assert_conditions:
+            if not a in "\n".join([repr(x) for x in p.plan]):
+                brake = True
+        for a in not_assert_conditions:
+            if a in "\n".join([repr(x) for x in p.plan]):
+                brake = True
+    if not p.plan:
+        brake = True
+    assert brake == False
+    # if p.plan:
+    #     for a in p.plan:
+    #         print(a)
+    # else:
+    #     print('No solution')
+
+######################
+#### next test works , but for test one need to have folder with yamls of demo cluster  in variable TEST_CLUSTER_FOLDER ####
+#####################
+# def test_cluster_dump_rebalance_2_pods():
+#     k = KubernetesCluster()
+#     k.load_dir(TEST_CLUSTER_FOLDER)
+#     k._build_state()
+#     globalVar = next(filter(lambda x: isinstance(x, GlobalVar), k.state_objects))
+#     globalVar.target_amount_of_recomendations = 2
+#     class NewGoal(Optimize_directly):
+#         pass
+#     p = NewGoal(k.state_objects)
+#     # print_objects(k.state_objects)
+#     p.run(timeout=9000)
+#     assert_conditions = ["move_pod_recomendation_reason_antiaffinity",\
+#                      "check_node_for_pod_move_finished"]
+#     not_assert_conditions = []
+#     brake = False
+#     if p.plan:
+#         for a in assert_conditions:
+#             if not a in "\n".join([repr(x) for x in p.plan]):
+#                 brake = True
+#         for a in not_assert_conditions:
+#             if a in "\n".join([repr(x) for x in p.plan]):
+#                 brake = True
+#     if not p.plan:
+#         brake = True
+#     assert brake == False

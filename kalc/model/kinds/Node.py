@@ -35,6 +35,9 @@ class Node(ModularKind, HasLabel):
     directedPodList_length: int
     daemonset_podList: Set["Pod"]
     daemonset_podList_lenght: int
+    drain_started: bool
+    daemonset_pod_list: Set["Pod"]
+    daemonset_pod_list_length: int
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,6 +61,8 @@ class Node(ModularKind, HasLabel):
         self.oversubscribe = 0
         self.oversubscribe_mem = 0
         self.oversubscribe_cpu = 0
+        self.drain_started = False
+        self.daemonset_pod_list_length = 0
 
     def hook_after_create(self, object_space):
         globalVar = next(filter(lambda x: isinstance(x, GlobalVar), object_space))
