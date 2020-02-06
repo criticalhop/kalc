@@ -18,7 +18,7 @@ def test_faultTolerance():
         node.cpuCapacity = 10
         nodes.append(node)
         k.state_objects.append(node)
-        # print(node.metadata_name)
+        # print(node.metadata_name._get_value())
 
     for d in range(1, deploymentRange):
         deployment = Deployment()
@@ -60,25 +60,71 @@ def test_faultTolerance():
     metric.nodeOverSubscribe()
 
     # print("\nNode oversubscribe\n")
-    # TODO: fixme here >>>
-    testMetric = [0.8, 0.7, 0.6] #, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    testMetric = [0.8, 0.7, 0.6]
     nodes = filter(lambda x: isinstance(x, Node), k.state_objects)
     for idx, mS in list(enumerate(nodes))[:3]:
         # print("{0} {2} - {1}".format(idx, mS.oversubscribe, mS.metadata_name._get_value()))
         assert mS.oversubscribe == testMetric[idx]
-
-    # print("deployment total ", metric.deployment_fault_tolerance_metric)
-    # print("nodes metric ", metric.node_oversubscribe)
-
-
-    # print("cpu free", metric.cpu_free, " ", metric.cpu_total, " ", metric.cpu_used)
-    # print("mem free", metric.mem_free, " ", metric.mem_total, " ", metric.mem_used)
     assert metric.deployment_fault_tolerance_metric == 0.816091448406487
-    assert metric.node_oversubscribe == 0.5000000000000001
 
-ALL_RESOURCES = ["all", "node", "pc", "limitranges", "resourcequotas", "poddisruptionbudgets", "hpa"]
-PREFIX = "test"
+def test_metric_pod_progressive_sum():
+    k = KubernetesCluster()
+    nodes = []
+    for n in range(2):
+        node = Node()
+        node.memCapacity = 16
+        node.cpuCapacity = 16
+        nodes.append(node)
+        k.state_objects.append(node)
+ 
+    deployment = Deployment()
+    k.state_objects.append(deployment)
+    for p in range(3):
+        pod = Pod()
+        pod.currentFormalCpuConsumption = 1
+        pod.currentFormalMemConsumption = 1
+        k.state_objects.append(pod)
+        pod.atNode = nodes[0]
+        nodes[0].currentFormalCpuConsumption += 1
+        nodes[0].currentFormalMemConsumption += 1
+        deployment.podList.add(pod)
 
-# def test_metric_process():
-    # optimize_cluster(open("./tests/test1.yaml").read())
-    # optimize_cluster()
+    deployment = Deployment()
+    k.state_objects.append(deployment)
+    for p in range(2):
+        pod = Pod()
+        pod.currentFormalCpuConsumption = 1
+        pod.currentFormalMemConsumption = 1
+        k.state_objects.append(pod)
+        pod.atNode = nodes[0]
+        nodes[0].currentFormalCpuConsumption += 1
+        nodes[0].currentFormalMemConsumption += 1
+        deployment.podList.add(pod)
+    for p in range(2):
+        pod = Pod()
+        pod.currentFormalCpuConsumption = 1
+        pod.currentFormalMemConsumption = 1
+        k.state_objects.append(pod)
+        pod.atNode = nodes[1]
+        nodes[1].currentFormalCpuConsumption += 1
+        nodes[1].currentFormalMemConsumption += 1
+        deployment.podList.add(pod)
+
+    deployment = Deployment()
+    k.state_objects.append(deployment)
+    for p in range(5):
+        pod = Pod()
+        pod.currentFormalCpuConsumption = 1
+        pod.currentFormalMemConsumption = 1
+        k.state_objects.append(pod)
+        pod.atNode = nodes[1]
+        nodes[1].currentFormalCpuConsumption += 1
+        nodes[1].currentFormalMemConsumption += 1
+        deployment.podList.add(pod)
+
+    metric = Metric(k.state_objects)
+    metric.setUnusedRes()
+    metric.fault_tolerance()
+
+    assert metric.progressive_pod_sum == metric.progressive_sum(3) + metric.progressive_sum(2) + metric.progressive_sum(2) + metric.progressive_sum(5)
+    
