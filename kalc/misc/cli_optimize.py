@@ -30,20 +30,19 @@ C_NUM = 0
 def generate_combinations(move_bound,drain_bound,drain_step):
     recomendations_list = []
     move_list = []
-    for i in range(move_bound):
+    for i in range(1,move_bound):
         item = [i,'move']
         move_list.append(item)
 
     drain_list = []
-    for d in range(drain_bound):
+    for d in range(1,drain_bound):
         item = [d,'drain']
         drain_list.append(item)
 
     combinations_list = []
-    next_drain = 0
-    for i in range(move_bound):
-        if i > 0:
-            combinations_list.append(move_list[i])
+    next_drain = 1
+    for i in range(move_bound-1):
+        combinations_list.append(move_list[i])
         if i % drain_step == 0 and drain_bound > 0 and next_drain < drain_bound-1:
             combinations_list.append(drain_list[next_drain])
             next_drain += 1
@@ -78,11 +77,15 @@ def optimize_cluster(clusterData=None, runs=999999):
         if combination[C_TYPE] == 'move':
             globalVar_local.target_amount_of_recomendations = combination[C_NUM] 
             globalVar_local.target_NodesDrained_length = 0
+            # print("Recomendations : " + str(combination[C_NUM]))
+            # print("Drained nodes : " + '0')
             logger.debug("Recomendations : " + str(combination[C_NUM]))
             logger.debug("Drained nodes : " + '0')
         if combination[C_TYPE] == 'drain':
             globalVar_local.target_amount_of_recomendations = 0 
             globalVar_local.target_NodesDrained_length = combination[C_NUM]
+            # print("Recomendations : " + '0')
+            # print("Drained nodes : " + str(combination[C_NUM]))
             logger.debug("Recomendations : " + '0')
             logger.debug("Drained nodes : " + str(combination[C_NUM]))
         logger.info("-----------------------------------------------------------------------------------")
