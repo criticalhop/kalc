@@ -57,6 +57,14 @@ def print_stats(metric: Metric, metric_name: str):
     if len(metric.moved_pod_set) > 0:
         metric_info += f"""echo Pod moved {len(metric.moved_pod_set)}
 """
+    if metric.run_time > 0:
+        metric_info += "echo Run time {0:.0f}s\n".format(metric.run_time)
+    if len(metric.pods) > 0:
+        metric_info += f"""echo Pod amount {len(metric.pods)}
+"""
+    if len(metric.nodes) > 0:
+        metric_info += f"""echo Node amount {len(metric.nodes)}
+"""
     return metric_info
 
 

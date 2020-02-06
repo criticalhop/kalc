@@ -4,11 +4,7 @@
 
 # Overview
 
-`kalc` is a Kubernetes operations automation system built on pure [AI planning](https://github.com/criticalhop/poodle).
-
-Currently, `kalc` provides a single command, `kalc-optimize` to do automatic cluster rebalancing and optimization.
-
-`kalc` can also be used with [Jupyter Lab](https://jupyter.org/) in interactive mode.
+`kalc` is application aware Kubernetes rebalancing tool built on pure [AI planning](https://github.com/criticalhop/poodle).
 
 # Quick Start
 
@@ -23,6 +19,10 @@ Currently, `kalc` provides a single command, `kalc-optimize` to do automatic clu
 ## Installation
 
     pip install kalc
+    
+If your Linux host has other versions of Python installed you will recieve an error regarding "Could not find a version that satisfies the requirement kalc (from versions: )No matching distribution found for kalc"... If you recieve this, type the following to install kalc
+    
+    python3.7 -m pip install kalc
 
 ## Basic usage
 
@@ -32,7 +32,7 @@ Currently, `kalc` provides a single command, `kalc-optimize` to do automatic clu
 
 ## Autopilot
 
-`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and reducing cost by freeing nodes with low utilization.
+`kalc` can optimize your cluster in background, gradually increasing reliability by rebalancing and reducing cost by freeing nodes with low utilization. You can run `kalc-optimize` as a cron job, wait for X minutes and then run the most recent generated script file.
 
 # Architecture
 
