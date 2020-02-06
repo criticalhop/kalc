@@ -11,6 +11,7 @@ from kalc.model.system.primitives import Label
 from kalc.model.system.base import HasLimitsRequests, HasLabel
 from kalc.misc.const import *
 from kalc.misc.util import cpuConvertToAbstractProblem, memConvertToAbstractProblem, getint, POODLE_MAXLIN
+from kalc.misc.selector import nativeSelector
 # import kalc.cli as cli
 import sys
 import random
@@ -173,20 +174,25 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
         
         services = filter(lambda x: isinstance(x, mservice.Service), object_space)
         for service in services:
-            if len(service.spec_selector._get_value()) and \
-                    set(service.spec_selector._get_value())\
-                        .issubset(set(self.metadata_labels._get_value())):
-                # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
-                service.podList.add(self)
-                self.hasService = True
-                if list(service.metadata_labels._get_value()):
-                    if self.status._property_value == STATUS_POD["Running"]:
-                        service.amountOfActivePods += 1
-                        service.status = STATUS_SERV["Started"]
-                        assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
-                else:
-                    pass
-                    # cli.click.echo("    - WRN: no label for service %s" % str(service.metadata_name))
+            if hasattr(service, "yaml_orig") and hasattr(self, "yaml_orig"):
+                selector = ""
+                if (not 'selector' in service.yaml_orig["spec"]) or (not 'labels' in self.yaml_orig["metadata"]):
+                    continue
+                for key in service.yaml_orig["spec"]["selector"]:
+                    selector += "{0}={1},".format(key, service.yaml_orig["spec"]["selector"][key])
+                selector = selector[:-1]
+                if nativeSelector.match_label(selector, self.yaml_orig["metadata"]["labels"]):
+                    # print("ASSOCIATE SERVICE", str(self.metadata_name), str(service.metadata_name))
+                    service.podList.add(self)
+                    self.hasService = True
+                    if list(service.metadata_labels._get_value()):
+                        if self.status._property_value == STATUS_POD["Running"]:
+                            service.amountOfActivePods += 1
+                            service.status = STATUS_SERV["Started"]
+                            assert getint(service.amountOfActivePods) < POODLE_MAXLIN, "Service pods overflow"
+                    else:
+                        pass
+                        # cli.click.echo("    - WRN: no label for service %s" % str(service.metadata_name))
         if self.status._property_value == STATUS_POD["Pending"]:
             scheduler = next(filter(lambda x: isinstance(x, mscheduler.Scheduler), object_space))
             scheduler.queueLength += 1
