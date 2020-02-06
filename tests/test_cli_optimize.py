@@ -42,6 +42,11 @@ def build_running_pod_with_d(podName, cpuRequest, memRequest, atNode, d, ds, s, 
     atNode.currentFormalCpuConsumption += cpuRequest
     atNode.currentFormalMemConsumption += memRequest
     atNode.amountOfActivePods += 1
+    atNode.allocatedPodList.add(pod_running_1)
+    atNode.allocatedPodList_length += 1
+    atNode.directedPodList.add(pod_running_1)
+    atNode.directedPodList_length += 1
+    pod_running_1.toNode = Node.NODE_NULL
     pods.append(pod_running_1)
     if d is not None:
         d.podList.add(pod_running_1)
@@ -150,8 +155,8 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(12,2,2,node_item,d2,None,s1,pods)
-    pod = build_running_pod_with_d(13,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(6,2,2,node_item,d2,None,s1,pods)
+    pod = build_running_pod_with_d(7,2,2,node_item,d2,None,s1,pods)
 
     
     node_item = Node()
@@ -162,7 +167,7 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     node_item.status = STATUS_NODE["Active"]
     nodes.append(node_item)
 
-    pod = build_running_pod_with_d(16,2,2,node_item,None,None,None,pods)
+    pod = build_running_pod_with_d(8,2,2,node_item,d,None,None,pods)
 
     node_item = Node()
     node_item.metadata_name = "node 4"
@@ -201,33 +206,33 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
             if node != node2:
                 node2.different_than.add(node)
 
-#     pods[0].antiaffinity_set = True
-#     pods[0].podsMatchedByAntiaffinity.add(pods[1])
-#     pods[0].podsMatchedByAntiaffinity.add(pods[2])
-#     pods[0].podsMatchedByAntiaffinity.add(pods[12])
-#     pods[0].podsMatchedByAntiaffinity_length = 3
-#     pods[0].target_number_of_antiaffinity_pods = 3
+    pods[0].antiaffinity_set = True
+    pods[0].podsMatchedByAntiaffinity.add(pods[1])
+    pods[0].podsMatchedByAntiaffinity.add(pods[2])
+    pods[0].podsMatchedByAntiaffinity.add(pods[8])
+    pods[0].podsMatchedByAntiaffinity_length = 3
+    pods[0].target_number_of_antiaffinity_pods = 3
 
-#     pods[1].antiaffinity_set = True
-#     pods[1].podsMatchedByAntiaffinity.add(pods[0])
-#     pods[1].podsMatchedByAntiaffinity.add(pods[2])
-#     pods[1].podsMatchedByAntiaffinity.add(pods[12])
-#     pods[1].podsMatchedByAntiaffinity_length = 3
-#     pods[1].target_number_of_antiaffinity_pods = 3
+    pods[1].antiaffinity_set = True
+    pods[1].podsMatchedByAntiaffinity.add(pods[0])
+    pods[1].podsMatchedByAntiaffinity.add(pods[2])
+    pods[1].podsMatchedByAntiaffinity.add(pods[8])
+    pods[1].podsMatchedByAntiaffinity_length = 3
+    pods[1].target_number_of_antiaffinity_pods = 3
 
-#     pods[2].antiaffinity_set = True
-#     pods[2].podsMatchedByAntiaffinity.add(pods[1])
-#     pods[2].podsMatchedByAntiaffinity.add(pods[0])
-#     pods[2].podsMatchedByAntiaffinity.add(pods[12])
-#     pods[2].podsMatchedByAntiaffinity_length = 3
-#     pods[2].target_number_of_antiaffinity_pods = 3
+    pods[2].antiaffinity_set = True
+    pods[2].podsMatchedByAntiaffinity.add(pods[1])
+    pods[2].podsMatchedByAntiaffinity.add(pods[0])
+    pods[2].podsMatchedByAntiaffinity.add(pods[8])
+    pods[2].podsMatchedByAntiaffinity_length = 3
+    pods[2].target_number_of_antiaffinity_pods = 3
 
-#     pods[12].antiaffinity_set = True
-#     pods[12].podsMatchedByAntiaffinity.add(pods[1])
-#     pods[12].podsMatchedByAntiaffinity.add(pods[2])
-#     pods[12].podsMatchedByAntiaffinity.add(pods[0])
-#     pods[12].podsMatchedByAntiaffinity_length = 3
-#     pods[12].target_number_of_antiaffinity_pods = 3
+    pods[8].antiaffinity_set = True
+    pods[8].podsMatchedByAntiaffinity.add(pods[1])
+    pods[8].podsMatchedByAntiaffinity.add(pods[2])
+    pods[8].podsMatchedByAntiaffinity.add(pods[0])
+    pods[8].podsMatchedByAntiaffinity_length = 3
+    pods[8].target_number_of_antiaffinity_pods = 3
     
 #     nodes[2].isSearched = True
     # priority for pod-to-evict
@@ -248,9 +253,9 @@ def prepare_affinity_test_8_pods_on_3_nodes_with_6_antiaffinity_pods():
     globalVar.target_DeploymentsWithAntiaffinity_length = 1
     globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
     globalVar.target_amountOfPodsWithAntiaffinity = 3
+    globalVar.target_amount_of_recomendations = 3
     
-    
-    class Antiaffinity_check_k1(Antiaffinity_check_with_limited_number_of_pods_with_add_node):
+    class Antiaffinity_check_k1(Optimize_directly):
         pass
 
     p = Antiaffinity_check_k1(k.state_objects)

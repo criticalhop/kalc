@@ -270,7 +270,7 @@ def prepare_synthetic_data():
     globalVar.maxNumberOfPodsOnSameNodeForDeployment = 10
     globalVar.target_amountOfPodsWithAntiaffinity = 3
     # globalVar.target_NodesDrained_length = 1
-    globalVar.target_amount_of_recomendations = 3
+    globalVar.target_amount_of_recomendations = 2
     
     class Antiaffinity_check_k1(Optimize_directly):
         pass

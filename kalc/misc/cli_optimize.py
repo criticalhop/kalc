@@ -41,7 +41,7 @@ def generate_combinations(move_bound,drain_bound,drain_step):
 
     combinations_list = []
     next_drain = 1
-    for i in range(move_bound-1):
+    for i in range(1,move_bound-1):
         combinations_list.append(move_list[i])
         if i % drain_step == 0 and drain_bound > 0 and next_drain < drain_bound-1:
             combinations_list.append(drain_list[next_drain])

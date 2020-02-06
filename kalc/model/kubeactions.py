@@ -321,7 +321,8 @@ class KubernetesModel(ProblemTemplate):
         globalVar: GlobalVar
          ):
         assert globalVar.block_policy_calculated == False
-        # assert selectedNode.isNull == False
+        assert selectedNode.isNull == False
+        assert selectedNode.status == STATUS_NODE["Active"]
         # assert globalVar.block_node_outage_in_progress == False
         pod1.nodeSelectorList.add(selectedNode) 
 
@@ -334,6 +335,8 @@ class KubernetesModel(ProblemTemplate):
         assert globalVar.block_node_outage_in_progress == False
         assert pod.toNode == Node.NODE_NULL
         assert selectedNode in pod.nodeSelectorList
+        assert selectedNode.isNull == False
+        assert selectedNode.status == STATUS_NODE["Active"]
         pod.toNode = selectedNode
 
     @planned(cost=1) # TODO
