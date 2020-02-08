@@ -285,7 +285,7 @@ def prepare_synthetic_data():
     services = [s1,s2]
     test_case.services = services
     test_case.deployments = deployments
-    # print_objects(k.state_objects)
+    print_objects(k.state_objects)
     return k, p, test_case
 
 
@@ -296,28 +296,28 @@ def test_synthetic_rebalance_3_pods():
                      "reached_reqested_amount_of_recomendations"]
     not_assert_conditions = []
     
-    # p.clear_node_of_pod(test_case.pods[0])
-    # p.SelectNode(test_case.pods[0],test_case.nodes[1],test_case.globalVar)
+    p.clear_node_of_pod(test_case.pods[0])
+    p.SelectNode(test_case.pods[0],test_case.nodes[1],test_case.globalVar)
     
-    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[1])
-    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[2])
-    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[8])
+    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[1])
+    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[2])
+    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[0],test_case.pods[8])
 
-    # p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[6])
-    # p.check_toNode_for_pod_move_for_that_pod_without_antiaffinity(test_case.pods[0],test_case.pods[7])
+    p.check_toNode_for_pod_move_for_other_pod_with_antiaffinity(test_case.pods[0],test_case.pods[6])
+    p.check_toNode_for_pod_move_for_other_pod_with_antiaffinity(test_case.pods[0],test_case.pods[7])
 
-    # p.check_node_for_pod_move_finished(test_case.pods[0],test_case.nodes[1])
+    p.check_node_for_pod_move_finished(test_case.pods[0],test_case.nodes[1])
 
-    # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[0],test_case.pods[1],test_case.nodes[0],test_case.nodes[1],test_case.scheduler, test_case.globalVar,test_case.deployments[0])
-    # p.clear_node_of_pod(test_case.pods[7])
-    # p.SelectNode(test_case.pods[7],test_case.nodes[2],test_case.globalVar)
-    # p.check_toNode_for_pod_move_for_this_pod(test_case.pods[7],test_case.pods[6])
-    # p.check_toNode_for_pod_move_for_that_pod_with_antiaffinity(test_case.pods[7],test_case.pods[8])
-    # p.check_node_for_pod_move_finished(test_case.pods[7],test_case.nodes[2])
-    # p.move_pod_recomendation_reason_antiaffinity(test_case.pods[7],test_case.pods[6],test_case.nodes[1],test_case.nodes[2],test_case.scheduler, test_case.globalVar,test_case.deployments[1])
+    p.move_pod_recomendation_reason_antiaffinity(test_case.pods[0],test_case.pods[1],test_case.nodes[0],test_case.nodes[1],test_case.scheduler, test_case.globalVar,test_case.deployments[0])
+    p.clear_node_of_pod(test_case.pods[7])
+    p.SelectNode(test_case.pods[7],test_case.nodes[2],test_case.globalVar)
+    p.check_toNode_for_pod_move_for_this_pod(test_case.pods[7],test_case.pods[6])
+    p.check_toNode_for_pod_move_for_that_pod_with_antiaffinity(test_case.pods[7],test_case.pods[8])
+    p.check_node_for_pod_move_finished(test_case.pods[7],test_case.nodes[2])
+    p.move_pod_recomendation_reason_antiaffinity(test_case.pods[7],test_case.pods[6],test_case.nodes[1],test_case.nodes[2],test_case.scheduler, test_case.globalVar,test_case.deployments[1])
 
 
-    # p.reached_reqested_amount_of_recomendations(test_case.globalVar)
+    p.reached_reqested_amount_of_recomendations(test_case.globalVar)
     
 
     assert_brake = checks_assert_conditions_in_one_mode(k,p,assert_conditions,not_assert_conditions,"functional test", DEBUG_MODE)

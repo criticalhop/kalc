@@ -1148,10 +1148,10 @@ class Antiaffinity_check_with_limited_number_of_pods(Antiaffinity_check_basis):
     #         if globalVar.target_amountOfPodsWithAntiaffinity == 4 and deployment not in globalVar.DeploymentsWithAntiaffinity:
     #             globalVar.DeploymentsWithAntiaffinity.add(deployment)
     #             globalVar.DeploymentsWithAntiaffinity_length += 1
-    @planned(cost=1)
-    def Reduce_maxNumberOfPodsOnSameNodeForDeployment(self,
-        globalVar: GlobalVar):
-        globalVar.maxNumberOfPodsOnSameNodeForDeployment -= 1       
+    # @planned(cost=1)
+    # def Reduce_maxNumberOfPodsOnSameNodeForDeployment(self,
+    #     globalVar: GlobalVar):
+    #     globalVar.maxNumberOfPodsOnSameNodeForDeployment -= 1       
    
     @planned(cost=1)
     def Calculate_fulfilled_antiaffinity_pods_of_deployment(self,
@@ -1291,6 +1291,21 @@ class Optimize_directly(Balance_pods_and_drain_node):
         globalVar: GlobalVar):
         assert globalVar.target_amount_of_recomendations <= globalVar.found_amount_of_recomendations
         globalVar.target_amount_of_recomendations_reached = True
+
+    @planned(cost=1)
+    def Set_antiaffinity_between_two_pods_of_deployment(self,
+        pod1: Pod,
+        pod2: Pod,
+        deployment: Deployment):
+        assert pod1 in deployment.podList
+        assert pod2 in deployment.podList
+        pod1.antiaffinity_set = True
+        pod1.podsMatchedByAntiaffinity.add(pod2)
+        pod1.podsMatchedByAntiaffinity_length += 1
+        pod2.antiaffinity_set = True
+        pod2.podsMatchedByAntiaffinity.add(pod1)
+        pod2.podsMatchedByAntiaffinity_length += 1
+        deployment.podsMatchedByAntiaffinity_length += 2
 
 
 class Optimize_directly_with_add_node(Optimize_directly):

@@ -652,6 +652,7 @@ class KubernetesModel(ProblemTemplate):
         nodeTo.allocatedPodList.add(pod)
         nodeTo.allocatedPodList_length += 1
         globalVar.found_amount_of_recomendations += 1
+        pod.toNode_is_checked = False
 
         # globalVar.pods_toNode_checked = False
         # globalVar.pods_toNode_cleared = False

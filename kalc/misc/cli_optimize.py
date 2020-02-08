@@ -9,6 +9,9 @@ from itertools import combinations, product
 from logzero import logger
 import logzero
 import os
+from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
+from test_util import print_objects
+
 logzero.logfile("./kalc-optimize.log")
 kalc_debug = os.getenv('KALC_DEBUG', "0")
 if kalc_debug == "0": logzero.loglevel(20)
@@ -41,7 +44,7 @@ def generate_combinations(move_bound,drain_bound,drain_step):
 
     combinations_list = []
     next_drain = 1
-    for i in range(1,move_bound-1):
+    for i in range(move_bound-1):
         combinations_list.append(move_list[i])
         if i % drain_step == 0 and drain_bound > 0 and next_drain < drain_bound-1:
             combinations_list.append(drain_list[next_drain])
@@ -93,7 +96,15 @@ def optimize_cluster(clusterData=None, runs=999999):
         kalc_state_objects.append(metric)
 
         try:
+            # print_objects(kalc_state_objects)
+            # problem.run()
+            # if problem.plan:
+            #     for a in problem.plan:
+            #         print(a)
             problem.xrun()
+            # print_objects(kalc_state_objects)
+            # print_plan(problem.plan)
+            
         except SchedulingError:
             logger.warning("Could not solve in this configuration, trying next...")
             success = False
@@ -129,7 +140,7 @@ def optimize_cluster(clusterData=None, runs=999999):
         with open(scritpt_file, "w+") as fd:
             fd.write(full_script)
         index += 1
-            
+        
             
 def run():  # pylint: disable=function-redefined
     optimize_cluster(None)
