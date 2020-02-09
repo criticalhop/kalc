@@ -11,6 +11,7 @@ import logzero
 import os
 from libs_for_tests import convert_space_to_yaml_dump,print_objects_from_yaml,print_plan,load_yaml, print_objects_compare, checks_assert_conditions, reload_cluster_from_yaml, checks_assert_conditions_in_one_mode
 from test_util import print_objects
+from datetime import datetime
 
 logzero.logfile("./kalc-optimize.log")
 kalc_debug = os.getenv('KALC_DEBUG', "0")
@@ -103,7 +104,7 @@ def optimize_cluster(clusterData=None, runs=999999):
             #         print(a)
             problem.xrun()
             # print_objects(kalc_state_objects)
-            # print_plan(problem.plan)
+            # print_plan(problem)
             
         except SchedulingError:
             logger.warning("Could not solve in this configuration, trying next...")
@@ -134,7 +135,8 @@ def optimize_cluster(clusterData=None, runs=999999):
             print_stats(metric, "Stats") +
             "####################################\n" +
             move_script)
-        scritpt_file = f"./kalc_optimize_{index}.sh"
+        current_time = datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
+        scritpt_file = f"./kalc_optimize_{index}_{current_time}.sh"
         logger.info("📜 Generated optimization script at %s" % scritpt_file)
         success = True
         with open(scritpt_file, "w+") as fd:

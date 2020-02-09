@@ -144,5 +144,6 @@ def print_objects(objectList):
         list_of_objects_output.extend(['target_DeploymentsWithAntiaffinity_length',str(globalvar_item.target_DeploymentsWithAntiaffinity_length._get_value())])
         list_of_objects_output.extend(['maxNumberOfPodsOnSameNodeForDeployment',str(globalvar_item.maxNumberOfPodsOnSameNodeForDeployment._get_value())])
         list_of_objects_output.extend(['target_amountOfPodsWithAntiaffinity',str(globalvar_item.target_amountOfPodsWithAntiaffinity._get_value())])
+        list_of_objects_output.extend(['target_amount_of_recomendations',str(globalvar_item.target_amount_of_recomendations._get_value())])
     
     print(list_of_objects_output)
