@@ -285,7 +285,7 @@ def prepare_synthetic_data():
     services = [s1,s2]
     test_case.services = services
     test_case.deployments = deployments
-    print_objects(k.state_objects)
+    # print_objects(k.state_objects)
     return k, p, test_case
 
 

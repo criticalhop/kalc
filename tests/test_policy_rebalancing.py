@@ -231,7 +231,7 @@ def test_stub_completion():
     # k._build_state()
 
     yamlState = convert_space_to_yaml(k.state_objects, wrap_items=True)
-    print("LEN", len(yamlState))
-    print(''.join(yamlState))
+    # print("LEN", len(yamlState))
+    # print(''.join(yamlState))
     update(''.join(yamlState))
 
