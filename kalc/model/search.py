@@ -1292,7 +1292,7 @@ class Optimize_directly(Balance_pods_and_drain_node):
         assert globalVar.target_amount_of_recomendations <= globalVar.found_amount_of_recomendations
         globalVar.target_amount_of_recomendations_reached = True
 
-    @planned(cost=1)
+    # @planned(cost=1)
     def Set_antiaffinity_between_two_pods_of_deployment(self,
         pod1: Pod,
         pod2: Pod,
