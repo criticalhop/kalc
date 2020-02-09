@@ -176,9 +176,11 @@ class Pod(ModularKind, HasLabel, HasLimitsRequests):
                 if self.cpuRequest > 0:
                     node.currentFormalCpuConsumption += self.cpuRequest
                     assert getint(node.currentFormalCpuConsumption) < POODLE_MAXLIN, "CPU request exceeded max: %s" % getint(node.currentFormalCpuConsumption)
+                    # assert getint(node.currentFormalCpuConsumption) <= getint(node.cpuCapacity), "Amount of numbers is not enought, increase LINCOUNT PARAMETER: Node: %s, CpuCapacity: %s, CpuConsumption: %s" % (node.metadata_name, getint(node.cpuCapacity),getint(node.currentFormalCpuConsumption))
                 if self.memRequest > 0:
                     node.currentFormalMemConsumption += self.memRequest
                     assert getint(node.currentFormalMemConsumption) < POODLE_MAXLIN, "MEM request exceeded max: %s" % getint(node.currentFormalMemConsumption)
+                    # assert getint(node.currentFormalMemConsumption) <= getint(node.memCapacity), "Amount of numbers is not enought, increase LINCOUNT PARAMETER: Node: %s, MemCapacity: %s, MemConsumtion: %s" % (node.metadata_name, getint(node.memCapacity),getint(node.currentFormalMemConsumption))
                 found = True
             if not self.nodeSelectorSet: self.nodeSelectorList.add(node)
         if not found and self.toNode == mnode.Node.NODE_NULL and not _ignore_orphan:
