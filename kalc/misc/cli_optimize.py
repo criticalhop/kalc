@@ -17,6 +17,7 @@ logzero.logfile("./kalc-optimize.log")
 kalc_debug = os.getenv('KALC_DEBUG', "0")
 if kalc_debug == "0": logzero.loglevel(20)
 if kalc_debug == "1": logzero.loglevel(10)
+logger.debug("Debug enabled.")
 
 D_RANK = 0
 D_DEPLOYMENT = 1
