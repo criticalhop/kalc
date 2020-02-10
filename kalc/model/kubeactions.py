@@ -639,6 +639,7 @@ class KubernetesModel(ProblemTemplate):
 
         assert pod in deployment.podList # Only pods with deployments can be moved by kalc 
         assert deployment.amountOfActivePods > 1
+        assert deployment.NumberOfPodsOnSameNodeForDeployment > 1
 
         nodeFrom.currentFormalMemConsumption -= pod.memRequest
         nodeFrom.currentFormalCpuConsumption -= pod.cpuRequest

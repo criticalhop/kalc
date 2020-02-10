@@ -15,6 +15,7 @@ from logzero import logger
 import kalc.misc.util as util
 import random
 import yaml, copy, jsonpatch, difflib
+from kalc.misc.metrics import calculate_maxNumberOfPodsOnSameNode_metrics
 
 class YAMLable():
     yaml_orig: {}
@@ -72,7 +73,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
         self.spec_template_spec_priorityClassName = "Normal-zero"
         self.priorityClass = zeroPriorityClass
         self.spec_replicas = 0
-        self.NumberOfPodsOnSameNodeForDeployment = 10
+        self.NumberOfPodsOnSameNodeForDeployment = 0
         self.amountOfPodsWithAntiaffinity = 5
         self.calc_PodsWithAntiaffinitySet_length = 0
         self.podsMatchedByAntiaffinity_length = 0
@@ -145,6 +146,7 @@ class Deployment(ModularKind, Controller, HasLimitsRequests, YAMLable):
             if br and pod.status._get_value() == "Running":
                 self.amountOfActivePods += 1
                     # self.check_pod(pod, object_space)
+        calculate_maxNumberOfPodsOnSameNode_metrics(self,object_space)
 
         for podList_item_level1 in self.podList:
             for podList_item_level2 in self.podList:

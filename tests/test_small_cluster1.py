@@ -25,7 +25,7 @@ from typing import Set
 
 DEBUG_MODE = 2 # 0 - no debug,  1- debug with yaml load , 2 - debug without yaml load
 
-TEST_DUMP = "./tests/client-cases/tesg1.yaml"
+TEST_DUMP = "/home/vasily/CLIENT_DATA/test1/vuclip_state_manifest.yaml"
 
 def test_optimmize_cluster_real():
     assert optimize_cluster(open(TEST_DUMP).read(), runs=1)
