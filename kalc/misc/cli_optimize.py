@@ -15,8 +15,10 @@ from datetime import datetime
 
 logzero.logfile("./kalc-optimize.log")
 kalc_debug = os.getenv('KALC_DEBUG', "0")
-if kalc_debug == "0": logzero.loglevel(20)
-if kalc_debug == "1": logzero.loglevel(10)
+DEFAULT_LOG_LEVEL = 20
+if kalc_debug == "0": DEFAULT_LOG_LEVEL = 20
+if kalc_debug == "1": DEFAULT_LOG_LEVEL = 10
+logzero.loglevel(DEFAULT_LOG_LEVEL)
 logger.debug("Debug enabled.")
 
 D_RANK = 0
@@ -74,7 +76,7 @@ def optimize_cluster(clusterData=None, runs=999999):
         success = False
         logzero.loglevel(40)
         update(clusterData) # To reload from scratch...
-        logzero.loglevel(20)
+        logzero.loglevel(DEFAULT_LOG_LEVEL)
         problem = Optimize_directly(kalc_state_objects)
         globalVar_local = next(filter(lambda x: isinstance(x, GlobalVar), kalc_state_objects)) # pylint: disable=undefined-variable
         
