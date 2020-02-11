@@ -38,7 +38,7 @@ C_NUM = 0
 def generate_combinations(move_bound,drain_bound,drain_step):
     recomendations_list = []
     move_list = []
-    for i in range(move_bound):
+    for i in range(1,move_bound):
         item = [i,'move']
         move_list.append(item)
 
@@ -50,8 +50,7 @@ def generate_combinations(move_bound,drain_bound,drain_step):
     combinations_list = []
     next_drain = 0
     for i in range(move_bound-1):
-        if i > 0:
-            combinations_list.append(move_list[i])
+        combinations_list.append(move_list[i])
         if i % drain_step == 0 and drain_bound > 0 and next_drain < drain_bound-1:
             combinations_list.append(drain_list[next_drain])
             next_drain += 1
@@ -69,7 +68,7 @@ def optimize_cluster(clusterData=None, runs=999999):
     recomendations_bound = 10
     nodes = len(list(filter(lambda x: isinstance(x, Node), kalc_state_objects))) # pylint: disable=undefined-variable
     drain_bound = nodes - 1
-    drain_step = 2
+    drain_step = 3
     combinations_list = generate_combinations(recomendations_bound,drain_bound,drain_step)
     index = 0
     for combination in combinations_list:
@@ -103,13 +102,13 @@ def optimize_cluster(clusterData=None, runs=999999):
 
         try:
             # print_objects(kalc_state_objects)
+            # print("run:")
             # problem.run()
             # if problem.plan:
             #     for a in problem.plan:
             #         print(a)
+            # print("xrun:")
             problem.xrun()
-            # print_objects(kalc_state_objects)
-            # print_plan(problem.plan)
         except SchedulingError:
             logger.warning("Could not solve in this configuration, trying next...")
             success = False
